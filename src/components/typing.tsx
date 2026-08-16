@@ -95,12 +95,49 @@ export class Engine {
     return out;
   }
 
+  /**
+   * Characters credited toward WPM, scored word by word off the final state of
+   * the text rather than off the keystroke log (the Monkeytype rule). A word
+   * counts only when every slot in it landed correct — fixing a slip with
+   * backspace still counts, the accuracy figure is what takes the hit. The
+   * word-ending separator counts with the word it closes.
+   *
+   * Scoring the text instead of the strokes is what makes mashing worthless:
+   * a wrong key can no longer earn credit just by being right about a space,
+   * and re-typing a slot after backspace can't bank the same character twice.
+   */
+  correctChars(): number {
+    let total = 0;
+    let i = 0;
+    while (i < this.pos) {
+      const ch = this.text[i];
+      if (ch === ' ' || ch === '\n') { i++; continue; }
+      let end = i;
+      while (end < this.text.length && this.text[end] !== ' ' && this.text[end] !== '\n') end++;
+      let clean = true;
+      const upto = Math.min(end, this.pos);
+      for (let j = i; j < upto; j++) {
+        const st = this.states[j];
+        if (st !== OK && st !== FIXED) { clean = false; break; }
+      }
+      // A word still being typed earns credit for the part typed so far, so a
+      // timer expiring mid-word doesn't silently discard it.
+      if (clean) {
+        total += upto - i;
+        const sep = this.states[end];
+        if (end < this.pos && (sep === OK || sep === FIXED)) total++;
+      }
+      i = end + 1;
+    }
+    return total;
+  }
+
   liveStats(now = performance.now()): { wpm: number; raw: number; acc: number; progress: number } {
     const ms = this.elapsedMs(now);
     const correct = this.strokes.reduce((a, s) => a + (s.ok ? 1 : 0), 0);
     const typed = this.strokes.length;
     return {
-      wpm: Math.round(wpmOf(correct, ms)),
+      wpm: Math.round(wpmOf(this.correctChars(), ms)),
       raw: Math.round(wpmOf(typed, ms)),
       acc: typed ? Math.round((correct / typed) * 1000) / 10 : 100,
       progress: this.cfg.timeLimitSec
@@ -165,7 +202,8 @@ export class Engine {
       if (this.states[i] === BAD) uncorrected++;
       if (this.states[i] === FIXED) corrected++;
     }
-    const wpm = round1(wpmOf(correct, seconds * 1000));
+    const scored = this.correctChars();
+    const wpm = round1(wpmOf(scored, seconds * 1000));
     const acc = typed ? Math.round((correct / typed) * 1000) / 10 : 100;
     const timeline: StrokeT[] | undefined = this.cfg.keepTimeline
       ? this.strokes.slice(-700).map((s) => ({ t: Math.round(s.t - this.startedAt), key: s.key, ok: s.ok }))
@@ -180,11 +218,17 @@ export class Engine {
       errors: this.errorsTotal,
       corrected, uncorrected,
       backspaces: this.backspaces,
-      words: Math.round(correct / 5),
+      words: Math.round(scored / 5),
       wpm,
       raw: round1(wpmOf(typed, seconds * 1000)),
       acc,
-      adjusted: round1(wpm * (acc / 100)),
+      // Two separate mashing shapes, each with its own tell. Hammering one key
+      // drives accuracy far below anything a real attempt sustains; alternating
+      // a key with backspace keeps accuracy at 100% but spends more strokes
+      // erasing than typing. Deliberately not keyed off how much text got
+      // scored: a struggling learner who leaves errors uncorrected scores very
+      // little too, and theirs is the session the adaptive engine most needs.
+      valid: typed >= 12 && acc >= 40 && this.backspaces <= typed * 0.7,
       consistency: consistencyScore(ikis),
       rhythm: rhythmScore(ikis),
       hesitations: hesitationCount(ikis),
@@ -228,7 +272,8 @@ export function resultFromStrokes(
     typed, correct, errors: typed - correct, corrected: 0, uncorrected: typed - correct,
     backspaces: 0, words: Math.round(correct / 5),
     wpm, raw: round1(wpmOf(typed, seconds * 1000)), acc,
-    adjusted: round1(wpm * (acc / 100)),
+    // Games drive their own targets, so there is no text to mash through.
+    valid: true,
     consistency: consistencyScore(ikis), rhythm: rhythmScore(ikis), hesitations: hesitationCount(ikis),
     keyAgg, slowPairs: [], errorPairs: [],
     ikis: ikis.filter((x) => x > 5 && x < 3000).map(Math.round).slice(-400),
@@ -252,7 +297,10 @@ export function combineResults(parts: SessionResult[], mode: SessionMode, label:
   for (const k of Object.keys(keyAgg)) keyAgg[k].ms = Math.round(keyAgg[k].ms);
   const ikis = parts.flatMap((p) => p.ikis ?? []);
   const acc = typed ? Math.round((correct / typed) * 1000) / 10 : 100;
-  const wpm = round1(wpmOf(correct, seconds * 1000));
+  // Recover each part's word-scored character count from its own wpm, so the
+  // combined figure stays word-scored rather than falling back to gross strokes.
+  const scored = parts.reduce((a, p) => a + (p.wpm * 5 * p.seconds) / 60, 0);
+  const wpm = round1(wpmOf(scored, seconds * 1000));
   const allSlow = parts.flatMap((p) => p.slowPairs).sort((a, b) => b[1] - a[1]).slice(0, 4);
   const allErr = parts.flatMap((p) => p.errorPairs);
   const errAgg: Record<string, number> = {};
@@ -265,9 +313,9 @@ export function combineResults(parts: SessionResult[], mode: SessionMode, label:
     corrected: parts.reduce((a, p) => a + p.corrected, 0),
     uncorrected: parts.reduce((a, p) => a + p.uncorrected, 0),
     backspaces: parts.reduce((a, p) => a + p.backspaces, 0),
-    words: Math.round(correct / 5),
+    words: parts.reduce((a, p) => a + p.words, 0),
     wpm, raw: round1(wpmOf(typed, seconds * 1000)), acc,
-    adjusted: round1(wpm * (acc / 100)),
+    valid: parts.every((p) => p.valid),
     consistency: consistencyScore(ikis),
     rhythm: rhythmScore(ikis),
     hesitations: parts.reduce((a, p) => a + p.hesitations, 0),
@@ -387,13 +435,12 @@ export function useTypingSession(
 
 // ---------- Text display ----------
 
-export function TypingText({ engine, caret, big, focused, onClick, masked }: {
+export function TypingText({ engine, caret, big, focused, onClick }: {
   engine: Engine;
   caret: 'bar' | 'block' | 'under';
   big?: boolean;
   focused: boolean;
   onClick?: () => void;
-  masked?: boolean;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
@@ -440,10 +487,9 @@ export function TypingText({ engine, caret, big, focused, onClick, masked }: {
               const st = i < engine.pos ? engine.states[i] : PENDING;
               const cls = i === engine.pos ? 'tt-cur' : st === OK ? 'tt-ok' : st === BAD ? 'tt-bad' : st === FIXED ? 'tt-fixed' : 'tt-pend';
               if (ch === '\n') return <span key={i}><span data-i={i} className={`tt-ch ${cls} tt-nl`}>⏎</span><br /></span>;
-              const hidden = masked && i >= engine.pos && ch !== ' ';
               return (
                 <span key={i} data-i={i} className={`tt-ch ${cls}`}>
-                  {hidden ? '·' : ch === ' ' ? ' ' : ch}
+                  {ch === ' ' ? ' ' : ch}
                 </span>
               );
             })}

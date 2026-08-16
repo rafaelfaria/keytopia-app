@@ -52,7 +52,6 @@ function defaultSettings(age: AgeGroup): Settings {
     caret: 'bar',
     correction: 'standard',
     focusMode: false,
-    speakTargets: false,
     untimed: false,
     unlockAll: false,
     hideLeaderboards: false,
@@ -122,13 +121,24 @@ export interface RootState {
 }
 
 function xpFor(r: SessionResult, extraStars: number): number {
-  let xp = Math.round((r.seconds / 60) * 12 + r.correct / 22);
+  if (!r.valid) return 0;
+  let xp = Math.round((r.seconds / 60) * 12 + (r.words * 5) / 22);
   if (r.acc >= 98) xp = Math.round(xp * 1.35);
   else if (r.acc >= 95) xp = Math.round(xp * 1.2);
   if (r.mode === 'lesson') xp += extraStars * 15;
   if (r.mode === 'challenge') xp += 40;
   if (r.mode === 'race') xp += 12;
   return Math.max(2, Math.min(220, xp));
+}
+
+/**
+ * A run that produced no real text still belongs in history so the learner
+ * sees what happened, but it must not teach the adaptive engine: every slot
+ * mashed past charges an error against that letter, which is enough to drag
+ * a healthy key down to "needs review" and hijack the next drill's focus.
+ */
+function countsTowardLearning(r: SessionResult): boolean {
+  return r.valid;
 }
 
 function applySession(d: ProfileData, r: SessionResult): Rewards {
@@ -147,10 +157,10 @@ function applySession(d: ProfileData, r: SessionResult): Rewards {
     if (d.sessions[i].ikis && withTimeline > 8) delete d.sessions[i].ikis;
   }
 
-  mergeKeyStats(d.keyStats, r.keyAgg);
+  if (countsTowardLearning(r)) mergeKeyStats(d.keyStats, r.keyAgg);
 
   const dk = dayKey(r.endedAt);
-  d.days[dk] = (d.days[dk] ?? 0) + r.seconds / 60;
+  if (countsTowardLearning(r)) d.days[dk] = (d.days[dk] ?? 0) + r.seconds / 60;
 
   // Records
   const rec = (key: string, v: number, min = 0) => {
@@ -177,7 +187,7 @@ function applySession(d: ProfileData, r: SessionResult): Rewards {
   if (d.missions.week !== wk) d.missions = rollMissions(d.profile.ageGroup, new Date(r.endedAt));
   const daysThisWeek = Object.keys(d.days).filter((k) => weekKey(new Date(k + 'T12:00:00')) === wk && d.days[k] > 0).length;
   for (const m of d.missions.list) {
-    if (m.done) continue;
+    if (m.done || !countsTowardLearning(r)) continue;
     if (m.id === 'days') m.progress = daysThisWeek;
     if (m.id === 'minutes') m.progress += r.seconds / 60;
     if (m.id === 'cleanwords' && r.acc >= 95) m.progress += r.words;
@@ -245,7 +255,7 @@ function seedHistory(d: ProfileData, a: AssessmentResult): void {
         corrected: Math.round(typed * (1 - acc / 100) * 0.6), uncorrected: Math.round(typed * (1 - acc / 100) * 0.4),
         backspaces: Math.round(typed * 0.05), words: Math.round(typed / 5),
         wpm: Math.round(wpm * 10) / 10, raw: Math.round(wpm * 1.08 * 10) / 10,
-        acc: Math.round(acc * 10) / 10, adjusted: Math.round(wpm * (acc / 100) * 10) / 10,
+        acc: Math.round(acc * 10) / 10, valid: true,
         consistency: Math.round(42 + progress * 22 + rng() * 14), rhythm: Math.round(40 + progress * 24 + rng() * 14),
         hesitations: Math.floor(rng() * 6), keyAgg: {}, slowPairs: [], errorPairs: [], seeded: true,
       };

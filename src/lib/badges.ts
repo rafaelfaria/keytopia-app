@@ -80,7 +80,6 @@ export const BADGES: BadgeDef[] = [
 
   { id: 'coder', name: 'Bracket Whisperer', desc: 'Complete 3 code-typing sessions.', icon: 'braces', cat: 'Specialist', check: (d) => Math.min(1, d.sessions.filter((s) => s.mode === 'code').length / 3) },
   { id: 'numerist', name: 'Peak Bagger', desc: 'Complete 3 number sessions.', icon: 'peaks', cat: 'Specialist', check: (d) => Math.min(1, d.sessions.filter((s) => s.mode === 'numbers').length / 3) },
-  { id: 'listener', name: 'Golden Ear', desc: 'Complete a dictation session.', icon: 'headphones', cat: 'Specialist', check: (d) => Math.min(1, d.sessions.filter((s) => s.mode === 'dictation').length) },
 
   { id: 'night-echo', name: 'The Quiet Hour', desc: '???', icon: 'moon', cat: 'Secret', secret: true, check: (d) => Math.min(1, d.sessions.filter((s) => s.mode === 'zen' && s.seconds >= 180).length) },
   { id: 'century', name: 'The Century Line', desc: '???', icon: 'stamp', cat: 'Secret', secret: true, check: (d) => Math.min(1, d.sessions.filter((s) => s.typed >= 100 && s.acc === 100).length) },

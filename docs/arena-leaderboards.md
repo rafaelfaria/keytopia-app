@@ -1,5 +1,28 @@
 # The Arena Boards — one leaderboard system for every mini game
 
+> **Status: phases 1–4 shipped.** Every one of the seven mini games now opens on
+> an `ArenaIntro`, plays inside an `ArenaStage` and ends on an `ArenaResult`.
+> Only phase 5 (the Arena hub rebuild, replacing `StandingsPreview`) is left.
+>
+> Three stage variants cover every game, and which one a game takes is a
+> gameplay judgement rather than a layout preference:
+>
+> | variant | games | why |
+> |---|---|---|
+> | split | Block Stack, Keyforge, Wordflight | the world reads fine in half the width |
+> | `wide` | Wordfall, Survivor Sprint, Wordflight | a horizontal world (a sky, a track) needs the room |
+> | solo | Cipher Run, Quill Duel | splitting would separate things that must be read together |
+>
+> Playfields that the game's own arithmetic measures against a fixed height —
+> Wordfall's fall distance, Wordflight's sky — are **capped and centred rather
+> than stretched**. A full-height column silently turned a 460px drop into an
+> 800px one, which is a difficulty change disguised as a layout change.
+>
+> **Bespoke 3D scenes are still per-game work.** Block Stack has `stackScene.ts`;
+> the other six keep their existing DOM and SVG artwork inside the new stage.
+> That preserves each game's identity now and leaves the 3D upgrade as six
+> separate design jobs rather than six rushed ones.
+>
 > **Status (2026-08-16): phases 1–3 shipped.** The schema, the four RPCs, the
 > realtime channel, the client layer and the three shared surfaces are built, and
 > **Block Stack is wired end to end** as the reference implementation. Phases 4
@@ -288,7 +311,14 @@ Presence rides the same channel and gives the board a genuinely alive header:
 cheapest liveness signal available.
 
 Subscriptions are dropped on unmount and while a game is in `phase: 'run'` — nothing
-re-renders behind a typing test.
+re-renders behind a typing test. Dropping one means `removeChannel`, **not**
+`unsubscribe`: supabase-js keys channels by topic and hands back the existing
+instance, so unsubscribing without removing left a dead channel in the registry
+and the next board on that topic was given it back. Adding a listener to an
+already-subscribed channel throws, which took the whole board down with an error
+boundary. The subscribe path also clears any stale instance for its topic first,
+so a remount — navigating away and straight back, a hot reload, StrictMode's
+double effect — is idempotent.
 
 **Degrade rule, unchanged:** no project, no session, or no network means the board
 falls back to the locally simulated rivals with the honest "practice rivals" chip. A
@@ -441,6 +471,16 @@ light ones and a field fogged to `#0b1020` sits on a cream page like a hole; and
 it passes a tint because `terrace`'s five plateaus otherwise take the five
 *curriculum world* colours, which is the wrong meaning inside a game.
 
+**The busy formations run slower behind a game than on a marketing page.**
+`wave`, `stream` and `scatter` animate at 0.35–0.4× the pace the public pages
+use. A ripple crossing the field, a sideways drift or cells tumbling on two axes
+is the point of a marketing hero; on a game's front door the same motion
+competes with the copy you are meant to read and the button you are meant to
+press, and it reads as restlessness rather than craft. `terrace` and `calm` were
+already gentle and are unchanged. The scene takes one `speed` multiplier applied
+to its time accumulator, so every formation slows in step and none can drift out
+of phase with another.
+
 **Contrast is guaranteed by a veil, not by luck.** `.arena-hero-veil` is opaque
 exactly where copy sits and thins out everywhere else. It is anchored left on
 desktop, where the text column is, and becomes a top-down band on mobile, where
@@ -574,7 +614,7 @@ it is visibly missing rather than silently unranked.
 | 1 ✅ | Migration, `arena_score`, RLS, four RPCs, `supabase/tests/arena_rls.sql` | nothing user-visible |
 | 2 ✅ | `src/lib/arena.ts`, `src/lib/arenaBoard.ts`, `src/lib/arenaLive.ts` | nothing user-visible |
 | 3 ✅ | `ArenaBoard`, `ArenaIntro`, `ArenaResult`, `RankBadge`, `Movement` + `arena.css` | Block Stack wired end to end as the reference implementation |
-| 4 | The remaining seven games wired | all games ranked |
+| 4 ✅ | The remaining six games wired | all games ranked |
 | 5 | Arena hub rebuild, Lightstream standings replacing `StandingsPreview` | the hub |
 
 Phase 3 deliberately wires one game before the other seven: the second game is where a
@@ -623,3 +663,35 @@ before the eighth.
 
 *(Open: whether Arena points should decay across weeks. Deferred until there is a
 real distribution to look at.)*
+
+---
+
+## 13. The stage left the Arena
+
+`ArenaStage` turned out to be two ideas welded together: *this activity keeps
+one frame across its three phases*, and *this game has a moving keycap field
+behind it*. Only the second is about games. The first is about anything with a
+front door, a run and a finish, and the fifteen training modes had all three
+phases wearing three different shapes.
+
+So the shell moved to `src/components/stage.tsx` as `<Stage>`, with the backdrop
+as a slot. `ArenaStage` is now `<Stage>` plus `<ArenaHero>` and behaves exactly
+as it did. Training passes no backdrop and gets the same veil over a still wash:
+same frame, same back link in the same corner, same kicker-over-headline rhythm,
+same two columns, **no WebGL and nothing moving**. A practice mode neither needs
+an identity as strong as a game's nor deserves to spend a frame budget saying so.
+
+Two additions the training phases needed and games did not:
+
+- **`tall`** lets a stage grow past the viewport. A game's phases each fit one
+  screen by design; a session's finish screen carries a full breakdown under the
+  figures, and clipping it at `100dvh` would hide the half that explains the
+  other half.
+- **`<TrainRecord>`** fills the column a game gives its leaderboard. Practice is
+  solo, so the rivals are your own past runs: the five best in *this* mode,
+  ranked, your last run pinned to the board wherever it landed, and rule 2's
+  target line underneath as "3 wpm off your best". Nothing is submitted and
+  nothing is compared to another learner. It is absent for Zen, whose whole
+  promise is not keeping score, and it ranks by accuracy rather than speed in the
+  Accuracy Lab, because a panel sorted by wpm would contradict the screen it sits
+  beside.

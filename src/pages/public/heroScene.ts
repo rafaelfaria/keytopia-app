@@ -43,6 +43,13 @@ export interface HeroOpts {
    * dark smudge, so the Arena passes a strength and gets one coherent colour.
    */
   tint?: number;
+  /**
+   * How fast the field animates, as a multiplier on time. 1 is the pace the
+   * public pages use, where the scene is the only thing on screen and a lively
+   * field reads as craft. Behind a game's front door it reads as restlessness,
+   * so the Arena slows the busier formations down.
+   */
+  speed?: number;
 }
 
 /** The five world colours, matching the curriculum and the landing's regions. */
@@ -220,7 +227,10 @@ export function createHeroScene(canvas: HTMLCanvasElement, opts: HeroOpts, stati
     raf = requestAnimationFrame(frame);
     const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016;
     last = now;
-    t += dt;
+    // Scaling time rather than each formation's constants: every formation is
+    // written as a function of `t`, so one multiplier slows the drift, the
+    // ripple and the tumble together and none of them can drift out of step.
+    t += dt * (opts.speed ?? 1);
     layout();
     renderer.render(scene, camera);
   }

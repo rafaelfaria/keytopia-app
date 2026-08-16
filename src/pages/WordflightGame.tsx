@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useData, useStore, useUi } from '../lib/store';
 import { COMMON_WORDS, KID_WORDS } from '../lib/words';
 import { mulberry32, pick } from '../lib/rng';
-import { Btn, Chip, Stat } from '../components/ui';
+import { Chip } from '../components/ui';
 import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
+import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { Ic } from '../components/icons';
 import { Glider, MobileKeys, useGameKeys } from '../components/gamekit';
 import { sparkBurst, floatText } from '../lib/fx';
@@ -16,7 +16,6 @@ const DURATION = 75; // seconds
 
 export default function WordflightGame() {
   const data = useData();
-  const nav = useNavigate();
   const recordSession = useStore((s) => s.recordSession);
   const patch = useStore((s) => s.patch);
   const pushToast = useUi((s) => s.pushToast);
@@ -26,7 +25,7 @@ export default function WordflightGame() {
 
   const [phase, setPhase] = useState<'intro' | 'run' | 'over'>('intro');
   const [, force] = useState(0);
-  const [overInfo, setOverInfo] = useState<{ score: number; gates: number; smooth: number; acc: number; rewards: Rewards | null; newBest: boolean } | null>(null);
+  const [overInfo, setOverInfo] = useState<{ score: number; gates: number; smooth: number; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null>(null);
 
   const st = useRef({
     word: '', next: '', hit: 0, missedInWord: false,
@@ -66,7 +65,8 @@ export default function WordflightGame() {
       if (!cur || s.score > cur.score) { d.gameBests['wordflight'] = { score: Math.round(s.score), level: s.gatesHit }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Wordflight best!' });
-    setOverInfo({ score: Math.round(s.score), gates: s.gatesHit, smooth: result.consistency, acc: result.acc, rewards, newBest });
+    // wpm rides along for the Arena board. docs/arena-leaderboards.md §10 step 4.
+    setOverInfo({ score: Math.round(s.score), gates: s.gatesHit, smooth: result.consistency, acc: result.acc, wpm: result.wpm, rewards, newBest });
     setPhase('over');
   }, [recordSession, patch, pushToast]);
 
@@ -145,7 +145,16 @@ export default function WordflightGame() {
     const s = st.current;
     if (phaseRef.current !== 'run') return;
     const t = performance.now();
-    const want = s.hit >= s.word.length ? ' ' : s.word[s.hit];
+    // One word rides the wind at a time with nothing after it, so there is no
+    // space on screen to type and asking for one made the last keystroke of
+    // every word a press at a character nobody could see. The final letter ends
+    // the word. A space pressed out of habit is swallowed rather than charged
+    // against the next word's first letter — which, now that words turn over on
+    // their own, is the only place it could land, and here a stray miss costs
+    // altitude.
+    if (key === ' ') return;
+    const want = s.word[s.hit];
+    if (want === undefined) return;
     const ok = key === want;
     s.strokes.push({ t, exp: want, ok });
     if (s.lastKeyT) {
@@ -155,8 +164,17 @@ export default function WordflightGame() {
     s.lastKeyT = t;
     if (ok) {
       if (data?.settings.soundOn) snd.key();
-      if (want === ' ') { s.words++; s.score += s.word.length * 4; newWord(); }
-      else s.hit++;
+      s.hit++;
+      if (s.hit >= s.word.length) {
+        // The separator is still recorded, unpressed. Speed here is characters
+        // over five like everywhere else, and a word counted without its space
+        // is a fifth short: dropping it would price the same typing lower in
+        // this game than in any other and drag the rolling average with it.
+        s.strokes.push({ t, exp: ' ', ok: true });
+        s.words++;
+        s.score += s.word.length * 4;
+        newWord();
+      }
     } else {
       s.missedInWord = true;
       s.turb = 1;
@@ -171,96 +189,121 @@ export default function WordflightGame() {
   if (!data) return null;
   const s = st.current;
   const remaining = phase === 'run' ? Math.max(0, DURATION - (performance.now() - s.startedAt) / 1000) : DURATION;
-  const skyH = 380;
+  // Must match the max-height of .arena-stage-side > .flight-sky in arena.css:
+  // gliderTop is computed from it, so a mismatch flies the glider off the sky.
+  const skyH = 440;
   const gliderTop = 20 + (1 - s.alt) * (skyH - 150);
 
-  return (
-    <div className="train-page">
-      <div className="train-top">
-        <Btn kind="ghost" onClick={() => { window.clearInterval(timer.current); nav('/app/games'); }} ariaLabel="Exit game">←</Btn>
-        <h1><Ic n="send" size={20} /> Wordflight</h1>
-        <Chip tone="accent">Trains: rhythm & flow</Chip>
-      </div>
+  if (phase === 'intro') {
+    return (
+      <ArenaIntro
+        game="wordflight"
+        title={kid ? 'Fly the little bird' : 'Ride the word-wind'}
+        onPlay={start}
+        cta={kid ? 'Flap flap →' : 'Launch →'}
+        stats={data.gameBests['wordflight'] ? [
+          { label: 'Best score', value: data.gameBests['wordflight'].score },
+          { label: 'Most gates', value: data.gameBests['wordflight'].level },
+        ] : undefined}
+      >
+        <p>
+          Type the running words. The last letter carries you to the next one, so
+          there is no space to reach for. <strong>Even, steady typing lifts you.</strong>{' '}
+          Bursts and misses bring turbulence and drop you back down.
+        </p>
+        <p>
+          Fly high and clean through the golden gates for bonus sparks. Altitude
+          follows evenness, not haste, so the beat you can hold beats the one you can't.
+        </p>
+      </ArenaIntro>
+    );
+  }
 
-      <div className="game-frame">
-        {phase === 'run' && (
-          <div className="game-hud">
-            <span>Score {Math.round(s.score)}</span>
-            <span>Gates {s.gatesHit}</span>
+  if (phase === 'over' && overInfo) {
+    return (
+      <ArenaResult
+        game="wordflight"
+        run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.gates }}
+        score={overInfo.score}
+        title={overInfo.newBest ? 'New flight record!' : 'Smooth landing'}
+        newBest={overInfo.newBest}
+        onAgain={start}
+      >
+        <Chip tone={overInfo.smooth >= 65 ? 'good' : 'default'}>
+          <Ic n="waves" size={12} /> {overInfo.smooth}% smooth
+        </Chip>
+        <RewardsBanner rewards={overInfo.rewards} />
+        <p className="small muted" style={{ maxWidth: 430 }}>
+          {overInfo.smooth >= 65
+            ? 'That rhythm was silk. Take it into a speed sprint.'
+            : 'Altitude follows evenness, not haste. Lock into a beat you can hold.'}
+        </p>
+      </ArenaResult>
+    );
+  }
+
+  return (
+    <>
+      <ArenaStage
+        game="wordflight"
+        quiet
+        wide
+        hud={(
+          <>
+            <span><b>{Math.round(s.score)}</b> points</span>
+            <span><b>{s.gatesHit}</b> gates</span>
             <span className="grow" />
-            <span>altitude {Math.round(s.alt * 100)}%</span>
-            <span>{Math.ceil(remaining)}s</span>
+            <span className="arena-meter" title="Altitude">
+              <Ic n="send" size={13} />
+              <i><b style={{ width: `${Math.round(s.alt * 100)}%` }} /></i>
+            </span>
+            <span className={`arena-hud-clock ${remaining < 10 ? 'bad' : ''}`}>{Math.ceil(remaining)}s</span>
+          </>
+        )}
+        main={(
+          <div className="wf-band">
+            <p className="arena-stage-kicker"><Ic n="keyboard" size={14} /> {kid ? 'Type me' : 'Type to fly'}</p>
+            <div className="wf-locked">
+              <span className="good">{s.word.slice(0, s.hit)}</span>
+              <span className="duel-cur">{s.word[s.hit] ?? ''}</span>
+              <span className="muted">{s.word.slice(s.hit + 1)}</span>
+            </div>
+            <div className="wf-band-meta">
+              {s.turb > 0.3
+                ? <Chip tone="warn"><Ic n="wind" size={12} /> turbulence</Chip>
+                : <Chip tone="good"><Ic n="waves" size={12} /> smooth air</Chip>}
+              <span className="stack-next"><span className="muted">next</span> {s.next}</span>
+            </div>
+            <p className="stack-hint muted small">
+              <Ic n="bulb" size={13} /> Even keystrokes climb. Rushing and missing both cost altitude.
+            </p>
           </div>
         )}
-        <div className={`flight-sky ${kid ? 'flight-kid' : ''}`} ref={skyRef} style={{ height: skyH }}>
-          {phase === 'intro' && (
-            <div className="game-over" style={{ paddingTop: 46 }}>
-              <Ic n="send" size={50} />
-              <h2>{kid ? 'Fly the little bird!' : 'Ride the word-wind'}</h2>
-              <p className="muted" style={{ maxWidth: 470 }}>
-                Type the running words in the bar below (press <strong>space</strong> between them).
-                <strong> Even, steady typing lifts you</strong>; bursts and misses bring turbulence and drop you.
-                Fly high and clean through the golden gates for bonus sparks.
-              </p>
-              {data.gameBests['wordflight'] && <Chip tone="gold"><Ic n="trophy" size={12} /> Personal best: {data.gameBests['wordflight'].score}</Chip>}
-              <Btn big onClick={start}>{kid ? 'Flap flap → ' : 'Launch →'}</Btn>
+        side={(
+          <div className={`flight-sky ${kid ? 'flight-kid' : ''}`} ref={skyRef}>
+            {kid && <span className="flight-sun" aria-hidden />}
+            <div className="flight-layer">
+              {s.clouds.map((c, i) => (
+                <span key={i} className="flight-cloud" style={{ left: `${c.x}%`, top: `${c.y}%`, width: c.w, height: c.w * 0.34 }} />
+              ))}
             </div>
-          )}
-          {phase === 'run' && (
-            <>
-              {kid && <span className="flight-sun" aria-hidden />}
-              <div className="flight-layer">
-                {s.clouds.map((c, i) => (
-                  <span key={i} className="flight-cloud" style={{ left: `${c.x}%`, top: `${c.y}%`, width: c.w, height: c.w * 0.34 }} />
-                ))}
-              </div>
-              {s.gates.map((g) => {
-                const x = ((g.at - s.dist) / 900) * 100 + 12;
-                if (x < -5 || x > 110) return null;
-                return (
-                  <div key={g.id} className={`flight-gate ${g.hit ? 'hit' : ''}`} style={{ left: `${x}%`, top: 16, bottom: 76 }} aria-hidden>
-                    <span className="flight-gate-flag"><Ic n="star" size={13} /></span>
-                  </div>
-                );
-              })}
-              <div className="flight-glider-wrap" style={{ top: gliderTop, transform: s.turb > 0.3 ? `rotate(${(s.rng() - 0.5) * 16}deg)` : 'rotate(0deg)' }}>
-                <Glider kid={kid} turbulent={s.turb > 0.3} />
-                {s.alt > 0.6 && <span className="flight-wind" aria-hidden><i /><i /><i /></span>}
-              </div>
-              <div className="flight-wordbar">
-                <span className="muted small flight-wordbar-label">{kid ? 'type me!' : 'type · space · next'}</span>
-                <span className="flight-wordbar-word">
-                  <span className="good">{s.word.slice(0, s.hit)}</span>
-                  <span className="duel-cur">{s.hit >= s.word.length ? '␣' : s.word[s.hit]}</span>
-                  <span className="muted">{s.word.slice(s.hit + 1)}</span>
-                </span>
-                <span className="muted small flight-wordbar-next">then: {s.next}</span>
-              </div>
-            </>
-          )}
-          {phase === 'over' && overInfo && (
-            <div className="game-over" style={{ paddingTop: 36 }}>
-              <Ic n={overInfo.newBest ? 'trophy' : 'sailboat'} size={44} />
-              <h2>{overInfo.newBest ? 'New flight record!' : 'Smooth landing'}</h2>
-              <div className="row gap wrap" style={{ justifyContent: 'center' }}>
-                <Stat v={overInfo.score} l="distance score" tone="accent" />
-                <Stat v={overInfo.gates} l="gates" />
-                <Stat v={overInfo.smooth} l="smoothness" />
-                <Stat v={`${overInfo.acc}%`} l="accuracy" />
-              </div>
-              <RewardsBanner rewards={overInfo.rewards} />
-              <p className="small muted" style={{ maxWidth: 430 }}>
-                {overInfo.smooth >= 65 ? 'That rhythm was silk. Take it into a speed sprint!' : 'Altitude follows evenness, not haste. Lock into a beat you can hold.'}
-              </p>
-              <div className="row gap">
-                <Btn onClick={start}>↻ Fly again</Btn>
-                <Btn kind="soft" to="/app/games">All games</Btn>
-              </div>
+            {s.gates.map((g) => {
+              const x = ((g.at - s.dist) / 900) * 100 + 12;
+              if (x < -5 || x > 110) return null;
+              return (
+                <div key={g.id} className={`flight-gate ${g.hit ? 'hit' : ''}`} style={{ left: `${x}%`, top: 16, bottom: 40 }} aria-hidden>
+                  <span className="flight-gate-flag"><Ic n="star" size={13} /></span>
+                </div>
+              );
+            })}
+            <div className="flight-glider-wrap" style={{ top: gliderTop, transform: s.turb > 0.3 ? `rotate(${(s.rng() - 0.5) * 16}deg)` : 'rotate(0deg)' }}>
+              <Glider kid={kid} turbulent={s.turb > 0.3} />
+              {s.alt > 0.6 && <span className="flight-wind" aria-hidden><i /><i /><i /></span>}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+      />
       <MobileKeys active={phase === 'run'} />
-    </div>
+    </>
   );
 }

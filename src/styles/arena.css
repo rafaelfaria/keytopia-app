@@ -187,7 +187,30 @@
   overflow: hidden;
 }
 
+/* A stage that is allowed to be longer than the window. A mini game's three
+   phases each fit one screen by design; a training session's finish screen
+   carries a full breakdown of the run underneath the figures, and clipping it
+   at 100dvh would hide the half that explains the other half. */
+.arena-stage-tall { height: auto; min-height: 100dvh; overflow: visible; }
+
 .arena-stage-top { display: flex; align-items: center; gap: 16px; flex: none; min-height: 44px; }
+
+/* The game's name, on the row with the way out. Carries the game's hue and
+   sits a step quieter than the live numbers beside it: it is the label of the
+   place, not a figure to read, and it must never pull the eye off the clock. */
+.arena-stage-title {
+  flex: none; margin: 0; z-index: 2;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 0.8rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--game-hue, var(--accent)) 82%, var(--text));
+  white-space: nowrap;
+}
+/* The name is the anchor of this row, so on a narrow screen it holds its place
+   beside the back link and the HUD is what wraps beneath them. */
+@media (max-width: 560px) {
+  .arena-stage-title { font-size: 0.72rem; letter-spacing: 0.05em; }
+  .arena-stage-title .ic { display: none; }
+}
 
 /* The running game's score and clock. A strip across the stage rather than a
    bar on a card, so the numbers sit in the same place in every game. */
@@ -207,6 +230,7 @@
   gap: 30px; padding-top: 14px; align-items: stretch;
 }
 .arena-stage-solo .arena-stage-grid { grid-template-columns: minmax(0, 1fr); }
+.arena-stage-wide .arena-stage-grid { grid-template-columns: minmax(0, 0.82fr) minmax(400px, 1.18fr); }
 .arena-stage-solo .arena-stage-main { max-width: 62ch; margin: 0 auto; }
 
 .arena-stage-main { display: flex; flex-direction: column; min-height: 0; }
@@ -232,8 +256,8 @@
 .arena-stage-quiet .arena-hero-veil {
   background:
     linear-gradient(to bottom,
-      color-mix(in oklab, var(--surface) 82%, transparent),
-      color-mix(in oklab, var(--surface) 90%, transparent));
+      color-mix(in oklab, var(--surface) 90%, transparent),
+      color-mix(in oklab, var(--surface) 95%, transparent));
 }
 
 /* The only chrome the front door needs. */
@@ -253,6 +277,17 @@
 .arena-back:hover { color: var(--text); border-color: color-mix(in oklab, var(--accent) 45%, var(--border)); }
 
 .arena-hero { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; }
+/* The same backdrop with nothing moving in it, for every stage that is not a
+   mini game. A practice mode should feel like it lives in the same building as
+   the Arena, and it should not spend a WebGL context or a frame budget on
+   saying so. The wash below is what the veil would have sat on, so the still
+   version has the same depth rather than reading as a blank page. */
+.arena-hero-still {
+  background:
+    radial-gradient(120% 90% at 82% -10%, color-mix(in oklab, var(--accent2) 13%, transparent), transparent 60%),
+    radial-gradient(90% 70% at 4% 6%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 62%),
+    linear-gradient(to bottom, var(--bg2), var(--bg));
+}
 .arena-hero-canvas { width: 100%; height: 100%; display: block; }
 /* The field is scenery. This veil is what keeps it scenery: text and the board
    sit on it, so contrast is guaranteed by the wash rather than by hoping the
@@ -265,13 +300,16 @@
        attempt: it cost the scenery everything to protect text occupying a
        quarter of the frame. */
     radial-gradient(60% 50% at 2% 20%,
-      color-mix(in oklab, var(--surface) 95%, transparent) 0 48%,
-      color-mix(in oklab, var(--surface) 62%, transparent) 72%,
-      transparent 90%),
-    radial-gradient(110% 80% at 78% 4%, color-mix(in oklab, var(--game-hue, var(--accent)) 20%, transparent), transparent 62%),
+      color-mix(in oklab, var(--surface) 96%, transparent) 0 50%,
+      color-mix(in oklab, var(--surface) 74%, transparent) 74%,
+      transparent 92%),
+    radial-gradient(110% 80% at 78% 4%, color-mix(in oklab, var(--game-hue, var(--accent)) 14%, transparent), transparent 62%),
+    /* The base wash sits heavier than it did. The field is meant to give the
+       page depth, not to be looked at: at the first setting it was still
+       pulling the eye off the copy. */
     linear-gradient(to bottom,
-      color-mix(in oklab, var(--surface) 26%, transparent),
-      color-mix(in oklab, var(--surface) 58%, transparent));
+      color-mix(in oklab, var(--surface) 52%, transparent),
+      color-mix(in oklab, var(--surface) 78%, transparent));
 }
 
 /* Top-aligned, so the kicker starts on the same line as the board's header and
@@ -310,6 +348,13 @@
   padding-right: 2px;
 }
 .arena-board-fill .arena-rows-grow { justify-content: flex-start; }
+/* An unclaimed board is a board: it takes the slack so its own `.arena-scroll`
+   has a height to scroll inside, rather than sizing to ten seats and running
+   its closing lines under the bottom edge of the stage. */
+.arena-board-fill .arena-unclaimed { flex: 1; min-height: 0; }
+/* The seats keep the roomier spacing they had when they were laid out by
+   `.arena-unclaimed` itself, not the 4px used between rows that hold a name. */
+.arena-unclaimed .arena-scroll { gap: 10px; }
 .arena-scroll { display: flex; flex-direction: column; gap: 4px; }
 
 @media (max-width: 900px) {
@@ -336,6 +381,23 @@
      order and win at every width. */
   .arena-stage-side { min-height: 48vh; }
   .arena-stage-grid { grid-template-columns: 1fr; gap: 18px; padding-top: 12px; }
+  /* The wide variant has to collapse too. Its `minmax(400px, …)` second column
+     is wider than the phone, and because it is a more specific selector it beat
+     the single-column rule above and pushed the whole stage off screen. */
+  .arena-stage-wide .arena-stage-grid { grid-template-columns: minmax(0, 1fr); }
+  /* The HUD drops under the back link rather than fighting it for the row. */
+  .arena-stage-top { flex-wrap: wrap; row-gap: 8px; }
+  .arena-hud { flex-basis: 100%; order: 2; font-size: 0.86rem; gap: 12px; }
+  /* The spacer exists to push the clock to the far edge of a single row. In a
+     wrapped layout it eats the whole first line instead and throws everything
+     after it onto lines of its own, which stranded Keyforge's heat meter 700px
+     down the page at full width. */
+  .arena-hud .grow { display: none; }
+  /* Figures a game can afford to drop when the strip has to wrap. The clock is
+     the one item that must stay on the first row with the score, and every
+     extra figure before it is what pushes it off. */
+  .arena-hud .hud-roomy { display: none; }
+  .arena-hud .arena-meter, .arena-hud .stack-footing { flex: none; }
   .arena-intro-play, .arena-result { align-items: center; text-align: center; }
   .arena-intro-play .chip, .arena-result .chip { align-self: center; }
   /* Equal columns rather than wrapping two-then-one, which left the last
@@ -354,10 +416,10 @@
   .arena-hero-veil {
     background:
       linear-gradient(to bottom,
-        color-mix(in oklab, var(--surface) 93%, transparent) 0 56%,
-        color-mix(in oklab, var(--surface) 60%, transparent) 76%,
-        color-mix(in oklab, var(--surface) 42%, transparent) 100%),
-      radial-gradient(110% 55% at 78% 4%, color-mix(in oklab, var(--game-hue, var(--accent)) 18%, transparent), transparent 62%);
+        color-mix(in oklab, var(--surface) 95%, transparent) 0 58%,
+        color-mix(in oklab, var(--surface) 78%, transparent) 78%,
+        color-mix(in oklab, var(--surface) 64%, transparent) 100%),
+      radial-gradient(110% 55% at 78% 4%, color-mix(in oklab, var(--game-hue, var(--accent)) 13%, transparent), transparent 62%);
   }
 }
 
@@ -550,39 +612,41 @@ html[data-rm='1'] .arena-skel { animation: none; }
   position: relative;
   width: min(280px, 80%); height: 5px; border-radius: 999px;
   background: color-mix(in oklab, var(--muted) 22%, transparent);
-  /* Room for the overrun caption, which is positioned out of flow. Reserved
-     whether or not it is showing, so nothing moves when it arrives and it
-     never lands on the chips underneath. */
-  margin-bottom: 18px;
 }
+/* Width is set from JS on the same clock as the readout, so the two can never
+   disagree. Transform only, so a 12fps update costs no layout. */
 .stack-pace i {
   display: block; height: 100%; width: 100%; border-radius: 999px;
   background: linear-gradient(90deg, var(--accent), var(--accent2));
   transform-origin: left center;
-  animation: stackPace linear forwards;
+  will-change: transform;
 }
-/* The overrun: once the word costs you width, the track says so. */
+/* The overrun: once the word is costing you width, the track says so. */
 .stack-pace b {
   position: absolute; inset: 0; border-radius: 999px; opacity: 0;
   background: var(--bad);
-  /* No backwards fill: during the delay the element must keep its own opacity
-     of 0, or the "you are late" state would be painted from the first frame. */
-  animation: stackLate 0.9s ease-in-out infinite;
+  transition: opacity 0.2s ease;
 }
-.stack-pace em {
-  position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
-  font-style: normal; font-size: 0.68rem; font-weight: 750; letter-spacing: 0.04em;
-  color: var(--bad); white-space: nowrap; opacity: 0;
-  animation: stackLateLabel 0.2s ease forwards;
+.stack-pace[data-over='true'] b { animation: stackLate 0.9s ease-in-out infinite; }
+/* What finishing right now is worth, counting down live. Tabular figures and a
+   fixed slot so a number that changes twelve times a second does not jiggle
+   the words around it. */
+.stack-delta {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem; font-weight: 750; letter-spacing: 0.01em;
+  min-height: 1.2em;
+  transition: color 0.2s ease;
 }
-@keyframes stackPace { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-@keyframes stackLate { 0%, 100% { opacity: 0.22; } 50% { opacity: 0.5; } }
-@keyframes stackLateLabel { from { opacity: 0; } to { opacity: 1; } }
+.stack-delta[data-tone='up'] { color: var(--good); }
+.stack-delta[data-tone='level'] { color: var(--text-dim); }
+.stack-delta[data-tone='down'] { color: var(--bad); }
+
+@keyframes stackLate { 0%, 100% { opacity: 0.24; } 50% { opacity: 0.5; } }
 
 @media (prefers-reduced-motion: reduce) {
   /* The drain and the overrun are information, not decoration, so they stay.
-     Only the pulse goes. */
-  .stack-pace b { animation: stackLateLabel 0.2s ease forwards; }
+     Only the pulse goes: it holds steady instead of breathing. */
+  .stack-pace[data-over='true'] b { animation: none; opacity: 0.36; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -610,3 +674,301 @@ html[data-rm='1'] .arena-skel { animation: none; }
 .set-field .ob-input { max-width: 320px; }
 .set-field small { max-width: 62ch; }
 .set-field .warnline { color: var(--warn); }
+
+
+/* ---------- per-game panels inside the stage ---------- */
+
+/* Cipher Run: one centred column. The rune and the answer sit together because
+   a timed decode should not need eye travel between the thing you are reading
+   and the thing you are building. */
+.arena-stage-main > .cipher-stage {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; gap: 10px; text-align: center;
+}
+.cipher-answer-label { margin-top: 14px; }
+.cipher-actions { margin-top: 18px; justify-content: center; }
+
+
+/* Wordfall Defence: the sky is the side panel, the locked word is the band.
+   Reading a word while it slides down the screen is the hard part of this game
+   and it is hard for the wrong reason, so the word you are actually typing is
+   repeated large and still on the left. */
+.arena-stage-side > .wf-board {
+  flex: 1; min-height: 260px; width: 100%;
+  /* Capped and centred rather than stretched. The fall distance is a difficulty
+     setting: a full-height column turned a 460px drop into an 800px one and
+     quietly made the game easier. */
+  max-height: 560px; margin: auto 0;
+  position: relative; overflow: hidden; border-radius: 12px;
+}
+.arena-stage-main > .wf-band {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; gap: 12px; text-align: center;
+}
+.wf-locked {
+  font-family: var(--font-type); font-size: clamp(1.8rem, 1.2rem + 2.4vw, 2.9rem);
+  font-weight: 700; letter-spacing: 0.02em; min-height: 1.2em;
+}
+.wf-locked-idle { font-family: var(--font-ui); font-size: 1rem; color: var(--muted); font-weight: 600; }
+.wf-band-meta { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; min-height: 30px; }
+
+/* A meter in the HUD, so a shield, a forge's heat and a tower's footing all
+   read the same way across games.
+
+   NOT `.wf-shield`: app.css:156 already owns that name for Wordfall's old
+   absolutely-positioned shield bar, so reusing it teleported the HUD meter
+   700px down the page. Arena classes are prefixed `arena-` for exactly this
+   reason and this one was the exception. */
+.arena-meter, .stack-footing { display: inline-flex; align-items: center; gap: 7px; }
+.arena-meter > i, .stack-footing > i {
+  display: block; width: 74px; height: 7px; border-radius: 999px;
+  background: var(--surface2); border: 1px solid var(--border); overflow: hidden;
+}
+.arena-meter > i > b, .stack-footing > i > b {
+  display: block; height: 100%; background: var(--accent);
+  transition: width 220ms ease;
+}
+.arena-meter.bad > i > b, .stack-footing.bad > i > b { background: var(--bad); }
+
+
+/* Wordflight: the sky is the side panel. Capped like Wordfall's, because the
+   glider's climb is measured against a fixed sky height in the game logic. */
+.arena-stage-side > .flight-sky {
+  flex: 1; min-height: 260px; max-height: 440px; margin: auto 0;
+  width: 100%; position: relative; overflow: hidden; border-radius: 12px;
+}
+
+
+/* Keyforge: the rune you strike on the left, the anvil and the haul on the right. */
+.arena-stage-main > .forge-band {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; gap: 12px; text-align: center;
+}
+.arena-stage-side > .forge-scene {
+  flex: 1; min-height: 0; width: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  position: relative;
+}
+.arena-stage-side > .forge-scene .forge-anvil-svg { width: min(100%, 340px); height: auto; }
+.forge-shelf { justify-content: center; max-width: 300px; }
+.forge-haul { justify-content: center; max-width: 460px; }
+.forge-haul .forge-item-card { padding: 9px 12px; }
+.forge-haul .forge-item-card small { max-width: 120px; text-align: center; }
+
+
+/* Quill Duel: one column, you above and the rival below with the phrase
+   between them. The difficulty tiles sit inside the intro's body. */
+.arena-stage-main > .duel-arena {
+  flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px;
+}
+.arena-intro-body .duel-diffs { margin-top: 12px; }
+
+
+/* Survivor Sprint: the word on the left, the eight lanes and the bench on the
+   right. Lanes are horizontal, so this stage runs wide. */
+.arena-stage-main > .surv-band {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; gap: 12px; text-align: center;
+}
+.arena-stage-side > .surv-scene {
+  flex: 1; min-height: 0; width: 100%;
+  display: flex; flex-direction: column; justify-content: center; gap: 12px;
+  overflow-y: auto;
+  position: relative; /* the cut card anchors to the track, not the whole stage */
+}
+
+/* ---------- the cut, between heats ---------- */
+
+/* This used to borrow .race-countdown, which is an absolutely positioned flex
+   box built to hold one enormous number. Two lines of prose inside it came out
+   side by side, because a <br> between flex items does nothing, and it anchored
+   to the whole stage rather than the board, so a sentence about two runners
+   blurred out the entire game to say it. */
+.surv-cut {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px;
+  /* Scrim, not blur. What is behind this card is the two runners walking off
+     the track, and that is worth seeing. */
+  background: color-mix(in oklab, var(--bg) 62%, transparent);
+  border-radius: inherit;
+  animation: surv-cut-in 260ms ease both;
+}
+@keyframes surv-cut-in { from { opacity: 0; } }
+
+.surv-cut-card {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  width: min(320px, 100%); padding: 20px 22px 22px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 18px 44px -20px rgb(0 0 0 / 0.45);
+  animation: surv-cut-rise 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes surv-cut-rise { from { opacity: 0; transform: translateY(10px) scale(0.97); } }
+
+.surv-cut-safe {
+  display: inline-flex; align-items: center; gap: 7px; margin: 0;
+  font-size: 0.76rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+  /* --good is tuned for fills and borders; as 12px text on the card's own
+     surface it lands near 3.5:1 in the light themes. Mixing toward --text
+     carries it away from the background in whichever direction the theme
+     needs: darker on porcelain, lighter on midnight. */
+  color: color-mix(in oklab, var(--good) 68%, var(--text));
+}
+
+/* What surviving the cut was worth, next to the fact of surviving it. The HUD
+   total jumps by this amount at this exact moment. */
+.surv-cut-gain {
+  margin-left: 2px; padding: 1px 7px; border-radius: 999px;
+  font-size: 0.8rem; letter-spacing: 0;
+  color: var(--bg); background: var(--good);
+}
+
+/* The people, not their names in a sentence. Two avatars read as "those two
+   are out" before a single word of it is parsed. */
+.surv-cut-list {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px;
+  list-style: none; margin: 0; padding: 0;
+}
+.surv-cut-list li { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.surv-cut-list span { font-size: 0.82rem; font-weight: 700; color: var(--text); }
+
+.surv-cut-bench { display: inline-flex; align-items: center; gap: 6px; margin: -2px 0 0; }
+
+/* Deliberately not a flex column. "Heat 2 · 13s" is one sentence made of inline
+   parts, and laying it out as a column turns each <b> into its own row. */
+.surv-cut-next { margin: 2px 0 0; font-size: 0.95rem; color: var(--text-dim); line-height: 1.45; }
+.surv-cut-next b { color: var(--text); }
+.surv-cut-next span { display: block; }
+
+/* How long the pause lasts, drawn. 2.4 seconds of nothing is long enough that
+   a learner starts wondering whether the game has stopped. Must match the
+   interlude timeout in SurvivorGame.tsx. */
+.surv-cut-bar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: color-mix(in oklab, var(--accent) 16%, transparent);
+}
+.surv-cut-bar i {
+  display: block; height: 100%; width: 100%; transform-origin: left;
+  background: var(--accent);
+  animation: surv-cut-tick 2400ms linear both;
+}
+@keyframes surv-cut-tick { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* One thing still moves: the bar, because it is load-bearing. It says the
+   pause has an end, which a learner cannot know any other way. */
+@media (prefers-reduced-motion: reduce) {
+  .surv-cut, .surv-cut-card { animation: none; }
+}
+
+/* ---------- where the score came from ---------- */
+
+/* A receipt, not a chart. Three rows and a sum is the whole of it, and the
+   point is only that the big number above resolves into things the learner
+   recognises doing: outlasting people, taking heats, typing at a pace. */
+.surv-tally {
+  width: min(340px, 100%); margin: 2px 0 0;
+  display: flex; flex-direction: column; gap: 2px;
+  font-size: 0.88rem;
+}
+.surv-tally > div {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 2px;
+}
+.surv-tally dt {
+  flex: 1; display: inline-flex; align-items: center; gap: 7px;
+  color: var(--text-dim); text-align: left;
+}
+.surv-tally dt .ic { color: var(--muted); flex: none; }
+.surv-tally dd {
+  margin: 0; font-weight: 700; font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.surv-tally-sum {
+  border-top: 1px solid var(--border); margin-top: 2px;
+}
+.surv-tally-sum dt { font-weight: 700; color: var(--text); }
+/* Accent at 17px bold is not large text, and raw --accent lands at 2.8:1 on the
+   light themes. Mixed toward --text it keeps the accent read and clears 4.5:1
+   in every theme. */
+.surv-tally-sum dd { font-size: 1.05rem; color: color-mix(in oklab, var(--accent) 55%, var(--text)); }
+
+
+/* ---------- training sessions on the stage ---------- */
+
+/* The same shell as a mini game, minus the moving field. What differs is only
+   what the columns hold: fifteen practice modes have no world to draw, so the
+   left column is the text you are typing and the right one is the only rival
+   solo practice has, which is you last week. */
+
+/* Reading, not glancing. The games' solo cap of 62ch is right for a headline
+   over a button and too narrow for three lines of monospace at 1.42rem, which
+   would rewrap every few words and cost more than the extra width does. */
+.stage-train .arena-stage-main { max-width: 78ch; margin: 0 auto; }
+
+.train-run { display: flex; flex-direction: column; gap: 14px; position: relative; width: 100%; }
+/* Centred in the column rather than pinned to the top: the typing area is what
+   the eye has to return to after every glance at the keyboard, so it belongs in
+   the same place whether the passage is three lines or thirty. */
+.stage-train .arena-stage-grid { align-items: center; }
+.train-run .train-kbd { margin-top: 4px; }
+
+/* The live figures move into the HUD strip, where a game's score and clock sit.
+   Same numbers in the same place across every activity, and the progress bar
+   gets the whole width of the stage to run along. */
+.arena-hud .live-stats { flex: 1; padding: 0; gap: 8px 18px; }
+.arena-hud .live-stats .ls-v { font-size: 1.1rem; }
+.arena-hud .btn-ghost { margin-left: auto; }
+
+/* A pre-flight decision, labelled. The duration buttons used to sit in the
+   middle of a centred column with nothing saying what they were for. */
+.train-pre { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.train-pre-label {
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+}
+.train-pre .duration-row { justify-content: flex-start; }
+.train-pre-copy { max-width: 52ch; }
+.train-pre-copy .copy-input { min-height: 120px; }
+
+/* The finish screen. The stage supplies the kicker and the headline; the
+   breakdown below is the existing results panel, which is shared with lessons
+   and races and is not the Arena's to rewrite. */
+.train-result { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
+.train-result .results { margin: 0; max-width: none; width: 100%; }
+.train-lab-score { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.05rem; }
+.train-lab-score strong { font-size: 1.5rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* Your own past runs, in the column a game puts its leaderboard in. No avatar
+   column: every row is you, so the four remaining columns take the width. */
+.train-row { grid-template-columns: auto minmax(0, 1fr) auto auto; }
+/* The open places lose their avatar too, so an empty board is the same shape as
+   the board it becomes rather than a differently-shaped placeholder for it. */
+.train-record .arena-seats .arena-row { grid-template-columns: auto minmax(0, 1fr) auto; }
+.train-record .arena-open-av { display: none; }
+
+/* Zen keeps its own calm. The wash goes fully to the accent gradient it always
+   had, and the breathing dot is the only thing on screen that moves. */
+.stage-zen .arena-hero-still {
+  background: linear-gradient(160deg,
+    color-mix(in oklab, var(--accent) 12%, var(--bg)),
+    color-mix(in oklab, var(--accent2) 14%, var(--bg)));
+}
+.stage-zen .zen-breath { margin-bottom: 8px; }
+
+@media (max-width: 900px) {
+  .stage-train .arena-stage-main { max-width: none; }
+  /* The figures wrap under the mode name rather than squeezing it, and the
+     pause button keeps its own line end. */
+  .arena-hud .live-stats { flex-basis: 100%; }
+  .train-result, .train-pre-copy { max-width: none; }
+  /* The column centres on a phone, so a left-aligned row of duration buttons
+     inside it sits off the axis everything else shares. */
+  .train-pre { align-items: center; }
+  .train-pre .duration-row { justify-content: center; }
+  .train-pre-copy { align-items: stretch; }
+  .train-result { align-items: center; }
+}

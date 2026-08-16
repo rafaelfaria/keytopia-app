@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useData, useStore, useUi } from '../lib/store';
 import { COMMON_WORDS, KID_WORDS } from '../lib/words';
 import { mulberry32, pick } from '../lib/rng';
-import { Btn, Chip, Stat } from '../components/ui';
+import { Chip } from '../components/ui';
 import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
+import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { Ic } from '../components/icons';
 import { Cannon, CityWall, MobileKeys, useGameKeys } from '../components/gamekit';
 import { fireBolt, floatText, screenShake, shatterWord } from '../lib/fx';
@@ -18,7 +18,6 @@ interface Fall { id: number; text: string; x: number; y: number; speed: number; 
 
 export default function WordfallGame() {
   const data = useData();
-  const nav = useNavigate();
   const recordSession = useStore((s) => s.recordSession);
   const patch = useStore((s) => s.patch);
   const pushToast = useUi((s) => s.pushToast);
@@ -29,7 +28,7 @@ export default function WordfallGame() {
   const [phase, setPhase] = useState<'intro' | 'run' | 'over'>('intro');
   const [, force] = useState(0);
   const [waveBanner, setWaveBanner] = useState('');
-  const [overInfo, setOverInfo] = useState<{ score: number; wave: number; acc: number; rewards: Rewards | null; newBest: boolean } | null>(null);
+  const [overInfo, setOverInfo] = useState<{ score: number; wave: number; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null>(null);
 
   const st = useRef({
     words: [] as Fall[],
@@ -69,7 +68,9 @@ export default function WordfallGame() {
       if (!cur || s.score > cur.score) { d.gameBests['wordfall'] = { score: s.score, level: s.wave }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Wordfall best!' });
-    setOverInfo({ score: s.score, wave: s.wave, acc: result.acc, rewards, newBest });
+    // wpm rides along for the Arena board, which ranks the run's typing as
+    // well as the game's own count. docs/arena-leaderboards.md §10 step 4.
+    setOverInfo({ score: s.score, wave: s.wave, acc: result.acc, wpm: result.wpm, rewards, newBest });
     setPhase('over');
   }, [recordSession, patch, pushToast]);
 
@@ -191,86 +192,112 @@ export default function WordfallGame() {
     cannonAngle = Math.atan2((locked.x / 100) * board.clientWidth - cx, cy - locked.y) * (180 / Math.PI);
   }
 
-  return (
-    <div className="train-page">
-      <div className="train-top">
-        <Btn kind="ghost" onClick={() => { window.clearInterval(timer.current); nav('/app/games'); }} ariaLabel="Exit game">←</Btn>
-        <h1><Ic n="shield" size={20} /> Wordfall Defence</h1>
-        <Chip tone="accent">Trains: accuracy under pressure</Chip>
-      </div>
+  if (phase === 'intro') {
+    return (
+      <ArenaIntro
+        game="wordfall"
+        title={kid ? 'Pop the word balloons' : 'Defend the Lantern City'}
+        onPlay={start}
+        cta={kid ? 'Ready the pop-cannon →' : 'Raise the shield →'}
+        stats={data.gameBests['wordfall'] ? [
+          { label: 'Best score', value: data.gameBests['wordfall'].score },
+          { label: 'Furthest wave', value: data.gameBests['wordfall'].level },
+        ] : undefined}
+      >
+        <p>
+          {kid
+            ? 'Word balloons float down to the garden. Start typing any one of them to aim your pop-cannon, finish it and BOOM, confetti.'
+            : 'Words drift toward the wall. Start typing any one of them to lock your cannon on, and finish it to blast it out of the sky.'}
+        </p>
+        <p>
+          Wrong keys drain the shield a little. A word reaching the ground drains it a lot,
+          and every wave falls faster. <strong>Calm accuracy beats frantic speed.</strong>
+        </p>
+      </ArenaIntro>
+    );
+  }
 
-      <div className="game-frame">
-        {phase === 'run' && (
-          <div className="game-hud">
-            <span>Score {s.score}</span>
-            <span>Wave {s.wave}</span>
-            <span className={s.combo >= 5 ? 'good' : ''}>Combo ×{s.combo}</span>
+  if (phase === 'over' && overInfo) {
+    return (
+      <ArenaResult
+        game="wordfall"
+        run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.wave }}
+        score={overInfo.score}
+        title={overInfo.newBest ? 'New personal best!' : kid ? 'The garden is safe' : 'The city rests'}
+        newBest={overInfo.newBest}
+        onAgain={start}
+      >
+        <RewardsBanner rewards={overInfo.rewards} />
+        <p className="small muted" style={{ maxWidth: 430 }}>
+          {overInfo.acc >= 95
+            ? 'Beautiful defence. Your calm under pressure is real.'
+            : 'It is faster to type each word once, correctly, than twice in a panic.'}
+        </p>
+      </ArenaResult>
+    );
+  }
+
+  return (
+    <>
+      <ArenaStage
+        game="wordfall"
+        quiet
+        wide
+        hud={(
+          <>
+            <span><b>{s.score}</b> points</span>
+            <span><b>{s.wave}</b> wave</span>
+            {s.combo >= 2 && <span className="good">combo ×{s.combo}</span>}
             <span className="grow" />
-            <span className={s.shield < 30 ? 'bad' : ''}>Shield {Math.max(0, Math.round(s.shield))}%</span>
+            <span className={`arena-meter ${s.shield < 30 ? 'bad' : ''}`} title="Shield remaining">
+              <Ic n="shield" size={13} />
+              <i><b style={{ width: `${Math.max(0, Math.round(s.shield))}%` }} /></i>
+            </span>
+          </>
+        )}
+        main={(
+          <div className="wf-band">
+            <p className="arena-stage-kicker"><Ic n="keyboard" size={14} /> Type any falling word</p>
+            {/* The locked word, repeated big and still. Reading a word that is
+                sliding down the sky while you type it is the hard part of this
+                game, and it is hard for the wrong reason. */}
+            <div className="wf-locked">
+              {locked
+                ? <><span className="good">{locked.text.slice(0, locked.hit)}</span><span className="muted">{locked.text.slice(locked.hit)}</span></>
+                : <span className="wf-locked-idle">start any word to lock on</span>}
+            </div>
+            <div className="wf-band-meta">
+              {s.combo >= 2
+                ? <Chip tone="good"><Ic n="flame" size={12} /> combo ×{s.combo}</Chip>
+                : <Chip><Ic n="target" size={12} /> one word at a time</Chip>}
+            </div>
+            <p className="stack-hint muted small">
+              <Ic n="bulb" size={13} /> Finish the word to fire. Every {kid ? '10 pops' : 'wave'} the fall speeds up.
+            </p>
           </div>
         )}
-        <div className={`game-board wf-board ${kid ? 'wf-kid' : ''}`} ref={boardRef} style={{ minHeight: 460 }}>
-          {phase === 'intro' && (
-            <div className="game-over">
-              <Ic n="shield" size={50} />
-              <h2>{kid ? 'Pop the word balloons!' : 'Defend the Lantern City'}</h2>
-              <p className="muted" style={{ maxWidth: 470 }}>
-                {kid
-                  ? 'Word balloons are floating down to the garden. Type a word to aim your pop-cannon: finish it and BOOM, confetti! Every 10 pops the balloons drift faster.'
-                  : 'Words drift toward the wall. Type one to lock your cannon on, finish it and the cannon blasts it out of the sky. Wrong keys drain the shield a little; a word landing drains it a lot. Every wave falls faster.'}
-                <strong> Calm accuracy beats frantic speed.</strong>
-              </p>
-              {data.gameBests['wordfall'] && <Chip tone="gold"><Ic n="trophy" size={12} /> Personal best: {data.gameBests['wordfall'].score}</Chip>}
-              <Btn big onClick={start}>{kid ? 'Ready the pop-cannon →' : 'Raise the shield →'}</Btn>
+        side={(
+          <div className={`wf-board ${kid ? 'wf-kid' : ''}`} ref={boardRef}>
+            {waveBanner && <div className="wf-wave-banner">{waveBanner}</div>}
+            {s.words.map((w) => (
+              <span
+                key={w.id}
+                className={`wf-word ${kid ? 'wf-balloon' : ''} ${w.id === s.targetId ? 'wf-target' : ''} ${w.dying ? 'wf-dying' : ''}`}
+                style={kid
+                  ? { left: `${w.x}%`, top: w.y, background: BALLOON_COLORS[w.id % BALLOON_COLORS.length], borderColor: 'transparent', color: '#2d2a26' }
+                  : { left: `${w.x}%`, top: w.y }}
+              >
+                <span className="hit">{w.text.slice(0, w.hit)}</span>{w.text.slice(w.hit)}
+              </span>
+            ))}
+            <div className="wf-base">
+              <Cannon angle={cannonAngle} firing={!!locked} />
+              <CityWall kid={kid} />
             </div>
-          )}
-          {phase === 'run' && (
-            <>
-              {waveBanner && <div className="wf-wave-banner">{waveBanner}</div>}
-              {s.words.map((w) => (
-                <span
-                  key={w.id}
-                  className={`wf-word ${kid ? 'wf-balloon' : ''} ${w.id === s.targetId ? 'wf-target' : ''} ${w.dying ? 'wf-dying' : ''}`}
-                  style={kid
-                    ? { left: `${w.x}%`, top: w.y, background: BALLOON_COLORS[w.id % BALLOON_COLORS.length], borderColor: 'transparent', color: '#2d2a26' }
-                    : { left: `${w.x}%`, top: w.y }}
-                >
-                  <span className="hit">{w.text.slice(0, w.hit)}</span>{w.text.slice(w.hit)}
-                </span>
-              ))}
-              <div className="wf-base">
-                <Cannon angle={cannonAngle} firing={!!locked} />
-                <CityWall kid={kid} />
-              </div>
-            </>
-          )}
-          {phase === 'over' && overInfo && (
-            <div className="game-over">
-              <Ic n={overInfo.newBest ? 'trophy' : 'rainbow'} size={46} />
-              <h2>{overInfo.newBest ? 'New personal best!' : kid ? 'The garden is safe' : 'The city rests'}</h2>
-              <div className="row gap wrap" style={{ justifyContent: 'center' }}>
-                <Stat v={overInfo.score} l="score" tone="accent" />
-                <Stat v={overInfo.wave} l="wave" />
-                <Stat v={`${overInfo.acc}%`} l="accuracy" />
-              </div>
-              <RewardsBanner rewards={overInfo.rewards} />
-              <p className="small muted" style={{ maxWidth: 420 }}>
-                {overInfo.acc >= 95 ? 'Beautiful defence: your calm under pressure is real.' : 'Tip: it is faster to type each word once, correctly, than twice in a panic.'}
-              </p>
-              <div className="row gap">
-                <Btn onClick={start}>↻ {kid ? 'Pop again' : 'Defend again'}</Btn>
-                <Btn kind="soft" to="/app/games">All games</Btn>
-              </div>
-            </div>
-          )}
-        </div>
-        {phase === 'run' && (
-          <div className="game-typebar">
-            <span className="muted small">type a word to lock on. Finish it to fire · every 10 pops the fall speeds up</span>
           </div>
         )}
-      </div>
+      />
       <MobileKeys active={phase === 'run'} />
-    </div>
+    </>
   );
 }

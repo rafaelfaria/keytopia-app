@@ -72,6 +72,17 @@ export function watchArenaBoard(
   let settleTimer = 0;
   let closed = false;
 
+  // supabase-js keys channels by topic and hands back the EXISTING instance if
+  // one is already registered. A board that remounts on the same topic before
+  // the previous instance was removed — navigating away and straight back, a
+  // hot reload, StrictMode's double effect — therefore got a channel that had
+  // already been subscribed, and adding a listener to it throws
+  // "cannot add `presence` callbacks … after `subscribe()`", which took the
+  // whole board down with it. Clearing any stale instance first makes the
+  // subscription idempotent.
+  const stale = supabase.getChannels().find((c) => c.topic === `realtime:${topic}`);
+  if (stale) void supabase.removeChannel(stale);
+
   const channel: RealtimeChannel = supabase.channel(topic, {
     config: {
       // Keyed by profile so two tabs of the same learner count once, and so a
@@ -125,7 +136,10 @@ export function watchArenaBoard(
     close: () => {
       closed = true;
       window.clearTimeout(settleTimer);
-      void channel.unsubscribe();
+      // removeChannel, not unsubscribe: unsubscribe closes the socket topic but
+      // leaves the instance in the client's registry, so the next board on this
+      // topic is handed the dead one back.
+      void supabase?.removeChannel(channel);
     },
   };
 }

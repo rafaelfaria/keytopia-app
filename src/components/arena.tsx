@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 import gsap from 'gsap';
+import { Stage } from './stage';
 import { Btn, Chip, Seg } from './ui';
 import { Ic } from './icons';
 import { Avatar } from './avatars';
@@ -128,7 +128,7 @@ function BoardSkeleton({ n = 6 }: { n?: number }) {
  * aria-hidden: a screen reader should hear the one sentence underneath, not
  * five empty list items.
  */
-function OpenSeats({ from, count }: { from: number; count: number }) {
+export function OpenSeats({ from, count }: { from: number; count: number }) {
   if (count <= 0) return null;
   return (
     <ol className="arena-rows arena-seats" start={from} aria-hidden>
@@ -147,8 +147,13 @@ function OpenSeats({ from, count }: { from: number; count: number }) {
 /** A board nobody has posted to at all: every seat open, and yours already drawn. */
 function UnclaimedBoard({ n, me }: { n: number; me: { name: string; avatar: string } }) {
   return (
-    <div className="arena-unclaimed arena-rows-grow">
-      <OpenSeats from={1} count={n} />
+    <div className="arena-unclaimed">
+      {/* The seats scroll and the two lines under them do not, exactly as on a
+          board that has rows in it. Without this the empty board sizes to its
+          ten seats and the stage clips the note off the bottom edge. */}
+      <div className="arena-scroll arena-rows-grow">
+        <OpenSeats from={1} count={n} />
+      </div>
       <ol className="arena-rows">
         <li className="arena-row arena-row-you arena-row-waiting">
           <span className="arena-rank arena-rank-sm arena-rank-none" aria-hidden><Ic n="lock" size={12} /></span>
@@ -309,7 +314,7 @@ export function ArenaBoard({ game, compact, limit = 10, fill, paused, onResult }
       {loading && !result ? (
         <BoardSkeleton n={Math.min(limit, 6)} />
       ) : rows.length === 0 ? (
-        <UnclaimedBoard n={Math.min(limit, 5)} me={{ name: data.profile.name, avatar: data.profile.avatar }} />
+        <UnclaimedBoard n={limit} me={{ name: data.profile.name, avatar: data.profile.avatar }} />
       ) : (
         // The rows scroll inside the column; the header, the pager and the
         // target line do not. On a short window a ten-row board would otherwise
@@ -414,6 +419,13 @@ export interface ArenaStageProps {
   hud?: ReactNode;
   backTo?: string;
   /**
+   * Give the right column the larger share. Games whose world is horizontal —
+   * a sky words fall through, a track runners cross — need width more than the
+   * band beside them does, and an even split turns their playfield into a
+   * chute that changes how the game plays.
+   */
+  wide?: boolean;
+  /**
    * Freeze the backdrop. During play the field keeps its last frame as scenery
    * and stops asking for new ones: nothing should animate, or spend a frame
    * budget, behind someone who is typing.
@@ -436,23 +448,22 @@ export interface ArenaStageProps {
  * The backdrop, the way out and the two-column rhythm are constant throughout,
  * so finishing a run feels like the same place you started it.
  */
-export function ArenaStage({ game, main, side, hud, backTo = '/app/games', quiet }: ArenaStageProps) {
+export function ArenaStage({ game, main, side, hud, backTo = '/app/games', quiet, wide }: ArenaStageProps) {
   const spec = arenaGame(game);
   if (!spec) return null;
+  // The shell is shared with training (src/components/stage.tsx). What a mini
+  // game adds to it is the moving keycap field, so that is the only thing
+  // handed in here.
   return (
-    <div className={`arena-stage${side ? '' : ' arena-stage-solo'}${quiet ? ' arena-stage-quiet' : ''}`}>
-      <ArenaHero spec={spec} quiet={quiet} />
-      <div className="arena-stage-top">
-        <Link to={backTo} className="arena-back">
-          <Ic n="chevron-right" size={15} /> Arena
-        </Link>
-        {hud && <div className="arena-hud">{hud}</div>}
-      </div>
-      <div className="arena-stage-grid">
-        <div className="arena-stage-main">{main}</div>
-        {side && <div className="arena-stage-side">{side}</div>}
-      </div>
-    </div>
+    <Stage
+      main={main} side={side} hud={hud} quiet={quiet} wide={wide}
+      // Only while the game is running. The intro and the finish screen print
+      // the same name as their own kicker, a few lines below this row, and the
+      // HUD is what tells the two apart: no game shows one until it starts.
+      title={hud ? <><Ic n={spec.icon} size={15} /> {spec.name}</> : undefined}
+      backTo={backTo} backLabel="Arena"
+      backdrop={<ArenaHero spec={spec} quiet={quiet} />}
+    />
   );
 }
 
@@ -529,6 +540,30 @@ export function ArenaIntro({ game, title, children, onPlay, cta, stats, backTo }
 }
 
 /**
+ * How fast each formation animates behind a game, as a multiplier on the pace
+ * the public pages use.
+ *
+ * `wave`, `stream` and `scatter` are the lively three: a ripple crossing the
+ * field, a sideways drift, and cells tumbling on two axes. That liveliness is
+ * right on a marketing page, where the scene is the point. On a game's front
+ * door it competes with the copy you are meant to read and the button you are
+ * meant to press, and it reads as restlessness rather than craft.
+ *
+ * These are a sixth of the public pages' pace. The backdrop should be something
+ * you notice when you look at it and never while you are reading past it, which
+ * is slower than "slow" sounds: a first pass at 0.4× was still distracting.
+ */
+const HERO_SPEED: Record<ArenaGame['hero']['formation'], number> = {
+  wave: 0.18,
+  stream: 0.15,
+  scatter: 0.18,
+  // Already nearly still at full pace, but brought down with the rest so the
+  // whole Arena drifts at one speed rather than two.
+  terrace: 0.55,
+  calm: 0.55,
+};
+
+/**
  * The stage's backdrop: the same keycap field as the landing and the public
  * pages, in this game's formation and hue.
  *
@@ -580,6 +615,7 @@ function ArenaHero({ spec, quiet }: { spec: ArenaGame; quiet?: boolean }) {
         surfaceA: token('--surface2', '#1a2244'),
         surfaceB: token('--border', '#242e59'),
         tint: 0.5,
+        speed: HERO_SPEED[spec.hero.formation] ?? 1,
       }, reduced || matchMedia('(prefers-reduced-motion: reduce)').matches);
       handleRef.current = h;
       if (!quiet) h.start();

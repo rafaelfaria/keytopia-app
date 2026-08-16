@@ -9,7 +9,7 @@ import { Btn, Chip } from '../components/ui';
 import { PauseModal, ResultsPanel } from '../components/ResultsPanel';
 import { sessionInsight, nextAction, encouragement } from '../lib/coach';
 import type { Rewards, SessionResult } from '../lib/types';
-import { snd, speak, stopSpeak } from '../lib/sound';
+import { snd } from '../lib/sound';
 import { Ic } from '../components/icons';
 
 export default function LessonPlayer() {
@@ -92,18 +92,6 @@ export default function LessonPlayer() {
   );
 
   useEffect(() => { session.focus(); }, [stepIdx, seed]);
-  useEffect(() => () => stopSpeak(), []);
-
-  // Speak target letters for accessibility / kids
-  const posRef = useRef(-1);
-  useEffect(() => {
-    if (!data?.settings.speakTargets || !step) return;
-    const ch = session.engine.text[session.engine.pos];
-    if (session.engine.pos !== posRef.current && ch && ch !== ' ') {
-      posRef.current = session.engine.pos;
-      speak(ch === '\n' ? 'enter' : ch, 1.2);
-    }
-  });
 
   if (!data || !lesson || !plan) {
     return <div className="empty"><div className="empty-icon">🧭</div><h3>Lesson not found</h3><p>This trail doesn't exist on your map.</p><Btn to="/app">Back to the map</Btn></div>;

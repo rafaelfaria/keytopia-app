@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useData, useStore, useUi } from '../lib/store';
 import { COMMON_WORDS, KID_WORDS, FORGE_ITEMS, FORGE_MATERIALS, FORGE_SUFFIX, TRICKY_WORDS } from '../lib/words';
 import { mulberry32, pick, uid } from '../lib/rng';
-import { Btn, Chip, Stat } from '../components/ui';
+import { Btn, Chip } from '../components/ui';
 import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
+import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { sparkBurst, screenShake, popIn, floatText } from '../lib/fx';
@@ -20,7 +20,6 @@ const HOT_BONUS_AT = 70;         // finish a treasure with ≥70 heat → +1 rar
 
 export default function KeyforgeGame() {
   const data = useData();
-  const nav = useNavigate();
   const recordSession = useStore((s) => s.recordSession);
   const patch = useStore((s) => s.patch);
   const pushToast = useUi((s) => s.pushToast);
@@ -42,7 +41,7 @@ export default function KeyforgeGame() {
   const [levelBanner, setLevelBanner] = useState('');
   const [forged, setForged] = useState<ForgeItem[]>([]);
   const [justForged, setJustForged] = useState<ForgeItem | null>(null);
-  const [overInfo, setOverInfo] = useState<{ rewards: Rewards | null; acc: number; score: number; level: number; quenched: boolean } | null>(null);
+  const [overInfo, setOverInfo] = useState<{ rewards: Rewards | null; acc: number; wpm: number; score: number; level: number; quenched: boolean; newBest: boolean } | null>(null);
 
   const strokes = useRef<GameStroke[]>([]);
   const startedAt = useRef(0);
@@ -168,13 +167,14 @@ export default function KeyforgeGame() {
     if (strokes.current.length > 10) {
       const result = resultFromStrokes('game', 'Keyforge', strokes.current, startedAt.current, performance.now(), { game: 'keyforge', forged: items.length, score });
       const rewards = recordSession(result);
+      let newBest = false;
       patch((d) => {
         const cur = d.gameBests['keyforge'];
-        if (!cur || score > cur.score) d.gameBests['keyforge'] = { score, level: items.length };
+        if (!cur || score > cur.score) { d.gameBests['keyforge'] = { score, level: items.length }; newBest = true; }
       });
-      setOverInfo({ rewards, acc: result.acc, score, level: items.length, quenched });
+      setOverInfo({ rewards, acc: result.acc, wpm: result.wpm, score, level: items.length, quenched, newBest });
     } else {
-      setOverInfo({ rewards: null, acc: 100, score, level: items.length, quenched });
+      setOverInfo({ rewards: null, acc: 100, wpm: 0, score, level: items.length, quenched, newBest: false });
     }
     if (data?.settings.soundOn) snd.done();
     setPhase('over');
@@ -237,139 +237,147 @@ export default function KeyforgeGame() {
   const heatPct = Math.round(heatUi);
   const cold = heatPct < 25;
 
-  return (
-    <div className="train-page">
-      <div className="train-top">
-        <Btn kind="ghost" onClick={() => { window.clearInterval(heatTimer.current); nav('/app/games'); }} ariaLabel="Exit game">←</Btn>
-        <h1><Ic n="hammer" size={20} /> Keyforge</h1>
-        <Chip tone="accent">Trains: fast, flawless words</Chip>
-        {phase === 'run' && <Btn kind="soft" onClick={() => endGame(true)}>Quench & collect</Btn>}
-      </div>
+  if (phase === 'intro') {
+    return (
+      <ArenaIntro
+        game="keyforge"
+        title="Keep the forge alive"
+        onPlay={start}
+        cta="Light the forge →"
+        stats={[
+          ...(data.gameBests['keyforge'] ? [
+            { label: 'Best score', value: data.gameBests['keyforge'].score },
+            { label: 'Most forged', value: `${data.gameBests['keyforge'].level} treasures` },
+          ] : []),
+          { label: 'Collection', value: data.forge.length },
+        ]}
+      >
+        <p>
+          The fire only burns while you type. <strong>Heat drains constantly</strong>: every
+          correct strike feeds it, every miss vents it.
+        </p>
+        <p>
+          Three runes forge a treasure, and each treasure makes the fire <strong>hungrier and
+          the runes longer</strong>. Finish one with the forge blazing, above {HOT_BONUS_AT}%,
+          for bonus rarity. Quench when you want to bank what you have.
+        </p>
+      </ArenaIntro>
+    );
+  }
 
-      <div className="game-frame">
-        {phase === 'run' && (
-          <div className="game-hud">
-            <span>Forged {forged.length}</span>
-            <span>Level {level + 1}</span>
-            {data.gameBests['keyforge'] && <span className="muted">best {data.gameBests['keyforge'].score}</span>}
-            <span className="grow" />
-            <span className={cold ? 'bad' : heatPct >= HOT_BONUS_AT ? 'good' : ''}>
-              <Ic n="flame" size={13} /> {heatPct}%
-            </span>
+  if (phase === 'over' && overInfo) {
+    return (
+      <ArenaResult
+        game="keyforge"
+        run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.level }}
+        score={overInfo.score}
+        title={overInfo.quenched ? 'Quenched: treasures banked' : 'The forge went cold'}
+        newBest={overInfo.newBest}
+        onAgain={start}
+      >
+        {forged.length > 0 && (
+          <div className="row gap wrap forge-haul">
+            {forged.map((f) => (
+              <span key={f.id} className={`forge-item-card rarity-${f.rarity}`}>
+                <Ic n={f.icon} size={22} />
+                <small>{f.name}</small>
+              </span>
+            ))}
           </div>
         )}
-        <div className="game-board" ref={sceneRef} style={{ minHeight: 460 }}>
-          {phase === 'intro' && (
-            <div className="game-over">
-              <Ic n="flame" size={50} />
-              <h2>Keep the forge alive</h2>
-              <p className="muted" style={{ maxWidth: 480 }}>
-                The fire only burns while you type. <strong>Heat drains constantly</strong>: every correct strike feeds it,
-                every miss vents it. Three runes forge a treasure, and each treasure makes the fire <strong>hungrier and the
-                runes longer</strong>. Finish a treasure with the forge blazing (≥{HOT_BONUS_AT}%) for bonus rarity.
-                How much can you forge before it goes cold?
-              </p>
-              <div className="row gap wrap" style={{ justifyContent: 'center' }}>
-                <Chip tone="gold"><Ic n="lamp" size={12} /> Collection: {data.forge.length}</Chip>
-                {data.gameBests['keyforge'] && <Chip tone="gold"><Ic n="trophy" size={12} /> Best: {data.gameBests['keyforge'].score}</Chip>}
-              </div>
-              <Btn big onClick={start}>Light the forge →</Btn>
-            </div>
-          )}
-          {phase === 'run' && (
-            <div className="forge-scene">
-              <div className={`forge-heatbar ${cold ? 'forge-cold' : ''}`} role="meter" aria-valuenow={heatPct} aria-label="Forge heat">
-                <div className="forge-heatfill" style={{ width: `${heatPct}%` }} />
-                <span className="forge-heatlabel"><Ic n="flame" size={12} /> {heatPct}%{heatPct >= HOT_BONUS_AT ? ' · blazing (rarity bonus)' : cold ? ' · the fire is dying!' : ''}</span>
-              </div>
-              {levelBanner && <div className="wf-wave-banner">{levelBanner}</div>}
-              {justForged ? (
-                <div className="forge-reveal">
-                  <div className={`forge-item-card rarity-${justForged.rarity}`}>
-                    <Ic n={justForged.icon} size={44} />
-                    <strong>{justForged.name}</strong>
-                    <Chip tone={justForged.rarity >= 3 ? 'gold' : 'default'}>{RARITY_NAMES[justForged.rarity]}</Chip>
-                  </div>
-                  <p className="muted small">the fire holds its breath… next runes are longer</p>
+        <RewardsBanner rewards={overInfo.rewards} />
+        <p className="small muted" style={{ maxWidth: 430 }}>
+          {overInfo.quenched
+            ? 'Banked in time. Push one level deeper next run?'
+            : `The fire ate ${Math.round(drainPerSec())}% a second by the end. Speed feeds it, misses starve it.`}
+        </p>
+      </ArenaResult>
+    );
+  }
+
+  return (
+    <>
+      <ArenaStage
+        game="keyforge"
+        quiet
+        hud={(
+          <>
+            <span><b>{forged.length}</b> forged</span>
+            <span><b>{level + 1}</b> level</span>
+            <span className="grow" />
+            <span className={`arena-meter ${cold ? 'bad' : ''}`} title="Forge heat">
+              <Ic n="flame" size={13} />
+              <i><b style={{ width: `${heatPct}%` }} /></i>
+            </span>
+            <Btn kind="soft" onClick={() => endGame(true)}>Quench &amp; collect</Btn>
+          </>
+        )}
+        main={(
+          <div className="forge-band">
+            {justForged ? (
+              <div className="forge-reveal">
+                <div className={`forge-item-card rarity-${justForged.rarity}`}>
+                  <Ic n={justForged.icon} size={44} />
+                  <strong>{justForged.name}</strong>
+                  <Chip tone={justForged.rarity >= 3 ? 'gold' : 'default'}>{RARITY_NAMES[justForged.rarity]}</Chip>
                 </div>
-              ) : (
-                <>
-                  <div className="forge-progress" aria-label={`Rune ${runeIdx + 1} of 3`}>
-                    {[0, 1, 2].map((i) => (
-                      <span key={i} className={`forge-part ${i < runeIdx ? 'part-done' : i === runeIdx ? 'part-cur' : ''}`}>
-                        <Ic n={i < runeIdx ? 'check' : 'gem'} size={13} /> part {i + 1}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="forge-say muted small">{missed ? 'cracked: finish strong, misses vent heat' : 'strike fast and true'}</p>
-                  <div className="forge-word">
-                    <span className="done">{word.slice(0, hit)}</span>
-                    <span className="cur">{word[hit] ?? ''}</span>
-                    <span>{word.slice(hit + 1)}</span>
-                  </div>
-                  <svg viewBox="0 0 220 132" className="forge-anvil-svg" aria-hidden>
-                    <path
-                      d="M30 62 Q42 56 60 55 L156 55 Q165 55 165 62 L165 68 Q165 74 156 74 L124 74 L130 92 L142 97 L148 110 L72 110 L78 97 L90 92 L96 74 L64 74 Q46 72 34 68 Q28 65 30 62 Z"
-                      fill="color-mix(in oklab, var(--text) 26%, var(--surface2))"
-                      stroke="var(--border)" strokeWidth="2.5" strokeLinejoin="round"
-                    />
-                    <rect x="62" y="110" width="96" height="13" rx="5" fill="var(--surface2)" stroke="var(--border)" strokeWidth="2.5" />
-                    <rect x="60" y="55" width="105" height="6" rx="3" fill="color-mix(in oklab, var(--text) 45%, var(--surface2))" opacity="0.55" />
-                    <rect x="94" y="44" width="34" height="12" rx="3" fill="var(--gold)" className="forge-ingot" style={{ opacity: 0.3 + (heatUi / 100) * 0.7 }} />
-                    <g ref={hammerRef} className="forge-hammer">
-                      <g transform="translate(172 98) rotate(-142)">
-                        <rect x="4" y="-4.5" width="60" height="9" rx="4.5" fill="#a8703f" stroke="#7a4f2a" strokeWidth="1.5" />
-                        <rect x="58" y="-15" width="26" height="30" rx="5"
-                          fill="color-mix(in oklab, var(--text) 55%, var(--surface2))" stroke="var(--border)" strokeWidth="2" />
-                        <rect x="80" y="-15" width="6" height="30" rx="2.5"
-                          fill="color-mix(in oklab, var(--text) 75%, var(--surface2))" />
-                      </g>
-                    </g>
-                  </svg>
-                </>
-              )}
-              {forged.length > 0 && !justForged && (
-                <div className="row gap wrap" style={{ justifyContent: 'center', marginTop: 10 }}>
-                  {forged.slice(-6).map((f) => (
-                    <span key={f.id} title={f.name} style={{ opacity: 0.5 + f.rarity * 0.12 }}><Ic n={f.icon} size={20} /></span>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-          {phase === 'over' && overInfo && (
-            <div className="game-over">
-              <Ic n={overInfo.quenched ? 'lamp' : 'snowflake'} size={44} />
-              <h2>{overInfo.quenched ? 'Quenched: treasures banked' : 'The forge went cold'}</h2>
-              <div className="row gap wrap" style={{ justifyContent: 'center' }}>
-                <Stat v={overInfo.score} l="score" tone="accent" />
-                <Stat v={overInfo.level} l="treasures" />
-                <Stat v={forged.filter((f) => f.rarity >= 3).length} l="rare+" />
-                <Stat v={`${overInfo.acc}%`} l="accuracy" />
+                <p className="muted small">the fire holds its breath. The next runes are longer</p>
               </div>
-              {forged.length > 0 && (
-                <div className="row gap wrap" style={{ justifyContent: 'center', maxWidth: 480 }}>
-                  {forged.map((f) => (
-                    <span key={f.id} className={`forge-item-card rarity-${f.rarity}`} style={{ padding: '10px 14px' }}>
-                      <Ic n={f.icon} size={24} />
-                      <small style={{ maxWidth: 130, textAlign: 'center' }}>{f.name}</small>
+            ) : (
+              <>
+                <p className="arena-stage-kicker"><Ic n="keyboard" size={14} /> Strike the rune</p>
+                <div className="forge-word">
+                  <span className="done">{word.slice(0, hit)}</span>
+                  <span className="cur">{word[hit] ?? ''}</span>
+                  <span>{word.slice(hit + 1)}</span>
+                </div>
+                <div className="forge-progress" aria-label={`Rune ${runeIdx + 1} of 3`}>
+                  {[0, 1, 2].map((i) => (
+                    <span key={i} className={`forge-part ${i < runeIdx ? 'part-done' : i === runeIdx ? 'part-cur' : ''}`}>
+                      <Ic n={i < runeIdx ? 'check' : 'gem'} size={13} /> part {i + 1}
                     </span>
                   ))}
                 </div>
-              )}
-              <RewardsBanner rewards={overInfo.rewards} />
-              <p className="small muted" style={{ maxWidth: 440 }}>
-                {overInfo.quenched ? 'Banked in time. Push one level deeper next run?' : `The fire ate ${Math.round(drainPerSec())}%/s by the end. Speed feeds it, misses starve it.`}
-              </p>
-              <div className="row gap">
-                <Btn onClick={start}>↻ Relight the forge</Btn>
-                <Btn kind="soft" to="/app/games">All games</Btn>
+                <p className="forge-say muted small">
+                  {missed ? 'Cracked. Finish strong, misses vent heat' : cold ? 'The fire is dying. Strike!' : 'Strike fast and true'}
+                </p>
+              </>
+            )}
+          </div>
+        )}
+        side={(
+          <div className="forge-scene" ref={sceneRef}>
+            {levelBanner && <div className="wf-wave-banner">{levelBanner}</div>}
+            <svg viewBox="0 0 220 132" className="forge-anvil-svg" aria-hidden>
+              <path
+                d="M30 62 Q42 56 60 55 L156 55 Q165 55 165 62 L165 68 Q165 74 156 74 L124 74 L130 92 L142 97 L148 110 L72 110 L78 97 L90 92 L96 74 L64 74 Q46 72 34 68 Q28 65 30 62 Z"
+                fill="color-mix(in oklab, var(--text) 26%, var(--surface2))"
+                stroke="var(--border)" strokeWidth="2.5" strokeLinejoin="round"
+              />
+              <rect x="62" y="110" width="96" height="13" rx="5" fill="var(--surface2)" stroke="var(--border)" strokeWidth="2.5" />
+              <rect x="60" y="55" width="105" height="6" rx="3" fill="color-mix(in oklab, var(--text) 45%, var(--surface2))" opacity="0.55" />
+              <rect x="94" y="44" width="34" height="12" rx="3" fill="var(--gold)" className="forge-ingot" style={{ opacity: 0.3 + (heatUi / 100) * 0.7 }} />
+              <g ref={hammerRef} className="forge-hammer">
+                <g transform="translate(172 98) rotate(-142)">
+                  <rect x="4" y="-4.5" width="60" height="9" rx="4.5" fill="#a8703f" stroke="#7a4f2a" strokeWidth="1.5" />
+                  <rect x="58" y="-15" width="26" height="30" rx="5"
+                    fill="color-mix(in oklab, var(--text) 55%, var(--surface2))" stroke="var(--border)" strokeWidth="2" />
+                  <rect x="80" y="-15" width="6" height="30" rx="2.5"
+                    fill="color-mix(in oklab, var(--text) 75%, var(--surface2))" />
+                </g>
+              </g>
+            </svg>
+            {forged.length > 0 && (
+              <div className="row gap wrap forge-shelf">
+                {forged.slice(-8).map((f) => (
+                  <span key={f.id} title={f.name} style={{ opacity: 0.5 + f.rarity * 0.12 }}><Ic n={f.icon} size={20} /></span>
+                ))}
               </div>
-            </div>
-          )}
-        </div>
-      </div>
+            )}
+          </div>
+        )}
+      />
       <MobileKeys active={phase === 'run'} />
-    </div>
+    </>
   );
 }

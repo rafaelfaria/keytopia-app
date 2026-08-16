@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useData, useStore, levelInfo, useUi } from '../lib/store';
+import { useData, useStore, useUi } from '../lib/store';
 import { THEMES } from '../lib/themes';
 import { Btn, Card, Chip, Modal, Seg, Toggle } from '../components/ui';
 import { LAYOUT_NAMES } from '../lib/keyboard';
 import type { CaretStyle, Correction, GuideStyle, LayoutId, ThemeId } from '../lib/types';
-import { snd, speak } from '../lib/sound';
+import { snd } from '../lib/sound';
 import { Ic } from '../components/icons';
 
 export default function Settings() {
@@ -15,7 +15,6 @@ export default function Settings() {
   const [confirmClear, setConfirmClear] = useState(false);
   if (!data) return null;
   const s = data.settings;
-  const lvl = levelInfo(data.xp);
 
   const set = <K extends keyof typeof s>(k: K, v: (typeof s)[K]) => patch((d) => { (d.settings as unknown as Record<string, unknown>)[k as string] = v; });
 
@@ -30,17 +29,15 @@ export default function Settings() {
 
       <Card className="settings-section">
         <h3><Ic n="palette" size={17} /> Theme gallery</h3>
-        <p className="small muted" style={{ marginBottom: 12 }}>Unlock more worlds as you level up (you're level {lvl.level}).</p>
+        <p className="small muted" style={{ marginBottom: 12 }}>Pick any world you like. They're all yours.</p>
         <div className="theme-grid">
           {THEMES.map((t) => {
-            const locked = !data.unlockedThemes.includes(t.id) && t.level > 0;
             const on = s.theme === t.id;
             return (
               <button
                 key={t.id} type="button"
                 className={`theme-tile ${on ? 'on' : ''}`}
-                onClick={() => { if (!locked) { set('theme', t.id as ThemeId); } }}
-                disabled={locked}
+                onClick={() => { set('theme', t.id as ThemeId); }}
                 aria-pressed={on}
                 title={t.desc}
               >
@@ -50,7 +47,7 @@ export default function Settings() {
                 </span>
                 <span className="theme-name">
                   {t.name}
-                  {locked ? <span className="theme-lock">🔒 Lv{t.level}</span> : on ? <span style={{ color: 'var(--accent)' }}>✓</span> : null}
+                  {on ? <span style={{ color: 'var(--accent)' }}>✓</span> : null}
                 </span>
               </button>
             );
@@ -70,7 +67,6 @@ export default function Settings() {
         <Toggle on={s.dyslexiaFont} onChange={(v) => set('dyslexiaFont', v)} label="High-legibility font" desc="Atkinson Hyperlegible across the whole app, including typing text" />
         <Toggle on={s.reducedMotion} onChange={(v) => set('reducedMotion', v)} label="Reduce motion" desc="Minimises animation everywhere, including the landing page" />
         <Toggle on={s.untimed} onChange={(v) => set('untimed', v)} label="Untimed learning" desc="Hides timers in lessons and practice (speed sprints stay timed)" />
-        <Toggle on={s.speakTargets} onChange={(v) => set('speakTargets', v)} label="Speak target letters" desc="Reads each expected key aloud during lessons" />
         <Toggle on={s.hideLeaderboards} onChange={(v) => set('hideLeaderboards', v)} label="Hide leaderboards" desc="Removes all ranked boards and comparisons" />
         {!s.hideLeaderboards && (
           <>
@@ -93,7 +89,6 @@ export default function Settings() {
             aria-label="Sound volume"
           />
         </div>
-        <Btn kind="ghost" onClick={() => { if (!speak('Welcome to KeyTopia. Dictation and spoken letters sound like this.')) pushToast({ kind: 'info', icon: 'warn', title: 'Speech not available in this browser' }); }}><Ic n="chat" size={15} /> Test speech voice</Btn>
       </Card>
 
       <Card className="settings-section">

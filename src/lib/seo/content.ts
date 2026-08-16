@@ -60,13 +60,13 @@ export const CORE_FEATURES: Feature[] = [
   { name: 'Adaptive practice engine', description: 'Every keystroke updates a per-key mastery map. Practice sets are generated on the fly so weak keys and slow letter-pairs get extra repetitions, wrapped in real words rather than nonsense drills.' },
   { name: '60-second placement assessment', description: 'Reads speed, accuracy, rhythm, hesitation, backspace habits and per-key reflexes, then names your rank and draws your starting map.' },
   { name: '41-lesson curriculum', description: 'Nine regions grouped into five worlds, from the two home-row anchor keys through capitals, numbers, symbols, code, rhythm and endurance.' },
-  { name: 'Fourteen training modes', description: 'Adaptive practice, weak-key workouts, speed sprints, Accuracy Lab, rhythm studio, zen, lights-out, code forge, dictation, numerals, recovery, endurance, real-world desk and copy desk.' },
+  { name: 'Fourteen training modes', description: 'Adaptive practice, weak-key workouts, speed sprints, Accuracy Lab, rhythm studio, zen, lights-out, code forge, numerals, recovery, endurance, camp checkpoints, real-world desk and copy desk.' },
   { name: 'Seven original typing games', description: 'Each game is built around one named skill and tells you which skill it trains. No typing glued onto an unrelated arcade game.' },
   { name: 'Racing with CPU rivals', description: 'Five difficulties plus adaptive, rivals with believable habits, a ghost of your own best run, and private rooms with join codes for friends or a classroom.' },
   { name: 'Deep analytics', description: 'Per-key heatmaps, finger and hand balance, rhythm fingerprints, session echo replay, consistency scoring, records and a practice calendar.' },
   { name: 'A coach that is specific', description: 'Kip reads your actual session data and names the exact keys and transitions holding you back, then prescribes a drill for them.' },
   { name: 'Layout-aware', description: 'QWERTY, QWERTZ, AZERTY, Dvorak and Colemak. The curriculum rebuilds itself around whichever layout you use.' },
-  { name: 'Accessibility as a requirement', description: 'Full keyboard navigation, four text sizes, the Atkinson Hyperlegible typeface, a high-contrast theme, reduced-motion mode, untimed learning, spoken target letters and never colour-only feedback.' },
+  { name: 'Accessibility as a requirement', description: 'Full keyboard navigation, four text sizes, the Atkinson Hyperlegible typeface, a high-contrast theme, reduced-motion mode, untimed learning and never colour-only feedback.' },
   { name: 'Local-first privacy', description: 'Nothing ever blocks on the network: keystrokes are written to your browser first and synced afterwards. One grown-up account covers the whole household, learners never sign in themselves, and everything can be erased in one click.' },
   { name: 'Twelve themes', description: 'Themes change illustration, keyboard, sound and celebration, and are unlocked by learning rather than by paying.' },
 ];
@@ -80,7 +80,6 @@ export const TRAINING_MODES: Feature[] = [
   { name: 'Zen typing', description: 'No scores, just flow' },
   { name: 'Lights out', description: 'Wean off looking down' },
   { name: 'Code forge', description: 'Brackets and symbols' },
-  { name: 'Dictation', description: 'Type what you hear' },
   { name: 'Numeral Peaks', description: 'Numbers and the symbol row' },
   { name: 'Recovery', description: 'Stay calm after misses' },
   { name: 'Endurance', description: 'Long-form stamina' },
@@ -162,7 +161,6 @@ export const MODE_CLUSTERS: ModeCluster[] = [
     modes: [
       { name: 'Rhythm studio', sample: 'e·v·e·n  h·a·n·d·s  w·i·n', skill: 'On the beat', description: 'Type on the beat. Smoothing your inter-key intervals is usually worth more words per minute than any amount of pushing.' },
       { name: 'Zen typing', sample: 'no timer. no score. no rank.', skill: 'Just flow', description: 'No timer, no score, no rank. Just text and the sound of it going right.' },
-      { name: 'Dictation', sample: '♪  type only what you hear', skill: 'Listen & type', description: 'Type what you hear, with replay and speed control. It breaks the habit of reading ahead and typing behind.' },
       { name: 'Endurance', sample: '… and on into minute four', skill: 'Stamina', description: 'Long-form passages, where the interesting question is not how fast you start but what is left of your technique in minute four.' },
     ],
   },
@@ -208,8 +206,6 @@ export const ACCESSIBILITY: string[] = [
   'High-contrast theme',
   'Reduced-motion mode',
   'Untimed learning',
-  'Spoken target letters',
-  'Dictation with replay and speed control',
   'Never colour-only feedback',
   'Hideable leaderboards',
 ];
@@ -368,7 +364,7 @@ export const SCHOOLS_POINTS: Feature[] = [
   { name: 'Only the results a teacher needs', description: 'Raw keystroke timings stay in the browser on the machine the student uses. What reaches a class board is the finished result: lesson, score, accuracy. No text a child typed is uploaded and there is nothing for a stranger to see.' },
   { name: 'Multiple explorers per device', description: 'A shared classroom machine can hold several student profiles side by side, each with its own mastery map, settings and accessibility profile.' },
   { name: 'Private race rooms', description: 'Races use join codes and are limited to the people you share the code with. There is no public matchmaking and no chat.' },
-  { name: 'Per-student accessibility profiles', description: 'Text size, the Atkinson Hyperlegible typeface, high contrast, reduced motion, untimed mode and spoken target letters are per-profile, so an accommodation follows the student rather than the device.' },
+  { name: 'Per-student accessibility profiles', description: 'Text size, the Atkinson Hyperlegible typeface, high contrast, reduced motion and untimed mode are per-profile, so an accommodation follows the student rather than the device.' },
   { name: 'Progress you can actually read', description: 'A guardian and teacher summary built from real session data (per-key mastery, accuracy trends and practice frequency) rather than a participation score.' },
 ];
 
@@ -384,7 +380,7 @@ export const FAQS: Faq[] = [
   { question: 'Is it suitable for children?', answer: 'Yes. There is a dedicated kids world with an island map, quests, a guardian companion, gentler speed targets and kid-appropriate word lists. Children never create an account or give an email address: a parent or teacher signs in and the child gets a profile. There is no chat and no strangers, race rivals are computer-controlled, and rooms are join-code only.' },
   { question: 'Can it be used in a classroom?', answer: 'Yes. Assignable lessons, private race rooms with join codes, multiple student profiles per shared device and per-student accessibility profiles are all supported. Students join with a class code rather than an email address, and only finished results reach the class board. The teacher dashboard is currently a preview.' },
   { question: 'Is there a typing test I can take without signing up?', answer: 'Yes. The free typing test runs in the browser at 15, 30, 60 or 120 seconds and reports WPM, raw WPM, accuracy, consistency and a per-key breakdown. No sign-up, and the result stays on your device.' },
-  { question: 'What accessibility support does KeyTopia have?', answer: 'Full keyboard navigation, four text sizes, the Atkinson Hyperlegible typeface, a high-contrast theme, reduced-motion mode, untimed learning, spoken target letters, dictation with replay and speed control, feedback that is never colour-only, and hideable leaderboards. These are per-profile settings.' },
+  { question: 'What accessibility support does KeyTopia have?', answer: 'Full keyboard navigation, four text sizes, the Atkinson Hyperlegible typeface, a high-contrast theme, reduced-motion mode, untimed learning, feedback that is never colour-only, and hideable leaderboards. These are per-profile settings.' },
   { question: 'Does it work offline?', answer: 'Yes. Once loaded, every lesson, game and analytics view runs from local storage, so practice continues if the connection drops and syncs up quietly when it returns. Only the initial sign-in needs a connection. It is installable as a progressive web app on desktop and mobile.' },
   { question: 'How is WPM calculated?', answer: 'The standard way: correctly typed characters divided by five (the conventional word length), scaled to one minute. Raw WPM applies the same formula to every keystroke including errors, so the gap between raw and net WPM is a direct measure of how much speed your mistakes are costing you.' },
 ];

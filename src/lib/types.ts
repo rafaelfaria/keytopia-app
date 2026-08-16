@@ -11,7 +11,7 @@ export type ThemeId =
 
 export type SessionMode =
   | 'lesson' | 'adaptive' | 'weakkeys' | 'speed' | 'accuracy' | 'rhythm' | 'zen'
-  | 'endurance' | 'realworld' | 'code' | 'numbers' | 'dictation' | 'copy'
+  | 'endurance' | 'realworld' | 'code' | 'numbers' | 'copy'
   | 'blind' | 'recovery' | 'checkpoint' | 'game' | 'race' | 'challenge' | 'assessment';
 
 export interface Profile {
@@ -48,7 +48,6 @@ export interface Settings {
   caret: CaretStyle;
   correction: Correction;
   focusMode: boolean;
-  speakTargets: boolean;
   untimed: boolean;
   unlockAll: boolean;
   hideLeaderboards: boolean;
@@ -85,7 +84,13 @@ export interface SessionResult {
   wpm: number;
   raw: number;
   acc: number;                  // 0..100
-  adjusted: number;
+  /**
+   * False when the run was mashed rather than typed — accuracy far below any
+   * real attempt, or more strokes spent erasing than typing. Such a run still
+   * shows its score and stays in history, but is kept out of the long-term key
+   * stats that drive the adaptive drills, and earns no XP or streak credit.
+   */
+  valid: boolean;
   consistency: number;          // 0..100
   rhythm: number;               // 0..100
   hesitations: number;

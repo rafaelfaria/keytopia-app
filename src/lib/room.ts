@@ -110,7 +110,18 @@ export class Room {
   private connect(expectOthers: boolean) {
     if (!supabase) { this.setPhase('error', 'Rooms need an internet connection.'); return; }
 
-    const ch = supabase.channel(`ktroom:${this.code}`, {
+    // supabase-js keys channels by topic and hands back the EXISTING instance
+    // if one is still registered, and adding a presence listener to a channel
+    // that has already joined throws outright. `unsubscribe()` alone does not
+    // deregister it, so leaving a room and rejoining the same code — a rematch,
+    // a mistyped code corrected, a hot reload — reached this line, got the old
+    // channel back and took the lobby down on the `on('presence')` below.
+    // Clearing any stale instance first makes connecting idempotent.
+    const topic = `ktroom:${this.code}`;
+    const stale = supabase.getChannels().find((c) => c.topic === `realtime:${topic}`);
+    if (stale) void supabase.removeChannel(stale);
+
+    const ch = supabase.channel(topic, {
       config: { presence: { key: this.me.id }, broadcast: { self: true } },
     });
     this.channel = ch;
@@ -212,7 +223,10 @@ export class Room {
   leave(): void {
     window.clearTimeout(this.graceTimer);
     this.listeners = {};
-    void this.channel?.unsubscribe();
+    // removeChannel, not unsubscribe: the latter leaves the channel registered
+    // under its topic, where the next room with the same code would find it.
+    const ch = this.channel;
+    if (ch) void supabase?.removeChannel(ch);
     this.channel = null;
     if (current === this) current = null;
   }

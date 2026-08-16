@@ -15,6 +15,7 @@ import './styles/mock.css';
 import './styles/classroom.css';
 import './styles/arena.css';
 import { AppShell, ThemeSync } from './components/Shell';
+import { Boundary } from './components/Boundary';
 import Landing from './pages/Landing';
 import Onboarding from './pages/Onboarding';
 import ProfilePicker from './pages/ProfilePicker';
@@ -73,23 +74,6 @@ function ScrollToTop() {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
   }, [pathname, hash]);
   return null;
-}
-
-class Boundary extends React.Component<{ children: React.ReactNode }, { err: Error | null }> {
-  state = { err: null as Error | null };
-  static getDerivedStateFromError(err: Error) { return { err }; }
-  render() {
-    if (this.state.err) {
-      return (
-        <div style={{ padding: 40, fontFamily: 'sans-serif' }}>
-          <h1>Something went off the map</h1>
-          <p>{String(this.state.err)}</p>
-          <button onClick={() => { this.setState({ err: null }); location.href = '/'; }}>Back to safety</button>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

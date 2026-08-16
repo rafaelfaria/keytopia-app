@@ -28,6 +28,14 @@ export interface StackScene {
   place(width: number, cracked: boolean): void;
   /** 0..1. The tower leans and sways as it approaches failure. */
   setStrain(v: number): void;
+  /**
+   * The storey you are about to place, hovering over the tower at the width it
+   * would come out right now. This is the shrinking, shown: it is drawn
+   * directly above the storey it will sit on, so the comparison is made by the
+   * eye instead of by reading a percentage. `danger` marks a width that would
+   * buckle the tower. Pass null to clear it.
+   */
+  setPreview(width: number | null, danger?: boolean): void;
   /** Shear above this storey. Everything higher tumbles off. */
   shear(fromIndex: number): void;
   /** Storeys standing, not counting the foundation. */
@@ -79,11 +87,15 @@ export function createStackScene(canvas: HTMLCanvasElement, opts: StackSceneOpts
 
   let meshes: THREE.Mesh[] = [];
   let falling: Falling[] = [];
+  let ghost: THREE.Mesh | null = null;
+  let ghostMat: THREE.MeshLambertMaterial | null = null;
   let strain = 0;
   let lean = 0;
   let t = 0;
 
   let camY = 0;
+  /** Vertical world units the frame can show, kept from the last resize. */
+  let spanY = 11;
   let raf = 0;
   let last = 0;
   let running = false;
@@ -134,6 +146,29 @@ export function createStackScene(canvas: HTMLCanvasElement, opts: StackSceneOpts
     meshes.push(addMesh(level, y, Math.max(0.2, width) * BASE, cracked));
   }
 
+  /** The hovering next storey. Its whole job is to be compared with the one
+   *  under it, so it sits square above the top and shares its colour family. */
+  function setPreview(width: number | null, danger = false): void {
+    if (disposed) return;
+    if (width === null) {
+      if (ghost) ghost.visible = false;
+      return;
+    }
+    if (!ghost) {
+      ghostMat = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.42 });
+      materials.push(ghostMat);
+      ghost = new THREE.Mesh(geo, ghostMat);
+      tower.add(ghost);
+    }
+    const hue = danger
+      ? 0
+      : (opts.hue + 52 * Math.sin(meshes.length * 0.34) + 360) % 360;
+    ghostMat!.color.setHSL(hue / 360, danger ? 0.75 : opts.light ? 0.64 : 0.58, danger ? 0.55 : opts.light ? 0.58 : 0.66);
+    ghost.visible = true;
+    ghost.scale.set(Math.max(0.12, width) * BASE, H, Math.max(0.12, width) * BASE);
+    ghost.position.set(0, (meshes.length - 1) * H + H * 2.1, 0);
+  }
+
   function shear(fromIndex: number): void {
     // Everything above the failed joint leaves the building. The stump keeps
     // its own history, so a run after a collapse is still the same run.
@@ -160,6 +195,8 @@ export function createStackScene(canvas: HTMLCanvasElement, opts: StackSceneOpts
   function reset(): void {
     for (const m of meshes) tower.remove(m);
     for (const f of falling) scene.remove(f.mesh);
+    if (ghost) tower.remove(ghost);
+    ghost = null; ghostMat = null;
     for (const m of materials) m.dispose();
     materials.length = 0;
     falling = [];
@@ -169,6 +206,20 @@ export function createStackScene(canvas: HTMLCanvasElement, opts: StackSceneOpts
     camY = 0;
     applyCamera();
     if (!running && !disposed) renderer.render(scene, camera);
+  }
+
+  /**
+   * Where the camera should be looking.
+   *
+   * While the building fits, it is centred in the panel. Only once it outgrows
+   * the frame does the camera start trailing the top. Trailing from the first
+   * storey left a six-storey tower pinned to the ceiling with a third of the
+   * panel empty underneath it.
+   */
+  function focusTarget(): number {
+    const bottom = -H * 3;
+    const top = (meshes.length - 1) * H + (ghost?.visible ? H * 2.6 : H);
+    return (top - bottom) <= spanY * 0.92 ? (bottom + top) / 2 : top - spanY * 0.42;
   }
 
   function applyCamera(): void {
@@ -188,8 +239,18 @@ export function createStackScene(canvas: HTMLCanvasElement, opts: StackSceneOpts
     camera.right = (view * aspect) / 2;
     camera.top = view / 2;
     camera.bottom = -view / 2;
+    // The camera looks down at about 33 degrees, so a vertical world segment
+    // only uses ~0.84 of its length on screen. Dividing it back out gives the
+    // world height the frame actually holds, which is what decides whether the
+    // tower still fits.
+    spanY = view / 0.84;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
+    // Reframe immediately rather than easing there. A resize is not a move the
+    // tower made, so it should not be animated, and the panel changing shape
+    // must not leave the building parked where it used to fit.
+    camY = focusTarget();
+    applyCamera();
     if (!running && !disposed) renderer.render(scene, camera);
   };
 
@@ -208,6 +269,12 @@ export function createStackScene(canvas: HTMLCanvasElement, opts: StackSceneOpts
     const sway = opts.calm ? 0 : Math.sin(t * 5.5) * 0.012 * Math.max(0, strain - 0.45);
     tower.rotation.z = lean + sway;
 
+    // The next storey hovers rather than rests, so it never reads as already
+    // placed. Its width is doing the talking; the bob only says "not yet".
+    if (ghost && ghost.visible && !opts.calm) {
+      ghost.position.y = (meshes.length - 1) * H + H * 2.1 + Math.sin(t * 2.6) * 0.09;
+    }
+
     for (let i = falling.length - 1; i >= 0; i--) {
       const f = falling[i];
       f.vy -= 13 * dt;
@@ -222,9 +289,7 @@ export function createStackScene(canvas: HTMLCanvasElement, opts: StackSceneOpts
       }
     }
 
-    // The camera trails the top storey rather than snapping to it, so a run
-    // reads as a climb, and a collapse reads as falling back down.
-    const focusY = (meshes.length - 1) * H - 1.6;
+    const focusY = focusTarget();
     camY += (focusY - camY) * (opts.calm ? 1 : Math.min(1, dt * 3));
     applyCamera();
 
@@ -250,6 +315,7 @@ export function createStackScene(canvas: HTMLCanvasElement, opts: StackSceneOpts
     },
     place,
     setStrain(v: number): void { strain = Math.max(0, Math.min(1, v)); },
+    setPreview,
     shear,
     height: () => meshes.length - 1,
     reset,

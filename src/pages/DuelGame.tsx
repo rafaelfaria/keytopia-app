@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useData, useStore, useUi } from '../lib/store';
 import { COMMON_WORDS, KID_WORDS, RACER_NAMES } from '../lib/words';
 import { mulberry32, pick, pickN, avatarIndexFor } from '../lib/rng';
 import { recentAvgWpm, PACE_MIN, PACE_MAX } from '../lib/challenge';
-import { Btn, Chip, Stat } from '../components/ui';
+import { Btn } from '../components/ui';
 import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
+import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { Ic } from '../components/icons';
 import { Avatar, BlockAvatar } from '../components/avatars';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
@@ -32,7 +32,6 @@ const MATCHED_CAP = 90;
 
 export default function DuelGame() {
   const data = useData();
-  const nav = useNavigate();
   const recordSession = useStore((s) => s.recordSession);
   const patch = useStore((s) => s.patch);
   const pushToast = useUi((s) => s.pushToast);
@@ -199,17 +198,75 @@ export default function DuelGame() {
   const myPct = (pos / Math.max(1, phrase.length)) * 100;
   const rivalPct = (Math.min(rivalPos, phrase.length) / Math.max(1, phrase.length)) * 100;
 
-  return (
-    <div className="train-page">
-      <div className="train-top">
-        <Btn kind="ghost" onClick={() => { clearTimers(); nav('/app/games'); }} ariaLabel="Exit game">←</Btn>
-        <h1><Ic n="swords" size={20} /> Quill Duel</h1>
-        <Chip tone="accent">Trains: burst speed under pressure</Chip>
-      </div>
+  if (phase === 'intro') {
+    return (
+      <ArenaIntro
+        game="duel"
+        title="First to four phrases wins"
+        onPlay={startMatch}
+        cta="Draw quills →"
+        stats={[
+          { label: 'Your pace', value: `${Math.round(basePace)} wpm` },
+          ...(data.gameBests['duel'] ? [{ label: 'Best match', value: data.gameBests['duel'].score }] : []),
+        ]}
+      >
+        <p>
+          One phrase per round, and the first to finish it takes the round. Only correct
+          letters move you, so a clean first strike beats a fast messy one.
+          Today's rival is <strong>{rival.name}</strong>.
+        </p>
+        <div className="duel-diffs" role="radiogroup" aria-label="Rival difficulty">
+          {DIFFS.map((d) => (
+            <button
+              key={d.id} type="button"
+              className={`opt-tile duel-diff ${diff === d.id ? 'on' : ''}`}
+              onClick={() => setDiff(d.id)}
+              aria-pressed={diff === d.id}
+              title={d.desc}
+            >
+              <span className="opt-ic"><Ic n={d.icon} size={17} /></span>
+              <span>
+                <strong>{d.name} · {paceOf(d.id)} wpm</strong>
+                <small>{d.desc}</small>
+              </span>
+            </button>
+          ))}
+        </div>
+      </ArenaIntro>
+    );
+  }
 
-      <div className="game-frame">
-        {running && (
-          <div className="game-hud">
+  if (phase === 'over' && overInfo) {
+    return (
+      <ArenaResult
+        game="duel"
+        run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: scores.you }}
+        score={overInfo.wpm * 10 + scores.you * 100}
+        title={overInfo.won ? `Victory, ${scores.you}–${scores.rival}!` : `${rival.name} wins ${scores.rival}–${scores.you}`}
+        newBest={overInfo.won}
+        onAgain={startMatch}
+      >
+        <RewardsBanner rewards={overInfo.rewards} />
+        <p className="small muted" style={{ maxWidth: 430 }}>
+          {overInfo.won
+            ? 'Sharp quill. Step up to a fiercer rival when that feels comfortable.'
+            : 'Duels reward a clean first strike. Try the Friendly pace, then work up.'}
+        </p>
+        <Btn kind="soft" onClick={() => setPhaseBoth('intro')}>Change rival pace</Btn>
+      </ArenaResult>
+    );
+  }
+
+  return (
+    <>
+      {/* One column. The duel is you above, the rival below and the phrase
+          between them: that vertical is the whole picture, and putting the
+          lanes in a narrow side panel would flatten it. */}
+      <ArenaStage
+        game="duel"
+        quiet
+        hud={(
+          <>
             <span className="row gap"><Avatar v={data.profile.avatar} size={22} /> You</span>
             <span className="duel-pips" aria-label={`You ${scores.you}, ${rival.name} ${scores.rival}`}>
               {Array.from({ length: TARGET_WINS }).map((_, i) => <i key={`y${i}`} className={i < scores.you ? 'pip pip-you' : 'pip'} />)}
@@ -219,96 +276,43 @@ export default function DuelGame() {
             <span className="row gap"><BlockAvatar preset={rival.avatar} size={22} /> {rival.name}</span>
             <span className="grow" />
             <span>Round {round} · first to {TARGET_WINS}</span>
+          </>
+        )}
+        main={(
+          <div className="duel-arena">
+            {phase === 'ready' && <div className="race-countdown" style={{ fontSize: '2rem' }}>Round {round}…</div>}
+            {banner && phase !== 'ready' && <div className="race-countdown" style={{ fontSize: '2rem' }}>{banner}</div>}
+            <div className="duel-lane">
+              <Avatar v={data.profile.avatar} size={26} />
+              <div className="race-track">
+                <div className="race-trail" style={{ width: `${Math.max(2, myPct)}%` }} />
+                <span className="race-comet" style={{ left: `${Math.max(2, myPct)}%` }} aria-hidden><span className="comet-dot" /></span>
+              </div>
+              <span className="race-wpm">{Math.round(myPct)}%</span>
+            </div>
+            <div className="duel-phrase" aria-live="off">
+              <span className="good">{phrase.slice(0, pos)}</span>
+              <span className="duel-cur">{phrase[pos] === ' ' ? '␣' : phrase[pos] ?? ''}</span>
+              <span className="muted">{phrase.slice(pos + 1)}</span>
+            </div>
+            <div className="duel-lane duel-lane-rival">
+              <BlockAvatar preset={rival.avatar} size={26} />
+              <div className="duel-ghost">
+                <div className="duel-ghostline" aria-hidden>
+                  <span className="gl-done">{phrase.slice(0, Math.min(rivalPos, phrase.length))}</span>
+                  <span className={`gl-caret ${phase === 'live' ? 'gl-live' : ''}`} />
+                  <span className="gl-rest">{phrase.slice(Math.min(rivalPos, phrase.length))}</span>
+                </div>
+                <div className="race-track duel-ghost-track">
+                  <div className="race-trail duel-rival-trail" style={{ width: `${Math.max(2, rivalPct)}%` }} />
+                </div>
+              </div>
+              <span className="race-wpm">{Math.round(rivalPct)}%</span>
+            </div>
           </div>
         )}
-        <div className="game-board" style={{ minHeight: 380 }}>
-          {phase === 'intro' && (
-            <div className="game-over duel-intro">
-              <h2><Ic n="swords" size={22} /> First to four phrases wins</h2>
-              <p className="muted small" style={{ maxWidth: 470 }}>
-                One phrase per round, first to finish takes it. Only correct letters move you.
-                Today's rival is <strong>{rival.name}</strong>.
-              </p>
-              <div className="duel-diffs" role="radiogroup" aria-label="Rival difficulty">
-                {DIFFS.map((d) => (
-                  <button
-                    key={d.id} type="button"
-                    className={`opt-tile duel-diff ${diff === d.id ? 'on' : ''}`}
-                    onClick={() => setDiff(d.id)}
-                    aria-pressed={diff === d.id}
-                    title={d.desc}
-                  >
-                    <span className="opt-ic"><Ic n={d.icon} size={17} /></span>
-                    <span>
-                      <strong>{d.name} · {paceOf(d.id)} wpm</strong>
-                      <small>{d.desc}</small>
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <p className="small muted duel-meta">
-                your recent pace ~{Math.round(basePace)} wpm
-                {data.gameBests['duel'] && <> · <Ic n="trophy" size={12} /> best match {data.gameBests['duel'].score}</>}
-              </p>
-              <Btn big onClick={startMatch}>Draw quills →</Btn>
-            </div>
-          )}
-          {running && (
-            <div className="duel-arena">
-              {phase === 'ready' && <div className="race-countdown" style={{ fontSize: '2rem' }}>Round {round}…</div>}
-              {banner && phase !== 'ready' && <div className="race-countdown" style={{ fontSize: '2rem' }}>{banner}</div>}
-              <div className="duel-lane">
-                <Avatar v={data.profile.avatar} size={26} />
-                <div className="race-track">
-                  <div className="race-trail" style={{ width: `${Math.max(2, myPct)}%` }} />
-                  <span className="race-comet" style={{ left: `${Math.max(2, myPct)}%` }} aria-hidden><span className="comet-dot" /></span>
-                </div>
-                <span className="race-wpm">{Math.round(myPct)}%</span>
-              </div>
-              <div className="duel-phrase" aria-live="off">
-                <span className="good">{phrase.slice(0, pos)}</span>
-                <span className="duel-cur">{phrase[pos] === ' ' ? '␣' : phrase[pos] ?? ''}</span>
-                <span className="muted">{phrase.slice(pos + 1)}</span>
-              </div>
-              <div className="duel-lane duel-lane-rival">
-                <BlockAvatar preset={rival.avatar} size={26} />
-                <div className="duel-ghost">
-                  <div className="duel-ghostline" aria-hidden>
-                    <span className="gl-done">{phrase.slice(0, Math.min(rivalPos, phrase.length))}</span>
-                    <span className={`gl-caret ${phase === 'live' ? 'gl-live' : ''}`} />
-                    <span className="gl-rest">{phrase.slice(Math.min(rivalPos, phrase.length))}</span>
-                  </div>
-                  <div className="race-track duel-ghost-track">
-                    <div className="race-trail duel-rival-trail" style={{ width: `${Math.max(2, rivalPct)}%` }} />
-                  </div>
-                </div>
-                <span className="race-wpm">{Math.round(rivalPct)}%</span>
-              </div>
-            </div>
-          )}
-          {phase === 'over' && overInfo && (
-            <div className="game-over">
-              <Ic n={overInfo.won ? 'trophy' : 'heart'} size={48} />
-              <h2>{overInfo.won ? `Victory, ${scores.you}–${scores.rival}!` : `${rival.name} wins ${scores.rival}–${scores.you}`}</h2>
-              <div className="row gap wrap" style={{ justifyContent: 'center' }}>
-                <Stat v={overInfo.wpm} l="burst wpm" tone="accent" />
-                <Stat v={`${overInfo.acc}%`} l="accuracy" />
-                <Stat v={`${scores.you}–${scores.rival}`} l="rounds" />
-              </div>
-              <RewardsBanner rewards={overInfo.rewards} />
-              <p className="small muted" style={{ maxWidth: 430 }}>
-                {overInfo.won ? 'Sharp quill! Step up to a fiercer rival when that feels comfortable.' : 'Duels reward a clean first strike. Try the Friendly pace, then work up.'}
-              </p>
-              <div className="row gap wrap" style={{ justifyContent: 'center' }}>
-                <Btn onClick={startMatch}>↻ Rematch</Btn>
-                <Btn kind="soft" onClick={() => setPhaseBoth('intro')}>Change rival pace</Btn>
-                <Btn kind="ghost" to="/app/games">All games</Btn>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      />
       <MobileKeys active={running} />
-    </div>
+    </>
   );
 }

@@ -23,15 +23,14 @@ const DURATION = 60;
  * the run: a warm-up taper at the bottom, a steady column where you found your
  * rhythm, a shelf where you tried to sprint.
  *
- * The tension comes from the fact that structures have a property graphs do
- * not: only smooth curves stand up. A storey much wider than the one below is
- * a shelf with nothing under it, and one much narrower is a neck. Either is a
- * weak joint, and weak joints accumulate strain until the tower shears there.
- * Typing errors crack a storey, and a cracked storey bears less.
+ * There is one failure and it is visible in the building itself: the tower
+ * narrows when you drop below your pace, and a storey too thin to carry
+ * anything snaps the whole spire off. No hidden meter decides it. Typos eat
+ * width as well, so accuracy and speed spend the same currency.
  *
- * Which makes the winning strategy the same as the real lesson: do not sprint,
- * ramp up gradually and hold your best steady pace. A burst buys one wide
- * storey on a narrow neck and loses everything above it.
+ * Which makes the winning strategy the same as the real lesson: find a pace you
+ * can actually hold and raise it a little at a time. Because width compounds, a
+ * cold streak is visible three storeys before it costs you anything.
  */
 
 /**
@@ -52,19 +51,13 @@ const FOOTING = 0.8;
 /** The most one word may change the width, so masonry does not teleport. */
 const MAX_GROW = 1.26;
 const MAX_SHRINK = 0.76;
-/** Each typo eats this much of the storey on top of whatever the pace did. */
-const ERROR_BITE = 0.06;
 /**
- * How much of the pause before the first keystroke counts as typing time.
- *
- * Hesitation is real and should cost something, but not all of it: the first
- * word of a run was being timed from the moment the screen changed, so it
- * included the transition, the scene warming up and the half second anyone
- * spends finding the word. It came out at 14wpm against a 109wpm baseline,
- * which is a foundation the width of a chimney and a run that falls over at
- * word two through nothing the player did.
+ * Each typo eats this much of the storey on top of whatever the pace did, and
+ * a thoroughly mistyped word can cost more than a merely slow one, which is
+ * why the floor here is below MAX_SHRINK.
  */
-const THINK_GRACE = 600;
+const ERROR_BITE = 0.06;
+const ERROR_FLOOR = 0.6;
 
 const HINTS = [
   'Finish before the bar empties and the next storey comes out wider.',
@@ -122,11 +115,13 @@ export default function StackGame() {
   const phaseRef = useRef(phase);
   const landingId = useRef(1);
   const wordShownAt = useRef(0);
-  const firstKeyAt = useRef(0);
+  const deltaRef = useRef<HTMLSpanElement>(null);
+  const paceRef = useRef<HTMLDivElement>(null);
+  const paceFillRef = useRef<HTMLElement>(null);
   /**
    * The run's tally, kept outside React so the timer's endGame reads truth.
-   * `joints` is the strain each joint carries, which is how the tower knows
-   * where to break: it shears at its weakest point, not at the top.
+   * `widths` is every storey standing, which is what a buckle searches to find
+   * the last one with real footing under it.
    */
   const run = useRef({ height: 0, tallest: 0, steady: 0, score: 0, widths: [1], collapses: 0 });
   /**
@@ -149,8 +144,21 @@ export default function StackGame() {
     s.pos = 0; s.errs = 0;
     setWord(s.word); setNextWord(s.next); setPos(0); setWordErrs(0);
     wordShownAt.current = performance.now();
-    firstKeyAt.current = 0;
   };
+
+  /**
+   * How long the current word has taken. The clock simply runs from the moment
+   * the word appears: hesitating is slow typing, and a storey that stops
+   * shrinking while you stare at the word is a promise the game does not keep.
+   *
+   * This used to hold for 600ms before the first keystroke, to stop a screen
+   * transition poisoning the opening word. That guard belonged to the old
+   * scoring, where one slow word could set the width outright; width compounds
+   * now and can only move a quarter either way, so the worst a bad start can
+   * do is one narrow storey. The scene start reseats this clock for the first
+   * word, which is the part that was actually unfair.
+   */
+  const elapsedFor = (now: number) => now - wordShownAt.current;
 
   const tick = () => {
     const left = DURATION - (performance.now() - startedAt.current) / 1000;
@@ -204,13 +212,8 @@ export default function StackGame() {
     const site = siteRef.current;
     setWordsDone((n) => n + 1);
 
-    // Speed for this word, measured from when it appeared, except that only
-    // THINK_GRACE of the pause before the first key counts against you.
-    const from = firstKeyAt.current
-      ? Math.max(wordShownAt.current, firstKeyAt.current - THINK_GRACE)
-      : wordShownAt.current;
-    const mins = Math.max(0.0001, (performance.now() - from) / 60000);
-    const wpm = (s.word.length / 5) / mins;
+    const elapsed = elapsedFor(performance.now());
+    const wpm = (s.word.length / 5) / Math.max(0.0001, elapsed / 60000);
 
     const p = pace.current;
     p.seen.push(wpm);
@@ -224,10 +227,10 @@ export default function StackGame() {
     }
     // How much this word grew or shrank the tower. Beating your pace makes the
     // next storey wider than the last one, missing it makes it narrower, and
-    // hitting it exactly holds the line.
+    // hitting it exactly holds the line. Same function the live readout uses,
+    // so the number under the word is a promise rather than a hint.
     const cracked = s.errs > 0;
-    let factor = 1 + (wpm / p.base - 1) * 0.35 - s.errs * ERROR_BITE;
-    factor = Math.max(MAX_SHRINK, Math.min(MAX_GROW, factor));
+    const factor = factorAt(elapsed, s.word.length, s.errs, p.base);
 
     const prev = r.widths[r.widths.length - 1];
     const raw = prev * factor;
@@ -302,7 +305,6 @@ export default function StackGame() {
     const want = s.word[s.pos];
     if (want === undefined) return;
     const ok = key === want;
-    if (!firstKeyAt.current) firstKeyAt.current = performance.now();
     strokes.current.push({ t: performance.now(), exp: want, ok });
     if (ok) {
       if (data?.settings.soundOn) snd.key();
@@ -317,6 +319,45 @@ export default function StackGame() {
 
   useGameKeys(phase === 'run', handleKey, { onEscape: endGame });
   useEffect(() => () => window.clearInterval(timer.current), []);
+
+  // The live preview: the storey you are about to place, hovering over the
+  // tower at the width it would come out right now, shrinking while you type.
+  // The percentage beside the word is the same number said precisely.
+  //
+  // Deliberately not React state. This changes twelve times a second and
+  // nothing else on the page depends on it, so it writes to one text node and
+  // one mesh instead of re-rendering the stage.
+  useEffect(() => {
+    if (phase !== 'run') return;
+    const paint = () => {
+      const s = st.current;
+      if (!s.word) return;
+      const r = run.current;
+      const elapsed = elapsedFor(performance.now());
+      const f = factorAt(elapsed, s.word.length, s.errs, pace.current.base);
+      const prev = r.widths[r.widths.length - 1];
+      const raw = prev * f;
+
+      sceneRef.current?.setPreview(Math.min(MAX_W, raw), raw < CRITICAL);
+
+      // The bar empties exactly as the factor crosses 1, because both are the
+      // same number: at your own pace a word takes `expected` milliseconds.
+      const expected = ((s.word.length / 5) / pace.current.base) * 60000;
+      if (paceFillRef.current) {
+        paceFillRef.current.style.transform = `scaleX(${Math.max(0, Math.min(1, 1 - elapsed / expected))})`;
+      }
+      if (paceRef.current) paceRef.current.dataset.over = elapsed > expected ? 'true' : 'false';
+
+      const el = deltaRef.current;
+      if (!el) return;
+      const pct = Math.round((f - 1) * 100);
+      el.textContent = raw < CRITICAL ? 'too thin to stand' : `${pct > 0 ? '+' : ''}${pct}% width`;
+      el.dataset.tone = raw < CRITICAL ? 'down' : pct > 0 ? 'up' : pct < 0 ? 'down' : 'level';
+    };
+    paint();
+    const id = window.setInterval(paint, 80);
+    return () => window.clearInterval(id);
+  }, [phase]);
 
   // A hidden tab suspends requestAnimationFrame, so the tower stops moving
   // while the clock, which is an interval, keeps counting. Coming back to
@@ -355,14 +396,16 @@ export default function StackGame() {
     sceneRef.current = scene;
     scene.reset();
     scene.start();
+    // Building a WebGL context takes long enough to be worth a storey. The
+    // first word's clock starts when the tower is actually on screen, not when
+    // the phase flipped.
+    wordShownAt.current = performance.now();
     return () => { scene.dispose(); sceneRef.current = null; };
   }, [phase]);
 
   if (!data) return null;
   const hint = wordsDone < HINTS.length ? HINTS[wordsDone] : '';
   const bestLevel = data.gameBests['stack']?.level ?? 0;
-  /** How long a storey of this word's length takes at the learner's own pace. */
-  const paceMs = Math.round(((word.length / 5) / (paceBase || baseline)) * 60000);
 
   // The intro IS the page. A card inside a page inside a header bar put three
   // frames around a game's front door; the backdrop wants the whole area, and
@@ -451,11 +494,22 @@ export default function StackGame() {
                 one. It used to just empty and sit there, which promised
                 something and then did nothing: now the moment it runs out the
                 whole thing flips to losing, on the same delay, in CSS. */}
-            <div className="stack-pace" key={`${landingId.current}-${word}`}>
-              <i style={{ animationDuration: `${paceMs}ms` }} />
-              <b style={{ animationDelay: `${paceMs}ms` }} />
-              <em style={{ animationDelay: `${paceMs}ms` }}>losing width</em>
+            {/* Driven from the same clock as everything else, not a CSS
+                animation of its own. As an animation it started when the word
+                appeared, while scoring does not start until just before your
+                first keystroke, so the bar could sit empty and red next to a
+                readout saying +21%. Two clocks, two answers. */}
+            <div className="stack-pace" ref={paceRef}>
+              <i ref={paceFillRef} />
+              <b />
             </div>
+            {/* What finishing right now would do to the width, counting down
+                live. "Losing width" named the direction but not the price, and
+                the price is the whole decision: it is the difference between
+                pushing on and taking the hit. Written straight to the DOM at
+                12fps rather than through state, so the readout does not
+                re-render the page ten times a second. */}
+            <span className="stack-delta" ref={deltaRef} data-tone="up">+0%</span>
             <div className="stack-band-meta">
               {wordErrs > 0
                 ? <Chip tone="warn"><Ic n="waves" size={12} /> cracked</Chip>
@@ -480,6 +534,23 @@ export default function StackGame() {
       <MobileKeys active={phase === 'run'} />
     </>
   );
+}
+
+/**
+ * What finishing the word right now would do to the width, as a multiplier.
+ *
+ * Shared by the scoring and by the live readout under the word, because a
+ * preview that is computed differently from the thing it previews is worse
+ * than no preview at all.
+ */
+function factorAt(elapsedMs: number, len: number, errs: number, base: number): number {
+  const wpm = (len / 5) / Math.max(0.0001, elapsedMs / 60000);
+  // The pace is clamped first and the typos bite afterwards. Taking the bite
+  // before the clamp meant that early in a word, where the raw pace is far
+  // above the cap, three mistakes changed the number by nothing at all: they
+  // were charged, but invisibly, which is the same as lying about them.
+  const paced = Math.max(MAX_SHRINK, Math.min(MAX_GROW, 1 + (wpm / base - 1) * 0.35));
+  return Math.max(ERROR_FLOOR, paced - errs * ERROR_BITE);
 }
 
 /** 0 when the tower is solid, 1 when the next slow word will snap it. */

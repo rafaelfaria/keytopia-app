@@ -125,20 +125,3 @@ export function stopZen(): void {
   zenNodes = null;
 }
 
-export function speak(text: string, rate = 0.95): boolean {
-  try {
-    if (!('speechSynthesis' in window)) return false;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = rate;
-    u.lang = 'en';
-    window.speechSynthesis.speak(u);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export function stopSpeak(): void {
-  try { window.speechSynthesis.cancel(); } catch { /* noop */ }
-}

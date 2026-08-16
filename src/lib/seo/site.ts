@@ -157,7 +157,7 @@ export const PUBLIC_PAGES: PublicPage[] = [
     label: 'Practice modes',
     title: 'Typing Practice Modes: every session names the skill it builds',
     description:
-      'Speed sprints, Accuracy Lab, rhythm studio, lights out, code forge, dictation, endurance, zen and ' +
+      'Speed sprints, Accuracy Lab, rhythm studio, lights out, code forge, endurance, zen and ' +
       'more. Every KeyTopia practice mode names the skill it builds, so practice always has a point.',
     llmsNote: 'The training modes, grouped into foundations, precision, feel and real-world work, with the skill each one builds.',
     priority: 0.8,

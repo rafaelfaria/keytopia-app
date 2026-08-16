@@ -843,8 +843,8 @@ export default function Landing() {
 
           <p className="a11y-rest rv">
             Also, and without a paid tier anywhere in sight: full keyboard navigation on every
-            screen, spoken target letters, dictation with replay and speed control, and
-            leaderboards you can switch off entirely. Each one is a per-profile setting, because
+            screen, untimed learning, and leaderboards you can switch off entirely. Each one is a
+            per-profile setting, because
             an accommodation should belong to the person, not to the laptop they borrowed.
           </p>
         </div>

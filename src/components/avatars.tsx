@@ -52,6 +52,13 @@ export function Avatar({ v, size = 40, expr, className = '' }: {
   if (v?.startsWith('ch1:') || v?.startsWith('bk:')) {
     return <CharacterSprite ch={decodeCharacter(v)} size={size} expr={expr} className={className} />;
   }
+  // A tagged value this build does not know: "ch2:", or whatever a newer one
+  // writes. Draw a head from it rather than printing the raw string across the
+  // screen. Keyed on the tag rather than on length, because an emoji built from
+  // a ZWJ sequence is several codepoints long and is still an emoji.
+  if (/^[a-z][a-z0-9]*:/i.test(v ?? '')) {
+    return <BlockAvatar preset={hashStr(v)} size={size} expr={expr} className={className} />;
+  }
   return <span className={className} style={{ fontSize: size * 0.82, lineHeight: 1 }} aria-hidden>{v || '·'}</span>;
 }
 

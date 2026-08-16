@@ -13,6 +13,7 @@ import './styles/gameart.css';
 import './styles/public.css';
 import './styles/mock.css';
 import './styles/classroom.css';
+import './styles/arena.css';
 import { AppShell, ThemeSync } from './components/Shell';
 import Landing from './pages/Landing';
 import Onboarding from './pages/Onboarding';

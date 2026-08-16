@@ -45,6 +45,18 @@ export default function CipherGame() {
   const [shake, setShake] = useState(false);
   const [timeLeft, setTimeLeft] = useState(DURATION);
   const [overInfo, setOverInfo] = useState<{ rewards: Rewards | null; newBest: boolean } | null>(null);
+  // Score, solved count and phase are read back from the interval's endGame,
+  // which closes over the render that started the run. Mirror them in refs so
+  // the finished run is scored from what actually happened, not from render 1.
+  const scoreRef = useRef(0);
+  const solvedRef = useRef(0);
+  const phaseRef = useRef(phase);
+  phaseRef.current = phase;
+  const bumpScore = (fn: (s: number) => number) => {
+    scoreRef.current = fn(scoreRef.current);
+    setScore(scoreRef.current);
+  };
+
   const strokes = useRef<GameStroke[]>([]);
   const startedAt = useRef(0);
   const wordShownAt = useRef(0);
@@ -62,6 +74,7 @@ export default function CipherGame() {
   const start = () => {
     strokes.current = [];
     startedAt.current = performance.now();
+    scoreRef.current = 0; solvedRef.current = 0;
     setScore(0); setSolved(0); setTimeLeft(DURATION);
     newPuzzle();
     setPhase('run');
@@ -75,26 +88,27 @@ export default function CipherGame() {
 
   const endGame = () => {
     window.clearInterval(timer.current);
-    setPhase((p) => {
-      if (p !== 'run') return p;
-      const result = resultFromStrokes('game', 'Cipher Run', strokes.current, startedAt.current, performance.now(), { game: 'cipher', score, solved });
-      const rewards = strokes.current.length > 8 ? recordSession(result) : null;
-      let newBest = false;
-      patch((d) => {
-        const cur = d.gameBests['cipher'];
-        if (!cur || score > cur.score) { d.gameBests['cipher'] = { score, level: solved }; newBest = true; }
-      });
-      if (newBest) pushToast({ kind: 'record', icon: 'puzzle', title: 'New Cipher Run best!' });
-      setOverInfo({ rewards, newBest });
-      return 'over';
+    if (phaseRef.current !== 'run') return;
+    const finalScore = scoreRef.current;
+    const finalSolved = solvedRef.current;
+    const result = resultFromStrokes('game', 'Cipher Run', strokes.current, startedAt.current, performance.now(), { game: 'cipher', score: finalScore, solved: finalSolved });
+    const rewards = strokes.current.length > 8 ? recordSession(result) : null;
+    let newBest = false;
+    patch((d) => {
+      const cur = d.gameBests['cipher'];
+      if (!cur || finalScore > cur.score) { d.gameBests['cipher'] = { score: finalScore, level: finalSolved }; newBest = true; }
     });
+    if (newBest) pushToast({ kind: 'record', icon: 'puzzle', title: 'New Cipher Run best!' });
+    setOverInfo({ rewards, newBest });
+    setPhase('over');
   };
 
   const solve = () => {
     const secs = (performance.now() - wordShownAt.current) / 1000;
     const bonus = Math.max(0, Math.round((8 - secs) * 4));
-    setScore((s) => s + answer.length * 12 + bonus);
-    setSolved((n) => n + 1);
+    bumpScore((s) => s + answer.length * 12 + bonus);
+    solvedRef.current += 1;
+    setSolved(solvedRef.current);
     if (data?.settings.soundOn) snd.pop();
     newPuzzle();
   };
@@ -126,7 +140,7 @@ export default function CipherGame() {
         setBuffer('');
         setShake(true);
         setTimeout(() => setShake(false), 260);
-        setScore((s) => Math.max(0, s - 4));
+        bumpScore((s) => Math.max(0, s - 4));
         if (data?.settings.soundOn) snd.err();
       }
     } else {
@@ -140,12 +154,12 @@ export default function CipherGame() {
     if (revealed >= answer.length - 1) return;
     setRevealed((r) => r + 1);
     setBuffer(answer.slice(0, revealed + 1));
-    setScore((s) => Math.max(0, s - 15));
+    bumpScore((s) => Math.max(0, s - 15));
     if (data?.settings.soundOn) snd.thock();
   };
 
   const skip = () => {
-    setScore((s) => Math.max(0, s - 8));
+    bumpScore((s) => Math.max(0, s - 8));
     newPuzzle();
     if (data?.settings.soundOn) snd.thock();
   };

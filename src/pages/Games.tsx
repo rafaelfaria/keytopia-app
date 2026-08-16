@@ -84,7 +84,7 @@ function GameArt({ id }: { id: string }) {
       return (
         <div className="arena-art ga-cipher" aria-hidden>
           {([['h', 'c'], ['p', 'i'], ['c', 'p'], ['i', 'h'], ['r', 'e'], ['e', 'r']] as const).map(([a, b], i) => (
-            <span className="gc-tile" key={i} style={{ animationDelay: `${i * 0.22}s` }}><b>{a}</b><i>{b}</i></span>
+            <span className="gc-tile" key={i} style={{ animationDelay: `${i * 0.4}s` }}><b>{a}</b><i>{b}</i></span>
           ))}
         </div>
       );
@@ -128,37 +128,41 @@ export default function Games() {
   const data = useData();
   if (!data) return null;
   const kid = data.profile.ageGroup === 'kid';
-  const bests = Object.keys(data.gameBests).length;
   return (
     <div>
       <header className="arena-head">
         <div className="arena-head-txt">
           <div className="dash-kicker">{kid ? 'Playtime' : 'The Arena'}</div>
-          <h1>{kid ? 'Pick a game, hero.' : 'Seven games. Seven real skills.'}</h1>
-          <p>Every game here is built around one real typing skill, and tells you which. Not typing glued onto someone else's game.</p>
+          <h1>{kid ? 'Pick a game, hero.' : 'Every game trains one real skill.'}</h1>
+          <p>And each one tells you which. Not typing glued onto someone else's game.</p>
         </div>
         <div className="arena-head-stats">
-          <span className="arena-stat"><Ic n="swords" size={15} /> 7 games</span>
-          <span className="arena-stat"><Ic n="trophy" size={15} /> {bests} personal {bests === 1 ? 'best' : 'bests'}</span>
           {data.race.wins > 0 && <span className="arena-stat arena-stat-gold"><Ic n="rocket" size={15} /> {data.race.wins} race {data.race.wins === 1 ? 'win' : 'wins'}</span>}
         </div>
       </header>
 
       <h2 className="section-title"><Ic n="swords" size={19} /> Competitive</h2>
       <Link to="/app/race" className="race-hall" aria-label="Open the Race hub">
-        <span className="rh-sky" aria-hidden>
-          <i className="rh-comet" /><i className="rh-comet" /><i className="rh-comet" />
-        </span>
-        <span className="race-banner-rocket"><Ic n="rocket" size={40} /></span>
-        <span className="race-banner-txt">
-          <strong className="race-hall-title">The Lightstream</strong>
-          <span className="race-hall-sub">Full typing races, the Arena's main event. CPU rivals matched to your pace, your own ghost, private rooms with friends.</span>
-          <span className="row gap wrap race-hall-chips">
-            <Chip tone="accent">Sustained speed under pressure</Chip>
-            {data.race.wins > 0 && <Chip tone="gold"><Ic n="trophy" size={12} /> {data.race.wins} wins</Chip>}
+        <span className="race-hall-main">
+          <span className="race-banner-rocket"><Ic n="rocket" size={40} /></span>
+          <span className="race-banner-txt">
+            <strong className="race-hall-title">The Lightstream</strong>
+            <span className="race-hall-sub">Full typing races, the Arena's main event. CPU rivals matched to your pace, your own ghost, private rooms with friends.</span>
+            <span className="row gap wrap race-hall-chips">
+              <Chip tone="accent">Sustained speed under pressure</Chip>
+              {data.race.wins > 0 && <Chip tone="gold"><Ic n="trophy" size={12} /> {data.race.wins} wins</Chip>}
+            </span>
           </span>
+          <span className="race-hall-cta">Enter the Race hub →</span>
         </span>
-        <span className="race-hall-cta">Enter the Race hub →</span>
+        {/* What a race actually looks like: three lanes creeping toward the
+            finish, yours in front. Sits below the copy, never under it. */}
+        <span className="rh-track" aria-hidden>
+          <i className="rh-lane rh-lane-you"><b /></i>
+          <i className="rh-lane rh-lane-2"><b /></i>
+          <i className="rh-lane rh-lane-3"><b /></i>
+          <span className="rh-finish"><Ic n="flag" size={13} /></span>
+        </span>
       </Link>
       <div className="arena-grid race-hall-underlings">
         {COMPETITIVE.map((g, i) => <GameCard key={g.id} g={g} best={data.gameBests[g.id]} i={i} />)}

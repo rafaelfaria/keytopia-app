@@ -56,6 +56,7 @@ function defaultSettings(age: AgeGroup): Settings {
     untimed: false,
     unlockAll: false,
     hideLeaderboards: false,
+    hideGlobalBoards: false,
     coachFreq: age === 'kid' ? 'high' : 'normal',
     showLiveWpm: age !== 'kid',
     kidWorld: age === 'kid',

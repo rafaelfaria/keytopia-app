@@ -320,14 +320,10 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .cipher-slot.filled { border-style: solid; border-color: var(--accent); background: color-mix(in oklab, var(--accent) 12%, transparent); }
 .cipher-shake { animation: keyshake 0.24s ease; }
 
-/* ---------- Stack ---------- */
-.stack-stage { display: flex; flex-direction: column; align-items: center; padding: 18px 12px 0; min-height: 400px; }
+/* ---------- Stack ----------
+   The tower itself is a WebGL canvas (stackScene.ts). What is left here is the
+   word being typed; the layout around both lives in arena.css. */
 .stack-word { font-family: var(--font-type); font-size: clamp(1.4rem, 3.6vw, 2rem); display: flex; align-items: center; gap: 10px; padding: 6px 0 14px; }
-.stack-tower { display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; flex: 1; width: min(420px, 92%); gap: 3px; padding-bottom: 12px; }
-.stack-block { height: 30px; border-radius: 8px; color: #0b1020; font-weight: 750; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; animation: popin 0.25s cubic-bezier(0.2, 1.4, 0.4, 1); overflow: hidden; white-space: nowrap; }
-.stack-gold { box-shadow: 0 0 16px color-mix(in oklab, var(--gold) 55%, transparent); }
-.stack-ground { width: 100%; height: 8px; border-radius: 999px; background: var(--surface2); border: 1px solid var(--border); order: -1; }
-.stack-wobble { animation: keyshake 0.4s ease 2; }
 
 /* ---------- Survivor ---------- */
 .surv-stage { padding: 20px clamp(12px, 3vw, 28px); position: relative; min-height: 360px; }
@@ -679,36 +675,36 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .ga-wordfall span {
   font-family: var(--font-type); font-size: 0.92rem; color: var(--text-dim);
   background: var(--surface); border: 1px solid var(--border); padding: 3px 9px; border-radius: 999px;
-  animation: gaFall 2.6s linear infinite;
+  animation: gaFall 4.6s linear infinite;
 }
-.ga-wordfall span:nth-child(2) { animation-delay: 0.5s; } .ga-wordfall span:nth-child(3) { animation-delay: 1s; }
-.ga-wordfall span:nth-child(4) { animation-delay: 1.5s; } .ga-wordfall span:nth-child(5) { animation-delay: 2s; }
+.ga-wordfall span:nth-child(2) { animation-delay: 0.9s; } .ga-wordfall span:nth-child(3) { animation-delay: 1.8s; }
+.ga-wordfall span:nth-child(4) { animation-delay: 2.7s; } .ga-wordfall span:nth-child(5) { animation-delay: 3.6s; }
 @keyframes gaFall { from { transform: translateY(-64px); opacity: 0.4; } 60% { opacity: 1; } to { transform: translateY(64px); opacity: 0; } }
 
 /* Keyforge: warm hearth, sparks rising */
 .ga-forge { background: radial-gradient(circle at 50% 78%, color-mix(in oklab, var(--warn) 24%, var(--surface2)), var(--surface2) 72%); }
-.ga-forge i { position: absolute; font-style: normal; color: var(--gold); font-size: 0.9rem; animation: gaSpark 1.6s ease-in-out infinite; }
-.ga-forge i:nth-of-type(1) { left: 38%; animation-delay: 0.3s; }
-.ga-forge i:nth-of-type(2) { left: 56%; animation-delay: 0.8s; }
-.ga-forge i:nth-of-type(3) { left: 47%; animation-delay: 1.2s; }
+.ga-forge i { position: absolute; font-style: normal; color: var(--gold); font-size: 0.9rem; animation: gaSpark 3s ease-in-out infinite; }
+.ga-forge i:nth-of-type(1) { left: 38%; animation-delay: 0.5s; }
+.ga-forge i:nth-of-type(2) { left: 56%; animation-delay: 1.5s; }
+.ga-forge i:nth-of-type(3) { left: 47%; animation-delay: 2.2s; }
 @keyframes gaSpark { 0% { transform: translateY(20px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(-32px); opacity: 0; } }
 
 /* Wordflight: gates slide past a bobbing glider */
 .ga-flight::before {
   content: ''; position: absolute; inset: 0;
   background: repeating-linear-gradient(90deg, transparent 0 34px, color-mix(in oklab, var(--gold) 28%, transparent) 34px 37px);
-  animation: gaGate 3s linear infinite;
+  animation: gaGate 5.5s linear infinite;
 }
 @keyframes gaGate { to { transform: translateX(-37px); } }
-.gf-glider { position: relative; z-index: 1; animation: gaGlide 3s ease-in-out infinite alternate; }
+.gf-glider { position: relative; z-index: 1; animation: gaGlide 5.5s ease-in-out infinite alternate; }
 @keyframes gaGlide { from { transform: translateY(7px) rotate(-5deg); } to { transform: translateY(-9px) rotate(4deg); } }
 
 /* Quill Duel: two typing lanes racing, medallion between */
 .ga-duel { flex-direction: column; gap: 24px; }
 .gd-lane { position: relative; width: 72%; height: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
-.gd-fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; animation: gaType 2.5s ease-in-out infinite; }
+.gd-fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; animation: gaType 4.6s ease-in-out infinite; }
 .gd-you { background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 25%, transparent), var(--accent)); }
-.gd-foe { background: linear-gradient(90deg, color-mix(in oklab, var(--accent2) 25%, transparent), var(--accent2)); animation-duration: 3.1s; }
+.gd-foe { background: linear-gradient(90deg, color-mix(in oklab, var(--accent2) 25%, transparent), var(--accent2)); animation-duration: 5.7s; }
 @keyframes gaType { 0% { width: 3%; opacity: 1; } 80% { width: 97%; opacity: 1; } 92% { width: 97%; opacity: 0; } 100% { width: 3%; opacity: 0; } }
 .gd-badge {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;
@@ -721,16 +717,16 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 /* Survivor Sprint: dots race toward the crown */
 .ga-sprint::before { content: ''; position: absolute; inset: 12px 0; background: repeating-linear-gradient(180deg, transparent 0 24px, color-mix(in oklab, var(--text) 7%, transparent) 24px 25px); }
 .gs-finish { position: absolute; right: 9%; top: 6px; bottom: 6px; border-left: 2px dashed color-mix(in oklab, var(--gold) 50%, transparent); color: var(--gold); padding: 2px 0 0 5px; }
-.gs-dot { position: absolute; width: 11px; height: 11px; border-radius: 999px; left: 5%; animation: gaRace 2.5s linear infinite; }
+.gs-dot { position: absolute; width: 11px; height: 11px; border-radius: 999px; left: 5%; animation: gaRace 5s linear infinite; }
 .gs-dot:nth-of-type(1) { top: 20px; background: var(--accent); }
-.gs-dot:nth-of-type(2) { top: 44px; background: var(--gold); animation-duration: 3s; }
-.gs-dot:nth-of-type(3) { top: 68px; background: var(--accent2); animation-duration: 3.6s; }
-.gs-dot:nth-of-type(4) { top: 92px; background: var(--bad); animation-duration: 4.3s; }
+.gs-dot:nth-of-type(2) { top: 44px; background: var(--gold); animation-duration: 5.8s; }
+.gs-dot:nth-of-type(3) { top: 68px; background: var(--accent2); animation-duration: 6.6s; }
+.gs-dot:nth-of-type(4) { top: 92px; background: var(--bad); animation-duration: 7.6s; }
 @keyframes gaRace { 0% { left: 4%; opacity: 0; } 10% { opacity: 1; } 88% { left: 84%; opacity: 1; } 100% { left: 87%; opacity: 0; } }
 
 /* Cipher Run: tiles flip from scramble to solved */
 .ga-cipher { gap: 7px; perspective: 400px; }
-.gc-tile { position: relative; width: 28px; height: 36px; transform-style: preserve-3d; animation: gaFlip 3.6s ease-in-out infinite; font-family: var(--font-type); font-size: 1rem; }
+.gc-tile { position: relative; width: 28px; height: 36px; transform-style: preserve-3d; animation: gaFlip 6.4s ease-in-out infinite; font-family: var(--font-type); font-size: 1rem; }
 .gc-tile b, .gc-tile i {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   border-radius: 8px; backface-visibility: hidden; font-style: normal; font-weight: 600;
@@ -742,7 +738,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 /* Block Stack: a fresh block keeps dropping onto the tower */
 .gk-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 94px; }
 .gk-b { height: 14px; border-radius: 4px; background: var(--surface); border: 1px solid var(--border); }
-.gk-drop { width: 50px; height: 14px; border-radius: 4px; background: color-mix(in oklab, var(--accent) 80%, transparent); transform-origin: bottom; animation: gaDrop 2.3s ease-in infinite; }
+.gk-drop { width: 50px; height: 14px; border-radius: 4px; background: color-mix(in oklab, var(--accent) 80%, transparent); transform-origin: bottom; animation: gaDrop 4.2s ease-in infinite; }
 @keyframes gaDrop {
   0% { transform: translateY(-54px); opacity: 0; } 18% { opacity: 1; }
   42% { transform: translateY(0); } 52% { transform: translateY(0) scaleY(0.8); } 60% { transform: translateY(0) scaleY(1); }
@@ -773,39 +769,65 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
    a faint lane sky, and a real CTA pill instead of a text link. */
 .race-hall {
   position: relative; overflow: hidden;
-  margin-top: 12px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  margin-top: 12px; display: flex; flex-direction: column; gap: 20px;
   border: 1.5px solid color-mix(in oklab, var(--accent) 35%, var(--border));
   background: linear-gradient(100deg, color-mix(in oklab, var(--accent2) 13%, var(--surface)), color-mix(in oklab, var(--accent) 9%, var(--surface)) 60%, var(--surface));
-  border-radius: 20px; padding: 26px clamp(18px, 2.6vw, 30px);
+  border-radius: 20px; padding: 26px clamp(18px, 2.6vw, 30px) 22px;
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
 .race-hall:hover {
   border-color: var(--accent); transform: translateY(-2px);
   box-shadow: 0 14px 30px color-mix(in oklab, var(--accent) 16%, transparent);
 }
-.race-hall > * { position: relative; }
+.race-hall-main { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .race-hall .ic { color: var(--accent); }
-.rh-sky {
-  position: absolute; inset: 0; pointer-events: none;
-  background: repeating-linear-gradient(180deg, transparent 0 30px, color-mix(in oklab, var(--text) 4%, transparent) 30px 31px);
+
+/* The race itself, drawn small: three lanes, a finish line, yours ahead. */
+.rh-track {
+  position: relative; display: flex; flex-direction: column; gap: 7px;
+  padding-right: 28px;
 }
-.rh-comet {
-  position: absolute; top: 20%; height: 3px; width: 110px; border-radius: 999px; opacity: 0.75;
-  background: linear-gradient(90deg, transparent, var(--accent));
-  box-shadow: 0 0 12px color-mix(in oklab, var(--accent) 55%, transparent);
-  animation: rhFly 3.4s linear infinite;
+.rh-lane {
+  position: relative; height: 4px; border-radius: 999px;
+  background: color-mix(in oklab, var(--text) 9%, transparent);
 }
-.rh-comet:nth-of-type(2) {
-  top: 52%; animation-duration: 4.6s; animation-delay: 1.2s;
-  background: linear-gradient(90deg, transparent, var(--accent2));
-  box-shadow: 0 0 12px color-mix(in oklab, var(--accent2) 55%, transparent);
+.rh-lane b {
+  position: absolute; top: 50%; left: 0; width: 9px; height: 9px; margin-top: -4.5px;
+  border-radius: 999px; background: var(--muted); transform: translateX(-50%);
+  animation: rhRun 11s cubic-bezier(0.4, 0, 0.5, 1) infinite;
 }
-.rh-comet:nth-of-type(3) {
-  top: 82%; animation-duration: 5.6s; animation-delay: 0.6s;
-  background: linear-gradient(90deg, transparent, var(--gold));
-  box-shadow: 0 0 12px color-mix(in oklab, var(--gold) 50%, transparent);
+.rh-lane-you b {
+  background: var(--accent); width: 11px; height: 11px; margin-top: -5.5px;
+  box-shadow: 0 0 10px color-mix(in oklab, var(--accent) 55%, transparent);
+  animation-duration: 9s;
 }
-@keyframes rhFly { from { left: -12%; } to { left: 104%; } }
+.rh-lane-2 b { background: var(--accent2); animation-duration: 10s; animation-delay: -1.4s; }
+.rh-lane-3 b { background: var(--gold); animation-duration: 12s; animation-delay: -3s; }
+/* The lane fills behind each runner, so progress reads even mid-loop. */
+.rh-lane::after {
+  content: ''; position: absolute; inset: 0 auto 0 0; border-radius: 999px;
+  background: color-mix(in oklab, var(--text) 22%, transparent);
+  animation: rhFill 11s cubic-bezier(0.4, 0, 0.5, 1) infinite;
+}
+.rh-lane-you::after { background: color-mix(in oklab, var(--accent) 55%, transparent); animation-duration: 9s; }
+.rh-lane-2::after { background: color-mix(in oklab, var(--accent2) 40%, transparent); animation-duration: 10s; animation-delay: -1.4s; }
+.rh-lane-3::after { background: color-mix(in oklab, var(--gold) 40%, transparent); animation-duration: 12s; animation-delay: -3s; }
+/* Runners fade out at the line and fade back in at the start, so the loop
+   never snaps. */
+@keyframes rhRun {
+  0% { left: 0; opacity: 0; } 7% { opacity: 1; }
+  84% { left: 100%; opacity: 1; } 94%, 100% { left: 100%; opacity: 0; }
+}
+@keyframes rhFill {
+  0% { width: 0; opacity: 0; } 7% { opacity: 1; }
+  84% { width: 100%; opacity: 1; } 94%, 100% { width: 100%; opacity: 0; }
+}
+.rh-finish {
+  position: absolute; right: 0; top: -5px; bottom: -5px;
+  display: flex; align-items: center; padding-left: 6px;
+  border-left: 2px dashed color-mix(in oklab, var(--gold) 45%, transparent);
+}
+.rh-finish .ic { color: var(--gold); }
 .race-banner-txt { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 2px; }
 .race-hall-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em; }
 .race-hall-sub { color: var(--text-dim); max-width: 58ch; }
@@ -820,9 +842,10 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 }
 .race-hall:hover .race-hall-cta { box-shadow: 0 10px 24px color-mix(in oklab, var(--accent) 45%, transparent); }
 @media (prefers-reduced-motion: reduce) {
-  .rh-comet { animation: none; left: 68%; }
-  .rh-comet:nth-of-type(2) { left: 38%; }
-  .rh-comet:nth-of-type(3) { left: 14%; }
+  .rh-lane b, .rh-lane::after { animation: none; }
+  .rh-lane-you b { left: 78%; } .rh-lane-you::after { width: 78%; }
+  .rh-lane-2 b { left: 54%; } .rh-lane-2::after { width: 54%; }
+  .rh-lane-3 b { left: 36%; } .rh-lane-3::after { width: 36%; }
 }
 
 /* ---------- Duel intro: compact, fits without scrolling ---------- */
@@ -961,31 +984,19 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   .lobby-pulse { animation: none; opacity: 0.9; }
 }
 
-/* ---------- Block Stack: split blueprint / construction site ---------- */
-.stack-split { display: grid; grid-template-columns: 1fr 360px; gap: 14px; padding: 16px; align-items: stretch; }
-@media (max-width: 760px) { .stack-split { grid-template-columns: 1fr; } .stack-site { height: 320px !important; } }
-.stack-typepanel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
-.stack-typepanel .stack-word { font-size: clamp(1.6rem, 3.8vw, 2.3rem); padding: 0; }
+/* ---------- Block Stack: the construction site ----------
+   The band above it lives in arena.css with the rest of the stage; the split
+   layout it used to sit in is gone, the stage owns that now. */
+/* No border of its own: the stage's side panel is already a framed rectangle,
+   and two rounded frames around one canvas read as a picture of a game rather
+   than a game. Just the sky the tower stands against. */
 .stack-site {
-  position: relative; border-radius: 16px; overflow: hidden;
-  background:
-    linear-gradient(180deg, color-mix(in oklab, var(--accent2) 7%, transparent), transparent 40%),
-    color-mix(in oklab, var(--text) 3%, var(--bg));
-  border: 1px solid var(--border);
+  position: relative; border-radius: 12px; overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent2) 14%, transparent), transparent 62%);
 }
-.stack-crane2 { position: absolute; top: 0; left: 0; right: 0; height: 64px; z-index: 5; }
-.stack-crane2 .stack-crane-arm { position: absolute; top: 10px; left: 4%; right: 4%; height: 7px; border-radius: 4px; background: var(--surface2); border: 1px solid var(--border); }
-.stack-crane2 .stack-crane-cable { position: absolute; top: 17px; left: 50%; width: 2px; height: 16px; background: var(--muted); }
-.stack-crane2 .stack-preview { top: 33px; height: 27px; font-size: 0.85rem; }
-.stack-world { position: absolute; left: 0; right: 0; bottom: 0; transition: transform 0.4s ease; }
-.stack-column { display: flex; flex-direction: column-reverse; align-items: center; gap: 3px; padding-bottom: 14px; }
-.stack-column .stack-block { height: 27px; flex: none; }
-.stack-marks { position: absolute; inset: 0; pointer-events: none; }
-.stack-mark { position: absolute; right: 8px; font-size: 0.68rem; color: var(--muted); opacity: 0.7; }
-.stack-mark::before { content: ''; position: absolute; right: 18px; top: 50%; width: 26px; height: 1.5px; background: color-mix(in oklab, var(--muted) 45%, transparent); }
-.stack-bestline { position: absolute; left: 6%; right: 6%; height: 0; }
-.stack-bestline i { position: absolute; left: 0; right: 0; border-top: 2px dashed color-mix(in oklab, var(--gold) 65%, transparent); }
-.stack-bestline em { position: absolute; left: 0; top: -18px; font-style: normal; font-size: 0.68rem; font-weight: 750; color: var(--gold); }
+/* The canvas fills the site exactly. Its own drawing buffer is sized from the
+   element, so it must not be allowed to size itself from the buffer. */
+.stack-canvas { display: block; width: 100%; height: 100%; }
 
 /* ---------- Keyforge heat gauge ---------- */
 .forge-heatbar { position: relative; max-width: 440px; height: 22px; margin: 0 auto 12px; border-radius: 999px; background: var(--ring-track); border: 1px solid var(--border); overflow: hidden; }

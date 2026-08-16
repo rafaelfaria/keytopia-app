@@ -24,6 +24,13 @@ export interface Profile {
   experience: 'new' | 'some' | 'confident';
   layout: LayoutId;
   competitive: boolean;
+  /**
+   * What boards of strangers call you. Empty means the default for the
+   * division: a generated handle for a kid, the account name for everyone else.
+   * A name someone picked is the only option that is both real to them and not
+   * necessarily their real name, which is why it is offered to every age.
+   */
+  boardName?: string;
   coach: CoachStyle;
   createdAt: number;
 }
@@ -45,6 +52,12 @@ export interface Settings {
   untimed: boolean;
   unlockAll: boolean;
   hideLeaderboards: boolean;
+  /**
+   * Boards of strangers only. Family and class boards keep working, and the
+   * setting stops the upload rather than merely hiding the result — a setting
+   * that only hides is decoration. See docs/arena-leaderboards.md §12.
+   */
+  hideGlobalBoards: boolean;
   coachFreq: 'high' | 'normal' | 'low' | 'off';
   showLiveWpm: boolean;
   kidWorld?: boolean;

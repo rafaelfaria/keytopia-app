@@ -145,7 +145,8 @@ export default function KeyforgeGame() {
       icon: pick(rng.current, FORGE_ICONS),
       t: Date.now(),
     };
-    setForged((f) => { const nf = [...f, item]; forgedRef.current = nf; return nf; });
+    forgedRef.current = [...forgedRef.current, item];
+    setForged(forgedRef.current);
     setJustForged(item);
     addHeat(14);
     patch((d) => { d.forge.push(item); });

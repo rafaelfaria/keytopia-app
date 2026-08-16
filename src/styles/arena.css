@@ -1,0 +1,612 @@
+/* ===== The Arena Boards =====
+   One leaderboard skin for every mini game. Design: docs/arena-leaderboards.md.
+
+   Everything here is built from the theme tokens in base.css and nothing else,
+   because a board has to survive all twelve themes including `contrast`, where
+   --shadow is none and colour separation cannot be relied on at all. That is
+   also why rank is always a numeral: the podium tints below are decoration
+   layered on top of a number, never a replacement for one. */
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* ---------- atoms ---------- */
+
+.arena-rank {
+  display: inline-grid; place-items: center; flex: none;
+  font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+  border-radius: 9px;
+}
+.arena-rank-sm { min-width: 26px; height: 26px; font-size: 0.82rem; padding: 0 5px; }
+.arena-rank-md { min-width: 32px; height: 32px; font-size: 0.95rem; padding: 0 6px; }
+.arena-rank-lg { min-width: 46px; height: 46px; font-size: 1.4rem; padding: 0 8px; border-radius: 13px; }
+.arena-rank-none { color: var(--muted); }
+
+/* Podium. The tint is a background wash and a border, so it still reads as a
+   distinct tier in monochrome and never becomes the only carrier of meaning. */
+.arena-rank-p1 { color: var(--gold);  border-color: color-mix(in oklab, var(--gold) 60%, transparent);  background: color-mix(in oklab, var(--gold) 16%, var(--surface)); }
+.arena-rank-p2 { color: var(--text);  border-color: color-mix(in oklab, var(--text) 32%, transparent);  background: color-mix(in oklab, var(--text) 9%, var(--surface)); }
+.arena-rank-p3 { color: var(--warn);  border-color: color-mix(in oklab, var(--warn) 50%, transparent);  background: color-mix(in oklab, var(--warn) 13%, var(--surface)); }
+
+.arena-move {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 0.78rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  padding: 2px 6px; border-radius: 7px; margin-left: 8px;
+}
+.arena-move-up   { color: var(--good); background: color-mix(in oklab, var(--good) 14%, transparent); }
+.arena-move-down { color: var(--muted); background: color-mix(in oklab, var(--muted) 14%, transparent); }
+
+/* ---------- the board ---------- */
+
+/* A container, not a breakpoint. The same board renders in a wide hub panel, a
+   half-width intro column and a phone, and what has to give way is decided by
+   how much room THIS board got, not by how wide the window is. */
+.arena-board { display: flex; flex-direction: column; gap: 10px; min-width: 0; container-type: inline-size; }
+
+.arena-board-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.arena-board-head h3 { display: flex; align-items: center; gap: 7px; font-size: 1rem; }
+
+.arena-watchers {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; font-weight: 700; color: var(--good);
+}
+.arena-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--good);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--good) 60%, transparent);
+  animation: arena-pulse 2.2s ease-out infinite;
+}
+@keyframes arena-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--good) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.arena-switches { display: flex; flex-wrap: wrap; gap: 8px; }
+.arena-switches .seg-item { padding: 6px 11px; font-size: 0.84rem; }
+
+.arena-rows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.arena-row {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto auto;
+  align-items: center; gap: 10px;
+  padding: 8px 12px 8px 9px;
+  background: var(--surface2);
+  border: 1px solid transparent;
+  /* The accent edge is reserved for "you" and painted transparent otherwise, so
+     every row is the same width and nothing shifts when your position changes. */
+  border-left: 3px solid transparent;
+  border-radius: 11px;
+  min-height: 44px;                 /* a row is a touch target on the hub */
+}
+.arena-row-podium { background: color-mix(in oklab, var(--surface2) 78%, var(--surface)); }
+.arena-row-near   { border-color: color-mix(in oklab, var(--accent) 24%, transparent); }
+.arena-row-you {
+  border-left-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 10%, var(--surface2));
+}
+
+.arena-av { flex: none; border-radius: 8px; }
+.arena-name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.arena-you-tag { color: var(--accent); font-weight: 800; }
+
+.arena-metrics { display: flex; gap: 10px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.arena-score { font-weight: 800; font-variant-numeric: tabular-nums; min-width: 3.4ch; text-align: right; }
+
+/* Metrics are context, the name and the score are the row. As the board narrows
+   the context is dropped from the least useful end rather than every column
+   being squeezed until a rival's name reads "Breez…". */
+@container (max-width: 430px) { .arena-metrics > *:nth-child(n + 3) { display: none; } }
+@container (max-width: 380px) { .arena-metrics > *:nth-child(n + 2) { display: none; } }
+/* On a phone the last metric goes too. Who is on the board and what they scored
+   is the whole message; a truncated "Breezyl…" beside a wpm is neither. */
+@container (max-width: 335px) { .arena-metrics { display: none; } }
+
+.arena-gap { text-align: center; color: var(--muted); letter-spacing: 4px; padding: 2px 0; }
+
+/* Skeletons reserve the exact row height, so landing data never shoves the
+   play button down the page. Rule 1: the board must not move the game. */
+.arena-skel { background: var(--surface2); opacity: 0.55; animation: arena-shimmer 1.4s ease-in-out infinite; }
+.arena-rows-skel .arena-row:nth-child(2n) { animation-delay: 0.18s; }
+@keyframes arena-shimmer { 50% { opacity: 0.28; } }
+
+/* A board nobody has posted to. Unclaimed places, not an apology: the numbered
+   rows sit there empty and your row is already pinned at the bottom. */
+.arena-unclaimed { display: flex; flex-direction: column; gap: 10px; }
+/* Open seats sit directly under the real rows and share their rhythm, so the
+   board reads as one list that runs out of people rather than two lists. */
+.arena-seats { margin-top: 4px; }
+.arena-board-fill .arena-seats { flex: 1; justify-content: flex-start; }
+.arena-row-open {
+  background: color-mix(in oklab, var(--surface2) 55%, transparent);
+  border: 1px dashed color-mix(in oklab, var(--border) 90%, transparent);
+  border-left: 3px solid transparent;
+  /* Fades down the list, but never past legibility: at ten seats the old
+     0.13-per-row ramp went negative and the bottom of the board vanished.
+     The floor is what keeps rank 10 a visible place rather than a blank. */
+  opacity: max(0.42, calc(1 - var(--i) * 0.07));
+}
+.arena-row-open .arena-rank { opacity: 0.6; }
+.arena-open-av { width: 26px; height: 26px; border-radius: 8px; background: color-mix(in oklab, var(--text) 9%, transparent); }
+.arena-open-name { height: 10px; border-radius: 999px; width: min(52%, 170px); background: color-mix(in oklab, var(--text) 9%, transparent); }
+.arena-open-score { height: 10px; border-radius: 999px; width: 38px; background: color-mix(in oklab, var(--text) 9%, transparent); margin-left: auto; }
+.arena-row-waiting .arena-metrics { color: var(--muted); font-style: italic; }
+.arena-unclaimed-note { font-size: 0.86rem; color: var(--muted); margin: 0; }
+.arena-unclaimed-note strong { color: var(--text); }
+
+.arena-target {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  padding: 10px 12px; border-radius: 11px;
+  background: color-mix(in oklab, var(--accent) 11%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--accent) 34%, transparent);
+  color: var(--text); font-size: 0.92rem;
+}
+.arena-target strong { font-variant-numeric: tabular-nums; }
+.arena-target-lead  { background: color-mix(in oklab, var(--gold) 12%, var(--surface)); border-color: color-mix(in oklab, var(--gold) 40%, transparent); }
+.arena-target-quiet { background: var(--surface2); border-color: var(--border); color: var(--muted); }
+
+.arena-note { display: flex; align-items: center; gap: 6px; }
+
+/* Paging is a growing window, not numbered pages: the top of a board and your
+   own neighbourhood are the parts that mean anything, and both stay on screen
+   as it grows. The count says what is still below you so the button is a
+   decision rather than a shrug. */
+.arena-more {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; min-height: 42px; padding: 10px 14px;
+  border-radius: 11px; cursor: pointer;
+  font: inherit; font-size: 0.88rem; font-weight: 700;
+  color: var(--text-dim);
+  background: var(--surface2); border: 1px dashed var(--border);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.arena-more:hover { color: var(--text); border-color: color-mix(in oklab, var(--accent) 45%, var(--border)); }
+
+/* ---------- surface two: the pre-game panel ---------- */
+
+/* The stage. Every phase of a mini game sits in this one shell: two full-height
+   columns over a 3D keycap field, a constant way out, and a constant rhythm.
+   A game that changed shape between starting, playing and finishing reorganised
+   itself twice while the learner was still in it. */
+.arena-stage {
+  position: relative;
+  display: flex; flex-direction: column;
+  padding: 16px 34px 34px;
+  isolation: isolate;
+  /* The page IS the panel. No card, no border, no shadow: three nested frames
+     around a game's front door was two too many, and the backdrop wants the
+     whole area rather than a rounded rectangle in the middle of it.
+     The negative margins cancel `.main`'s padding exactly (app.css:40), which is
+     why they are written as the same clamp rather than a round number. */
+  margin: -26px calc(-1 * clamp(16px, 4vw, 44px)) -60px;
+  height: 100dvh; min-height: 540px;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.arena-stage-top { display: flex; align-items: center; gap: 16px; flex: none; min-height: 44px; }
+
+/* The running game's score and clock. A strip across the stage rather than a
+   bar on a card, so the numbers sit in the same place in every game. */
+.arena-hud {
+  display: flex; align-items: center; gap: 18px; flex: 1; flex-wrap: wrap;
+  font-weight: 700; font-variant-numeric: tabular-nums; font-size: 0.92rem;
+  color: var(--text-dim);
+}
+.arena-hud b { color: var(--text); font-size: 1.05rem; }
+.arena-hud .grow { flex: 1; }
+.arena-hud-clock { font-size: 1.15rem; font-weight: 800; color: var(--text); }
+.arena-hud-clock.bad { color: var(--bad); }
+
+.arena-stage-grid {
+  flex: 1; min-height: 0;
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+  gap: 30px; padding-top: 14px; align-items: stretch;
+}
+.arena-stage-solo .arena-stage-grid { grid-template-columns: minmax(0, 1fr); }
+.arena-stage-solo .arena-stage-main { max-width: 62ch; margin: 0 auto; }
+
+.arena-stage-main { display: flex; flex-direction: column; min-height: 0; }
+
+/* The right column is a panel: the board, or the game's own world. Same frame
+   either way, which is what makes play and standings feel like one screen. */
+.arena-stage-side {
+  display: flex; flex-direction: column; min-height: 0;
+  background: color-mix(in oklab, var(--bg2) 88%, transparent);
+  backdrop-filter: blur(7px);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px;
+}
+
+.arena-stage-kicker {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 0.76rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--game-hue, var(--accent)); margin: 0;
+}
+
+/* While a game is running the backdrop holds still and steps further back:
+   scenery must not compete with the word someone is trying to type. */
+.arena-stage-quiet .arena-hero-veil {
+  background:
+    linear-gradient(to bottom,
+      color-mix(in oklab, var(--surface) 82%, transparent),
+      color-mix(in oklab, var(--surface) 90%, transparent));
+}
+
+/* The only chrome the front door needs. */
+.arena-back {
+  flex: none; z-index: 2;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px 8px 10px; border-radius: 999px;
+  min-height: 40px;
+  font-size: 0.88rem; font-weight: 700; text-decoration: none;
+  color: var(--text-dim);
+  background: color-mix(in oklab, var(--surface) 76%, transparent);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(6px);
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+.arena-back .ic { transform: rotate(180deg); }
+.arena-back:hover { color: var(--text); border-color: color-mix(in oklab, var(--accent) 45%, var(--border)); }
+
+.arena-hero { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; }
+.arena-hero-canvas { width: 100%; height: 100%; display: block; }
+/* The field is scenery. This veil is what keeps it scenery: text and the board
+   sit on it, so contrast is guaranteed by the wash rather than by hoping the
+   3D happens to be dark enough where a word lands. */
+.arena-hero-veil {
+  position: absolute; inset: 0;
+  background:
+    /* Opaque exactly where the headline and body copy sit, and nowhere else.
+       A flat wash across the whole panel is what buried the field on the first
+       attempt: it cost the scenery everything to protect text occupying a
+       quarter of the frame. */
+    radial-gradient(60% 50% at 2% 20%,
+      color-mix(in oklab, var(--surface) 95%, transparent) 0 48%,
+      color-mix(in oklab, var(--surface) 62%, transparent) 72%,
+      transparent 90%),
+    radial-gradient(110% 80% at 78% 4%, color-mix(in oklab, var(--game-hue, var(--accent)) 20%, transparent), transparent 62%),
+    linear-gradient(to bottom,
+      color-mix(in oklab, var(--surface) 26%, transparent),
+      color-mix(in oklab, var(--surface) 58%, transparent));
+}
+
+/* Top-aligned, so the kicker starts on the same line as the board's header and
+   the two columns share a baseline. What must NOT come back is stretching the
+   CTA to the bottom edge with margin-top:auto — that was the actual cause of
+   the button stranding on short windows, and centring the whole column was a
+   worse fix for it: it left the page with no shared top edge at all. */
+.arena-intro-play, .arena-result {
+  display: flex; flex-direction: column; align-items: flex-start;
+  justify-content: flex-start; gap: 13px;
+}
+.arena-stage-main h2 { font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.1rem); line-height: 1.12; }
+.arena-intro-body { color: var(--text-dim); max-width: 46ch; }
+.arena-intro-body p { margin: 0; }
+
+/* A personal best as figures under words, not as a sentence. */
+.arena-figures { display: flex; gap: 10px; flex-wrap: wrap; margin: 2px 0 0; }
+.arena-figures > div {
+  padding: 9px 14px; border-radius: 12px;
+  background: color-mix(in oklab, var(--surface2) 82%, transparent);
+  border: 1px solid var(--border);
+}
+.arena-figures dt { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); font-weight: 700; }
+.arena-figures dd { margin: 2px 0 0; font-size: 1.25rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.arena-intro-cta { margin-top: 6px; }
+
+/* Fill mode: the rows take the slack and the target line stays pinned to the
+   bottom edge, so the board reads as a full column rather than a short list
+   with dead space under it. */
+.arena-board-fill { flex: 1; min-height: 0; }
+.arena-board-fill .arena-scroll {
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; gap: 4px;
+  /* Room for the scrollbar so the last row does not sit under it. */
+  padding-right: 2px;
+}
+.arena-board-fill .arena-rows-grow { justify-content: flex-start; }
+.arena-scroll { display: flex; flex-direction: column; gap: 4px; }
+
+@media (max-width: 900px) {
+  /* The board moves below the button rather than beside it. The first thing a
+     thumb reaches on a phone stays the game. */
+  .arena-stage {
+    padding: 10px 16px 24px;
+    /* Bottom padding is NOT cancelled here: `.main` reserves 90px for the
+       bottom nav, and pulling it back would run the board under the tab bar. */
+    margin: -14px -14px 0; height: auto; min-height: 0;
+  }
+  /* One scroll on a phone, the page's. An inner scroller inside a page that
+     also scrolls is a trap for a thumb. */
+  .arena-board-fill .arena-scroll { overflow: visible; }
+  /* The stage still covers the screen, so the backdrop does not stop halfway
+     down and leave a slab of raw page under it. Header and bottom nav are the
+     two chrome bars it sits between. */
+  .arena-stage { min-height: calc(100dvh - 132px); }
+  /* A single-column stage gives the side panel no height of its own, and the
+     playfield collapsed to a strip. */
+  /* The board panel, which has no height of its own once the columns stack.
+     The playfield does not go through here: it is sized with the stacked
+     stage further down, and a rule here would sit ahead of that one in source
+     order and win at every width. */
+  .arena-stage-side { min-height: 48vh; }
+  .arena-stage-grid { grid-template-columns: 1fr; gap: 18px; padding-top: 12px; }
+  .arena-intro-play, .arena-result { align-items: center; text-align: center; }
+  .arena-intro-play .chip, .arena-result .chip { align-self: center; }
+  /* Equal columns rather than wrapping two-then-one, which left the last
+     figure stranded on its own line looking like a different kind of thing. */
+  .arena-figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+  .arena-figures > div { padding: 9px 6px; text-align: center; }
+  .arena-figures dt { font-size: 0.62rem; letter-spacing: 0.04em; }
+  .arena-figures dd { font-size: 1.15rem; }
+  .arena-intro .arena-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .arena-intro-cta { margin-top: 4px; }
+
+  /* The desktop wash is anchored to the left, where the copy lives there. On a
+     phone the column is centred and full width, so the same gradient leaves
+     body text sitting directly on the keycaps. Here the protection is a
+     top-down band over the text and the field is left to fill below it. */
+  .arena-hero-veil {
+    background:
+      linear-gradient(to bottom,
+        color-mix(in oklab, var(--surface) 93%, transparent) 0 56%,
+        color-mix(in oklab, var(--surface) 60%, transparent) 76%,
+        color-mix(in oklab, var(--surface) 42%, transparent) 100%),
+      radial-gradient(110% 55% at 78% 4%, color-mix(in oklab, var(--game-hue, var(--accent)) 18%, transparent), transparent 62%);
+  }
+}
+
+/* ---------- surface three: the rank reveal ---------- */
+
+.arena-result {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 30px 20px 26px; text-align: center;
+}
+.arena-result-ic { color: var(--accent); }
+.arena-result h2 { font-size: 1.45rem; }
+
+/* Two labelled zones — "Your run" and "Where that puts you" — because the first
+   version of this screen stacked a score, three figures, two kinds of chip, a
+   rank badge and a board in one centred column, and nothing told you which
+   number answered which question. The rule is the separator; the label is the
+   answer to "what am I looking at". */
+.arena-sec {
+  width: 100%; max-width: 540px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  margin-top: 8px;
+}
+.arena-sec-t {
+  width: 100%; display: flex; align-items: center; gap: 12px;
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin: 0;
+}
+.arena-sec-t::before, .arena-sec-t::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.arena-result-score { display: flex; align-items: baseline; gap: 8px; }
+.arena-result-num {
+  font-size: clamp(2.8rem, 2rem + 3vw, 3.6rem); font-weight: 800; line-height: 1;
+  /* Tabular figures so the count-up does not reflow on every frame, tightened
+     because at this size their sidebearings make "111" read as three separate
+     digits. */
+  font-variant-numeric: tabular-nums; letter-spacing: -0.035em;
+  color: var(--accent);
+}
+.arena-result-num-l { color: var(--muted); font-weight: 700; }
+
+/* Figure over label, one tile each. The previous inline run ("42 wpm 83%
+   accurate 29 blocks") made three separate measurements read as one phrase. */
+.arena-tiles { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 0; }
+.arena-tiles > div {
+  min-width: 92px; padding: 10px 14px; border-radius: 13px;
+  background: var(--surface2); border: 1px solid var(--border);
+}
+.arena-tiles dd { margin: 0; font-size: 1.5rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.arena-tiles dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; margin-top: 3px; }
+
+/* Rewards, gold counts and the coaching line. Grouped and quieted so they read
+   as footnotes to the run rather than as more results. */
+.arena-result-extras {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding-top: 4px;
+}
+.arena-result-extras .row { justify-content: center; }
+
+.arena-result-board { text-align: left; align-items: stretch; }
+.arena-result-standing {
+  display: flex; align-items: center; gap: 13px;
+  padding: 10px 12px; border-radius: 13px;
+  background: color-mix(in oklab, var(--accent) 9%, var(--surface2));
+  border: 1px solid color-mix(in oklab, var(--accent) 26%, transparent);
+}
+.arena-result-standing-txt { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px; }
+.arena-result-standing-txt strong { font-size: 1.35rem; line-height: 1; }
+
+/* The reveal list is a positioning context for the FLIP travel: rows are moved
+   with transform only, so the whole sequence stays on the compositor. */
+.arena-rows-reveal { position: relative; }
+.arena-rows-reveal .arena-row { will-change: transform; }
+.arena-result-settled .arena-rows-reveal .arena-row { will-change: auto; }
+
+.arena-result-lines { display: flex; flex-direction: column; gap: 6px; }
+.arena-line { display: flex; align-items: center; gap: 7px; font-size: 0.92rem; color: var(--text-dim); margin: 0; }
+.arena-line-good { color: var(--good); font-weight: 600; }
+.arena-line-ribbon { color: var(--gold); font-weight: 700; }
+.arena-line-target {
+  padding: 9px 11px; border-radius: 10px;
+  background: color-mix(in oklab, var(--accent) 11%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--accent) 32%, transparent);
+  color: var(--text);
+}
+
+.arena-result-cta { margin-top: 8px; }
+
+/* ---------- hub standings strip ---------- */
+
+.arena-standing-strip {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 0.84rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.arena-standing-strip .arena-of { color: var(--muted); font-weight: 600; }
+.arena-standing-unranked { color: var(--muted); font-weight: 600; }
+
+/* ---------- motion ---------- */
+
+/* Nothing above carries information in the animation alone, so switching it all
+   off loses nothing: the reveal renders its final state, the board still shows
+   every rank, target and movement figure. */
+@media (prefers-reduced-motion: reduce) {
+  .arena-pulse { animation: none; }
+  .arena-skel  { animation: none; opacity: 0.4; }
+  .arena-rows-reveal .arena-row { transition: none !important; }
+}
+/* The in-app switch, which also covers a learner who wants calm without
+   changing an OS setting. Set by applyTheme() in src/lib/themes.ts. */
+html[data-rm='1'] .arena-pulse,
+html[data-rm='1'] .arena-skel { animation: none; }
+
+
+/* ---------- the running game inside the stage ---------- */
+
+/* The playfield keeps a fixed height and centres in the panel rather than
+   stretching. Everything inside it is absolutely positioned, so without a
+   height of its own it collapses to its border and the game vanishes.
+   StackGame measures this box for its camera pan, so the number can live
+   here in CSS and change per breakpoint without the tower drifting. */
+/* ---------- the word, beside the tower ---------- */
+
+/* The playfield takes the side column's height. */
+.arena-stage-side > .stack-site {
+  flex: 1 1 auto; width: 100%; margin: auto 0;
+  min-height: 300px; max-height: 560px;
+}
+
+/* The word panel. Centred in its column, because everything in it is read in
+   one vertical glance: what to type, how the block is doing, what is next. */
+.stack-band {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; text-align: center;
+}
+.stack-band .stack-word {
+  font-size: clamp(1.7rem, 1.1rem + 2.2vw, 2.6rem);
+  padding: 0; line-height: 1.15;
+}
+.stack-band-meta {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;
+  min-height: 30px;
+}
+/* The next word is a preview, not an instruction: same monospace as the word
+   you are typing so the shape is familiar when it arrives, but quieter. */
+.stack-next {
+  font-family: var(--font-type); font-size: 0.95rem; color: var(--text-dim);
+  display: inline-flex; align-items: baseline; gap: 7px;
+}
+.stack-next .muted { font-family: inherit; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+/* Block, not flex: when the hint wraps to two lines a flex row leaves the bulb
+   stranded beside the middle of the paragraph instead of in front of it. */
+.stack-band .stack-hint { margin: 0; text-align: center; display: block; max-width: 46ch; }
+.stack-band .stack-hint svg { vertical-align: -2px; margin-right: 3px; }
+
+/* The last landing. One line that changes, rather than a log: it is read in
+   the corner of the eye between words, so it has to be the same shape every
+   time and hold its space when there is nothing to say. */
+.stack-verdict {
+  margin: 0; min-height: 1.4em; font-size: 0.9rem; font-weight: 650;
+  display: flex; align-items: center; gap: 6px;
+  animation: stackVerdict 0.28s ease;
+}
+.stack-verdict svg { vertical-align: -2px; }
+.stack-verdict span { display: inline-flex; align-items: center; gap: 6px; }
+.stack-v-perfect { color: var(--gold); }
+@keyframes stackVerdict { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* How much footing is left under the tower, which is the same number the
+   building is drawn from, so the HUD and the tower cannot disagree. */
+.stack-footing { display: inline-flex; align-items: center; gap: 7px; color: var(--text-dim); }
+.stack-footing i {
+  display: block; width: 78px; height: 7px; border-radius: 999px;
+  background: color-mix(in oklab, var(--muted) 28%, transparent); overflow: hidden;
+}
+.stack-footing i b {
+  display: block; height: 100%; border-radius: 999px;
+  background: var(--accent); transition: width 0.35s ease, background 0.35s ease;
+}
+.stack-footing.bad { color: var(--bad); }
+.stack-footing.bad i b { background: var(--bad); }
+
+/* The pace bar drains over exactly as long as this word takes at the learner's
+   own speed, so finishing before it empties is what widens the storey. Three
+   layers on one clock: the fill drains, and on the same delay the track turns
+   and a caption arrives, so running out is an event rather than a bar that
+   quietly stops. All CSS, so it stays smooth without a JS tick. */
+.stack-pace {
+  position: relative;
+  width: min(280px, 80%); height: 5px; border-radius: 999px;
+  background: color-mix(in oklab, var(--muted) 22%, transparent);
+  /* Room for the overrun caption, which is positioned out of flow. Reserved
+     whether or not it is showing, so nothing moves when it arrives and it
+     never lands on the chips underneath. */
+  margin-bottom: 18px;
+}
+.stack-pace i {
+  display: block; height: 100%; width: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transform-origin: left center;
+  animation: stackPace linear forwards;
+}
+/* The overrun: once the word costs you width, the track says so. */
+.stack-pace b {
+  position: absolute; inset: 0; border-radius: 999px; opacity: 0;
+  background: var(--bad);
+  /* No backwards fill: during the delay the element must keep its own opacity
+     of 0, or the "you are late" state would be painted from the first frame. */
+  animation: stackLate 0.9s ease-in-out infinite;
+}
+.stack-pace em {
+  position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+  font-style: normal; font-size: 0.68rem; font-weight: 750; letter-spacing: 0.04em;
+  color: var(--bad); white-space: nowrap; opacity: 0;
+  animation: stackLateLabel 0.2s ease forwards;
+}
+@keyframes stackPace { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@keyframes stackLate { 0%, 100% { opacity: 0.22; } 50% { opacity: 0.5; } }
+@keyframes stackLateLabel { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  /* The drain and the overrun are information, not decoration, so they stay.
+     Only the pulse goes. */
+  .stack-pace b { animation: stackLateLabel 0.2s ease forwards; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack-verdict { animation: none; }
+}
+
+/* The result screen shares the intro's column rhythm. */
+.arena-result { gap: 12px; }
+.arena-result h2 { display: flex; align-items: center; gap: 10px; }
+.arena-result-ic { display: inline-flex; color: var(--game-hue, var(--accent)); }
+/* A container like .arena-board, so the same "drop the metrics before you
+   truncate the name" rules apply on the finish screen. Without it the reveal
+   board squeezed names to "Ms Rivera (yo…" on a phone. */
+.arena-result-board {
+  display: flex; flex-direction: column; gap: 10px; min-height: 0; flex: 1;
+  container-type: inline-size;
+}
+.arena-result-board .arena-rows-reveal { flex: none; }
+.arena-result-lines { margin-top: auto; }
+
+
+/* A settings field that is a decision, not a switch. */
+.set-field { display: flex; flex-direction: column; gap: 6px; padding: 12px 2px; }
+.set-field-label { font-weight: 700; }
+.set-field .ob-input { max-width: 320px; }
+.set-field small { max-width: 62ch; }
+.set-field .warnline { color: var(--warn); }

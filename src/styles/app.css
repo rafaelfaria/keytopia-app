@@ -1470,21 +1470,24 @@ a.who-add-link { text-decoration: none; }
 
 .xb-panel { padding-top: 8px; }
 .xb-tabs {
-  display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--border);
-  margin: 0 -6px 16px; padding: 0 6px 8px; scrollbar-width: thin;
+  display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--border);
+  margin: 0 -6px 16px; padding: 0 6px 8px;
 }
 .xb-tab {
-  flex: none; min-width: 72px; min-height: 56px;
+  flex: 1 1 auto; min-height: 56px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  padding: 8px 10px; border: none; border-radius: 12px; background: none;
+  padding: 8px 6px; border: none; border-radius: 12px; background: none;
   color: var(--muted); cursor: pointer; position: relative;
   transition: background 0.15s ease, color 0.15s ease;
 }
 .xb-tab:hover { background: var(--surface2); color: var(--text); }
-.xb-tab small { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.xb-tab small {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 .xb-tab.on { color: var(--accent); background: color-mix(in oklab, var(--accent) 12%, transparent); }
 .xb-tab.on::after {
-  content: ''; position: absolute; left: 12px; right: 12px; bottom: -9px;
+  content: ''; position: absolute; left: 12px; right: 12px; bottom: 4px;
   height: 2px; border-radius: 2px; background: var(--accent);
 }
 

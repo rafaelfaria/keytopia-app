@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useData } from '../lib/store';
-import { Card, Chip } from '../components/ui';
+import { Chip } from '../components/ui';
 import { Ic } from '../components/icons';
 import { ARENA_GAMES, ARENA_LIST, type ArenaGame } from '../lib/arena';
 
@@ -248,12 +248,6 @@ export default function Games() {
         </>
       )}
 
-      {!kid && (
-        <Card style={{ marginTop: 18 }} className="card">
-          <h3><Ic n="users" size={17} /> Cooperative missions</h3>
-          <p className="small muted">Team typing missions, where two players share one transmission and type alternating lines, are designed and coming with online play. <Chip>Concept preview</Chip></p>
-        </Card>
-      )}
     </div>
   );
 }

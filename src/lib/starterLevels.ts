@@ -57,6 +57,13 @@ export interface StarterLevel {
 
 const HOME4 = 'fjdk';
 const HOME = 'fjdksla';
+/**
+ * The home row with g on the end, for the one level that needs eight different
+ * letters at once. Paint Reveal gives every tile its own letter, so a pool
+ * smaller than the grid quietly builds a smaller grid: level two asked for
+ * eight patches from seven letters and cleared itself at "7 of 8".
+ */
+const HOME8 = 'fjdkslag';
 const VOWELS = 'fjdkslaeiou';
 const TOP = 'fjdkslaeiouqwrtyp';
 const MOST = 'fjdkslaeiouqwrtypzxcvbnm';
@@ -78,7 +85,7 @@ export const STARTER_LADDERS: Record<StarterGameId, StarterLevel[]> = {
   /** Paint Reveal: the canvas grows and the letters spread out. */
   paint: [
     { name: 'Six patches', chars: HOME, goal: 6, cols: 3, rows: 2 },
-    { name: 'Eight patches', chars: HOME, goal: 8, cols: 4, rows: 2 },
+    { name: 'Eight patches', chars: HOME8, goal: 8, cols: 4, rows: 2 },
     { name: 'Vowels join in', chars: VOWELS, goal: 10, cols: 5, rows: 2 },
     { name: 'Twelve patches', chars: TOP, goal: 12, cols: 4, rows: 3 },
     { name: 'Sixteen patches', chars: TOP, goal: 16, cols: 4, rows: 4 },

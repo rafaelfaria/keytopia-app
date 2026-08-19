@@ -107,7 +107,10 @@ export default function PaintRevealGame() {
     setOverInfo({
       score: cur.score, cleared, who: STARTER_PALS[cur.pal].name,
       acc: result.acc, wpm: result.wpm, rewards, newBest,
-      level: at.n, goal: at.level.goal, unlocked: won,
+      // The tiles that were actually built, not what the level asked for. If a
+      // level's pool is ever smaller than its grid again, the meter says so
+      // instead of reading "7 of 8" over the word DONE.
+      level: at.n, goal: cur.tiles.length, unlocked: won,
     });
     setPhase('over');
   };

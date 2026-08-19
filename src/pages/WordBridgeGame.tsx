@@ -6,6 +6,7 @@ import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
+import { StarterScene } from '../components/starterScenes';
 import { Ic } from '../components/icons';
 import { MobileKeys, STARTER_PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -189,6 +190,7 @@ export default function WordBridgeGame() {
         title="Build the bridge, word by word"
         onPlay={start}
         cta="Lay the first plank →"
+        side={<StarterScene game="bridge" />}
         stats={best ? [
           { label: 'Best score', value: best.score },
           { label: 'Most planks', value: best.level },
@@ -239,7 +241,7 @@ export default function WordBridgeGame() {
             <span><b>{s.built}</b> of {PLANKS} planks</span>
             <span><b>{s.score}</b> points</span>
             <span className="grow" />
-            <span className="wb-nolose"><Ic n="heart" size={14} /> a wrong key never restarts a word</span>
+            <span className="st-promise"><Ic n="heart" size={14} /> a wrong key never restarts a word</span>
           </>
         )}
         main={(

@@ -7,6 +7,7 @@ import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
+import { StarterScene } from '../components/starterScenes';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -379,6 +380,7 @@ export default function LetterFallGame() {
         title="Catch the falling letters"
         onPlay={start}
         cta="Open the basket →"
+        side={<StarterScene game="letterfall" />}
         stats={best ? [
           { label: 'Best score', value: best.score },
           { label: 'Most letters', value: best.level },

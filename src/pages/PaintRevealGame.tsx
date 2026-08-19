@@ -6,6 +6,7 @@ import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
+import { StarterScene } from '../components/starterScenes';
 import { Ic } from '../components/icons';
 import { MobileKeys, STARTER_PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -180,6 +181,7 @@ export default function PaintRevealGame() {
         title="Uncover the hidden pal"
         onPlay={start}
         cta="Start scratching →"
+        side={<StarterScene game="paint" />}
         stats={best ? [
           { label: 'Best score', value: best.score },
           { label: 'Most patches', value: best.level },
@@ -230,7 +232,7 @@ export default function PaintRevealGame() {
             <span><b>{TILES - left}</b> of {TILES} uncovered</span>
             <span><b>{s.score}</b> points</span>
             <span className="grow" />
-            <span className="pr-nolose"><Ic n="heart" size={14} /> any letter works</span>
+            <span className="st-promise"><Ic n="heart" size={14} /> any letter works</span>
           </>
         )}
         main={(

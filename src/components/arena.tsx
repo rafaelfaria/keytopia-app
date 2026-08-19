@@ -509,6 +509,15 @@ export interface ArenaIntroProps {
    * as prose or not at all.
    */
   stats?: { label: string; value: ReactNode }[];
+  /**
+   * What fills the second column when this game has no board.
+   *
+   * A ranked game's front door is "here is where you stand"; an unranked one had
+   * nothing there at all, which left the six starters opening on a paragraph
+   * beside a gap. This is where each of them puts a small still view of its own
+   * world, so the front door shows the place you are about to be.
+   */
+  side?: ReactNode;
 }
 
 /**
@@ -517,7 +526,7 @@ export interface ArenaIntroProps {
  * mobile the columns stack with the board BELOW the button, so the first thing
  * a thumb reaches is still the game.
  */
-export function ArenaIntro({ game, title, children, onPlay, cta, stats, backTo }: ArenaIntroProps) {
+export function ArenaIntro({ game, title, children, onPlay, cta, stats, side, backTo }: ArenaIntroProps) {
   const data = useData();
   const spec = arenaGame(game);
   if (!spec) return null;
@@ -553,7 +562,7 @@ export function ArenaIntro({ game, title, children, onPlay, cta, stats, backTo }
            top ten waiting to be filled. Anything beyond that is one click away
            rather than scrolled past. */
         <ArenaBoard game={game} limit={10} fill />
-      ) : undefined}
+      ) : side}
     />
   );
 }

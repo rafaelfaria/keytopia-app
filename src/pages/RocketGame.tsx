@@ -5,6 +5,7 @@ import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
+import { StarterScene } from '../components/starterScenes';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -173,6 +174,7 @@ export default function RocketGame() {
         title="Fly the alphabet to the moon"
         onPlay={start}
         cta="Start the countdown →"
+        side={<StarterScene game="rocket" />}
         stats={best ? [
           { label: 'Best score', value: best.score },
           { label: 'Furthest letter', value: (AZ[best.level - 1] ?? 'a').toUpperCase() },

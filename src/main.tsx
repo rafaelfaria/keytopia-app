@@ -58,6 +58,8 @@ import { AuthCallback, RequireAccount } from './components/Account';
 import SignIn from './pages/SignIn';
 import CreateProfile from './pages/CreateProfile';
 import JoinClass from './pages/JoinClass';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
+import { GtagLoader } from './components/analytics/GtagLoader';
 import { startSync } from './lib/syncEngine';
 import { startClassroomWatch } from './lib/classroom';
 
@@ -187,6 +189,16 @@ container.__ktRoot.render(
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      {/* Two measurements, deliberately. GA4 runs in Consent Mode with storage
+          denied, which keeps the privacy page's "no analytics cookies" true but
+          leaves it unable to tell one visitor from another: every page view
+          looks like a new person. Vercel identifies a visitor by a hash of IP,
+          user agent and a salt that rotates daily and is then thrown away, so
+          the visitor and bounce numbers are real without anything being stored
+          on the device. GA keeps the event stream; Vercel counts the people. */}
+      <GtagLoader />
+      <VercelAnalytics />
     </BrowserRouter>
   </Boundary>,
 );

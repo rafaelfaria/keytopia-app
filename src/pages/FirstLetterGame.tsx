@@ -6,6 +6,7 @@ import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
+import { StarterScene } from '../components/starterScenes';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -213,6 +214,7 @@ export default function FirstLetterGame() {
         title="What does it start with?"
         onPlay={start}
         cta="Show me the first one →"
+        side={<StarterScene game="firstletter" />}
         stats={best ? [
           { label: 'Best score', value: best.score },
           { label: 'Pictures done', value: best.level },
@@ -261,7 +263,7 @@ export default function FirstLetterGame() {
             <span><b>{s.i + (s.got ? 1 : 0)}</b> of {ROUND} pictures</span>
             <span><b>{s.score}</b> points</span>
             <span className="grow" />
-            <span className="fl-nolose"><Ic n="heart" size={14} /> no clock, no losing</span>
+            <span className="st-promise"><Ic n="heart" size={14} /> no clock, no losing</span>
           </>
         )}
         main={(

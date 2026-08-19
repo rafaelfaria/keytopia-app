@@ -1415,7 +1415,6 @@ html[data-rm='1'] .wf-caret { animation: none; }
   padding: 6px 12px; border-radius: 999px;
 }
 .ks-stop:hover, .ks-stop:focus-visible { color: var(--text); background: var(--surface2); }
-.ks-nolose { font-size: 0.82rem; font-weight: 650; color: var(--good); display: inline-flex; align-items: center; gap: 5px; }
 
 @media (max-width: 900px) {
   .ks-meadow { min-height: 160px; }
@@ -1660,7 +1659,6 @@ html[data-rm='1'] .wf-caret { animation: none; }
 }
 @keyframes prIn { from { opacity: 0; transform: scale(0.7); } }
 .pr-meta { display: flex; align-items: center; gap: 12px; min-height: 30px; }
-.pr-nolose { font-size: 0.82rem; font-weight: 650; color: var(--good); display: inline-flex; align-items: center; gap: 5px; }
 
 @media (max-width: 900px) {
   .pr-board { min-height: 190px; }
@@ -1732,7 +1730,6 @@ html[data-rm='1'] .wf-caret { animation: none; }
 .fl-hint strong { color: var(--accent); font-family: var(--font-type); }
 .fl-hint svg { vertical-align: -3px; margin-right: 6px; }
 .fl-meta { display: flex; align-items: center; gap: 12px; min-height: 30px; }
-.fl-nolose { font-size: 0.82rem; font-weight: 650; color: var(--good); display: inline-flex; align-items: center; gap: 5px; }
 
 @media (max-width: 900px) {
   .fl-pic { min-height: 170px; }
@@ -1850,7 +1847,6 @@ html[data-rm='1'] .wf-caret { animation: none; }
 .wb-hint strong { color: var(--accent); font-family: var(--font-type); }
 .wb-hint svg { vertical-align: -3px; margin-right: 6px; }
 .wb-meta { display: flex; align-items: center; gap: 12px; min-height: 30px; }
-.wb-nolose { font-size: 0.82rem; font-weight: 650; color: var(--good); display: inline-flex; align-items: center; gap: 5px; }
 
 @media (max-width: 900px) {
   .wb-river { min-height: 165px; }
@@ -1862,4 +1858,203 @@ html[data-rm='1'] .wf-caret { animation: none; }
 @media (prefers-reduced-motion: reduce) {
   .wb-water i, .wb-deck .wb-laid { animation: none; }
   .wb-walker { transition: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Starter front doors — the small still world beside each intro
+   ---------------------------------------------------------------------------
+   Same chunky vocabulary as the games themselves, at half the size. Every
+   colour is a theme token, and the only motion in any of them is a drift or a
+   flicker, because this is a screen someone is meant to read and press a button
+   on rather than watch. */
+
+.ss-frame {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  min-height: 260px; padding: 4px;
+}
+.ss {
+  /* Fills the column rather than sitting as a small card in the middle of it.
+     Every scene is laid out in percentages, so they all take the column's shape
+     instead of holding a fixed one. */
+  position: relative; width: 100%; height: 100%;
+  max-width: 460px; min-height: 260px; max-height: 460px;
+  border-radius: 20px; border: 3px solid var(--border); overflow: hidden;
+  box-shadow: 0 18px 40px color-mix(in oklab, var(--accent) 14%, transparent);
+}
+.ss-sun { position: absolute; top: 14px; right: 18px; color: var(--gold); opacity: 0.8; }
+
+/* --- Letter Fall: the garden --- */
+.ss-garden {
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--accent) 12%, var(--surface2)) 0%,
+    color-mix(in oklab, var(--accent2) 8%, var(--surface2)) 55%,
+    color-mix(in oklab, var(--good) 16%, var(--surface2)) 100%);
+}
+.ss-seed {
+  position: absolute; left: 62%; top: 20%; transform: translateX(-50%);
+  width: 54px; height: 54px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 1.7rem; font-weight: 800; color: #2d2a26;
+  background: var(--petal); border: 3px solid color-mix(in oklab, var(--petal) 62%, #000);
+  box-shadow: 0 5px 0 color-mix(in oklab, var(--petal) 55%, #000), inset 0 4px 0 rgba(255, 255, 255, 0.45);
+  animation: ssDrift 4.5s ease-in-out infinite alternate;
+}
+@keyframes ssDrift { from { transform: translateX(-50%) translateY(-6px) rotate(-5deg); } to { transform: translateX(-50%) translateY(8px) rotate(5deg); } }
+.ss-ground {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 38%;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--good) 45%, var(--surface2)), color-mix(in oklab, var(--good) 60%, var(--surface2)));
+  border-top: 3px solid color-mix(in oklab, var(--good) 72%, var(--border));
+}
+.ss-flower { position: absolute; bottom: 8px; transform: translateX(-50%) scale(var(--s, 1)); transform-origin: bottom center; }
+.ss-flower:nth-of-type(odd) { bottom: 30px; }
+.ss-basket { position: absolute; left: 80%; bottom: 12px; transform: translateX(-50%); filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.2)); }
+
+/* --- Key Safari: the meadow --- */
+.ss-meadow {
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--accent) 12%, var(--surface2)) 0%,
+    color-mix(in oklab, var(--good) 18%, var(--surface2)) 100%);
+}
+.ss-grass {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 46%;
+  background: color-mix(in oklab, var(--good) 46%, var(--surface2));
+  border-top: 3px solid color-mix(in oklab, var(--good) 70%, var(--border));
+}
+.ss-pal { position: absolute; transform: translateX(-50%); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.18)); }
+/* The keycap somebody is still behind. */
+.ss-hidekey {
+  position: absolute; right: 13%; bottom: 16px;
+  width: 54px; height: 48px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--key-bg); border: 2.5px solid var(--key-border);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.18);
+  animation: ssRustle 3s ease-in-out infinite;
+}
+.ss-hidekey i { font-style: normal; font-family: var(--font-type); font-size: 1.3rem; font-weight: 750; color: var(--key-text); }
+.ss-peek { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(38%); clip-path: inset(0 0 44% 0); }
+@keyframes ssRustle {
+  0%, 66%, 100% { transform: none; }
+  74% { transform: rotate(-5deg); }
+  86% { transform: rotate(5deg); }
+}
+
+/* --- Alphabet Rocket: the climb --- */
+.ss-sky {
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--accent2) 42%, #0a1030) 0%,
+    color-mix(in oklab, var(--accent2) 40%, #2a3a7a) 28%,
+    color-mix(in oklab, var(--accent) 30%, var(--surface2)) 62%,
+    color-mix(in oklab, var(--good) 22%, var(--surface2)) 100%);
+}
+.ss-moon { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); color: var(--gold); filter: drop-shadow(0 0 10px color-mix(in oklab, var(--gold) 60%, transparent)); }
+.ss-stars {
+  position: absolute; inset: 0 0 55% 0; opacity: 0.8;
+  background-image:
+    radial-gradient(1.6px 1.6px at 20% 30%, #fff, transparent),
+    radial-gradient(1.4px 1.4px at 68% 18%, #fff, transparent),
+    radial-gradient(1.7px 1.7px at 84% 40%, #fff, transparent),
+    radial-gradient(1.3px 1.3px at 36% 48%, #fff, transparent);
+  animation: ssTwinkle 4s ease-in-out infinite alternate;
+}
+@keyframes ssTwinkle { to { opacity: 0.45; } }
+.ss-cloud { position: absolute; width: 58px; height: 13px; border-radius: 999px; background: color-mix(in oklab, var(--surface) 80%, transparent); }
+.ss-cloud-sm { width: 40px; height: 11px; }
+.ss-trail {
+  position: absolute; left: 50%; bottom: 26px; width: 2px; height: 96px; transform: translateX(-50%);
+  background: repeating-linear-gradient(180deg, color-mix(in oklab, var(--surface) 70%, transparent) 0 4px, transparent 4px 10px);
+}
+.ss-mark { position: absolute; left: 50%; margin-left: 26px; font-style: normal; font-family: var(--font-type); font-size: 0.76rem; font-weight: 700; color: color-mix(in oklab, #fff 65%, transparent); }
+.ss-rocket { position: absolute; left: 50%; bottom: 108px; transform: translateX(-50%); filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.3)); }
+.ss-flame { animation: ssBurn 0.34s steps(2, jump-none) infinite alternate; transform-origin: 22px 56px; }
+@keyframes ssBurn { to { transform: scaleY(0.72) scaleX(1.1); opacity: 0.85; } }
+.ss-pad { position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: color-mix(in oklab, var(--good) 46%, var(--surface2)); border-top: 3px solid color-mix(in oklab, var(--good) 70%, var(--border)); }
+
+/* --- Paint Reveal: the canvas --- */
+.ss-paint {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--accent) 14%, var(--surface2)), color-mix(in oklab, var(--accent2) 16%, var(--surface2)));
+}
+.ss-canvas { position: relative; width: 88%; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; background: color-mix(in oklab, var(--accent2) 20%, var(--surface2)); }
+.ss-under { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); image-rendering: pixelated; }
+.ss-tiles { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+.ss-tiles i {
+  display: flex; align-items: center; justify-content: center; font-style: normal;
+  border-radius: 7px; font-family: var(--font-type); font-size: 0.9rem; font-weight: 800; color: #2d2a26;
+  background: color-mix(in oklab, var(--gold) 62%, var(--surface));
+  border: 2px solid color-mix(in oklab, var(--gold) 72%, #000);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.4);
+}
+.ss-tiles i:nth-child(3n) { background: color-mix(in oklab, var(--accent2) 55%, var(--surface)); border-color: color-mix(in oklab, var(--accent2) 70%, #000); }
+.ss-tiles i:nth-child(4n) { background: color-mix(in oklab, var(--good) 52%, var(--surface)); border-color: color-mix(in oklab, var(--good) 70%, #000); }
+.ss-tiles .ss-tile-off { opacity: 0; }
+
+/* --- First Letter: the whole game in one row --- */
+.ss-first {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--warn) 14%, var(--surface2)), color-mix(in oklab, var(--accent) 12%, var(--surface2)));
+}
+.ss-pair { display: flex; align-items: center; gap: 14px; }
+.ss-thing { color: var(--bad); animation: ssBob 4s ease-in-out infinite; }
+/* What is still in the pile. Muted, so it reads as "later" rather than as four
+   more things to answer right now. */
+.ss-queue { display: flex; gap: 8px; opacity: 0.5; }
+.ss-queue i {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in oklab, var(--surface) 70%, transparent);
+  border: 2px solid var(--border); color: var(--text-dim);
+}
+@keyframes ssBob { 0%, 100% { transform: none; } 50% { transform: translateY(-6px) rotate(-4deg); } }
+.ss-arrow { color: var(--muted); }
+.ss-letter {
+  width: 82px; height: 82px; border-radius: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 3rem; font-weight: 800; color: #2d2a26;
+  background: var(--gold); border: 4px solid color-mix(in oklab, var(--gold) 62%, #000);
+  box-shadow: 0 7px 0 color-mix(in oklab, var(--gold) 52%, #000), inset 0 5px 0 rgba(255, 255, 255, 0.42);
+}
+
+/* --- Word Bridge: half a crossing --- */
+.ss-river {
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--accent) 14%, var(--surface2)) 0%,
+    color-mix(in oklab, var(--accent) 8%, var(--surface2)) 48%,
+    color-mix(in oklab, var(--accent) 26%, #2a72b8) 48%,
+    color-mix(in oklab, var(--accent) 16%, #17558f) 100%);
+}
+.ss-bank {
+  position: absolute; bottom: 0; height: 56%; width: 15%; z-index: 2;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--good) 52%, var(--surface2)), color-mix(in oklab, var(--good) 38%, #3a2a18));
+  border-top: 4px solid color-mix(in oklab, var(--good) 70%, var(--border));
+}
+.ss-bank-l { left: 0; border-radius: 0 12px 0 0; }
+.ss-bank-r { right: 0; border-radius: 12px 0 0 0; }
+.ss-deck { position: absolute; left: 14%; right: 14%; top: 48%; transform: translateY(-6px); display: flex; gap: 4px; z-index: 3; }
+.ss-deck i { flex: 1; height: 12px; border-radius: 4px; background: color-mix(in oklab, var(--text) 10%, transparent); }
+.ss-deck .ss-laid { background: color-mix(in oklab, var(--warn) 62%, var(--surface)); box-shadow: 0 3px 0 color-mix(in oklab, var(--warn) 48%, #000); }
+.ss-walker { position: absolute; left: 47%; top: 48%; transform: translate(-50%, -100%); z-index: 4; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2)); }
+.ss-current { position: absolute; left: 0; right: 0; bottom: 0; height: 52%; overflow: hidden; }
+.ss-current i {
+  position: absolute; left: -10%; width: 120%; height: 3px;
+  background: repeating-linear-gradient(90deg, color-mix(in oklab, #fff 46%, transparent) 0 18px, transparent 18px 46px);
+  animation: ssFlow 8s linear infinite alternate;
+}
+.ss-current i:nth-child(1) { top: 38%; }
+.ss-current i:nth-child(2) { top: 68%; opacity: 0.6; animation-duration: 6s; }
+@keyframes ssFlow { from { transform: translateX(-6%); } to { transform: translateX(6%); } }
+
+@media (max-width: 900px) {
+  .ss { max-width: 320px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ss-seed, .ss-hidekey, .ss-stars, .ss-flame, .ss-thing, .ss-current i { animation: none; }
+}
+
+/* The promise, in the same pill in the same corner of all four starters that
+   make one. It was four identical rules under four names, which is how a family
+   of games stops looking like a family. The words stay each game's own, because
+   "any letter works" and "no clock, no losing" are different promises. */
+.st-promise {
+  font-size: 0.82rem; font-weight: 650; color: var(--good);
+  display: inline-flex; align-items: center; gap: 5px;
 }

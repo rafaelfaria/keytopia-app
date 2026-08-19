@@ -7,6 +7,7 @@ import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
+import { StarterScene } from '../components/starterScenes';
 import { Ic } from '../components/icons';
 import { MobileKeys, STARTER_PALS as PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -342,6 +343,7 @@ export default function KeySafariGame() {
         title="Find who is hiding"
         onPlay={start}
         cta="Go on safari →"
+        side={<StarterScene game="keysafari" />}
         stats={best ? [
           { label: 'Best score', value: best.score },
           { label: 'Animals found', value: best.level },
@@ -396,7 +398,7 @@ export default function KeySafariGame() {
             <span><b>{done}</b> of {FINDS} found</span>
             <span><b>{s.score}</b> points</span>
             <span className="grow" />
-            <span className="ks-nolose"><Ic n="heart" size={14} /> nothing to lose here</span>
+            <span className="st-promise"><Ic n="heart" size={14} /> nothing to lose here</span>
           </>
         )}
         main={(

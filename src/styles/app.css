@@ -787,6 +787,27 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   background: var(--gold); box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent2) 55%, transparent);
 }
 
+/* Key Safari: three keycaps, and the middle one has ears */
+.ga-safari { gap: 12px; background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 7%, var(--surface2)), color-mix(in oklab, var(--good) 13%, var(--surface2))); }
+.gsf-key {
+  position: relative; width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 1.1rem; font-weight: 750; color: var(--text-dim);
+  background: var(--surface); border: 2px solid var(--border);
+  box-shadow: 0 3px 0 color-mix(in oklab, var(--border) 75%, transparent);
+}
+.gsf-hiding { color: var(--text); border-color: color-mix(in oklab, var(--accent) 60%, var(--border)); animation: gaWiggle 2.6s ease-in-out infinite; }
+/* Two ears over the cap, which is the whole game in one shape. */
+.gsf-ears {
+  position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+  width: 26px; height: 10px;
+  background:
+    radial-gradient(circle at 5px 10px, var(--accent2) 5px, transparent 5px),
+    radial-gradient(circle at 21px 10px, var(--accent2) 5px, transparent 5px);
+}
+@keyframes gaWiggle { 0%, 68%, 100% { transform: none; } 76% { transform: rotate(-6deg); } 88% { transform: rotate(6deg); } }
+.gsf-grass { position: absolute; left: 0; right: 0; bottom: 0; height: 13px; background: color-mix(in oklab, var(--good) 52%, var(--surface2)); border-top: 2px solid color-mix(in oklab, var(--good) 70%, var(--border)); }
+
 /* Keyforge: warm hearth, sparks rising */
 .ga-forge { background: radial-gradient(circle at 50% 78%, color-mix(in oklab, var(--warn) 24%, var(--surface2)), var(--surface2) 72%); }
 .ga-forge i { position: absolute; font-style: normal; color: var(--gold); font-size: 0.9rem; animation: gaSpark 3s ease-in-out infinite; }
@@ -857,7 +878,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   .arena-card { animation: none; }
-  .gw-word, .gl-seed, .ga-forge i, .ga-flight::before, .gf-glider,
+  .gw-word, .gl-seed, .gsf-hiding, .ga-forge i, .ga-flight::before, .gf-glider,
   .gd-fill, .gs-dot, .gc-tile, .gk-drop { animation: none; }
   .gd-you { width: 62%; }
   .gd-foe { width: 38%; }

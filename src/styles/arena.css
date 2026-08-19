@@ -1275,3 +1275,120 @@ html[data-rm='1'] .wf-caret { animation: none; }
      ring the keyboard frame takes. */
   .lf-big[data-help='true'] .lf-big-ch { outline: 4px solid var(--accent); outline-offset: 5px; }
 }
+
+/* ---------------------------------------------------------------------------
+   Key Safari — the starter game with nothing to lose
+   ---------------------------------------------------------------------------
+   Same chunky vocabulary as Letter Fall, and deliberately so: a child who
+   learns to read one of these screens can read the other. The difference is
+   where the answer lives. Letter Fall puts it in the band and asks you to find
+   it below; Safari puts it on the keyboard and asks you to notice it. */
+
+.ks-scene { flex: 1; display: flex; flex-direction: column; gap: 12px; min-height: 0; width: 100%; }
+
+.ks-meadow {
+  position: relative; flex: 1; min-height: 190px; max-height: 380px; overflow: hidden;
+  border-radius: 18px; border: 2px solid var(--border);
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--accent) 10%, var(--surface2)) 0%,
+    color-mix(in oklab, var(--good) 16%, var(--surface2)) 100%);
+}
+.ks-sun { position: absolute; top: 12px; right: 16px; color: var(--gold); opacity: 0.75; }
+.ks-grass {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 34px;
+  background: color-mix(in oklab, var(--good) 46%, var(--surface2));
+  border-top: 3px solid color-mix(in oklab, var(--good) 70%, var(--border));
+}
+
+/* A pal who has been found, standing on the grass for the rest of the run.
+   The hop is drawn between two real points: --fx and --fy are measured from
+   the key it was hiding behind to the patch of grass it is going to. */
+.ks-found {
+  position: absolute; bottom: 22px; transform: translateX(-50%); z-index: 2;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.18));
+  animation: ksHop 0.62s cubic-bezier(0.33, 1, 0.68, 1);
+}
+@keyframes ksHop {
+  0%   { transform: translateX(-50%) translate(var(--fx, 0px), var(--fy, 120px)) scale(0.7); }
+  55%  { transform: translateX(-50%) translate(calc(var(--fx, 0px) * 0.35), calc(var(--fy, 120px) * 0.25 - 26px)) scale(1.12); }
+  100% { transform: translateX(-50%); }
+}
+
+.ks-keys {
+  position: relative;
+  padding: 10px 12px; border-radius: 16px;
+  background: var(--surface); border: 2px solid var(--border);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.ks-keys-help {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 16%, transparent);
+}
+/* No finger caption here either: it appears and vanishes between finds, which
+   would shove the keyboard, and it is a reading task in a game for a player
+   who cannot read yet. The finger is named in the band when it is wanted. */
+.ks-keys .kbd-finger-hint { display: none; }
+
+/* The hiding place. A wiggle, not a highlight: a lit key ends the search, and
+   the search is the entire lesson. */
+.kbd-key.ks-hiding { animation: ksRustle 2.2s ease-in-out infinite; z-index: 1; }
+@keyframes ksRustle {
+  0%, 62%, 100% { transform: none; }
+  70% { transform: translateY(-2px) rotate(-4deg); }
+  80% { transform: translateY(-1px) rotate(4deg); }
+  90% { transform: rotate(-2deg); }
+}
+/* The pal itself, peeking over the top of that key. Clipped to its top half so
+   it reads as hiding behind the cap rather than sitting on it. */
+.ks-peek {
+  position: absolute; transform: translate(-50%, -74%); z-index: 3;
+  pointer-events: none;
+  clip-path: inset(0 0 42% 0);
+  animation: ksPeek 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.2));
+}
+@keyframes ksPeek {
+  0%, 62%, 100% { transform: translate(-50%, -74%); }
+  74% { transform: translate(-50%, -84%); }
+  88% { transform: translate(-50%, -78%); }
+}
+
+/* The band: who you are looking for, big and still. */
+.arena-stage-main > .ks-band {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; gap: 12px; text-align: center;
+}
+.ks-who {
+  width: 132px; height: 132px; border-radius: 34px;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in oklab, var(--accent2) 16%, var(--surface2));
+  border: 4px solid color-mix(in oklab, var(--accent2) 45%, var(--border));
+  box-shadow: 0 8px 0 color-mix(in oklab, var(--accent2) 30%, var(--border)), 0 18px 30px rgba(0, 0, 0, 0.16);
+}
+.ks-who[data-help='true'] { animation: ksBreathe 1.2s ease-in-out infinite; }
+@keyframes ksBreathe { 50% { transform: scale(1.05); } }
+.ks-who-done { color: var(--gold); }
+.ks-line { margin: 0; min-height: 1.5em; font-size: 1.05rem; font-weight: 650; }
+.ks-line strong { color: var(--accent2); }
+.ks-ch {
+  font-family: var(--font-type); font-size: 1.3rem; color: var(--accent);
+  padding: 0 2px;
+}
+.ks-hint { margin: 0; min-height: 1.5em; font-size: 0.94rem; font-weight: 620; color: var(--text-dim); }
+.ks-hint strong { color: var(--accent); }
+.ks-hint svg { vertical-align: -3px; margin-right: 6px; }
+.ks-band-meta { display: flex; align-items: center; gap: 12px; min-height: 30px; }
+.ks-nolose { font-size: 0.82rem; font-weight: 650; color: var(--good); display: inline-flex; align-items: center; gap: 5px; }
+
+@media (max-width: 900px) {
+  .ks-meadow { min-height: 160px; }
+  .ks-who { width: 104px; height: 104px; border-radius: 26px; }
+  .ks-keys { padding: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-found, .ks-peek, .kbd-key.ks-hiding, .ks-who[data-help='true'] { animation: none; }
+  /* Without the rustle the hiding place has to be findable some other way, so
+     it takes a ring from the start rather than only once help arrives. */
+  .kbd-key.ks-hiding { outline: 3px dashed var(--accent2); outline-offset: 1px; }
+}

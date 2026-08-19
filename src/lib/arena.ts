@@ -22,7 +22,7 @@ export type ArenaToken = 'accent' | 'accent2' | 'good' | 'warn' | 'gold' | 'bad'
 export type ArenaGameId =
   | 'lightstream' | 'duel' | 'survivor' | 'wordfall'
   | 'stack' | 'cipher' | 'keyforge' | 'wordflight'
-  | 'letterfall';
+  | 'letterfall' | 'keysafari';
 
 export interface ArenaGame {
   id: ArenaGameId;
@@ -103,6 +103,13 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
     desc: 'Eight typists, four rapid heats, the slowest move to the cheer bench each round. Outlast everyone for the crown.',
     valueLabel: 'heats', unit: plural('heat'), tier: 'competitive',
     hero: { formation: 'stream', tone: ['warn', 'gold', 0.4] },
+  },
+  keysafari: {
+    id: 'keysafari', name: 'Key Safari', icon: 'telescope', to: '/app/games/keysafari',
+    trains: 'Where the keys live',
+    desc: 'A pal hides behind a key and the key wiggles. Press it and out they hop. No clock, no way to lose, just the hunt.',
+    valueLabel: 'pals', unit: plural('pal'), tier: 'starter',
+    hero: { formation: 'calm', tone: ['good', 'accent', 0.5] },
   },
   letterfall: {
     id: 'letterfall', name: 'Letter Fall', icon: 'flower', to: '/app/games/letterfall',

@@ -47,6 +47,19 @@ function GameArt({ id }: { id: string }) {
           <i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" />
         </div>
       );
+    case 'keysafari':
+      /* Three keycaps, and one of them has ears. */
+      return (
+        <div className="arena-art ga-safari" aria-hidden>
+          <span className="gsf-key">a</span>
+          <span className="gsf-key gsf-hiding">
+            <i className="gsf-ears" />
+            f
+          </span>
+          <span className="gsf-key">j</span>
+          <span className="gsf-grass" />
+        </div>
+      );
     case 'letterfall':
       /* Single letters dropping into a garden. This art was Wordfall's until
          Letter Fall existed, and it was always drawing this game: five separate

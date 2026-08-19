@@ -10,6 +10,13 @@ export interface KeyboardVisualProps {
   heat?: Record<string, { v: number; label: string }>;   // 0..1 per base char
   stateColors?: Record<string, string>;                   // mastery map colors per base char
   hiddenLabels?: Set<string> | 'all';
+  /**
+   * Extra class per base character, for a game that needs to say something
+   * about one key that "next" does not cover. Key Safari marks the key an
+   * animal is hiding behind, which has to read as movement rather than as the
+   * answer: a lit key ends the search, and the search is the game.
+   */
+  markChars?: Record<string, string>;
   compact?: boolean;
   onKeyClick?: (k: KeyInfo) => void;
 }
@@ -49,6 +56,7 @@ export const KeyboardVisual = memo(function KeyboardVisual(p: KeyboardVisualProp
                   k.control ? 'kbd-ctrl' : '',
                   p.guide === 'zones' && !k.control ? `fz${k.finger}` : '',
                   isNext ? 'kbd-next' : '',
+                  (k.base && p.markChars?.[k.base]) || '',
                   isShiftHint ? 'kbd-next kbd-shift-hint' : '',
                   pressed,
                   k.code === 'space' ? 'kbd-space' : '',

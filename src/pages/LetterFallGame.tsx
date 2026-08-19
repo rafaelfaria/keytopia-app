@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useData, useStore, useUi } from '../lib/store';
 import { mulberry32, pick } from '../lib/rng';
+import { STARTER_LETTER_SETS as SETS } from '../lib/words';
 import { Chip } from '../components/ui';
 import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
@@ -38,21 +39,6 @@ import type { GuideStyle, Rewards } from '../lib/types';
 
 /** Flower colours, reused for the falling seeds so a catch keeps its colour. */
 const PETALS = ['#ff8fa3', '#ffb26b', '#ffd166', '#7dd8a0', '#5fc9e0', '#8b9cf5', '#c99cf5'];
-
-/**
- * The letter pool, widening as the garden grows.
- *
- * It starts at the four keys the index fingers already rest on, which is the
- * same place the Journey starts, so a child who plays this first arrives at
- * their first lesson having already met f, j, d and k.
- */
-const SETS: { chars: string; name: string }[] = [
-  { chars: 'fjdk', name: 'the four home keys' },
-  { chars: 'fjdksla', name: 'the whole home row' },
-  { chars: 'fjdkslaeiou', name: 'the home row and the vowels' },
-  { chars: 'fjdkslaeiourtnmpbcgw', name: 'most of the keyboard' },
-  { chars: 'abcdefghijklmnopqrstuvwxyz', name: 'every letter there is' },
-];
 
 const PATCH = 6;        // catches per garden row, and the width of a bed row
 const MAX_MISS = 3;     // letters allowed to land before the run ends

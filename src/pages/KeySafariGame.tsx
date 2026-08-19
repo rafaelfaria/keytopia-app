@@ -1,0 +1,377 @@
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useData, useStore, useUi } from '../lib/store';
+import { mulberry32, pick } from '../lib/rng';
+import { STARTER_LETTER_SETS as SETS } from '../lib/words';
+import { Chip } from '../components/ui';
+import { resultFromStrokes, type GameStroke } from '../components/typing';
+import { snd } from '../lib/sound';
+import { RewardsBanner } from '../components/ResultsPanel';
+import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
+import { Ic } from '../components/icons';
+import { MobileKeys, useGameKeys } from '../components/gamekit';
+import { KeyboardVisual } from '../components/KeyboardVisual';
+import { CharacterSprite, PRESET_CHARACTERS } from '../components/avatars';
+import { FINGER_NAMES, makeCharLookup } from '../lib/keyboard';
+import type { GuideStyle, Rewards } from '../lib/types';
+
+/**
+ * Key Safari — the second starter game, and the one with nothing to lose.
+ *
+ * Letter Fall asks a child to read a letter and then find it. This asks less
+ * and earlier: an animal hides behind a key, the key rustles with its ears
+ * over the top, and pressing it lets the animal out into the meadow. Nothing
+ * falls, nothing is timed, and there is no way to fail, so the only thing the
+ * game can do to you is take a while.
+ *
+ * That is deliberate. A child who has never typed needs one loop that is pure
+ * "look at the keyboard, find the thing, press it" with no second demand on
+ * top, and a game with a fail state cannot be that however gentle it is.
+ *
+ * The rustle is the cue, not the lit key. Lighting it immediately would end
+ * the search, and the search IS the lesson: after a few seconds, or two wrong
+ * keys, the game gives in and lights it anyway, because a child stuck at a
+ * wall learns nothing except that they are stuck.
+ */
+
+/** The pals, by preset index, with the names the rest of the app calls them. */
+const PALS: { preset: number; name: string; rare?: boolean }[] = [
+  { preset: 20, name: 'Clementine' },
+  { preset: 21, name: 'Miso' },
+  { preset: 22, name: 'Pip' },
+  { preset: 23, name: 'Waffles' },
+  { preset: 24, name: 'Biscuit' },
+  // Two who show up once in a while, so a long expedition still holds a
+  // surprise. A child who finds Ember once will keep looking for Ember.
+  { preset: 14, name: 'Noodle', rare: true },
+  { preset: 19, name: 'Ember', rare: true },
+];
+const COMMON = PALS.filter((p) => !p.rare);
+const RARE = PALS.filter((p) => p.rare);
+
+/** One expedition. Long enough to be an outing, short enough to finish. */
+const FINDS = 12;
+
+interface Found { id: number; pal: number; x: number; dx: number; dy: number }
+
+export default function KeySafariGame() {
+  const data = useData();
+  const recordSession = useStore((s) => s.recordSession);
+  const patchData = useStore((s) => s.patch);
+  const pushToast = useUi((s) => s.pushToast);
+
+  const [phase, setPhase] = useState<'intro' | 'run' | 'over'>('intro');
+  const [, force] = useState(0);
+  const [press, setPress] = useState<{ key: string; ok: boolean; t: number } | null>(null);
+  const [peek, setPeek] = useState<{ x: number; y: number } | null>(null);
+  const [overInfo, setOverInfo] = useState<
+    { score: number; found: number; firstTry: number; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null
+  >(null);
+
+  const st = useRef({
+    ch: '', pal: 0, since: 0, tries: 0,
+    found: [] as Found[], firstTry: 0, score: 0,
+    strokes: [] as GameStroke[], startedAt: 0,
+    rng: mulberry32(Date.now() % 1e9),
+  });
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const meadowRef = useRef<HTMLDivElement>(null);
+  const keysRef = useRef<HTMLDivElement>(null);
+  const pressTimer = useRef(0);
+  const tick = useRef(0);
+  const nextTimer = useRef(0);
+
+  const layout = data?.profile.layout ?? 'qwerty';
+  const lookup = useMemo(() => makeCharLookup(layout), [layout]);
+  const guide: GuideStyle = data?.settings.guide === 'hidden' ? 'plain' : (data?.settings.guide ?? 'hands');
+
+  const s = st.current;
+  const info = s.ch ? lookup(s.ch) : null;
+  const pal = PALS[s.pal] ?? PALS[0];
+  /** Give in and light the key. See the note at the top: being stuck teaches nothing. */
+  const helping = phase === 'run' && !!s.ch && (performance.now() - s.since > 3500 || s.tries >= 2);
+
+  const hide = useCallback(() => {
+    const cur = st.current;
+    const chars = SETS[Math.min(SETS.length - 1, Math.floor(cur.found.length / 4))].chars.split('');
+    let ch = pick(cur.rng, chars);
+    for (let i = 0; i < 5 && ch === cur.ch; i++) ch = pick(cur.rng, chars);
+    const table = cur.rng() < 0.12 ? RARE : COMMON;
+    const who = pick(cur.rng, table);
+    cur.ch = ch;
+    cur.pal = PALS.indexOf(who);
+    cur.since = performance.now();
+    cur.tries = 0;
+    force((n) => n + 1);
+  }, []);
+
+  const endGame = useCallback(() => {
+    const cur = st.current;
+    if (!cur.startedAt) return;
+    window.clearInterval(tick.current);
+    window.clearTimeout(nextTimer.current);
+    const result = resultFromStrokes('game', 'Key Safari', cur.strokes, cur.startedAt, performance.now(), {
+      game: 'keysafari', score: cur.score, found: cur.found.length,
+    });
+    const rewards = cur.strokes.length > 6 ? recordSession(result) : null;
+    let newBest = false;
+    patchData((d) => {
+      const prev = d.gameBests['keysafari'];
+      if (!prev || cur.score > prev.score) { d.gameBests['keysafari'] = { score: cur.score, level: cur.found.length }; newBest = true; }
+    });
+    if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Key Safari best!' });
+    setOverInfo({
+      score: cur.score, found: cur.found.length, firstTry: cur.firstTry,
+      acc: result.acc, wpm: result.wpm, rewards, newBest,
+    });
+    setPhase('over');
+  }, [recordSession, patchData, pushToast]);
+
+  const start = () => {
+    st.current = {
+      ...st.current,
+      ch: '', pal: 0, since: 0, tries: 0, found: [], firstTry: 0, score: 0,
+      strokes: [], startedAt: performance.now(),
+    };
+    setPress(null);
+    setPeek(null);
+    setPhase('run');
+    hide();
+    // Nothing in this game moves on its own. The only reason to tick at all is
+    // so the hint can arrive after a few seconds of hunting.
+    window.clearInterval(tick.current);
+    tick.current = window.setInterval(() => force((n) => n + 1), 250);
+  };
+
+  useEffect(() => () => {
+    window.clearInterval(tick.current);
+    window.clearTimeout(pressTimer.current);
+    window.clearTimeout(nextTimer.current);
+  }, []);
+
+  /**
+   * Put the ears over the right key.
+   *
+   * Measured off the rendered keyboard rather than computed from the layout,
+   * because the keyboard is fluid: it is a different width on a phone, in a
+   * split stage and in every one of the five layouts, and a hiding place that
+   * is one key off is worse than no hiding place at all.
+   */
+  useLayoutEffect(() => {
+    if (phase !== 'run' || !s.ch) { setPeek(null); return; }
+    const place = () => {
+      const wrap = keysRef.current;
+      const code = lookup(s.ch).key?.code;
+      const el = code ? wrap?.querySelector(`[data-code="${code}"]`) : null;
+      if (!wrap || !el) return;
+      const w = wrap.getBoundingClientRect();
+      const k = (el as HTMLElement).getBoundingClientRect();
+      setPeek({ x: k.left + k.width / 2 - w.left, y: k.top - w.top });
+    };
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [phase, s.ch, lookup]);
+
+  const flashKey = (key: string, ok: boolean) => {
+    setPress({ key, ok, t: performance.now() });
+    window.clearTimeout(pressTimer.current);
+    pressTimer.current = window.setTimeout(() => setPress(null), ok ? 200 : 320);
+  };
+
+  const findIt = () => {
+    const cur = st.current;
+    const scene = sceneRef.current;
+    const meadow = meadowRef.current;
+    const wrap = keysRef.current;
+    const i = cur.found.length;
+    const x = 6 + i * (88 / (FINDS - 1));
+    let dx = 0;
+    let dy = 120;
+    if (scene && meadow && wrap && peek) {
+      // Where the animal is now (over its key) relative to where it is going
+      // (its place on the grass), so the hop is drawn between two real points.
+      const mr = meadow.getBoundingClientRect();
+      const wr = wrap.getBoundingClientRect();
+      dx = (wr.left + peek.x) - (mr.left + (x / 100) * mr.width);
+      dy = (wr.top + peek.y) - (mr.bottom - 34);
+    }
+    // A find with no wrong keys before it is worth double. Quietly: a seven
+    // year old should never be told they lost points, and this is the only
+    // place the board can tell a confident press from a lucky one.
+    const clean = cur.tries === 0;
+    if (clean) cur.firstTry++;
+    cur.score += clean ? 20 : 10;
+    cur.found.push({ id: i, pal: cur.pal, x, dx, dy });
+    if (data?.settings.soundOn) { snd.pop(); if (clean) snd.step(); }
+    if (cur.found.length >= FINDS) {
+      window.clearTimeout(nextTimer.current);
+      nextTimer.current = window.setTimeout(endGame, 900);
+      cur.ch = '';
+      force((n) => n + 1);
+      return;
+    }
+    window.clearTimeout(nextTimer.current);
+    nextTimer.current = window.setTimeout(hide, 700);
+    cur.ch = '';
+    force((n) => n + 1);
+  };
+
+  const handleKey = (raw: string) => {
+    const cur = st.current;
+    if (phase !== 'run' || !cur.ch) return;
+    const key = raw.toLowerCase();
+    if (key < 'a' || key > 'z') return;
+    const t = performance.now();
+    if (key === cur.ch) {
+      cur.strokes.push({ t, exp: cur.ch, ok: true });
+      flashKey(key, true);
+      findIt();
+      return;
+    }
+    // Wrong key: the pressed key shakes and that is the entire consequence.
+    cur.strokes.push({ t, exp: cur.ch, ok: false });
+    flashKey(key, false);
+    cur.tries++;
+    if (data?.settings.soundOn) snd.err();
+    force((n) => n + 1);
+  };
+
+  useGameKeys(phase === 'run', handleKey, { onEscape: endGame });
+
+  if (!data) return null;
+  const best = data.gameBests['keysafari'];
+
+  if (phase === 'intro') {
+    return (
+      <ArenaIntro
+        game="keysafari"
+        title="Find who is hiding"
+        onPlay={start}
+        cta="Go on safari →"
+        stats={best ? [
+          { label: 'Best score', value: best.score },
+          { label: 'Animals found', value: best.level },
+        ] : undefined}
+      >
+        <p>
+          One of the pals is hiding behind a key on the keyboard below. Watch for the key that
+          wiggles, press it, and out they hop into the meadow to wait for you.
+        </p>
+        <p>
+          There is no clock and no way to lose. Press as many wrong keys as you like:
+          if a hiding place is too tricky, the game lights it up for you.
+        </p>
+      </ArenaIntro>
+    );
+  }
+
+  if (phase === 'over' && overInfo) {
+    return (
+      <ArenaResult
+        game="keysafari"
+        run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.found }}
+        score={overInfo.score}
+        title={overInfo.newBest ? 'Your best expedition yet!' : 'The meadow is full'}
+        newBest={overInfo.newBest}
+        onAgain={start}
+      >
+        <RewardsBanner rewards={overInfo.rewards} />
+        <p className="small muted" style={{ maxWidth: 430 }}>
+          {overInfo.firstTry >= FINDS - 2
+            ? `You found ${overInfo.firstTry} of them on the very first key you pressed. You know where these letters live.`
+            : `Found on the first press: ${overInfo.firstTry} of ${overInfo.found}. That number goes up every single time you play.`}
+        </p>
+      </ArenaResult>
+    );
+  }
+
+  const done = s.found.length;
+
+  return (
+    <>
+      <ArenaStage
+        game="keysafari"
+        quiet
+        wide
+        hud={(
+          <>
+            <span><b>{done}</b> of {FINDS} found</span>
+            <span><b>{s.score}</b> points</span>
+            <span className="grow" />
+            <span className="ks-nolose"><Ic n="heart" size={14} /> nothing to lose here</span>
+          </>
+        )}
+        main={(
+          <div className="ks-band">
+            <p className="arena-stage-kicker"><Ic n="telescope" size={14} /> Who is hiding?</p>
+            <div className="ks-who" data-help={helping ? 'true' : undefined}>
+              {s.ch ? (
+                <CharacterSprite ch={PRESET_CHARACTERS[pal.preset].ch} size={92} expr="happy" />
+              ) : (
+                <span className="ks-who-done"><Ic n="sparkles" size={40} /></span>
+              )}
+            </div>
+            <p className="ks-line">
+              {s.ch
+                ? <><strong>{pal.name}</strong> is behind the <b className="ks-ch">{s.ch}</b> key</>
+                : done >= FINDS ? 'Everybody is out. What a safari.' : <span className="muted">Someone else is hiding now</span>}
+            </p>
+            <p className="ks-hint">
+              {s.ch && info?.key && (helping
+                ? <><Ic n="person" size={14} /> Use your <strong>{FINGER_NAMES[info.finger]}</strong> finger</>
+                : <><Ic n="eye" size={14} /> Look for the key that is wiggling</>)}
+            </p>
+            <div className="ks-band-meta">
+              <Chip tone={s.tries === 0 ? 'good' : undefined}>
+                <Ic n="star" size={12} /> {s.firstTry} found first try
+              </Chip>
+            </div>
+          </div>
+        )}
+        side={(
+          <div className="ks-scene" ref={sceneRef}>
+            <div className="ks-meadow" ref={meadowRef}>
+              <span className="ks-sun" aria-hidden><Ic n="sun" size={28} /></span>
+              {/* Everyone found so far, waiting on the grass. This is the score
+                  a child can actually read: the meadow gets busier. */}
+              {s.found.map((f) => (
+                <span
+                  key={f.id}
+                  className="ks-found"
+                  style={{
+                    left: `${f.x}%`,
+                    ['--fx' as string]: `${f.dx.toFixed(0)}px`,
+                    ['--fy' as string]: `${f.dy.toFixed(0)}px`,
+                  }}
+                >
+                  <CharacterSprite ch={PRESET_CHARACTERS[PALS[f.pal].preset].ch} size={44} expr="happy" />
+                </span>
+              ))}
+              <span className="ks-grass" aria-hidden />
+            </div>
+            <div className={`ks-keys ${helping ? 'ks-keys-help' : ''}`} ref={keysRef}>
+              <KeyboardVisual
+                layout={layout}
+                guide={guide}
+                compact
+                /* The rustle is always on the hiding key. The lit key only
+                   arrives once the child has been hunting a while. */
+                markChars={s.ch ? { [s.ch]: 'ks-hiding' } : undefined}
+                nextChar={helping ? s.ch : undefined}
+                lastPress={press}
+              />
+              {/* The ears over the key. Absolutely placed from a measurement of
+                  the real key, so it is right in every layout and width. */}
+              {peek && s.ch && (
+                <span className="ks-peek" style={{ left: peek.x, top: peek.y }} aria-hidden>
+                  <CharacterSprite ch={PRESET_CHARACTERS[pal.preset].ch} size={38} expr="happy" />
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      />
+      <MobileKeys active={phase === 'run'} />
+    </>
+  );
+}

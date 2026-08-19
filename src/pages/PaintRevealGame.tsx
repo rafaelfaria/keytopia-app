@@ -7,7 +7,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
-import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
+import { LevelActions, LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, STARTER_PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -58,7 +58,7 @@ export default function PaintRevealGame() {
   const boardRef = useRef<HTMLDivElement>(null);
   const pressTimer = useRef(0);
 
-  const { level, cleared: clearedLevels, chosen, setChosen, clear, total } = useStarterLadder('paint');
+  const { level, cleared: clearedLevels, chosen, setChosen, begin, active, clear, total } = useStarterLadder('paint');
   const COLS = level.cols ?? 6;
   const ROWS = level.rows ?? 4;
   const TILES = level.goal;
@@ -99,30 +99,32 @@ export default function PaintRevealGame() {
       if (!prev || cur.score > prev.score) { d.gameBests['paint'] = { score: cur.score, level: cleared }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Paint Reveal best!' });
+    const at = active.current;
     if (won) {
-      clear(chosen);
-      if (chosen === clearedLevels + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+      clear(at.n);
+      if (at.n === clearedLevels + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: cur.score, cleared, who: STARTER_PALS[cur.pal].name,
       acc: result.acc, wpm: result.wpm, rewards, newBest,
-      level: chosen, goal: TILES, unlocked: won,
+      level: at.n, goal: at.level.goal, unlocked: won,
     });
     setPhase('over');
   };
 
-  const start = () => {
+  const start = (n?: number) => {
+    const lvl = begin(n ?? active.current.n);
     const rng = st.current.rng;
     // Twenty four different letters, so every tile is its own key and pressing
     // one can never be ambiguous about which patch it opens.
-    const pool = (level.chars ?? 'abcdefghijklmnopqrstuvwxyz').split('');
+    const pool = (lvl.chars ?? 'abcdefghijklmnopqrstuvwxyz').split('');
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(rng() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
     st.current = {
       ...st.current,
-      tiles: pool.slice(0, TILES).map((ch) => ({ ch, gone: false })),
+      tiles: pool.slice(0, lvl.goal).map((ch) => ({ ch, gone: false })),
       pal: STARTER_PALS.indexOf(pick(rng, STARTER_PALS)),
       score: 0, strokes: [], startedAt: performance.now(),
     };
@@ -220,7 +222,13 @@ export default function PaintRevealGame() {
         score={overInfo.score}
         title={overInfo.unlocked ? `It was ${overInfo.who}!` : 'Half a picture is still a picture'}
         newBest={overInfo.newBest}
-        onAgain={start}
+        onAgain={() => start()}
+        actions={(
+          <LevelActions
+            game="paint" level={overInfo.level} unlocked={overInfo.unlocked}
+            onPlay={(n) => start(n)} onPick={() => setPhase('intro')}
+          />
+        )}
         standing={(
           <LevelResult
             game="paint" level={overInfo.level} done={overInfo.cleared}

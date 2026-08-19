@@ -7,7 +7,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
-import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
+import { LevelActions, LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -90,7 +90,7 @@ export default function FirstLetterGame() {
   const tick = useRef(0);
   const nextTimer = useRef(0);
 
-  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('firstletter');
+  const { level, cleared, chosen, setChosen, begin, active, clear, total } = useStarterLadder('firstletter');
   const ROUND = level.goal;
 
   const layout = data?.profile.layout ?? 'qwerty';
@@ -123,19 +123,21 @@ export default function FirstLetterGame() {
       if (!prev || cur.score > prev.score) { d.gameBests['firstletter'] = { score: cur.score, level: cur.i }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New First Letter best!' });
-    const won = cur.i >= ROUND;
+    const at = active.current;
+    const won = cur.i >= at.level.goal;
     if (won) {
-      clear(chosen);
-      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+      clear(at.n);
+      if (at.n === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: cur.score, done: cur.i, solo: cur.solo, acc: result.acc, wpm: result.wpm,
-      rewards, newBest, level: chosen, goal: ROUND, unlocked: won,
+      rewards, newBest, level: at.n, goal: at.level.goal, unlocked: won,
     });
     setPhase('over');
   };
 
-  const start = () => {
+  const start = (n?: number) => {
+    const lvl = begin(n ?? active.current.n);
     const rng = st.current.rng;
     const pool = [...THINGS];
     for (let i = pool.length - 1; i > 0; i--) {
@@ -151,7 +153,7 @@ export default function FirstLetterGame() {
       if (seen.has(p.word[0])) continue;
       seen.add(p.word[0]);
       queue.push(p);
-      if (queue.length >= ROUND) break;
+      if (queue.length >= lvl.goal) break;
     }
     st.current = { ...st.current, queue, i: 0, solo: 0, score: 0, tries: 0, since: performance.now(), got: false, strokes: [], startedAt: performance.now() };
     setPress(null);
@@ -254,7 +256,13 @@ export default function FirstLetterGame() {
         score={overInfo.score}
         title={overInfo.unlocked ? 'Every picture answered' : 'Good listening'}
         newBest={overInfo.newBest}
-        onAgain={start}
+        onAgain={() => start()}
+        actions={(
+          <LevelActions
+            game="firstletter" level={overInfo.level} unlocked={overInfo.unlocked}
+            onPlay={(n) => start(n)} onPick={() => setPhase('intro')}
+          />
+        )}
         standing={(
           <LevelResult
             game="firstletter" level={overInfo.level} done={overInfo.done}

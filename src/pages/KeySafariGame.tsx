@@ -7,7 +7,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
-import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
+import { LevelActions, LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, STARTER_PALS as PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -104,7 +104,7 @@ export default function KeySafariGame() {
   const sayTimer = useRef(0);
   const bloomTimers = useRef<number[]>([]);
 
-  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('keysafari');
+  const { level, cleared, chosen, setChosen, begin, active, clear, total } = useStarterLadder('keysafari');
   const FINDS = level.goal;
 
   const layout = data?.profile.layout ?? 'qwerty';
@@ -119,7 +119,7 @@ export default function KeySafariGame() {
 
   const hide = useCallback(() => {
     const cur = st.current;
-    const chars = (level.chars ?? 'fjdk').split('');
+    const chars = (active.current.level.chars ?? 'fjdk').split('');
     let ch = pick(cur.rng, chars);
     for (let i = 0; i < 5 && ch === cur.ch; i++) ch = pick(cur.rng, chars);
     const table = cur.rng() < 0.12 ? RARE : COMMON;
@@ -148,20 +148,22 @@ export default function KeySafariGame() {
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Key Safari best!' });
     // The level only goes in if the meadow actually filled. Stopping early
     // costs nothing and leaves it exactly where it was.
-    const won = cur.found.length >= FINDS;
+    const at = active.current;
+    const won = cur.found.length >= at.level.goal;
     if (won) {
-      clear(chosen);
-      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+      clear(at.n);
+      if (at.n === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: cur.score, found: cur.found.length, firstTry: cur.firstTry,
       acc: result.acc, wpm: result.wpm, rewards, newBest,
-      level: chosen, goal: FINDS, unlocked: won,
+      level: at.n, goal: at.level.goal, unlocked: won,
     });
     setPhase('over');
   }, [recordSession, patchData, pushToast]);
 
-  const start = () => {
+  const start = (n?: number) => {
+    begin(n ?? active.current.n);
     st.current = {
       ...st.current,
       ch: '', pal: 0, since: 0, tries: 0, rowNote: 0, streak: 0, found: [], firstTry: 0, score: 0,
@@ -251,7 +253,8 @@ export default function KeySafariGame() {
     const meadow = meadowRef.current;
     const wrap = keysRef.current;
     const i = cur.found.length;
-    const spot = meadowSpot(i, FINDS);
+    const goal = active.current.level.goal;
+    const spot = meadowSpot(i, goal);
     let dx = 0;
     let dy = 120;
     if (scene && meadow && wrap && peek) {
@@ -299,7 +302,7 @@ export default function KeySafariGame() {
 
     // A row filling up is the milestone this game has instead of a level, and
     // the whole meadow celebrates it rather than a chip changing.
-    if (cur.found.length % ROW === 0 && cur.found.length < FINDS) {
+    if (cur.found.length % ROW === 0 && cur.found.length < goal) {
       cur.rowNote = performance.now();
       window.setTimeout(() => {
         cheer(0, true);
@@ -308,7 +311,7 @@ export default function KeySafariGame() {
       }, 700);
       if (data?.settings.soundOn) window.setTimeout(() => snd.step(), 760);
     }
-    if (cur.found.length >= FINDS) {
+    if (cur.found.length >= goal) {
       window.clearTimeout(nextTimer.current);
       nextTimer.current = window.setTimeout(endGame, 900);
       cur.ch = '';
@@ -385,7 +388,13 @@ export default function KeySafariGame() {
            must not congratulate you on filling a meadow you did not fill. */
         title={overInfo.unlocked ? 'The meadow is full' : 'A good day out'}
         newBest={overInfo.newBest}
-        onAgain={start}
+        onAgain={() => start()}
+        actions={(
+          <LevelActions
+            game="keysafari" level={overInfo.level} unlocked={overInfo.unlocked}
+            onPlay={(n) => start(n)} onPick={() => setPhase('intro')}
+          />
+        )}
         standing={(
           <LevelResult
             game="keysafari" level={overInfo.level} done={overInfo.found}

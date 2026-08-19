@@ -7,7 +7,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
-import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
+import { LevelActions, LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -105,7 +105,7 @@ export default function LetterFallGame() {
   const pressTimer = useRef(0);
   const bloomTimers = useRef<number[]>([]);
 
-  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('letterfall');
+  const { level, cleared, chosen, setChosen, begin, active, clear, total } = useStarterLadder('letterfall');
   const GOAL = level.goal;
 
   const layout = data?.profile.layout ?? 'qwerty';
@@ -121,7 +121,7 @@ export default function LetterFallGame() {
 
   const spawn = useCallback(() => {
     const s = st.current;
-    const chars = level.chars ?? 'fjdk';
+    const chars = active.current.level.chars ?? 'fjdk';
     // Two seeds in the same column are two seeds a child cannot tell apart, and
     // the one they are hunting for is whichever they did not look at.
     let x = 12 + s.rng() * 76;
@@ -140,7 +140,7 @@ export default function LetterFallGame() {
       // Slow, and barely faster later. The garden growing is the progression;
       // speed is only enough that a run does not feel identical at flower 40.
       // The level sets the pace; inside a level it only creeps.
-      speed: 16 * (level.speed ?? 1) * Math.min(1.35, 1 + patchOf(s.caught) * 0.05),
+      speed: 16 * (active.current.level.speed ?? 1) * Math.min(1.35, 1 + patchOf(s.caught) * 0.05),
       tint: Math.floor(s.rng() * PETALS.length),
       wobble: s.rng() * 6.28,
     });
@@ -161,15 +161,16 @@ export default function LetterFallGame() {
       if (!cur || s.score > cur.score) { d.gameBests['letterfall'] = { score: s.score, level: s.caught }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Letter Fall best!' });
-    const won = s.caught >= GOAL;
+    const at = active.current;
+    const won = s.caught >= at.level.goal;
     if (won) {
-      clear(chosen);
-      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+      clear(at.n);
+      if (at.n === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: s.score, caught: s.caught, best: s.bestStreak,
       acc: result.acc, wpm: result.wpm, rewards, newBest,
-      level: chosen, goal: GOAL, unlocked: won,
+      level: at.n, goal: at.level.goal, unlocked: won,
     });
     setPhase('over');
   }, [recordSession, patchData, pushToast]);
@@ -183,7 +184,7 @@ export default function LetterFallGame() {
     s.lastTick = t;
 
     const p = patchOf(s.caught);
-    const room = level.room ?? 1;
+    const room = active.current.level.room ?? 1;
     const live = s.seeds.filter((w) => !w.caught).length;
     /**
      * An empty sky refills fast. The spawn gap is there to keep two or three
@@ -232,9 +233,10 @@ export default function LetterFallGame() {
     if (!low) s.targetId = 0;
 
     force((n) => n + 1);
-  }, [spawn, endGame, data?.settings.soundOn, level.room]);
+  }, [spawn, endGame, data?.settings.soundOn]);
 
-  const start = () => {
+  const start = (n?: number) => {
+    begin(n ?? active.current.n);
     st.current = {
       ...st.current,
       seeds: [], flowers: [], score: 0, caught: 0, missed: 0, streak: 0, bestStreak: 0,
@@ -349,7 +351,7 @@ export default function LetterFallGame() {
      * Now the last flower goes in and the garden is finished, which is a
      * different feeling entirely and the one this game was always for.
      */
-    if (s.caught >= GOAL) {
+    if (s.caught >= active.current.level.goal) {
       const finish = window.setTimeout(endGame, 900);
       bloomTimers.current.push(finish);
     }
@@ -432,7 +434,13 @@ export default function LetterFallGame() {
         score={overInfo.score}
         title={overInfo.unlocked ? 'What a garden' : 'The last one got away'}
         newBest={overInfo.newBest}
-        onAgain={start}
+        onAgain={() => start()}
+        actions={(
+          <LevelActions
+            game="letterfall" level={overInfo.level} unlocked={overInfo.unlocked}
+            onPlay={(n) => start(n)} onPick={() => setPhase('intro')}
+          />
+        )}
         standing={(
           <LevelResult
             game="letterfall" level={overInfo.level} done={overInfo.caught}

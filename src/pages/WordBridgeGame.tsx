@@ -7,7 +7,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
-import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
+import { LevelActions, LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, STARTER_PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -68,7 +68,7 @@ export default function WordBridgeGame() {
   const pressTimer = useRef(0);
   const nextTimer = useRef(0);
 
-  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('bridge');
+  const { level, cleared, chosen, setChosen, begin, active, clear, total } = useStarterLadder('bridge');
   const PLANKS = level.goal;
 
   const layout = data?.profile.layout ?? 'qwerty';
@@ -95,19 +95,21 @@ export default function WordBridgeGame() {
       if (!prev || cur.score > prev.score) { d.gameBests['bridge'] = { score: cur.score, level: cur.built }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Word Bridge best!' });
-    const won = cur.built >= PLANKS;
+    const at = active.current;
+    const won = cur.built >= at.level.goal;
     if (won) {
-      clear(chosen);
-      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+      clear(at.n);
+      if (at.n === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: cur.score, built: cur.built, clean: cur.clean, acc: result.acc, wpm: result.wpm,
-      rewards, newBest, level: chosen, goal: PLANKS, unlocked: won,
+      rewards, newBest, level: at.n, goal: at.level.goal, unlocked: won,
     });
     setPhase('over');
   };
 
-  const start = () => {
+  const start = (n?: number) => {
+    const lvl = begin(n ?? active.current.n);
     const rng = st.current.rng;
     const pool = [...WORDS];
     for (let i = pool.length - 1; i > 0; i--) {
@@ -116,8 +118,8 @@ export default function WordBridgeGame() {
     }
     // The level picks the word length. Three letters is a first crossing, four
     // is the one that hands over to Wordfall.
-    const want = level.len ?? 3;
-    const queue = pool.filter((w) => w.length === want).slice(0, PLANKS);
+    const want = lvl.len ?? 3;
+    const queue = pool.filter((w) => w.length === want).slice(0, lvl.goal);
     st.current = {
       ...st.current,
       queue,
@@ -181,7 +183,7 @@ export default function WordBridgeGame() {
       nextTimer.current = window.setTimeout(() => {
         const c = st.current;
         c.crossing = false;
-        if (c.built >= PLANKS) endGame();
+        if (c.built >= active.current.level.goal) endGame();
         else force((n) => n + 1);
       }, 900);
     }
@@ -230,7 +232,13 @@ export default function WordBridgeGame() {
         score={overInfo.score}
         title={overInfo.unlocked ? 'All the way across' : 'A good stretch of bridge'}
         newBest={overInfo.newBest}
-        onAgain={start}
+        onAgain={() => start()}
+        actions={(
+          <LevelActions
+            game="bridge" level={overInfo.level} unlocked={overInfo.unlocked}
+            onPlay={(n) => start(n)} onPick={() => setPhase('intro')}
+          />
+        )}
         standing={(
           <LevelResult
             game="bridge" level={overInfo.level} done={overInfo.built}

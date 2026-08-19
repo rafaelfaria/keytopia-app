@@ -6,7 +6,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
-import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
+import { LevelActions, LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -66,7 +66,7 @@ export default function RocketGame() {
   const pressTimer = useRef(0);
   const tick = useRef(0);
 
-  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('rocket');
+  const { level, cleared, chosen, setChosen, begin, active, clear, total } = useStarterLadder('rocket');
   /** This level's stretch of the alphabet, in the direction it flies. */
   const AZ = useMemo(() => {
     const slice = ALPHABET.slice(level.from ?? 0, level.to ?? 26);
@@ -102,19 +102,22 @@ export default function RocketGame() {
       if (!prev || cur.score > prev.score) { d.gameBests['rocket'] = { score: cur.score, level: cur.i }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Alphabet Rocket best!' });
-    const won = landed || cur.i >= AZ.length;
+    const at = active.current;
+    const want = ALPHABET.slice(at.level.from ?? 0, at.level.to ?? 26).length;
+    const won = landed || cur.i >= want;
     if (won) {
-      clear(chosen);
-      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+      clear(at.n);
+      if (at.n === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: cur.score, solo: cur.solo, flown: cur.i, acc: result.acc, wpm: result.wpm,
-      rewards, newBest, level: chosen, goal: AZ.length, unlocked: won,
+      rewards, newBest, level: at.n, goal: want, unlocked: won,
     });
     setPhase('over');
   };
 
-  const start = () => {
+  const start = (n?: number) => {
+    begin(n ?? active.current.n);
     st.current = { i: 0, solo: 0, score: 0, tries: 0, since: performance.now(), helped: false, strokes: [], startedAt: performance.now() };
     setPress(null);
     setPhase('run');
@@ -221,7 +224,13 @@ export default function RocketGame() {
         score={overInfo.score}
         title={overInfo.unlocked ? 'You landed on the moon' : 'Back on the ground'}
         newBest={overInfo.newBest}
-        onAgain={start}
+        onAgain={() => start()}
+        actions={(
+          <LevelActions
+            game="rocket" level={overInfo.level} unlocked={overInfo.unlocked}
+            onPlay={(n) => start(n)} onPick={() => setPhase('intro')}
+          />
+        )}
         standing={(
           <LevelResult
             game="rocket" level={overInfo.level} done={overInfo.flown}

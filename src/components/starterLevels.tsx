@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useData, useStore } from '../lib/store';
+import { Btn } from './ui';
 import { Ic } from './icons';
 import {
   clearedCount, ladder, ladderNote, nextLevel,
@@ -36,7 +37,68 @@ export function useStarterLadder(game: StarterGameId) {
   }, [game, patch]);
 
   const level: StarterLevel = levels[Math.min(levels.length, Math.max(1, chosen)) - 1];
-  return { levels, level, cleared, chosen, setChosen, clear, total: levels.length };
+
+  /**
+   * The level a run is actually being played on, readable from inside the game
+   * loop.
+   *
+   * `chosen` is state, so starting level 5 from the finish screen of level 4
+   * sets it and then reads the old value for the rest of that tick — and the
+   * interval a game starts in that same tick would close over level 4 for the
+   * entire run. The ref is written synchronously by `begin`, so the loop always
+   * has the level it is really playing.
+   */
+  const active = useRef({ n: chosen, level });
+  active.current = { n: chosen, level };
+
+  /** Switch to a level and hand it straight back, for the caller's own reset. */
+  const begin = useCallback((n: number) => {
+    // Guarded because the obvious caller is a click handler, and a button hands
+    // its own event to the first argument: `onClick={start}` turns into
+    // start(MouseEvent) and levels[NaN] is a crash two frames later.
+    const want = Number.isFinite(n) ? n : active.current.n;
+    const at = Math.min(levels.length, Math.max(1, Math.round(want)));
+    const l = levels[at - 1];
+    active.current = { n: at, level: l };
+    setChosen(at);
+    return l;
+  }, [levels]);
+
+  return { levels, level, cleared, chosen, setChosen, begin, active, clear, total: levels.length };
+}
+
+/**
+ * What to do next, on the finish screen.
+ *
+ * "Play again" was the only button here, which is the wrong offer in a game
+ * with a ladder: the thing a child wants after clearing level one is level two,
+ * and being sent back to the level they have just finished reads as not having
+ * finished it. So the primary button is the next level, by name, and it is only
+ * a replay when there is nothing new to open.
+ *
+ * There is no "All games" here either. The stage already carries a way back to
+ * the Arena in its top corner, on every screen of every game, and a second one
+ * competing with the next level is a button spent on leaving.
+ */
+export function LevelActions({ game, level, unlocked, onPlay, onPick }: {
+  game: StarterGameId;
+  level: number;
+  unlocked: boolean;
+  onPlay: (n: number) => void;
+  onPick: () => void;
+}) {
+  const levels = ladder(game);
+  const next = unlocked && level < levels.length ? level + 1 : null;
+  return (
+    <>
+      {next ? (
+        <Btn big onClick={() => onPlay(next)}>Level {next}: {levels[next - 1].name} →</Btn>
+      ) : (
+        <Btn big onClick={() => onPlay(level)}>↻ {unlocked ? 'Play it again' : 'Try this one again'}</Btn>
+      )}
+      <Btn kind="soft" onClick={onPick}><Ic n="map" size={15} /> Pick a level</Btn>
+    </>
+  );
 }
 
 export function LevelPath({ game, cleared, chosen, onPick }: {

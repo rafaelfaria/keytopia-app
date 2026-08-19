@@ -12,6 +12,7 @@ import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
 import { CharacterSprite, PRESET_CHARACTERS } from '../components/avatars';
 import { FINGER_NAMES, makeCharLookup } from '../lib/keyboard';
+import { floatText, sparkBurst } from '../lib/fx';  // floatText: row milestones only
 import type { GuideStyle, Rewards } from '../lib/types';
 
 /**
@@ -94,12 +95,14 @@ export default function KeySafariGame() {
   const [, force] = useState(0);
   const [press, setPress] = useState<{ key: string; ok: boolean; t: number } | null>(null);
   const [peek, setPeek] = useState<{ x: number; y: number } | null>(null);
+  /** The pal who just arrived says their own name, briefly. */
+  const [say, setSay] = useState<number | null>(null);
   const [overInfo, setOverInfo] = useState<
     { score: number; found: number; firstTry: number; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null
   >(null);
 
   const st = useRef({
-    ch: '', pal: 0, since: 0, tries: 0, rowNote: 0,
+    ch: '', pal: 0, since: 0, tries: 0, rowNote: 0, streak: 0,
     found: [] as Found[], firstTry: 0, score: 0,
     strokes: [] as GameStroke[], startedAt: 0,
     rng: mulberry32(Date.now() % 1e9),
@@ -110,6 +113,8 @@ export default function KeySafariGame() {
   const pressTimer = useRef(0);
   const tick = useRef(0);
   const nextTimer = useRef(0);
+  const sayTimer = useRef(0);
+  const bloomTimers = useRef<number[]>([]);
 
   const layout = data?.profile.layout ?? 'qwerty';
   const lookup = useMemo(() => makeCharLookup(layout), [layout]);
@@ -160,7 +165,7 @@ export default function KeySafariGame() {
   const start = () => {
     st.current = {
       ...st.current,
-      ch: '', pal: 0, since: 0, tries: 0, rowNote: 0, found: [], firstTry: 0, score: 0,
+      ch: '', pal: 0, since: 0, tries: 0, rowNote: 0, streak: 0, found: [], firstTry: 0, score: 0,
       strokes: [], startedAt: performance.now(),
     };
     setPress(null);
@@ -177,6 +182,8 @@ export default function KeySafariGame() {
     window.clearInterval(tick.current);
     window.clearTimeout(pressTimer.current);
     window.clearTimeout(nextTimer.current);
+    window.clearTimeout(sayTimer.current);
+    bloomTimers.current.forEach(window.clearTimeout);
   }, []);
 
   /**
@@ -202,6 +209,36 @@ export default function KeySafariGame() {
     window.addEventListener('resize', place);
     return () => window.removeEventListener('resize', place);
   }, [phase, s.ch, lookup]);
+
+  /**
+   * Everyone in the meadow jumps, in a wave rolling out from `from`.
+   *
+   * The tween lands on an inner wrapper rather than on .ks-found itself, whose
+   * transform is already carrying the row's placement and depth scale. Two
+   * animations on one transform is one animation and a bug.
+   */
+  const cheer = (from: number, big: boolean) => {
+    if (data?.settings.reducedMotion || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const m = meadowRef.current;
+    if (!m) return;
+    const els = Array.from(m.querySelectorAll('.ks-pal')) as HTMLElement[];
+    els.forEach((el, idx) => {
+      el.getAnimations().forEach((a) => a.cancel());
+      el.animate(
+        [{ transform: 'translateY(0)' }, { transform: `translateY(${big ? -20 : -13}px)` }],
+        {
+          duration: big ? 230 : 190,
+          // The wave starts at whoever just arrived and rolls outward, capped
+          // so that a full meadow does not take a second and a half to finish
+          // celebrating something that happened at one end of it.
+          delay: Math.min(360, Math.abs(idx - from) * 45),
+          iterations: big ? 4 : 2,
+          direction: 'alternate',
+          easing: 'ease-out',
+        },
+      );
+    });
+  };
 
   const flashKey = (key: string, ok: boolean) => {
     setPress({ key, ok, t: performance.now() });
@@ -231,14 +268,46 @@ export default function KeySafariGame() {
     // year old should never be told they lost points, and this is the only
     // place the board can tell a confident press from a lucky one.
     const clean = cur.tries === 0;
-    if (clean) cur.firstTry++;
+    if (clean) { cur.firstTry++; cur.streak++; } else { cur.streak = 0; }
     cur.score += clean ? 20 : 10;
     cur.found.push({ id: i, pal: cur.pal, x: spot.x, bottom: spot.bottom, scale: spot.scale, z: spot.z, dx, dy });
     if (data?.settings.soundOn) { snd.pop(); if (clean) snd.step(); }
-    // A row filling up is the milestone this game has instead of a level.
+
+    /**
+     * The moment itself, which used to be a sprite quietly appearing in a grid.
+     *
+     * Four things happen at once and all of them are cheap: a puff where the
+     * pal was hiding, confetti where they land, their name over their head, and
+     * every pal already in the meadow jumping in a wave that starts at the new
+     * arrival. The wave is the one that matters. It turns a row of stickers
+     * into a crowd who noticed, and it costs one tween.
+     */
+    if (wrap && peek) sparkBurst(wrap, peek.x, peek.y, 6);
+    const landed = window.setTimeout(() => {
+      const m = meadowRef.current;
+      if (m) {
+        const mr = m.getBoundingClientRect();
+        // Confetti, and no number. A score float is for a reader; this player
+        // gets the sparkle and their parent gets the figure in the HUD.
+        sparkBurst(m, (spot.x / 100) * mr.width, mr.height - spot.bottom - 30, 12);
+      }
+      cheer(i, false);
+      setSay(i);
+      window.clearTimeout(sayTimer.current);
+      sayTimer.current = window.setTimeout(() => setSay(null), 1300);
+    }, 420);
+    bloomTimers.current.push(landed);
+
+    // A row filling up is the milestone this game has instead of a level, and
+    // the whole meadow celebrates it rather than a chip changing.
     if (cur.found.length % ROW === 0 && cur.found.length < FINDS) {
       cur.rowNote = performance.now();
-      if (data?.settings.soundOn) window.setTimeout(() => snd.step(), 260);
+      window.setTimeout(() => {
+        cheer(0, true);
+        const m = meadowRef.current;
+        if (m) floatText(m, 'Row full!', m.clientWidth / 2, 26, 'fx-score');
+      }, 700);
+      if (data?.settings.soundOn) window.setTimeout(() => snd.step(), 760);
     }
     if (cur.found.length >= FINDS) {
       window.clearTimeout(nextTimer.current);
@@ -308,7 +377,10 @@ export default function KeySafariGame() {
         game="keysafari"
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.found }}
         score={overInfo.score}
-        title={overInfo.newBest ? 'Your best expedition yet!' : 'The meadow is full'}
+        /* Going home early is a choice this game offers, so the finish screen
+           must not congratulate you on filling a meadow you did not fill. */
+        title={overInfo.newBest ? 'Your best expedition yet!'
+          : overInfo.found >= FINDS ? 'The meadow is full' : 'What a day out'}
         newBest={overInfo.newBest}
         onAgain={start}
       >
@@ -360,9 +432,16 @@ export default function KeySafariGame() {
                 : <><Ic n="eye" size={14} /> Look for the key that is wiggling</>)}
             </p>
             <div className="ks-band-meta">
+              {/* "12 found first try" was the ranked metric wearing its own
+                  name, and neither a seven year old nor their parent could tell
+                  what it meant. It belongs on the finish screen, in a sentence.
+                  What stays here is a streak, which every child already
+                  understands, and how close this row is to full. */}
               {rowFull
                 ? <Chip tone="gold"><Ic n="party" size={12} /> That row is full</Chip>
-                : <Chip tone={s.tries === 0 ? 'good' : undefined}><Ic n="star" size={12} /> {s.firstTry} found first try</Chip>}
+                : s.streak >= 2
+                  ? <Chip tone="good"><Ic n="flame" size={12} /> {s.streak} straight to the right key</Chip>
+                  : <Chip><Ic n="telescope" size={12} /> {done} of {FINDS} out of hiding</Chip>}
               <span className="ks-toward"><b>{ROW - (done % ROW)}</b> more in this row</span>
             </div>
             {/* A no-clock game still has to be leaveable, and a child should not
@@ -390,11 +469,15 @@ export default function KeySafariGame() {
                     bottom: f.bottom,
                     zIndex: f.z,
                     ['--grow' as string]: f.scale,
+                    ['--i' as string]: f.id,
                     ['--fx' as string]: `${f.dx.toFixed(0)}px`,
                     ['--fy' as string]: `${f.dy.toFixed(0)}px`,
                   }}
                 >
-                  <CharacterSprite ch={PRESET_CHARACTERS[PALS[f.pal].preset].ch} size={42} expr="happy" />
+                  <span className="ks-pal">
+                    <CharacterSprite ch={PRESET_CHARACTERS[PALS[f.pal].preset].ch} size={42} expr="happy" />
+                    {say === f.id && <b className="ks-say">{PALS[f.pal].name}!</b>}
+                  </span>
                 </span>
               ))}
               <span className="ks-grass" aria-hidden />

@@ -1308,6 +1308,27 @@ html[data-rm='1'] .wf-caret { animation: none; }
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.18));
   animation: ksHop 0.62s cubic-bezier(0.33, 1, 0.68, 1);
 }
+/* Three layers, one transform each: the outer holds the meadow position and the
+   row's depth, this one takes the cheer wave, and the sprite inside breathes.
+   Stacking them on one element is how you get an animation that fights itself. */
+.ks-pal { position: relative; display: block; }
+.ks-pal > svg { display: block; animation: ksIdle 3.2s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.29s); }
+@keyframes ksIdle { 50% { transform: translateY(-2px); } }
+/* The new arrival says who they are, once. */
+.ks-say {
+  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  margin-bottom: 4px; white-space: nowrap;
+  background: var(--surface); border: 2px solid var(--accent2); color: var(--text);
+  border-radius: 999px; padding: 1px 9px; font-size: 0.76rem; font-weight: 800;
+  animation: ksSay 1.3s ease-out forwards;
+}
+@keyframes ksSay {
+  0% { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.6); }
+  18% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.08); }
+  30% { transform: translateX(-50%) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+}
 @keyframes ksHop {
   0%   { transform: translateX(-50%) scale(var(--grow, 1)) translate(var(--fx, 0px), var(--fy, 120px)) scale(0.7); }
   55%  { transform: translateX(-50%) scale(var(--grow, 1)) translate(calc(var(--fx, 0px) * 0.35), calc(var(--fy, 120px) * 0.25 - 26px)) scale(1.14); }
@@ -1397,7 +1418,7 @@ html[data-rm='1'] .wf-caret { animation: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ks-found, .ks-peek, .kbd-key.ks-hiding, .ks-who[data-help='true'] { animation: none; }
+  .ks-found, .ks-peek, .kbd-key.ks-hiding, .ks-who[data-help='true'], .ks-pal > svg { animation: none; }
   .ks-found { transform: translateX(-50%) scale(var(--grow, 1)); }
   /* Without the rustle the hiding place has to be findable some other way, so
      it takes a ring from the start rather than only once help arrives. */

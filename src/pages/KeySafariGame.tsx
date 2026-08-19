@@ -8,7 +8,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { Ic } from '../components/icons';
-import { MobileKeys, useGameKeys } from '../components/gamekit';
+import { MobileKeys, STARTER_PALS as PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
 import { CharacterSprite, PRESET_CHARACTERS } from '../components/avatars';
 import { FINGER_NAMES, makeCharLookup } from '../lib/keyboard';
@@ -34,18 +34,6 @@ import type { GuideStyle, Rewards } from '../lib/types';
  * wall learns nothing except that they are stuck.
  */
 
-/** The pals, by preset index, with the names the rest of the app calls them. */
-const PALS: { preset: number; name: string; rare?: boolean }[] = [
-  { preset: 20, name: 'Clementine' },
-  { preset: 21, name: 'Miso' },
-  { preset: 22, name: 'Pip' },
-  { preset: 23, name: 'Waffles' },
-  { preset: 24, name: 'Biscuit' },
-  // Two who show up once in a while, so a long expedition still holds a
-  // surprise. A child who finds Ember once will keep looking for Ember.
-  { preset: 14, name: 'Noodle', rare: true },
-  { preset: 19, name: 'Ember', rare: true },
-];
 const COMMON = PALS.filter((p) => !p.rare);
 const RARE = PALS.filter((p) => p.rare);
 

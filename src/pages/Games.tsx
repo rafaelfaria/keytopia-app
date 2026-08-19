@@ -47,6 +47,15 @@ function GameArt({ id }: { id: string }) {
           <i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" />
         </div>
       );
+    case 'paint':
+      /* Tiles coming away from something underneath. */
+      return (
+        <div className="arena-art ga-paint" aria-hidden>
+          {['a', 'm', 'e', 'r', 't', 'o', 'k', 's', 'i'].map((c, i) => (
+            <i key={c} className={`gp-tile ${i === 2 || i === 4 || i === 7 ? 'gp-off' : ''}`}>{c}</i>
+          ))}
+        </div>
+      );
     case 'rocket':
       /* A rocket part way up its own alphabet. */
       return (

@@ -787,6 +787,19 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   background: var(--gold); box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent2) 55%, transparent);
 }
 
+/* Paint Reveal: tiles coming away from something underneath */
+.ga-paint {
+  display: grid; grid-template-columns: repeat(3, 34px); gap: 5px;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 22%, var(--surface2)), color-mix(in oklab, var(--accent2) 26%, var(--surface2)));
+}
+.gp-tile {
+  width: 34px; height: 26px; border-radius: 6px; font-style: normal;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 0.82rem; font-weight: 700;
+  color: var(--text-dim); background: var(--surface); border: 1.5px solid var(--border);
+}
+.gp-off { opacity: 0; }
+
 /* Alphabet Rocket: part way up its own alphabet */
 .ga-rocket { background: linear-gradient(180deg, color-mix(in oklab, var(--accent2) 24%, var(--surface2)), color-mix(in oklab, var(--good) 12%, var(--surface2))); }
 .gr-moon { position: absolute; top: 10px; right: 16px; color: var(--gold); }

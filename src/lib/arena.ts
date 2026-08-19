@@ -22,7 +22,7 @@ export type ArenaToken = 'accent' | 'accent2' | 'good' | 'warn' | 'gold' | 'bad'
 export type ArenaGameId =
   | 'lightstream' | 'duel' | 'survivor' | 'wordfall'
   | 'stack' | 'cipher' | 'keyforge' | 'wordflight'
-  | 'letterfall' | 'keysafari' | 'rocket';
+  | 'letterfall' | 'keysafari' | 'rocket' | 'paint';
 
 export interface ArenaGame {
   id: ArenaGameId;
@@ -103,6 +103,13 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
     desc: 'Eight typists, four rapid heats, the slowest move to the cheer bench each round. Outlast everyone for the crown.',
     valueLabel: 'heats', unit: plural('heat'), tier: 'competitive',
     hero: { formation: 'stream', tone: ['warn', 'gold', 0.4] },
+  },
+  paint: {
+    id: 'paint', name: 'Paint Reveal', icon: 'palette', to: '/app/games/paint',
+    trains: 'Spotting any letter',
+    desc: 'A pal hides under twenty four painted tiles, each with a letter on it. Press any one you can find and that patch comes away.',
+    valueLabel: 'patches', unit: plural('patch', 'patches'), tier: 'starter',
+    hero: { formation: 'terrace', tone: ['accent', 'accent2', 0.5] },
   },
   rocket: {
     id: 'rocket', name: 'Alphabet Rocket', icon: 'moon', to: '/app/games/rocket',

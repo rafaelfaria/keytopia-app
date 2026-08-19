@@ -190,6 +190,24 @@ export const PIXEL_PALS = [
   { name: 'Biscuit', kind: 'owl', preset: ANIMAL_START + 4 },
 ];
 
+/**
+ * The pals as the starter games use them: by preset index, with the two rare
+ * ones on the end.
+ *
+ * Kept separate from PIXEL_PALS above, which the worlds index into as guardians
+ * (`guardian % PIXEL_PALS.length`) and whose length is therefore load-bearing.
+ * Two lists is the cheaper mistake here.
+ */
+export const STARTER_PALS: { preset: number; name: string; rare?: boolean }[] = [
+  { preset: ANIMAL_START, name: 'Clementine' },
+  { preset: ANIMAL_START + 1, name: 'Miso' },
+  { preset: ANIMAL_START + 2, name: 'Pip' },
+  { preset: ANIMAL_START + 3, name: 'Waffles' },
+  { preset: ANIMAL_START + 4, name: 'Biscuit' },
+  { preset: 14, name: 'Noodle', rare: true },
+  { preset: 19, name: 'Ember', rare: true },
+];
+
 /** Tiny decorative critter that floats/flutters. Purely ornamental. */
 export function Critter({ kind, style }: { kind: 'butterfly' | 'bee' | 'snail'; style?: React.CSSProperties }) {
   if (kind === 'butterfly') {

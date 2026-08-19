@@ -1569,3 +1569,100 @@ html[data-rm='1'] .wf-caret { animation: none; }
   .ar-rocket { transition: none; }
   .ar-big[data-help='true'] .ar-big-ch { outline: 4px solid var(--accent); outline-offset: 5px; }
 }
+
+/* ---------------------------------------------------------------------------
+   Paint Reveal — the starter game where every letter is a right answer
+   --------------------------------------------------------------------------- */
+
+.pr-scene { flex: 1; display: flex; flex-direction: column; gap: 12px; min-height: 0; width: 100%; }
+
+.pr-board {
+  position: relative; flex: 1; min-height: 230px; max-height: 400px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  border-radius: 18px; border: 2px solid var(--border);
+  background: linear-gradient(160deg,
+    color-mix(in oklab, var(--accent) 12%, var(--surface2)),
+    color-mix(in oklab, var(--accent2) 14%, var(--surface2)));
+}
+/* One box holds the picture and the tiles that cover it. The sprite is larger
+   than the frame and pulled up, so what a patch uncovers is always a piece of
+   the pal's face rather than the sky beside it. */
+.pr-cover {
+  position: relative; width: min(94%, 340px); aspect-ratio: 6 / 4;
+  overflow: hidden; border-radius: 12px;
+  background: color-mix(in oklab, var(--accent2) 20%, var(--surface2));
+}
+.pr-pic {
+  position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
+  display: block; image-rendering: pixelated;
+}
+.pr-grid {
+  position: absolute; inset: 0;
+  display: grid; grid-template-columns: repeat(var(--cols, 6), 1fr); gap: 3px;
+}
+/* A painted tile: thick, chunky, and obviously something you could pull off. */
+.pr-tile {
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; font-family: var(--font-type); font-size: 1.05rem; font-weight: 800;
+  color: #2d2a26;
+  background: color-mix(in oklab, var(--gold) 62%, var(--surface));
+  border: 2px solid color-mix(in oklab, var(--gold) 72%, #000);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.4);
+  transition: none;
+}
+/* Every other tile takes a different paint, so the cover reads as paint rather
+   than as a spreadsheet. */
+.pr-tile:nth-child(3n) { background: color-mix(in oklab, var(--accent2) 55%, var(--surface)); border-color: color-mix(in oklab, var(--accent2) 70%, #000); }
+.pr-tile:nth-child(4n) { background: color-mix(in oklab, var(--good) 52%, var(--surface)); border-color: color-mix(in oklab, var(--good) 70%, #000); }
+.pr-tile:nth-child(5n) { background: color-mix(in oklab, var(--warn) 52%, var(--surface)); border-color: color-mix(in oklab, var(--warn) 70%, #000); }
+.pr-off { animation: prPeel 0.42s cubic-bezier(0.5, 0, 0.75, 0.4) forwards; pointer-events: none; }
+@keyframes prPeel {
+  0% { transform: none; opacity: 1; }
+  35% { transform: scale(1.12) rotate(-4deg); }
+  100% { transform: scale(0.2) rotate(22deg) translateY(18px); opacity: 0; }
+}
+
+.pr-keys { padding: 10px 12px; border-radius: 16px; background: var(--surface); border: 2px solid var(--border); }
+.pr-keys .kbd-finger-hint { display: none; }
+/* Every letter still on the board, lit at once. Deliberately softer than the
+   single lit key of the other starters: this is a set of options, not an
+   instruction. */
+.kbd-key.pr-live {
+  background: color-mix(in oklab, var(--good) 26%, var(--key-bg)) !important;
+  border-color: color-mix(in oklab, var(--good) 45%, var(--key-border));
+  color: var(--text);
+}
+
+.arena-stage-main > .pr-band {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; gap: 14px; text-align: center;
+}
+.pr-question { margin: 0; min-height: 1.4em; font-size: 1.25rem; font-weight: 750; }
+.pr-question strong { color: var(--accent2); font-size: 1.6rem; }
+/* The letters left to find, as something to choose from. */
+.pr-left {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 5px;
+  list-style: none; margin: 0; padding: 0; max-width: 320px;
+}
+.pr-left li {
+  width: 30px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 0.98rem; font-weight: 750;
+  color: #2d2a26; background: color-mix(in oklab, var(--gold) 55%, var(--surface));
+  border: 2px solid color-mix(in oklab, var(--gold) 68%, #000);
+  animation: prIn 0.3s ease-out;
+}
+@keyframes prIn { from { opacity: 0; transform: scale(0.7); } }
+.pr-meta { display: flex; align-items: center; gap: 12px; min-height: 30px; }
+.pr-nolose { font-size: 0.82rem; font-weight: 650; color: var(--good); display: inline-flex; align-items: center; gap: 5px; }
+
+@media (max-width: 900px) {
+  .pr-board { min-height: 190px; }
+  .pr-left li { width: 26px; height: 28px; font-size: 0.88rem; }
+  .pr-keys { padding: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-off { animation: none; opacity: 0; }
+  .pr-left li { animation: none; }
+}

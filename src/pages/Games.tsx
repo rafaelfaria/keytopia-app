@@ -47,6 +47,17 @@ function GameArt({ id }: { id: string }) {
           <i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" />
         </div>
       );
+    case 'bridge':
+      /* Planks going in over the water, one word at a time. */
+      return (
+        <div className="arena-art ga-bridge" aria-hidden>
+          <span className="gb-deck">
+            <i className="gb-laid" /><i className="gb-laid" /><i className="gb-laid" /><i /><i />
+          </span>
+          <span className="gb-walk"><Ic n="person" size={22} /></span>
+          <span className="gb-water" />
+        </div>
+      );
     case 'firstletter':
       /* A picture and the letter it wants. */
       return (

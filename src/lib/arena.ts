@@ -22,7 +22,7 @@ export type ArenaToken = 'accent' | 'accent2' | 'good' | 'warn' | 'gold' | 'bad'
 export type ArenaGameId =
   | 'lightstream' | 'duel' | 'survivor' | 'wordfall'
   | 'stack' | 'cipher' | 'keyforge' | 'wordflight'
-  | 'letterfall' | 'keysafari' | 'rocket' | 'paint' | 'firstletter';
+  | 'letterfall' | 'keysafari' | 'rocket' | 'paint' | 'firstletter' | 'bridge';
 
 export interface ArenaGame {
   id: ArenaGameId;
@@ -103,6 +103,13 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
     desc: 'Eight typists, four rapid heats, the slowest move to the cheer bench each round. Outlast everyone for the crown.',
     valueLabel: 'heats', unit: plural('heat'), tier: 'competitive',
     hero: { formation: 'stream', tone: ['warn', 'gold', 0.4] },
+  },
+  bridge: {
+    id: 'bridge', name: 'Word Bridge', icon: 'route', to: '/app/games/bridge',
+    trains: 'Whole words, one letter at a time',
+    desc: 'Each word is a plank and each letter a step across it. The letter you need is always lit, and a wrong key never sends you back.',
+    valueLabel: 'planks', unit: plural('plank'), tier: 'starter',
+    hero: { formation: 'terrace', tone: ['good', 'accent2', 0.4] },
   },
   firstletter: {
     id: 'firstletter', name: 'First Letter', icon: 'apple', to: '/app/games/firstletter',

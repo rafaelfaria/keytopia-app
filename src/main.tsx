@@ -31,6 +31,7 @@ import KeySafariGame from './pages/KeySafariGame';
 import RocketGame from './pages/RocketGame';
 import PaintRevealGame from './pages/PaintRevealGame';
 import FirstLetterGame from './pages/FirstLetterGame';
+import WordBridgeGame from './pages/WordBridgeGame';
 import KeyforgeGame from './pages/KeyforgeGame';
 import WordflightGame from './pages/WordflightGame';
 import DuelGame from './pages/DuelGame';
@@ -164,6 +165,7 @@ container.__ktRoot.render(
           <Route path="games/rocket" element={<RocketGame />} />
           <Route path="games/paint" element={<PaintRevealGame />} />
           <Route path="games/firstletter" element={<FirstLetterGame />} />
+          <Route path="games/bridge" element={<WordBridgeGame />} />
           <Route path="games/keyforge" element={<KeyforgeGame />} />
           <Route path="games/wordflight" element={<WordflightGame />} />
           <Route path="games/duel" element={<DuelGame />} />

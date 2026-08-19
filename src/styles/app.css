@@ -787,6 +787,15 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   background: var(--gold); box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent2) 55%, transparent);
 }
 
+/* Word Bridge: planks going in over the water */
+.ga-bridge { background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 14%, var(--surface2)) 55%, color-mix(in oklab, var(--accent2) 30%, var(--surface2)) 55%); }
+.gb-deck { position: absolute; left: 8%; right: 8%; top: 52%; display: flex; gap: 4px; }
+.gb-deck i { flex: 1; height: 9px; border-radius: 3px; background: color-mix(in oklab, var(--text) 12%, transparent); }
+.gb-deck .gb-laid { background: color-mix(in oklab, var(--warn) 62%, var(--surface)); box-shadow: 0 2px 0 color-mix(in oklab, var(--warn) 45%, #000); }
+.gb-walk { position: absolute; left: 34%; top: 30%; color: var(--accent); animation: gaWalk 4.6s ease-in-out infinite; }
+@keyframes gaWalk { 0%, 100% { transform: translateX(-14px); } 50% { transform: translateX(14px); } }
+.gb-water { position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: repeating-linear-gradient(90deg, transparent 0 12px, color-mix(in oklab, #fff 22%, transparent) 12px 20px); opacity: 0.5; }
+
 /* First Letter: a picture, and the letter it wants */
 .ga-first { gap: 10px; background: linear-gradient(180deg, color-mix(in oklab, var(--warn) 16%, var(--surface2)), color-mix(in oklab, var(--good) 14%, var(--surface2))); }
 .gfl-thing { color: var(--bad); animation: gaFirst 4.4s ease-in-out infinite; }
@@ -916,7 +925,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   .arena-card { animation: none; }
-  .gw-word, .gl-seed, .gsf-hiding, .gr-ship, .gfl-thing, .ga-forge i, .ga-flight::before, .gf-glider,
+  .gw-word, .gl-seed, .gsf-hiding, .gr-ship, .gfl-thing, .gb-walk, .ga-forge i, .ga-flight::before, .gf-glider,
   .gd-fill, .gs-dot, .gc-tile, .gk-drop { animation: none; }
   .gd-you { width: 62%; }
   .gd-foe { width: 38%; }

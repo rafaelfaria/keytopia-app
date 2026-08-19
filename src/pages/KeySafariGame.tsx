@@ -48,10 +48,41 @@ const PALS: { preset: number; name: string; rare?: boolean }[] = [
 const COMMON = PALS.filter((p) => !p.rare);
 const RARE = PALS.filter((p) => p.rare);
 
-/** One expedition. Long enough to be an outing, short enough to finish. */
-const FINDS = 12;
+/**
+ * One expedition: three rows of eight, filling back to front.
+ *
+ * It was one row of twelve, which finished about a minute after it started and
+ * left the meadow looking like a queue rather than a place. Rows give the run a
+ * shape a child can see coming ("this row is nearly full") and give the meadow
+ * somewhere to grow into, which is the same reason Letter Fall plants its
+ * flowers in a bed rather than wherever the letter happened to fall.
+ *
+ * A child who wants to stop before the meadow is full can, at any time, from
+ * the button in the band. There is no clock here and there is no obligation to
+ * finish either.
+ */
+const ROW = 8;
+const ROWS = 3;
+const FINDS = ROW * ROWS;
 
-interface Found { id: number; pal: number; x: number; dx: number; dy: number }
+/** Where a find stands in the meadow. Later rows are nearer, and larger. */
+function meadowSpot(i: number) {
+  const n = i % FINDS;
+  const col = n % ROW;
+  const row = Math.floor(n / ROW);
+  const step = 84 / (ROW - 1);
+  return {
+    // Odd rows sit half a step across, so a pal in the back row stands in the
+    // gap between two in front of it rather than directly behind one. Without
+    // the stagger, three rows in a meadow this size is one row and two rumours.
+    x: 8 + col * step + (row % 2 ? step / 2 : 0) - (row % 2 ? 2 : 0),
+    bottom: 70 - row * 28,
+    scale: 0.72 + row * 0.14,
+    z: row + 1,
+  };
+}
+
+interface Found { id: number; pal: number; x: number; bottom: number; scale: number; z: number; dx: number; dy: number }
 
 export default function KeySafariGame() {
   const data = useData();
@@ -68,7 +99,7 @@ export default function KeySafariGame() {
   >(null);
 
   const st = useRef({
-    ch: '', pal: 0, since: 0, tries: 0,
+    ch: '', pal: 0, since: 0, tries: 0, rowNote: 0,
     found: [] as Found[], firstTry: 0, score: 0,
     strokes: [] as GameStroke[], startedAt: 0,
     rng: mulberry32(Date.now() % 1e9),
@@ -129,7 +160,7 @@ export default function KeySafariGame() {
   const start = () => {
     st.current = {
       ...st.current,
-      ch: '', pal: 0, since: 0, tries: 0, found: [], firstTry: 0, score: 0,
+      ch: '', pal: 0, since: 0, tries: 0, rowNote: 0, found: [], firstTry: 0, score: 0,
       strokes: [], startedAt: performance.now(),
     };
     setPress(null);
@@ -184,16 +215,17 @@ export default function KeySafariGame() {
     const meadow = meadowRef.current;
     const wrap = keysRef.current;
     const i = cur.found.length;
-    const x = 6 + i * (88 / (FINDS - 1));
+    const spot = meadowSpot(i);
     let dx = 0;
     let dy = 120;
     if (scene && meadow && wrap && peek) {
       // Where the animal is now (over its key) relative to where it is going
-      // (its place on the grass), so the hop is drawn between two real points.
+      // (its own place in the meadow), so the hop is drawn between two real
+      // points rather than along a guess.
       const mr = meadow.getBoundingClientRect();
       const wr = wrap.getBoundingClientRect();
-      dx = (wr.left + peek.x) - (mr.left + (x / 100) * mr.width);
-      dy = (wr.top + peek.y) - (mr.bottom - 34);
+      dx = (wr.left + peek.x) - (mr.left + (spot.x / 100) * mr.width);
+      dy = (wr.top + peek.y) - (mr.bottom - spot.bottom - 16);
     }
     // A find with no wrong keys before it is worth double. Quietly: a seven
     // year old should never be told they lost points, and this is the only
@@ -201,8 +233,13 @@ export default function KeySafariGame() {
     const clean = cur.tries === 0;
     if (clean) cur.firstTry++;
     cur.score += clean ? 20 : 10;
-    cur.found.push({ id: i, pal: cur.pal, x, dx, dy });
+    cur.found.push({ id: i, pal: cur.pal, x: spot.x, bottom: spot.bottom, scale: spot.scale, z: spot.z, dx, dy });
     if (data?.settings.soundOn) { snd.pop(); if (clean) snd.step(); }
+    // A row filling up is the milestone this game has instead of a level.
+    if (cur.found.length % ROW === 0 && cur.found.length < FINDS) {
+      cur.rowNote = performance.now();
+      if (data?.settings.soundOn) window.setTimeout(() => snd.step(), 260);
+    }
     if (cur.found.length >= FINDS) {
       window.clearTimeout(nextTimer.current);
       nextTimer.current = window.setTimeout(endGame, 900);
@@ -286,6 +323,7 @@ export default function KeySafariGame() {
   }
 
   const done = s.found.length;
+  const rowFull = performance.now() - s.rowNote < 1800;
 
   return (
     <>
@@ -322,10 +360,19 @@ export default function KeySafariGame() {
                 : <><Ic n="eye" size={14} /> Look for the key that is wiggling</>)}
             </p>
             <div className="ks-band-meta">
-              <Chip tone={s.tries === 0 ? 'good' : undefined}>
-                <Ic n="star" size={12} /> {s.firstTry} found first try
-              </Chip>
+              {rowFull
+                ? <Chip tone="gold"><Ic n="party" size={12} /> That row is full</Chip>
+                : <Chip tone={s.tries === 0 ? 'good' : undefined}><Ic n="star" size={12} /> {s.firstTry} found first try</Chip>}
+              <span className="ks-toward"><b>{ROW - (done % ROW)}</b> more in this row</span>
             </div>
+            {/* A no-clock game still has to be leaveable, and a child should not
+                have to find the browser's back button to stop. It appears only
+                once there is something worth keeping. */}
+            {done >= 4 && (
+              <button type="button" className="ks-stop" onClick={endGame}>
+                Finish the safari and go home →
+              </button>
+            )}
           </div>
         )}
         side={(
@@ -340,11 +387,14 @@ export default function KeySafariGame() {
                   className="ks-found"
                   style={{
                     left: `${f.x}%`,
+                    bottom: f.bottom,
+                    zIndex: f.z,
+                    ['--grow' as string]: f.scale,
                     ['--fx' as string]: `${f.dx.toFixed(0)}px`,
                     ['--fy' as string]: `${f.dy.toFixed(0)}px`,
                   }}
                 >
-                  <CharacterSprite ch={PRESET_CHARACTERS[PALS[f.pal].preset].ch} size={44} expr="happy" />
+                  <CharacterSprite ch={PRESET_CHARACTERS[PALS[f.pal].preset].ch} size={42} expr="happy" />
                 </span>
               ))}
               <span className="ks-grass" aria-hidden />

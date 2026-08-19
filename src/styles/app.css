@@ -150,9 +150,20 @@
 .game-hud { display: flex; gap: 18px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; font-weight: 700; font-variant-numeric: tabular-nums; }
 .game-hud .grow { flex: 1; }
 .game-board { position: relative; min-height: 420px; overflow: hidden; user-select: none; }
-.wf-word { position: absolute; font-family: var(--font-type); font-weight: 600; font-size: 1.15rem; padding: 5px 12px; border-radius: 999px; background: var(--surface2); border: 1px solid var(--border); white-space: nowrap; transform: translateX(-50%); }
+/* z-index: above the tether that points at it (app.css .wf-tether). */
+.wf-word { position: absolute; z-index: 3; font-family: var(--font-type); font-weight: 600; font-size: 1.15rem; padding: 5px 12px; border-radius: 999px; background: var(--surface2); border: 1px solid var(--border); white-space: nowrap; transform: translateX(-50%); }
 .wf-word .hit { color: var(--accent); }
 .wf-target { border-color: var(--accent); background: color-mix(in oklab, var(--accent) 16%, var(--surface2)); box-shadow: 0 0 18px color-mix(in oklab, var(--accent) 30%, transparent); }
+/* The armed word, ringed. Five pill-shaped words in a sky and one of them tinted
+   was not enough to find at a glance while typing it. */
+.wf-target::before {
+  content: ''; position: absolute; inset: -5px; border-radius: 999px;
+  border: 1.5px solid color-mix(in oklab, var(--accent) 55%, transparent);
+  animation: wfLock 1.5s ease-in-out infinite;
+}
+@keyframes wfLock { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.045); } }
+@media (prefers-reduced-motion: reduce) { .wf-target::before { animation: none; } }
+html[data-rm='1'] .wf-target::before { animation: none; }
 .wf-shield { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: linear-gradient(0deg, color-mix(in oklab, var(--accent) 32%, transparent), transparent); border-top: 2.5px solid var(--accent); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; }
 .wf-city { font-size: 1.6rem; letter-spacing: 6px; }
 .wf-pop { animation: wfpop 0.4s ease forwards; }
@@ -190,6 +201,45 @@
 .race-wpm { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 0.88rem; }
 .race-countdown { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 5rem; font-weight: 800; z-index: 5; background: color-mix(in oklab, var(--bg) 55%, transparent); backdrop-filter: blur(3px); border-radius: 20px; animation: countpop 0.5s ease; }
 @keyframes countpop { from { transform: scale(1.6); opacity: 0; } }
+
+/* The race start cue. Unlike the countdown above — which is the duel's round
+   banner, where nothing is moving yet — this one sits over a track that is
+   about to move, so it never frosts the card: the veil pools behind the numeral
+   and fades out where the lanes are. */
+.race-cue {
+  position: absolute; inset: 0; z-index: 5; display: grid; place-items: center;
+  pointer-events: none; border-radius: 20px;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--bg) 78%, transparent), transparent 72%);
+}
+.race-cue-num {
+  font-size: clamp(3.4rem, 11vw, 5.5rem); font-weight: 800; line-height: 1;
+  font-variant-numeric: tabular-nums; color: var(--text);
+  animation: cueTick 0.75s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.race-cue-go {
+  font-size: clamp(2.6rem, 9vw, 4.2rem); font-weight: 800; letter-spacing: 0.04em;
+  color: var(--good); background: none;
+  animation: cueGo 0.55s ease-out forwards;
+}
+@keyframes cueTick { from { transform: scale(1.45); opacity: 0.15; } 60% { opacity: 1; } to { transform: scale(1); opacity: 0.92; } }
+@keyframes cueGo { from { transform: scale(0.9); opacity: 0; } 25% { transform: scale(1.04); opacity: 1; } to { transform: scale(1.02); opacity: 0; } }
+
+/* The clock, in the corner the cue vacates: during the count it says Ready, and
+   from GO! onward it is the only thing on the strip that keeps moving on its own. */
+.race-clock {
+  position: absolute; top: 10px; right: 14px; z-index: 4;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  color: var(--text-dim); background: color-mix(in oklab, var(--bg) 60%, transparent);
+  border-radius: 999px; padding: 3px 9px;
+}
+.race-clock-idle { color: var(--muted); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .race-cue-num { animation: none; }
+  .race-cue-go { animation: cueGoQuiet 0.55s linear forwards; }
+  @keyframes cueGoQuiet { from { opacity: 1; } to { opacity: 0; } }
+}
 .podium { display: flex; gap: 10px; align-items: flex-end; justify-content: center; margin: 20px 0; }
 .podium-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .podium-block { width: 86px; border-radius: 12px 12px 0 0; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; font-weight: 800; }
@@ -497,8 +547,44 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .fx-bolt { width: 26px; height: 5px; border-radius: 999px; background: linear-gradient(90deg, transparent, var(--accent)); box-shadow: 0 0 12px var(--accent); }
 
 /* ---------- Wordfall scene ---------- */
-.wf-board { overflow: hidden; }
+/* Words spawn at y -30 and the panel clips at its border, so every word used to
+   arrive as a rectangle sliced in half by a hard edge. The mask lets them come
+   out of the sky instead. Bottom stays hard: the wall is where the drop ends and
+   a fade there would soften exactly the line that matters. */
+.wf-board {
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 44px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 44px);
+}
 .wf-base { position: absolute; left: 0; right: 0; bottom: 0; height: 104px; pointer-events: none; }
+/* The ground glow, keyed to the wall's condition (--wf-danger, set on the
+   board). At full shield it is the game's own accent, at nothing left it is a
+   red hem under the whole city. */
+.wf-base::before {
+  content: ''; position: absolute; inset: auto 0 0; height: 74px;
+  background: linear-gradient(0deg,
+    color-mix(in oklab, var(--bad) calc(var(--wf-danger, 0) * 46%), transparent),
+    transparent 82%);
+  opacity: calc(0.25 + var(--wf-danger, 0) * 0.75);
+  transition: opacity 360ms ease;
+}
+/* Where a word starts costing you. Aligned with the loop's own impact test
+   (h - 108), which is why it is 108px and not a rounder number. */
+.wf-danger-line {
+  position: absolute; left: 0; right: 0; bottom: 108px; height: 0; z-index: 1;
+  border-top: 1.5px dashed color-mix(in oklab,
+    var(--bad) calc(28% + var(--wf-danger, 0) * 52%),
+    color-mix(in oklab, var(--muted) 40%, transparent));
+  opacity: calc(0.5 + var(--wf-danger, 0) * 0.5);
+  transition: opacity 360ms ease;
+}
+/* The lock, as a line from the muzzle to the word. Thin, dashed and behind the
+   words: it should be findable at a glance and invisible while reading. */
+.wf-tether { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+.wf-tether line {
+  stroke: color-mix(in oklab, var(--accent) 60%, transparent);
+  stroke-width: 1.5; stroke-dasharray: 4 7; stroke-linecap: round;
+}
 .wf-wall { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 40px; }
 .cannon { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 5; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35)); }
 .cannon-barrel { transform-origin: 45px 48px; transition: transform 0.12s ease-out; }
@@ -662,23 +748,44 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 }
 .arena-card:hover .arena-play, .arena-card:focus-visible .arena-play { opacity: 1; transform: none; }
 @media (hover: none) { .arena-play { display: none; } }
-.arena-best {
-  position: absolute; left: 10px; top: 10px; z-index: 3;
-  display: inline-flex; align-items: center; gap: 5px;
-  background: color-mix(in oklab, var(--surface) 85%, transparent); border: 1px solid color-mix(in oklab, var(--gold) 55%, var(--border));
-  color: var(--gold); border-radius: 999px; padding: 3px 10px; font-size: 0.76rem; font-weight: 750;
-  backdrop-filter: blur(4px);
+/* Wordfall: whole words falling on the wall they threaten */
+.ga-wordfall { gap: 14px; }
+.gw-word {
+  font-family: var(--font-type); font-size: 0.86rem; font-weight: 600; color: var(--text-dim);
+  background: var(--surface); border: 1px solid var(--border); padding: 3px 10px; border-radius: 8px;
+  animation: gaFall 5s linear infinite;
 }
+.gw-word:nth-child(2) { animation-delay: 1.7s; }
+.gw-word:nth-child(3) { animation-delay: 3.4s; }
+.gw-wall {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 20px;
+  --wall: color-mix(in oklab, var(--text) 22%, var(--surface));
+  /* Merlons in the top 7px, solid wall below: the first layer is transparent
+     where the notches are and lets the second layer's teeth through. */
+  background:
+    linear-gradient(180deg, transparent 0 7px, var(--wall) 7px),
+    repeating-linear-gradient(90deg, var(--wall) 0 12px, transparent 12px 21px);
+  box-shadow: 0 -8px 18px color-mix(in oklab, var(--accent2) 22%, transparent);
+}
+@keyframes gaFall { from { transform: translateY(-58px); opacity: 0.35; } 55% { opacity: 1; } to { transform: translateY(52px); opacity: 0; } }
 
-/* Wordfall: word pills drifting down */
-.ga-wordfall span {
-  font-family: var(--font-type); font-size: 0.92rem; color: var(--text-dim);
-  background: var(--surface); border: 1px solid var(--border); padding: 3px 9px; border-radius: 999px;
-  animation: gaFall 4.6s linear infinite;
+/* Letter Fall: one letter at a time, landing as a flower */
+.ga-letterfall { gap: 18px; background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 8%, var(--surface2)), color-mix(in oklab, var(--good) 12%, var(--surface2))); }
+.gl-seed {
+  font-family: var(--font-type); font-size: 1.28rem; font-weight: 800; color: var(--text);
+  width: 40px; height: 40px; border-radius: 999px; display: flex; align-items: center; justify-content: center;
+  background: var(--surface); border: 2.5px solid var(--border);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--border) 70%, transparent), inset 0 3px 0 rgba(255, 255, 255, 0.35);
+  animation: gaSeed 5.1s linear infinite;
 }
-.ga-wordfall span:nth-child(2) { animation-delay: 0.9s; } .ga-wordfall span:nth-child(3) { animation-delay: 1.8s; }
-.ga-wordfall span:nth-child(4) { animation-delay: 2.7s; } .ga-wordfall span:nth-child(5) { animation-delay: 3.6s; }
-@keyframes gaFall { from { transform: translateY(-64px); opacity: 0.4; } 60% { opacity: 1; } to { transform: translateY(64px); opacity: 0; } }
+.gl-seed:nth-child(2) { animation-delay: 1.7s; }
+.gl-seed:nth-child(3) { animation-delay: 3.4s; }
+@keyframes gaSeed { from { transform: translateY(-56px); opacity: 0.3; } 45% { opacity: 1; } 88%, 100% { transform: translateY(44px); opacity: 0; } }
+.gl-grass { position: absolute; left: 0; right: 0; bottom: 0; height: 15px; background: color-mix(in oklab, var(--good) 55%, var(--surface2)); border-top: 2px solid color-mix(in oklab, var(--good) 70%, var(--border)); }
+.gl-flower {
+  position: absolute; bottom: 11px; width: 11px; height: 11px; border-radius: 999px;
+  background: var(--gold); box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent2) 55%, transparent);
+}
 
 /* Keyforge: warm hearth, sparks rising */
 .ga-forge { background: radial-gradient(circle at 50% 78%, color-mix(in oklab, var(--warn) 24%, var(--surface2)), var(--surface2) 72%); }
@@ -750,7 +857,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   .arena-card { animation: none; }
-  .ga-wordfall span, .ga-forge i, .ga-flight::before, .gf-glider,
+  .gw-word, .gl-seed, .ga-forge i, .ga-flight::before, .gf-glider,
   .gd-fill, .gs-dot, .gc-tile, .gk-drop { animation: none; }
   .gd-you { width: 62%; }
   .gd-foe { width: 38%; }
@@ -850,6 +957,20 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 /* ---------- Duel intro: compact, fits without scrolling ---------- */
 .duel-intro { padding: 22px 16px 24px; gap: 10px; }
 .duel-intro h2 { font-size: 1.3rem; }
+/* The ranked rival is one tile on its own row, carrying the accent the rest of
+   the Arena uses for "this is the thing that counts". The practice tiers stay
+   the quiet grid they already were. Shared by the duel's rival picker and the
+   Lightstream's, because they are the same rule wearing two names. */
+.pace-group-label {
+  display: flex; align-items: center; gap: 6px; margin: 12px 0 5px;
+  font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase;
+  font-weight: 800; color: var(--muted);
+}
+.duel-diffs-ranked { grid-template-columns: minmax(0, 1fr); }
+.opt-tile-ranked { border-color: color-mix(in oklab, var(--accent) 40%, var(--border)); }
+.opt-tile-ranked .opt-ic { color: var(--accent); }
+.opt-tile-ranked small { color: color-mix(in oklab, var(--accent) 62%, var(--text-dim)); }
+
 .duel-diffs { display: grid; grid-template-columns: repeat(2, minmax(180px, 1fr)); gap: 7px; max-width: 480px; }
 .duel-diffs .duel-diff { padding: 8px 12px; border-radius: 11px; gap: 9px; }
 .duel-diffs .duel-diff strong { font-size: 0.86rem; display: block; }
@@ -883,6 +1004,11 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   background: repeating-conic-gradient(#e8e8f0 0% 25%, #14182b 0% 50%) 0 0 / 8px 8px; opacity: 0.85; }
 .road-done-flag { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); color: var(--gold); }
 .race-lane { grid-template-columns: 150px 1fr 70px; }
+/* Somebody who walked out mid-race. The lane stays, because a row vanishing
+   from under a race in progress is more startling than a car greyed out, and
+   the word beside it says what happened. */
+.race-lane-left { opacity: 0.45; }
+.race-lane-left .road-car { filter: grayscale(1); }
 
 /* ---------- The Lightstream: race hub ---------- */
 /* The hero repeats the comet band from the Arena card the learner just clicked,
@@ -910,74 +1036,281 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .ls-career dd.good { color: var(--good); }
 .ls-career dd.accent { color: var(--accent); }
 
-.ls-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 16px; align-items: start; }
-@media (max-width: 900px) { .ls-grid { grid-template-columns: 1fr; } }
+/* Ranked above practice on the left, standings holding the whole right column.
+   The board is what the two short cards used to leave a hole under, and it is
+   also the one thing on this page that answers "where am I". */
+.ls-grid {
+  display: grid; gap: 14px; align-items: start;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+/* The modes own their own stacking, so the board beside them cannot stretch
+   the rows they sit in. */
+.ls-modes { display: flex; flex-direction: column; gap: 14px; min-width: 0; container-type: inline-size; }
+.ls-ways { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: stretch; }
+.ls-boardcol { position: sticky; top: 12px; }
+@media (max-width: 900px) {
+  /* Modes first, board last: a board must never sit between a learner and a
+     race, and on one column "beside" becomes "in front of". */
+  .ls-grid { grid-template-columns: 1fr; }
+  .ls-boardcol { position: static; }
+}
+/* Two-up only when the mode column is actually wide enough for it. This is a
+   container query rather than a page breakpoint because the column's width is
+   set by the board beside it, not by the window: at 1000px the page is still
+   two columns and these cards are ~200px each, which is where "Ghost race"
+   starts wrapping around its own chip. */
+@container (min-width: 520px) { .ls-ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* The ranked race, at the weight of the thing the page is for. */
+.ls-ranked {
+  border: 1.5px solid color-mix(in oklab, var(--accent) 34%, var(--border));
+  background:
+    radial-gradient(120% 90% at 100% 0%, color-mix(in oklab, var(--accent) 11%, transparent), transparent 62%),
+    var(--surface);
+}
+.ls-ranked-title { display: flex; align-items: center; gap: 9px; font-size: 1.18rem; }
+.ls-ranked-title .ic { color: var(--accent); }
+.ls-ranked-lead { margin-top: 6px; color: var(--text-dim); max-width: 56ch; line-height: 1.55; }
+.ls-ranked-lead strong { color: var(--text); }
+
+/* Three facts, not three sentences: what it takes to post, what is scored, and
+   who you are up against. Each is one line with its own mark. */
+.ls-facts { list-style: none; margin: 10px 0 14px; padding: 0; display: grid; gap: 6px; }
+.ls-facts li {
+  display: grid; grid-template-columns: 22px 1fr; align-items: start; gap: 8px;
+  font-size: 0.88rem; color: var(--text-dim); line-height: 1.45;
+}
+.ls-facts .ic { color: var(--accent); margin-top: 1px; }
+.ls-facts strong { color: var(--text); }
+
+/* The other two modes. Same card weight as the ranked race, minus its accent:
+   equally reachable, visibly not the thing that ranks you. */
+.ls-way { display: flex; flex-direction: column; gap: 8px; }
+.ls-way h3 { font-size: 1rem; white-space: nowrap; }
+.ls-way .ls-card-head .chip { flex: none; white-space: nowrap; }
+.ls-way > p { min-height: 2.6em; }
+.ls-way-cta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+/* Create above, join below, each on one line: in a half-width card the two
+   actions and the code field wrapped into three ragged rows. */
+.ls-room .ls-way-cta { flex-direction: column; align-items: stretch; gap: 8px; }
+.ls-join { display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+.ls-join-label { font-size: 0.72rem; color: var(--muted); }
+.ls-join-row { display: flex; align-items: center; gap: 6px; }
+.ls-room .ls-code-input { flex: 1 1 auto; min-width: 0; max-width: none; }
+.ls-join-row .btn { flex: 0 0 auto; }
+
+/* Paces: one strip of pills. The least important choice on the page, sized like
+   it — pressing one starts that race, which is all a pace ever had to do. */
+/* A block like the cards above it. Loose on the page background, the strip read
+   as leftovers rather than as the third thing this column offers — a group with
+   no edge is a group only by proximity, and proximity ran out at the fold. It
+   stays quieter than the mode cards: same surface, no shadow, one flat border. */
+.ls-practice {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 14px clamp(12px, 1.6vw, 16px);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+}
+.ls-practice .pace-group-label { margin: 0; }
+.ls-paces { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Inside a panel the pills need their own ground, or a pill on a surface of the
+   same colour is a label with a border round it. */
+.ls-practice .ls-pace-pill { background: var(--surface2); }
+.ls-pace-pill {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 44px;
+  padding: 8px 14px; border-radius: 999px; cursor: pointer; font: inherit;
+  border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim);
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+.ls-pace-pill strong { font-size: 0.86rem; color: var(--text); font-weight: 700; }
+.ls-pace-pill .ic { color: var(--muted); }
+.ls-pace-pill:hover {
+  border-color: color-mix(in oklab, var(--accent) 34%, var(--border));
+  background: color-mix(in oklab, var(--accent) 7%, var(--surface2));
+}
+.ls-pace-pill:hover .ic { color: var(--accent); }
+.ls-pace-pill:active { transform: translateY(1px); }
 .ls-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 2px; }
 .ls-card-head h3 { display: flex; align-items: center; gap: 8px; }
 
-/* Two columns of difficulty tiles: the same five choices at half the height,
-   which is what lets the CPU card sit level with the column beside it. */
-.ls-diffs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 13px 0 15px; }
-.ls-diffs .opt-tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
-@media (max-width: 520px) { .ls-diffs { grid-template-columns: 1fr; } }
 .ls-pace { color: var(--muted); font-weight: 600; font-size: 0.82rem; white-space: nowrap; }
 .ls-cta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: auto; }
-.ls-cpu { display: flex; flex-direction: column; }
 .ls-ghost-on { border-color: color-mix(in oklab, var(--accent) 28%, var(--border)); }
 
-.ls-room-actions { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-top: 13px; }
-.ls-join { display: flex; flex-direction: column; gap: 5px; }
-.ls-join-label { font-size: 0.78rem; color: var(--muted); }
 .ls-code-input { max-width: 140px; padding: 9px 12px; font-family: var(--font-type); letter-spacing: 0.08em; text-transform: uppercase; }
 .warnline { display: flex; align-items: center; gap: 6px; color: var(--warn, var(--gold)); margin-top: 10px; }
 .warnline.center { justify-content: center; }
 
-/* Standings: a locked shape, not a claim. Skeleton rows say "ranks will live
-   here" without ever showing a number that could be mistaken for real. */
-.ls-standings { margin-top: 16px; }
-.ls-standings-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 12px 0 14px; }
-.ls-board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.ls-board-row {
-  display: grid; grid-template-columns: 34px 26px 1fr auto; gap: 12px; align-items: center;
-  padding: 9px 12px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--border);
+/* The real board, in the panel the locked mockup used to fill. It brings its own
+   head, switchers and target line from arena.css; the hub only has to give it a
+   card to sit in. */
+.ls-hub .arena-board {
+  padding: 18px clamp(14px, 2vw, 20px);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
 }
-.ls-board-locked { opacity: 0.55; }
-.ls-rank {
-  display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px;
-  font-weight: 800; font-size: 0.85rem; background: color-mix(in oklab, var(--text) 8%, transparent); color: var(--muted);
-}
-.ls-rank-1 { background: color-mix(in oklab, var(--gold) 26%, transparent); color: var(--gold); }
-.ls-rank-2, .ls-rank-3 { background: color-mix(in oklab, var(--text) 13%, transparent); color: var(--text-dim); }
-.ls-rank-you { background: color-mix(in oklab, var(--accent) 18%, transparent); color: var(--accent); }
-.ls-board-you { border-color: color-mix(in oklab, var(--accent) 40%, var(--border)); background: color-mix(in oklab, var(--accent) 7%, var(--surface2)); }
-.ls-board-name { display: flex; align-items: center; gap: 8px; font-weight: 600; }
-.ls-board-wpm { font-variant-numeric: tabular-nums; color: var(--text-dim); font-size: 0.9rem; }
-.ls-skel { display: block; height: 11px; border-radius: 999px; background: color-mix(in oklab, var(--text) 14%, transparent); }
-.ls-skel-av { width: 26px; height: 26px; border-radius: 50%; }
-.ls-skel-name { width: min(46%, 190px); }
-.ls-skel-wpm { width: 58px; }
-.ls-standings-foot { margin-top: 14px; max-width: 76ch; }
-.concept-tag-inline { flex: none; }
 
-/* Lobby */
-.ls-lobby { max-width: 640px; margin: 0 auto; }
-.lobby-code-btn {
-  display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; max-width: 360px;
-  margin: 10px auto 14px; cursor: pointer; color: inherit; white-space: nowrap;
-  font-size: 1.7rem; letter-spacing: 0.22em;
-  transition: border-color 0.15s ease, background 0.15s ease;
+/* The guest room: a whole page for somebody who has never seen KeyTopia, so it
+   carries its own frame rather than borrowing the app shell they have no
+   account for. One column, generous, nothing to navigate. */
+.guest-page {
+  min-height: 100dvh; padding: 20px clamp(14px, 4vw, 32px) 40px;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  background:
+    radial-gradient(120% 70% at 50% 0%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 60%),
+    var(--bg);
 }
-.lobby-code-btn:hover { background: color-mix(in oklab, var(--accent) 10%, var(--surface2)); }
+.guest-top {
+  width: 100%; max-width: 720px; display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
+}
+.guest-room-tag { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.guest-top .grow { flex: 1; }
+.guest-card {
+  width: 100%; max-width: 720px; display: flex; flex-direction: column; gap: 12px;
+  padding: clamp(18px, 3vw, 28px); border-radius: 20px;
+  background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+.guest-card h1 { display: flex; align-items: center; gap: 10px; font-size: clamp(1.3rem, 4vw, 1.7rem); }
+.guest-card > p { max-width: 56ch; color: var(--text-dim); }
+.guest-name { display: flex; flex-direction: column; gap: 6px; max-width: 340px; }
+.guest-name .ob-input { font-size: 1.05rem; }
+.guest-race { gap: 16px; }
+/* The account invitation, at logo level. Present on every stage, loud on none:
+   as the big button on the results card it stood where the standings belong. */
+.guest-join { flex: none; }
+@media (max-width: 460px) {
+  /* Room for the logo first. The label goes, the icon and the link stay. */
+  .guest-join { font-size: 0; padding: 9px 12px; gap: 0; }
+  .guest-join .ic { font-size: 1rem; }
+}
+
+/* The finish, as a race rather than as a test result: everybody, in order.
+   Rivals who have not landed keep counting up, so a screen you reach by
+   finishing first is also the screen you watch the rest of the race on. */
+.guest-standings {
+  list-style: none; margin: 6px 0 0; padding: 0;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+}
+.guest-standings li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+.guest-standings li:last-child { border-bottom: none; }
+.guest-standings li.is-you { background: color-mix(in oklab, var(--accent) 9%, transparent); }
+.guest-pos {
+  flex: none; width: 26px; text-align: center;
+  font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-dim);
+}
+.guest-standings li.is-you .guest-pos { color: var(--accent); }
+.guest-racer { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Same treatment as the Arena board's own "(you)": a tag on the name, in the
+   accent, never a replacement for it. */
+.guest-you { color: var(--accent); font-weight: 700; }
+.guest-line { font-size: 0.86rem; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Out of a room that cannot be raced in. Quiet, because trying the code again
+   is the answer more often than giving up is. */
+.guest-cancel {
+  background: none; border: none; cursor: pointer; padding: 6px 10px;
+  font: inherit; font-size: 0.88rem; font-weight: 650; color: var(--muted);
+  text-decoration: underline; text-underline-offset: 3px;
+  transition: color 140ms ease;
+}
+.guest-cancel:hover { color: var(--text-dim); }
+.guest-cancel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+.guest-again { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 6px; }
+.guest-again > button { width: 100%; max-width: 340px; justify-content: center; }
+.guest-again > p { text-align: center; max-width: 46ch; }
+
+/* Lobby, inside the room dialog. A room is a short wait for one friend, so it
+   sits over the Lightstream rather than replacing it. */
+.ls-lobby h2 { display: flex; align-items: center; gap: 9px; }
+.ls-lobby > p { max-width: 46ch; }
+.lobby-share {
+  margin: 14px 0 4px; padding: 14px; border-radius: 16px;
+  background: color-mix(in oklab, var(--accent) 6%, var(--surface2));
+  border: 1px solid color-mix(in oklab, var(--accent) 22%, var(--border));
+  text-align: center;
+}
+/* The code is the object on this screen, so it holds its own copy button
+   rather than delegating to a full-width one underneath. */
+.lobby-share .lobby-code {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin: 0 auto; max-width: 100%;
+  font-size: clamp(1.3rem, 5vw, 1.8rem); padding: 8px 10px 8px 18px;
+  border-style: dashed;
+}
+/* The negative right margin eats the trailing letter-space, which would
+   otherwise push the code visually left of the button beside it. */
+.lobby-share .lobby-code > span { letter-spacing: 0.2em; margin-right: -0.2em; user-select: all; }
+
+/* One control shape for every copy and share affordance here: a 36px square
+   that carries an icon and nothing else. They are aria-labelled rather than
+   captioned, because three captioned buttons are what made this dialog read as
+   a form when it is a code and a guest list. */
 .lobby-copy {
-  display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-ui, inherit);
-  font-size: 0.72rem; letter-spacing: 0; color: var(--muted); text-transform: uppercase;
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: transparent; border: 1px solid transparent; color: var(--text-dim);
+  cursor: pointer; transition: color 140ms ease, background 140ms ease, border-color 140ms ease;
 }
-.lobby-list { margin-top: 6px; }
+.lobby-copy:hover { color: var(--text); background: color-mix(in oklab, var(--accent) 12%, transparent); }
+.lobby-copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The address, printed. A share sheet is the whole answer on a phone and none
+   of it on a desktop, where the link used to exist only inside a button. */
+.lobby-url {
+  display: flex; align-items: center; gap: 4px;
+  margin: 10px auto 0; max-width: 100%; width: fit-content;
+  padding: 2px 4px 2px 12px; border-radius: 999px;
+  background: color-mix(in oklab, var(--bg) 55%, transparent);
+  border: 1px solid var(--border);
+}
+.lobby-url-txt {
+  font-size: 0.86rem; color: var(--text-dim); user-select: all;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Only ever present when the clipboard refused. A copy that worked is confirmed
+   by the tick on the button that did it. */
+.lobby-share-note { margin: 9px 0 0; }
+/* The confirmation, on the control that performed it. */
+.lobby-copy.is-done { color: var(--good); background: color-mix(in oklab, var(--good) 14%, transparent); }
+
+.lobby-list { margin-top: 16px; }
+/* A name, two chips and a state pill do not fit one line on a phone. The name
+   takes the slack and truncates; the state pill wraps to its own line rather
+   than being clipped by the dialog's edge. */
+.lobby-player { flex-wrap: wrap; row-gap: 6px; }
+.lobby-player > strong { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lobby-player > .grow { flex: 1 0 0; }
+.lobby-player .lobby-ready { flex: none; }
+/* Your own row's readiness is a control; everyone else's is a readout. Same
+   shape either way, so the list reads as one column of states. */
+.lobby-ready {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 13px; border-radius: 999px; min-height: 36px;
+  font-size: 0.84rem; font-weight: 700; color: var(--text-dim);
+  background: var(--surface2); border: 1px solid var(--border);
+  cursor: pointer; transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+.lobby-ready .ready-dot { margin-left: 0; }
+.lobby-ready.is-ready { color: var(--good); border-color: color-mix(in oklab, var(--good) 45%, var(--border)); }
+.lobby-ready:not(.lobby-ready-flat):hover { color: var(--text); border-color: color-mix(in oklab, var(--accent) 45%, var(--border)); }
+.lobby-ready:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lobby-ready-flat { background: transparent; border-color: transparent; cursor: default; font-weight: 600; }
+/* The guest room's own list still prints readiness as plain text. */
 .lobby-ready-txt { min-width: 68px; text-align: right; }
+
 .lobby-waiting { display: flex; align-items: center; gap: 8px; padding-top: 10px; }
 .lobby-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: lobbyPulse 1.4s ease-in-out infinite; }
 @keyframes lobbyPulse { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
-.lobby-actions { margin-top: 16px; align-items: center; }
+/* One action. Leaving is the dialog's X, and the three near-equal buttons that
+   used to sit here left nothing looking like the thing to press. */
+.lobby-actions {
+  margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.lobby-actions > button { width: 100%; justify-content: center; }
 
 @media (prefers-reduced-motion: reduce) {
   .lobby-pulse { animation: none; opacity: 0.9; }
@@ -1028,20 +1361,72 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .jn-head h1 { font-size: clamp(1.5rem, 3.4vw, 2rem); margin: 2px 0; }
 .jn-stats { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 
-.jn-elev { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.jn-leg { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 8px 10px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 6px; color: var(--text); font: inherit; transition: border-color 0.15s, transform 0.15s; }
-.jn-leg:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-2px); }
-.jn-leg.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.jn-leg.locked { opacity: 0.55; cursor: default; }
-.jn-leg-name { font-size: 0.78rem; font-weight: 750; display: flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.jn-leg.done .jn-leg-name { color: var(--good); }
-.jn-leg-bar { height: 5px; border-radius: 999px; background: var(--ring-track); overflow: hidden; }
-.jn-leg-bar i { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
-.jn-leg.done .jn-leg-bar i { background: var(--good); }
+/* The legs read as a ridge line: each block sits a little higher than the one
+   before it, so the strip is an elevation profile rather than five tabs. The
+   lift is a bottom margin against `align-items: end`, which keeps every block
+   the same height and lets the row wrap without any of it mattering. */
+.jn-elev { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: end; }
+.jn-leg {
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 10px 12px 11px; cursor: pointer; text-align: left;
+  display: flex; flex-direction: column; gap: 8px; color: var(--text); font: inherit;
+  position: relative; overflow: hidden;
+  transition: border-color 0.18s, transform 0.18s, background 0.18s, box-shadow 0.18s;
+}
+.jn-leg:nth-child(2) { margin-bottom: 5px; }
+.jn-leg:nth-child(3) { margin-bottom: 10px; }
+.jn-leg:nth-child(4) { margin-bottom: 15px; }
+.jn-leg:nth-child(5) { margin-bottom: 20px; }
+.jn-leg:hover:not(:disabled) { border-color: color-mix(in oklab, var(--accent) 55%, var(--border)); transform: translateY(-3px); box-shadow: var(--shadow); }
+.jn-leg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.jn-leg.on {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 10%, var(--surface));
+  box-shadow: 0 0 0 1px var(--accent), var(--shadow);
+}
+/* a summit cap on the selected leg — the one bit of colour the eye lands on */
+.jn-leg.on::before { content: ''; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.jn-leg.done { border-color: color-mix(in oklab, var(--good) 40%, var(--border)); }
+.jn-leg.locked { cursor: default; background: var(--bg2); border-style: dashed; }
 
-.jn-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; align-items: start; }
-@media (max-width: 960px) { .jn-grid { grid-template-columns: 1fr; } .jn-elev { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
+.jn-leg-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.jn-leg-badge {
+  flex: none; width: 21px; height: 21px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--surface2); color: var(--text-dim);
+  font-size: 0.72rem; font-weight: 800; line-height: 1;
+}
+.jn-leg.on .jn-leg-badge { background: var(--accent); color: var(--accent-ink); }
+.jn-leg.done .jn-leg-badge { background: var(--good); color: var(--accent-ink); }
+.jn-leg.locked .jn-leg-badge { background: transparent; box-shadow: inset 0 0 0 1.5px var(--border); color: var(--muted); }
+.jn-leg-name { font-size: 0.82rem; font-weight: 750; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jn-leg.locked .jn-leg-name { color: var(--muted); }
+.jn-leg-meta { font-size: 0.7rem; font-weight: 650; color: var(--muted); letter-spacing: 0.01em; }
+.jn-leg.on .jn-leg-meta { color: var(--text-dim); }
+.jn-leg.done .jn-leg-meta { color: var(--good); }
+.jn-leg-bar { height: 6px; border-radius: 999px; background: var(--ring-track); overflow: hidden; }
+.jn-leg-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.jn-leg.done .jn-leg-bar i { background: var(--good); }
+@media (prefers-reduced-motion: reduce) {
+  .jn-leg, .jn-leg-bar i { transition: none; }
+  .jn-leg:hover:not(:disabled) { transform: none; }
+}
+
+/* Both columns end on the same line. Whichever side is taller sets the height,
+   and the map card is the one thing on the left allowed to grow, so the slack
+   lands in the map rather than as a gap under the last card. */
+.jn-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; align-items: stretch; }
+@media (max-width: 960px) {
+  .jn-grid { grid-template-columns: 1fr; }
+  /* the ridge only reads on one line, so below the fold it becomes a swipeable
+     row: same blocks, no wrapped stair-step. */
+  .jn-elev { display: flex; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+  .jn-elev::-webkit-scrollbar { display: none; }
+  .jn-leg { flex: 0 0 clamp(140px, 44vw, 190px); scroll-snap-align: start; }
+  .jn-leg:nth-child(n) { margin-bottom: 0; }
+}
 .jn-left { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.jn-map-card { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 .jn-rail { display: flex; flex-direction: column; gap: 14px; }
 .jn-continue h2 { margin: 4px 0 6px; }
 
@@ -1052,8 +1437,16 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .jn-mission-bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
 .jn-mission.done .jn-mission-bar i { background: var(--good); }
 
-/* the trail map itself */
-.trail-map svg { width: 100%; height: auto; }
+/* The trail map itself. The drawing keeps its aspect ratio, so when the card is
+   taller than the drawing the terrain sits on the floor and the slack above it
+   becomes sky — a gradient, so the extra height reads as air over the ridge
+   rather than as a blank strip. */
+.trail-map {
+  flex: 1; display: flex; align-items: flex-end; min-height: 0;
+  border-radius: var(--radius-s); overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent2) 7%, var(--surface)) 0%, var(--surface) 62%);
+}
+.trail-map svg { width: 100%; height: auto; max-height: 100%; }
 .trail-massif { fill: color-mix(in oklab, var(--accent) 7%, var(--surface)); }
 .trail-massif2 { fill: color-mix(in oklab, var(--accent) 12%, var(--surface)); }
 .trail-contour { fill: none; stroke: var(--border); stroke-width: 1.5; opacity: 0.5; }

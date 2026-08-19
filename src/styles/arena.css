@@ -191,7 +191,15 @@
    phases each fit one screen by design; a training session's finish screen
    carries a full breakdown of the run underneath the figures, and clipping it
    at 100dvh would hide the half that explains the other half. */
-.arena-stage-tall { height: auto; min-height: 100dvh; overflow: visible; }
+.arena-stage-tall {
+  height: auto; min-height: 100dvh; overflow: visible;
+  /* The stage pulls itself 60px past the foot of the page to bleed its backdrop
+     off the bottom edge, which is right for a screen that fits and wrong for
+     one that scrolls: the last 60px of a growing stage, which is exactly where
+     the buttons are, sat underneath the end of the document with no scroll
+     range left to reach them. */
+  margin-bottom: 0; padding-bottom: 24px;
+}
 
 .arena-stage-top { display: flex; align-items: center; gap: 16px; flex: none; min-height: 44px; }
 
@@ -666,6 +674,11 @@ html[data-rm='1'] .arena-skel { animation: none; }
 }
 .arena-result-board .arena-rows-reveal { flex: none; }
 .arena-result-lines { margin-top: auto; }
+/* The waiting line belongs under the row, not inside it as a third item. */
+.arena-result-wait { flex-basis: 100%; margin: 0; }
+/* Nothing sits above these lines on a practice run, so pushing them to the foot
+   of the column leaves the panel empty from the heading down. */
+.arena-result-practice .arena-result-lines { margin-top: 0; }
 
 
 /* A settings field that is a decision, not a switch. */
@@ -708,9 +721,86 @@ html[data-rm='1'] .arena-skel { animation: none; }
 .wf-locked {
   font-family: var(--font-type); font-size: clamp(1.8rem, 1.2rem + 2.4vw, 2.9rem);
   font-weight: 700; letter-spacing: 0.02em; min-height: 1.2em;
+  display: flex; align-items: baseline; justify-content: center;
 }
-.wf-locked-idle { font-family: var(--font-ui); font-size: 1rem; color: var(--muted); font-weight: 600; }
-.wf-band-meta { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; min-height: 30px; }
+/* Nothing locked, which is most of the first second of every word. This used to
+   be a muted sentence sitting in a 2.9rem slot, so the largest area of a running
+   game held its quietest text and the line jumped by 1.9rem the moment a word
+   arrived. Now the slot keeps its size and holds the next move: the lowest word
+   in the sky, dimmed, with the key that would arm it lit. */
+.wf-locked-idle {
+  display: inline-flex; align-items: baseline;
+  font-family: inherit; font-weight: 700;
+}
+/* The key that arms it. Same treatment as a typed letter, because that is
+   exactly what pressing it makes it. */
+.wf-key { color: var(--accent); }
+.wf-locked-clear {
+  font-family: var(--font-ui); font-size: 1rem; color: var(--muted);
+  letter-spacing: 0.06em; text-transform: uppercase; align-self: center;
+}
+/* The one blinking thing on the screen, and it is the thing you are being asked
+   to act on. Blocked under reduced motion, where a steady caret says the same. */
+.wf-caret {
+  display: inline-block; width: 0.58em; height: 3px; border-radius: 2px;
+  margin-left: 0.06em; vertical-align: 0.1em;
+  background: var(--accent); animation: wfCaret 1.05s steps(2, jump-none) infinite;
+}
+
+/* Time to the wall, for the word you locked on or the lowest one if you have
+   not. Same three layers as Block Stack's pace bar and the same reasoning: a
+   bar that only ever drains says nothing, so the track turns at the point where
+   the word starts being a problem. */
+.wf-descent {
+  position: relative; width: min(280px, 80%); height: 5px; border-radius: 999px;
+  background: color-mix(in oklab, var(--muted) 22%, transparent);
+  transition: background 240ms ease;
+}
+.wf-descent > i {
+  display: block; height: 100%; width: 100%; border-radius: 999px;
+  transform-origin: left center; will-change: transform;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+.wf-descent[data-state='close'] > i { background: var(--warn); }
+.wf-descent[data-state='urgent'] > i { background: var(--bad); }
+.wf-descent[data-state='urgent'] { background: color-mix(in oklab, var(--bad) 22%, transparent); }
+/* An empty sky is a pause, not an emergency: the track holds still and full. */
+.wf-descent[data-idle='true'] > i { opacity: 0.28; }
+
+.wf-band-meta {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;
+  min-height: 30px;
+}
+/* How many pops to the next wave. The wave banner used to arrive out of
+   nowhere; this is the same event, counted down. */
+.wf-toward { font-size: 0.86rem; font-weight: 650; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.wf-toward b { color: var(--text); }
+
+/* The last thing that happened. Fixed height, one shape, so a line that changes
+   every second or two never moves the word above it. */
+.wf-note {
+  margin: 0; min-height: 1.4em; font-size: 0.9rem; font-weight: 650;
+  max-width: 46ch;
+  animation: wfNote 0.26s ease;
+}
+.wf-note span { display: inline-flex; align-items: center; gap: 6px; }
+.wf-note svg { vertical-align: -2px; }
+/* Block, not flex, for the resting hint: it is the only line here long enough
+   to wrap, and in a flex row a wrapped second line leaves the bulb stranded
+   beside the middle of the paragraph. Same fix as .stack-hint above. */
+.wf-note .muted { display: block; font-weight: 600; }
+.wf-note .muted svg { margin-right: 5px; }
+.wf-note-wave { color: var(--gold); }
+
+@keyframes wfCaret { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
+@keyframes wfNote { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  /* The bar drains because that is information. The caret and the note's
+     entrance are decoration, so they stop. */
+  .wf-caret { animation: none; }
+  .wf-note { animation: none; }
+}
+html[data-rm='1'] .wf-caret { animation: none; }
 
 /* A meter in the HUD, so a shield, a forge's heat and a tower's footing all
    read the same way across games.
@@ -729,14 +819,34 @@ html[data-rm='1'] .arena-skel { animation: none; }
   transition: width 220ms ease;
 }
 .arena-meter.bad > i > b, .stack-footing.bad > i > b { background: var(--bad); }
+/* The number beside the bar. A 74px bar answers "roughly how much" and nothing
+   else, and "roughly how much wall is left" is the figure this game is played
+   against. */
+.arena-meter-v { font-size: 0.82rem; font-weight: 750; font-variant-numeric: tabular-nums; color: var(--text); }
+.arena-meter.bad .arena-meter-v { color: var(--bad); }
 
 
-/* Wordflight: the sky is the side panel. Capped like Wordfall's, because the
-   glider's climb is measured against a fixed sky height in the game logic. */
+/* Wordflight: the sky is the side panel, and the sky is a WebGL canvas now.
+   Still capped like Wordfall's: the fx overlays (bursts, float text) place
+   themselves against this box, and a stretched sky drifts them off the bird. */
 .arena-stage-side > .flight-sky {
   flex: 1; min-height: 260px; max-height: 440px; margin: auto 0;
   width: 100%; position: relative; overflow: hidden; border-radius: 12px;
 }
+.flight-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.flight-launch {
+  position: absolute; left: 50%; top: 16%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 7px 14px; border-radius: 999px; font-size: 0.85rem; font-weight: 600;
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
+  border: 1px solid var(--border); color: var(--text);
+  animation: flight-launch-bob 1.6s ease-in-out infinite;
+}
+@keyframes flight-launch-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+@media (prefers-reduced-motion: reduce) { .flight-launch { animation: none; } }
 
 
 /* Keyforge: the rune you strike on the left, the anvil and the haul on the right. */
@@ -971,4 +1081,197 @@ html[data-rm='1'] .arena-skel { animation: none; }
   .train-pre .duration-row { justify-content: center; }
   .train-pre-copy { align-items: stretch; }
   .train-result { align-items: center; }
+}
+
+/* ---------------------------------------------------------------------------
+   Letter Fall — the starter game
+   ---------------------------------------------------------------------------
+   Chunky, soft-edged and toy-like, which is a deliberate choice rather than a
+   decoration: every hit target here is aimed at a seven year old, so nothing is
+   thin, nothing is small, and the two things that matter (the letter you want
+   and the key that makes it) are the two largest objects on the screen.
+
+   Every colour is a theme token or the seed's own petal, so the garden works in
+   all twelve themes rather than only in the light one it was drawn in. */
+
+.lf-scene { flex: 1; display: flex; flex-direction: column; gap: 12px; min-height: 0; width: 100%; }
+
+.arena-stage-side > .lf-scene .lf-board,
+.lf-board {
+  position: relative; flex: 1; min-height: 240px; max-height: 460px; overflow: hidden;
+  border-radius: 18px; border: 2px solid var(--border);
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--accent) 10%, var(--surface2)) 0%,
+    color-mix(in oklab, var(--accent2) 7%, var(--surface2)) 58%,
+    color-mix(in oklab, var(--good) 14%, var(--surface2)) 100%);
+}
+.lf-sun { position: absolute; top: 12px; right: 16px; color: var(--gold); opacity: 0.75; }
+
+/* A falling letter. Round, thick-bordered and lit from above, so it reads as an
+   object a child could catch rather than as text that happens to be moving. */
+.lf-seed {
+  position: absolute; transform: translateX(-50%);
+  width: 62px; height: 62px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 2rem; font-weight: 800; line-height: 1;
+  color: #2d2a26; background: var(--petal);
+  border: 3px solid color-mix(in oklab, var(--petal) 62%, #000);
+  box-shadow:
+    0 6px 0 color-mix(in oklab, var(--petal) 55%, #000),
+    0 12px 22px rgba(0, 0, 0, 0.18),
+    inset 0 4px 0 rgba(255, 255, 255, 0.45);
+  animation: lfSway 2.6s ease-in-out infinite alternate;
+  animation-delay: calc(var(--sway) * -1);
+  will-change: transform;
+}
+/* The one being asked for. It grows and takes a ring, because "the lowest one"
+   is a rule a child has to be told; "the big one with the ring" is not. */
+.lf-seed-target {
+  outline: 4px solid var(--accent); outline-offset: 4px;
+  transform: translateX(-50%) scale(1.1);
+}
+.lf-seed-caught { animation: lfCatch 0.44s cubic-bezier(0.5, 0, 0.75, 0.4) forwards; z-index: 2; }
+.lf-rolled { animation: lfRoll 0.6s ease-in forwards; }
+
+@keyframes lfSway { from { transform: translateX(-50%) rotate(-5deg); } to { transform: translateX(-50%) rotate(5deg); } }
+/* The letter flying into the basket. It swells for a moment where it was, so
+   the catch registers at the place the child was looking, and then travels. */
+@keyframes lfCatch {
+  0%   { transform: translateX(-50%) scale(1); }
+  18%  { transform: translateX(-50%) scale(1.24); }
+  100% { transform: translate(calc(-50% + var(--dx, 0px)), var(--dy, 40px)) scale(0.24); opacity: 0.15; }
+}
+@keyframes lfRoll {
+  40% { transform: translateX(-50%) translateY(6px) scale(1, 0.86); }
+  100% { transform: translateX(-30%) translateY(30px) rotate(70deg); opacity: 0; }
+}
+
+/* The garden: the run's score, drawn as the thing it earned. */
+.lf-ground {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 88px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--good) 45%, var(--surface2)), color-mix(in oklab, var(--good) 62%, var(--surface2)));
+  border-top: 3px solid color-mix(in oklab, var(--good) 72%, var(--border));
+}
+.lf-flower {
+  position: absolute; transform: translateX(-50%) scale(var(--grow, 1)); transform-origin: bottom center;
+  --stem: color-mix(in oklab, var(--good) 55%, #1d3b23);
+  animation: lfBloom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+/* Out of the soil rather than fading in: it starts flat, springs to full height
+   and settles. Rows further back are smaller, which is what --grow carries. */
+@keyframes lfBloom {
+  0%   { transform: translateX(-50%) scale(var(--grow, 1)) scaleY(0.05) translateY(6px); opacity: 0.3; }
+  55%  { transform: translateX(-50%) scale(var(--grow, 1)) scaleY(1.12); opacity: 1; }
+  100% { transform: translateX(-50%) scale(var(--grow, 1)); }
+}
+
+/* The gardener, sliding under whichever letter is lowest. */
+/* The gardener stands over the spot it is about to plant, and is always in
+   front of the bed: a flower opens under the basket and the cat steps away, so
+   for half a second the two occupy the same place and the cat must win. It sits
+   a few pixels nearer than its own row as well, which is what stops the flower
+   it just planted from swallowing it. */
+.lf-pal {
+  position: absolute; z-index: 6; transform: translateX(-50%);
+  transition:
+    left 0.45s cubic-bezier(0.33, 1, 0.68, 1),
+    bottom 0.45s cubic-bezier(0.33, 1, 0.68, 1);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.22));
+}
+/* Depth lives on the sprite, not on .lf-pal, so the catch bounce can animate
+   the wrapper's transform without dropping the scale. */
+.lf-pal svg {
+  transform: scale(var(--pal-scale, 1));
+  transform-origin: bottom center;
+  transition: transform 0.45s ease;
+}
+.lf-pal-cat { animation: lfPeek 3.4s ease-in-out infinite; transform-origin: 32px 24px; }
+@keyframes lfPeek { 0%, 70%, 100% { transform: translateY(0); } 80% { transform: translateY(-4px) rotate(-4deg); } }
+/* The catch itself: the basket takes the weight and bounces back. */
+.lf-pal-catch { animation: lfCatchBounce 0.44s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes lfCatchBounce {
+  30% { transform: translateX(-50%) translateY(5px) scale(1.06, 0.92); }
+  100% { transform: translateX(-50%); }
+}
+
+/* The keyboard is part of the playfield here, not a hint under it. */
+.lf-keys {
+  padding: 10px 12px; border-radius: 16px;
+  background: var(--surface); border: 2px solid var(--border);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+/* No "j · right index" line under this keyboard.
+ *
+ * Two reasons, and either alone would be enough. It is a reading task, and this
+ * game is for a player who cannot read a five word label faster than they can
+ * find the key it describes, so it was never being read. And the element only
+ * exists while a letter is in the sky, so it appeared and vanished between
+ * letters, changing the keyboard's height and therefore the board's, which made
+ * the whole scene jump every few seconds.
+ *
+ * The finger is still named, in the band, in words, and only once the child has
+ * been hunting long enough to want it. */
+.lf-keys .kbd-finger-hint { display: none; }
+
+.lf-keys-help {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 16%, transparent);
+}
+
+/* The band: the letter to press, still and enormous. */
+.arena-stage-main > .lf-band {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; gap: 14px; text-align: center;
+}
+.lf-big { min-height: 132px; display: flex; align-items: center; justify-content: center; }
+.lf-big-ch {
+  width: 124px; height: 124px; border-radius: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 4.4rem; font-weight: 800; line-height: 1;
+  color: #2d2a26; background: var(--petal, var(--surface2));
+  border: 4px solid color-mix(in oklab, var(--petal, var(--border)) 60%, #000);
+  box-shadow:
+    0 8px 0 color-mix(in oklab, var(--petal, var(--border)) 52%, #000),
+    0 18px 30px rgba(0, 0, 0, 0.2),
+    inset 0 6px 0 rgba(255, 255, 255, 0.42);
+}
+.lf-big-idle {
+  color: var(--muted); background: var(--surface2); border-color: var(--border);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.14);
+}
+/* Hunting for longer than a few seconds, or two wrong keys in. The letter
+   breathes and the keyboard below lights its frame, together, so the help
+   arrives as one event rather than as two things changing separately. */
+.lf-big[data-help='true'] .lf-big-ch { animation: lfBreathe 1.1s ease-in-out infinite; }
+@keyframes lfBreathe { 50% { transform: scale(1.06); } }
+
+.lf-finger { margin: 0; min-height: 1.5em; font-size: 0.98rem; font-weight: 650; }
+.lf-finger strong { color: var(--accent); }
+.lf-finger svg { vertical-align: -3px; margin-right: 6px; }
+.lf-band-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; min-height: 30px; }
+.lf-set { font-size: 0.86rem; color: var(--text-dim); }
+.lf-set b { color: var(--text); }
+
+/* Lives as three flowers waiting to be planted, greyed one at a time. Never
+   colour alone: a spent one loses its fill as well as its colour. */
+.lf-lives { display: inline-flex; align-items: center; gap: 4px; }
+.lf-life { display: inline-flex; color: var(--good); }
+.lf-life-gone { color: var(--muted); opacity: 0.4; }
+
+@media (max-width: 900px) {
+  .lf-board { min-height: 200px; }
+  .lf-big-ch { width: 96px; height: 96px; font-size: 3.4rem; border-radius: 26px; }
+  .lf-big { min-height: 104px; }
+  .lf-keys { padding: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lf-seed, .lf-pal-cat, .lf-flower, .lf-pal-catch { animation: none; }
+  /* The flight still has to end in the basket, it just gets there at once. */
+  .lf-seed-caught { animation-duration: 0.01s; }
+  .lf-big[data-help='true'] .lf-big-ch { animation: none; }
+  .lf-pal { transition: none; }
+  /* The help still has to be visible without the breathing, so it takes the
+     ring the keyboard frame takes. */
+  .lf-big[data-help='true'] .lf-big-ch { outline: 4px solid var(--accent); outline-offset: 5px; }
 }

@@ -14,7 +14,6 @@ import { fmtDuration, relTime, RANK_TIERS } from '../lib/metrics';
 import { COACH_STYLES } from '../lib/coach';
 import type { CoachStyle } from '../lib/types';
 
-const RARITY_NAMES = ['', 'Common', 'Fine', 'Rare', 'Mythic'];
 
 export default function Profile() {
   const data = useData();
@@ -148,19 +147,6 @@ export default function Profile() {
         </Card>
 
         <div className="col gap">
-          {data.forge.length > 0 && (
-            <Card>
-              <h3><Ic n="hammer" size={17} /> Forged treasures</h3>
-              <div className="row gap wrap" style={{ marginTop: 10 }}>
-                {[...data.forge].reverse().slice(0, 8).map((f) => (
-                  <span key={f.id} className={`forge-item-card rarity-${f.rarity}`} style={{ padding: '10px 12px' }} title={`${RARITY_NAMES[f.rarity]} · forged ${relTime(f.t)}`}>
-                    <Ic n={f.icon} size={24} />
-                    <small style={{ maxWidth: 120, textAlign: 'center' }}>{f.name}</small>
-                  </span>
-                ))}
-              </div>
-            </Card>
-          )}
           <Card>
             <h3><Ic n="users" size={17} /> Explorers</h3>
             {user

@@ -14,6 +14,12 @@ import { Ic } from '../components/icons';
 
 export default function LessonPlayer() {
   const { id } = useParams();
+  // Walking to the next stop keeps the same route, so without a key the run
+  // state (step, parts, results screen) would follow us into the new lesson.
+  return <LessonRun key={id ?? ''} id={id} />;
+}
+
+function LessonRun({ id }: { id?: string }) {
   const nav = useNavigate();
   const data = useData();
   const recordSession = useStore((s) => s.recordSession);

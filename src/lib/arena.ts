@@ -21,7 +21,8 @@ export type ArenaToken = 'accent' | 'accent2' | 'good' | 'warn' | 'gold' | 'bad'
 
 export type ArenaGameId =
   | 'lightstream' | 'duel' | 'survivor' | 'wordfall'
-  | 'stack' | 'cipher' | 'keyforge' | 'wordflight';
+  | 'stack' | 'cipher' | 'keyforge' | 'wordflight'
+  | 'letterfall';
 
 export interface ArenaGame {
   id: ArenaGameId;
@@ -39,8 +40,26 @@ export interface ArenaGame {
   valueLabel: string | null;
   /** How the finish screen says the count out loud. 21 => '21 blocks'. */
   unit: (v: number) => string;
-  /** Competitive games lead the hub; quests follow. */
-  tier: 'competitive' | 'quest';
+  /**
+   * What the game's own headline number IS, under the big figure on the finish
+   * screen. Almost every game totals abstract points; Wordflight's headline is
+   * the distance it flew, and calling that "points" would name the one number
+   * the whole game is about after the one thing it is not. Defaults to points.
+   *
+   * This is the game's own score, not the board's: the ranking points quoted in
+   * "12 more points to reach #3" are arena_score()'s and stay points everywhere.
+   */
+  scoreUnit?: string;
+  /**
+   * Competitive games lead the hub, quests follow, and starters come first for
+   * a learner who cannot type yet.
+   *
+   * A starter is not an easier quest. It is a game built for someone who takes
+   * seconds to find one key: one letter at a time, the keyboard on screen, and
+   * no clock. Wordfall Defence with a slower fall would still be unplayable at
+   * seven, which is why this is a tier rather than a difficulty setting.
+   */
+  tier: 'competitive' | 'quest' | 'starter';
   /**
    * The intro screen's 3D backdrop, drawn by the same keycap field the landing
    * and the public pages use (src/pages/public/heroScene.ts). Reusing that scene
@@ -66,7 +85,7 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
   lightstream: {
     id: 'lightstream', name: 'The Lightstream', icon: 'rocket', to: '/app/race',
     trains: 'Sustained speed under pressure',
-    desc: 'Full typing races, the Arena’s main event. CPU rivals matched to your pace, your own ghost, private rooms with friends.',
+    desc: 'Full typing races, the Arena’s main event. One rival pace is the ranked one; ghosts and private rooms are practice.',
     // The board ranks pace, so the count column would only repeat the wpm.
     valueLabel: null, unit: (v) => `${v} wpm`, tier: 'competitive',
     hero: { formation: 'stream', tone: ['accent', 'accent2', 0] },
@@ -74,7 +93,7 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
   duel: {
     id: 'duel', name: 'Quill Duel', icon: 'swords', to: '/app/games/duel',
     trains: 'Burst speed under pressure',
-    desc: 'Best-of-seven phrase duel against a rival matched to your pace. First to finish each phrase takes the round.',
+    desc: 'Best-of-seven phrase duel. First to finish each phrase takes the round, and one rival pace is the ranked one.',
     valueLabel: 'rounds', unit: plural('round'), tier: 'competitive',
     hero: { formation: 'wave', tone: ['bad', 'accent2', 0.35] },
   },
@@ -84,6 +103,13 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
     desc: 'Eight typists, four rapid heats, the slowest move to the cheer bench each round. Outlast everyone for the crown.',
     valueLabel: 'heats', unit: plural('heat'), tier: 'competitive',
     hero: { formation: 'stream', tone: ['warn', 'gold', 0.4] },
+  },
+  letterfall: {
+    id: 'letterfall', name: 'Letter Fall', icon: 'flower', to: '/app/games/letterfall',
+    trains: 'Finding the keys',
+    desc: 'One letter drifts down at a time and the key you need is lit on the keyboard below. Catch it and it becomes a flower.',
+    valueLabel: 'letters', unit: plural('letter'), tier: 'starter',
+    hero: { formation: 'calm', tone: ['good', 'gold', 0.35] },
   },
   wordfall: {
     id: 'wordfall', name: 'Wordfall Defence', icon: 'shield', to: '/app/games/wordfall',
@@ -116,8 +142,8 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
   wordflight: {
     id: 'wordflight', name: 'Wordflight', icon: 'send', to: '/app/games/wordflight',
     trains: 'Rhythm & flow',
-    desc: 'A glider that climbs when your rhythm is even and wobbles when you rush. Thread the golden gates.',
-    valueLabel: 'gates', unit: plural('gate'), tier: 'quest',
+    desc: 'A little bird over open sea. Every letter beats its wings, and the moment you stop typing it sinks.',
+    valueLabel: 'buoys', unit: plural('buoy'), scoreUnit: 'metres', tier: 'quest',
     hero: { formation: 'calm', tone: ['accent2', 'good', 0.5] },
   },
 };

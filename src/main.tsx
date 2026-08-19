@@ -26,6 +26,7 @@ import PracticeHub from './pages/PracticeHub';
 import TrainSession from './pages/TrainSession';
 import Games from './pages/Games';
 import WordfallGame from './pages/WordfallGame';
+import LetterFallGame from './pages/LetterFallGame';
 import KeyforgeGame from './pages/KeyforgeGame';
 import WordflightGame from './pages/WordflightGame';
 import DuelGame from './pages/DuelGame';
@@ -34,6 +35,7 @@ import StackGame from './pages/StackGame';
 import SurvivorGame from './pages/SurvivorGame';
 import RaceHub from './pages/RaceHub';
 import RaceLive from './pages/RaceLive';
+import GuestRoom from './pages/GuestRoom';
 import Challenge from './pages/Challenge';
 import ProgressHub from './pages/ProgressHub';
 import BadgesPage from './pages/BadgesPage';
@@ -76,7 +78,22 @@ function ScrollToTop() {
   return null;
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+/**
+ * One React root per container, for the life of the page.
+ *
+ * This file exports things that are not components, so Fast Refresh cannot
+ * patch it and Vite re-executes the whole module instead. `createRoot` at
+ * module scope therefore ran again on every edit, mounting a SECOND copy of the
+ * entire app into the same element — React says so in the console — and the
+ * first copy never unmounted. It kept its timers: a countdown that had already
+ * been left behind carried on beeping from a screen that was no longer on
+ * screen, and every interval in it went on running for the rest of the session.
+ *
+ * Caching the root on the element makes a re-execution a re-render instead.
+ */
+const container = document.getElementById('root')! as HTMLElement & { __ktRoot?: ReactDOM.Root };
+container.__ktRoot ??= ReactDOM.createRoot(container);
+container.__ktRoot.render(
   <Boundary>
     <BrowserRouter>
       <ThemeSync />
@@ -102,6 +119,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/typing-glossary" element={<GlossaryPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+
+        {/* A private race room, for somebody who does not have KeyTopia.
+            A room is a Realtime channel and owns no data, so a guest needs no
+            account to stand in one — see src/pages/GuestRoom.tsx. Signed-in
+            visitors are forwarded to /app/race/room/:code by the page itself.
+            Not prerendered and not in the sitemap: the address is one specific
+            room, alive for as long as somebody is standing in it. */}
+        <Route path="/race/room/:code" element={<GuestRoom />} />
 
         {/* --- the account boundary -------------------------------------
             Everything above this line is open to anyone and prerendered for
@@ -130,6 +155,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="games" element={<Games />} />
           <Route path="arena" element={<Games />} />
           <Route path="games/wordfall" element={<WordfallGame />} />
+          <Route path="games/letterfall" element={<LetterFallGame />} />
           <Route path="games/keyforge" element={<KeyforgeGame />} />
           <Route path="games/wordflight" element={<WordflightGame />} />
           <Route path="games/duel" element={<DuelGame />} />
@@ -138,6 +164,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="games/survivor" element={<SurvivorGame />} />
           <Route path="race" element={<RaceHub />} />
           <Route path="race/live" element={<RaceLive />} />
+          {/* A room is an address, so it can be sent to a friend. Same hub, with
+              the lobby dialog open over it. */}
+          <Route path="race/room/:code" element={<RaceHub />} />
           <Route path="challenge" element={<Challenge />} />
           <Route path="progress" element={<ProgressHub />} />
           <Route path="badges" element={<BadgesPage />} />
@@ -162,3 +191,6 @@ setTimeout(startSync, 0);
 // pushes finished daily-challenge runs to class boards in the background, so no
 // classroom code sits on the typing path (docs/classrooms-plan.md §2.5).
 setTimeout(startClassroomWatch, 0);
+
+
+

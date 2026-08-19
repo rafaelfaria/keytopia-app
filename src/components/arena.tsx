@@ -352,7 +352,16 @@ export function ArenaBoard({ game, compact, limit = 10, fill, paused, onResult }
         {result?.simulated ? (
           <><Ic n="bot" size={13} /> Practice rivals, generated on this device. Your score is real and saved.</>
         ) : scope.kind === 'global' && data.profile.ageGroup === 'kid' ? (
-          <><Ic n="shield" size={13} /> Young Explorers appear under nicknames. Your real name is never shown to people outside your family and class boards.</>
+          /*
+           * This used to promise that a Young Explorer's real name is never
+           * shown outside family and class boards. That was the first rule, and
+           * it was replaced: docs/arena-leaderboards.md §12.2 gives the learner
+           * their own board name at any age, with a generated handle as the
+           * default a kid keeps unless somebody deliberately changes it. The
+           * old sentence outlived the rule it described, which on a promise
+           * about a child's name is the worst kind of stale copy.
+           */
+          <><Ic n="shield" size={13} /> You appear under the name you choose in Settings. Leave it alone and it stays a nickname we pick.</>
         ) : scope.kind === 'global' ? (
           <><Ic n="compass" size={13} /> Everyone in your division, worldwide.</>
         ) : (
@@ -431,6 +440,15 @@ export interface ArenaStageProps {
    * budget, behind someone who is typing.
    */
   quiet?: boolean;
+  /**
+   * Let the stage grow past the window and scroll with the page.
+   *
+   * A running game must not: it is one screen by design and a scrollbar under a
+   * timed word is a bug. A finish screen is the opposite. With a room's copy,
+   * its standings and three buttons it can outgrow a laptop window, and clipped
+   * at 100dvh the buttons are simply gone, with no scrollbar to find them by.
+   */
+  tall?: boolean;
 }
 
 /**
@@ -448,7 +466,7 @@ export interface ArenaStageProps {
  * The backdrop, the way out and the two-column rhythm are constant throughout,
  * so finishing a run feels like the same place you started it.
  */
-export function ArenaStage({ game, main, side, hud, backTo = '/app/games', quiet, wide }: ArenaStageProps) {
+export function ArenaStage({ game, main, side, hud, backTo = '/app/games', quiet, wide, tall }: ArenaStageProps) {
   const spec = arenaGame(game);
   if (!spec) return null;
   // The shell is shared with training (src/components/stage.tsx). What a mini
@@ -456,7 +474,7 @@ export function ArenaStage({ game, main, side, hud, backTo = '/app/games', quiet
   // handed in here.
   return (
     <Stage
-      main={main} side={side} hud={hud} quiet={quiet} wide={wide}
+      main={main} side={side} hud={hud} quiet={quiet} wide={wide} tall={tall}
       // Only while the game is running. The intro and the finish screen print
       // the same name as their own kicker, a few lines below this row, and the
       // HUD is what tells the two apart: no game shows one until it starts.
@@ -656,9 +674,39 @@ export interface ArenaResultProps {
   score: number;
   title: string;
   newBest?: boolean;
+  /**
+   * A practice run: real, scored and rewarded, but never posted. Games with a
+   * ranked mode alongside practice modes pass `false` for the practice ones, so
+   * the finish screen shows what you did without pretending it placed you.
+   * Defaults to true, which is every game that has only one way to play.
+   */
+  ranked?: boolean;
+  /**
+   * Where the ranked mode is, in the game's own words. A practice panel that
+   * only says "not posted" tells the learner what did not happen; this is the
+   * sentence that tells them what to do instead.
+   */
+  practiceHint?: string;
+  /**
+   * Replace the right-hand column outright.
+   *
+   * A private room has its own standings and no board at all, so the practice
+   * panel there answered a question nobody asked: it explained where the ranked
+   * race lives, next to a race between two named friends. A game that knows
+   * what belongs beside its result passes it.
+   */
+  standing?: ReactNode;
   /** Rewards banner, coaching line, anything the game wants under the stats. */
   children?: ReactNode;
   onAgain: () => void;
+  /**
+   * Replace the "Play again / All games" row. A race that a room's host has to
+   * re-arm, or that leads back to its own hub rather than the Arena, needs its
+   * own buttons rather than a second row of them underneath.
+   */
+  actions?: ReactNode;
+  /** Where the way out goes. Defaults to the Arena. */
+  backTo?: string;
 }
 
 interface Reveal {
@@ -676,9 +724,13 @@ interface Reveal {
  * reduced motion on all land immediately on the final state with every piece of
  * information present.
  */
-export function ArenaResult({ game, run, score, title, newBest, children, onAgain }: ArenaResultProps) {
+export function ArenaResult({
+  game, run, score, title, newBest, ranked = true, practiceHint,
+  standing: standingSlot, children, onAgain, actions, backTo,
+}: ArenaResultProps) {
   const data = useData();
   const spec = arenaGame(game);
+  const scoreUnit = spec?.scoreUnit ?? 'points';
   const [reveal, setReveal] = useState<Reveal | null>(null);
   const [settled, setSettled] = useState(false);
 
@@ -693,7 +745,7 @@ export function ArenaResult({ game, run, score, title, newBest, children, onAgai
   useEffect(() => {
     if (!data) return;
     let live = true;
-    if (data.settings.hideLeaderboards) return;
+    if (!ranked || data.settings.hideLeaderboards) return;
     void (async () => {
       const submit = await submitArena(data, game, run, 'today');
       if (!live) return;
@@ -790,7 +842,24 @@ export function ArenaResult({ game, run, score, title, newBest, children, onAgai
   const rows = showFinal ? ordered.final : ordered.start;
   const pct = s && s.total > 0 ? Math.max(1, Math.round((s.rank / s.total) * 100)) : null;
 
-  const standing = board && board.rows.length > 0 && !data.settings.hideLeaderboards ? (
+  /* A practice run gets the same frame with the ranking taken out of it, rather
+     than a finish screen that is suddenly one column wide. Saying where the
+     ranked duel is beats leaving a hole where the board was. */
+  const practice = (
+    <div className="arena-result-board arena-result-practice">
+      <h3 className="arena-stage-kicker"><Ic n="sliders" size={15} /> Practice run</h3>
+      <div className="arena-result-lines">
+        <p className="arena-line">
+          Scored and saved to your progress, and not posted to any board.
+        </p>
+        <p className="arena-line arena-line-target">
+          <Ic n="medal" size={14} /> {practiceHint ?? 'Play the ranked mode when you want a place on the board.'}
+        </p>
+      </div>
+    </div>
+  );
+
+  const standing = standingSlot ? standingSlot : !ranked ? practice : board && board.rows.length > 0 && !data.settings.hideLeaderboards ? (
     <div className="arena-result-board">
       <h3 className="arena-stage-kicker"><Ic n="medal" size={15} /> Where that puts you</h3>
       <div className="arena-result-standing">
@@ -866,6 +935,8 @@ export function ArenaResult({ game, run, score, title, newBest, children, onAgai
     <ArenaStage
       game={game}
       quiet={false}
+      tall
+      backTo={backTo}
       side={standing}
       main={(
         <div className={`arena-result${settled ? ' arena-result-settled' : ''}`}>
@@ -878,7 +949,7 @@ export function ArenaResult({ game, run, score, title, newBest, children, onAgai
 
           <div className="arena-result-score">
             <span className="arena-result-num" ref={scoreRef}>0</span>
-            <span className="arena-result-num-l">points</span>
+            <span className="arena-result-num-l">{scoreUnit}</span>
           </div>
 
           <dl className="arena-figures">
@@ -894,12 +965,17 @@ export function ArenaResult({ game, run, score, title, newBest, children, onAgai
           {/* One sentence, once, when everything has landed. Announcing each
               beat would narrate an animation instead of reporting a result. */}
           <p className="sr-only" role="status">
-            {settled && s ? `${ordinal(s.rank)} of ${s.total} today, ${score} points.` : ''}
+            {!ranked ? `Practice run, ${score} ${scoreUnit}, not posted to a board.`
+              : settled && s ? `${ordinal(s.rank)} of ${s.total} today, ${score} ${scoreUnit}.` : ''}
           </p>
 
-          <div className="row gap arena-result-cta">
-            <Btn big onClick={onAgain}>↻ Play again</Btn>
-            <Btn kind="soft" to="/app/games">All games</Btn>
+          <div className="row gap wrap arena-result-cta">
+            {actions ?? (
+              <>
+                <Btn big onClick={onAgain}>↻ Play again</Btn>
+                <Btn kind="soft" to="/app/games">All games</Btn>
+              </>
+            )}
           </div>
         </div>
       )}

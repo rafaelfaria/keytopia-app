@@ -106,11 +106,16 @@ export default function Journey() {
               disabled={!unlocked}
               title={`${w.adult.adultName}: ${w.tagline}`}
             >
-              <span className="jn-leg-name">
-                {p.complete ? <Ic n="check" size={13} /> : unlocked ? null : <Ic n="lock" size={12} />}
-                {i + 1}. {w.adult.adultName}
+              <span className="jn-leg-top">
+                <span className="jn-leg-badge" aria-hidden="true">
+                  {p.complete ? <Ic n="check" size={12} /> : unlocked ? i + 1 : <Ic n="lock" size={11} />}
+                </span>
+                <span className="jn-leg-name">{w.adult.adultName}</span>
               </span>
-              <span className="jn-leg-bar"><i style={{ width: `${p.total ? Math.round((p.done / p.total) * 100) : 0}%` }} /></span>
+              <span className="jn-leg-bar" aria-hidden="true"><i style={{ width: `${p.total ? Math.round((p.done / p.total) * 100) : 0}%` }} /></span>
+              <span className="jn-leg-meta">
+                {p.complete ? 'Leg complete' : unlocked ? `${p.done}/${p.total} waypoints` : 'Locked'}
+              </span>
             </button>
           );
         })}

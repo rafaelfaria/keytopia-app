@@ -132,6 +132,36 @@ export class Engine {
     return total;
   }
 
+  /**
+   * Stuck on a wrong key, in strict correction: the cursor did not move and the
+   * only way past this slot is the right character.
+   *
+   * In standard correction a wrong key is drawn where it landed and the text
+   * carries on, so there is nothing to report. In strict there is no mark
+   * anywhere on the page, and a caret that silently refuses to move is
+   * indistinguishable from a dead keyboard.
+   */
+  blocked(): boolean {
+    return this.cfg.correction === 'strict' && !!this.lastPress && !this.lastPress.ok && !this.done;
+  }
+
+  /**
+   * How far through the text you have actually got, 0 to 1, counted in
+   * characters that landed rather than keys pressed.
+   *
+   * `pos` is the cursor, and in standard correction the cursor walks forward
+   * over a wrong key as happily as a right one. Anything that races on `pos`
+   * therefore rewards mashing: the Lightstream's cars used to be placed by it
+   * while the bots moved at a rate derived from words per minute, so a run at
+   * 13% accuracy crossed the line first. This is the same currency the bots
+   * spend and the same one the wpm readout is built from, so a lane's position
+   * and the figure printed beside it can no longer disagree.
+   */
+  distance(): number {
+    if (!this.text.length) return 0;
+    return Math.min(1, this.correctChars() / this.text.length);
+  }
+
   liveStats(now = performance.now()): { wpm: number; raw: number; acc: number; progress: number } {
     const ms = this.elapsedMs(now);
     const correct = this.strokes.reduce((a, s) => a + (s.ok ? 1 : 0), 0);
@@ -342,6 +372,8 @@ export interface UseSession {
   };
   focus: () => void;
   restart: () => void;
+  /** End the session now, on whatever has been typed. Safe to call twice. */
+  stop: () => void;
 }
 
 export function useTypingSession(
@@ -413,6 +445,17 @@ export function useTypingSession(
     for (const ch of v) press(ch === '\n' ? '\n' : ch, t);
   }, [press]);
 
+  /**
+   * End the session from outside, on whatever has been typed so far.
+   *
+   * A race in a room is over when nobody's place can still change, and the
+   * screens that have not reached the end of the text have to stop with it
+   * rather than typing on alone. It routes through the same `finishNow` as a
+   * completed text, so the result is scored the same way and the guard against
+   * finishing twice still holds.
+   */
+  const stop = useCallback(() => { finishNow(engine); }, [engine, finishNow]);
+
   const focus = useCallback(() => { inputRef.current?.focus({ preventScroll: true }); }, []);
   const restart = useCallback(() => {
     finishedFor.current = null;
@@ -429,7 +472,7 @@ export function useTypingSession(
       onFocus: () => setFocused(true),
       onBlur: () => setFocused(false),
     },
-    focus, restart,
+    focus, restart, stop,
   };
 }
 
@@ -485,7 +528,9 @@ export function TypingText({ engine, caret, big, focused, onClick }: {
           <span className="tt-word" key={wi}>
             {word.map(({ ch, i }) => {
               const st = i < engine.pos ? engine.states[i] : PENDING;
-              const cls = i === engine.pos ? 'tt-cur' : st === OK ? 'tt-ok' : st === BAD ? 'tt-bad' : st === FIXED ? 'tt-fixed' : 'tt-pend';
+              const cls = i === engine.pos
+                ? `tt-cur${engine.blocked() ? ' tt-stuck' : ''}`
+                : st === OK ? 'tt-ok' : st === BAD ? 'tt-bad' : st === FIXED ? 'tt-fixed' : 'tt-pend';
               if (ch === '\n') return <span key={i}><span data-i={i} className={`tt-ch ${cls} tt-nl`}>⏎</span><br /></span>;
               return (
                 <span key={i} data-i={i} className={`tt-ch ${cls}`}>

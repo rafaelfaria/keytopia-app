@@ -1,8 +1,19 @@
 # The Arena Boards — one leaderboard system for every mini game
 
-> **Status: phases 1–4 shipped.** Every one of the seven mini games now opens on
-> an `ArenaIntro`, plays inside an `ArenaStage` and ends on an `ArenaResult`.
-> Only phase 5 (the Arena hub rebuild, replacing `StandingsPreview`) is left.
+> **Status: phases 1–4 and 5a shipped.** Every one of the seven mini games opens
+> on an `ArenaIntro`, plays inside an `ArenaStage` and ends on an `ArenaResult`,
+> and **the Lightstream now ranks too**: its locked `StandingsPreview` mockup is a
+> real `ArenaBoard`, and its finish screen is an `ArenaResult`. What is left is
+> the Arena hub rebuild in `Games.tsx` (5b).
+>
+> **Quill Duel ranks one rival pace and treats the other four as practice**
+> (§3, "A game with difficulty settings"). Sharp at 48 wpm for teens and adults,
+> Steady at 30 for kids. No schema change was needed for it.
+>
+> **The Lightstream ranks one CPU pace** — Skilled at 45, Casual at 28 for kids —
+> and treats the other paces, ghost races and private rooms as practice. Same §3
+> rule, different reason: the duel's easy rival gave away free points, while the
+> Lightstream's rival pace changes how hard a run is *pulled*.
 >
 > Three stage variants cover every game, and which one a game takes is a
 > gameplay judgement rather than a layout preference:
@@ -89,10 +100,10 @@ them ends with a number nobody else will ever see.
   states its own score** (generated column), and **a child's real name never reaches
   a stranger** (`keytopia_alias()`). `boards` / `board_members` give households a
   private board with a six-character code. All of this is reusable as-is.
-- **The Lightstream's standings are a mockup.** `StandingsPreview` in
-  `RaceHub.tsx:340` renders four deliberately locked skeleton rows and a "Coming
-  soon" chip. That is the single biggest gap in the product, and it is the thing the
-  Arena hub is named after.
+- ~~**The Lightstream's standings are a mockup.**~~ They were: `StandingsPreview` in
+  `RaceHub.tsx` rendered four deliberately locked skeleton rows under a "Coming soon"
+  chip. It is now a real `ArenaBoard`, and the ranked-race rule below is what made it
+  one honest board rather than three kinds of race on one list.
 - **Realtime is already proven here.** `src/lib/room.ts` runs private race rooms on a
   Supabase Realtime channel with presence and broadcast, degrading to simulated
   friends when no project is configured. The Arena boards borrow its shape wholesale,
@@ -195,7 +206,7 @@ returns integer language sql immutable as $$
     when 'stack'       then round(p_value * 40 + p_acc * 4)        -- blocks stacked
     when 'cipher'      then round(p_value * 50 + p_wpm * 3)        -- runes solved
     when 'keyforge'    then round(p_value * 45 + p_wpm * 4)        -- treasures forged
-    when 'wordflight'  then round(p_value * 55 + p_acc * 5)        -- gates threaded
+    when 'wordflight'  then round(p_value * 55 + p_acc * 5)        -- buoys passed
     else round(p_wpm * 10 + p_acc)
   end)::integer;
 $$;
@@ -206,6 +217,63 @@ read from `arena_games` — cannot back a generated column, and the moment the f
 is data the client can be told what it is, which is halfway to the client stating its
 own score. The cost is one `case` branch; the benefit is that a tampered client cannot
 put a number on a stranger's screen.
+
+### A game with difficulty settings ranks one of them and practises the rest
+
+Quill Duel is the case that forced this rule, and any game that later grows a
+difficulty picker inherits it.
+
+The duel branch is `rounds won × 200 + wpm × 5`, and the round term only ranks
+anything when the rival sits near the middle of the field it is ranking. The duel
+offers five rival paces. Against Gentle at 18 wpm every player sweeps 4-0, so the
+term is a constant. Against Fierce at 70 almost nobody wins a round, so it is a
+constant again. Either way the board silently degrades into a plain wpm list, and
+worse, the cheapest route to the top is to pick the weakest rival: your wpm is your
+own either way, so an easy bot is free points. A board that rewards choosing the
+easy setting is not a leaderboard.
+
+**One pace is ranked and the rest are practice.** Practice runs are real, scored,
+rewarded and saved to local `gameBests`, and never posted. `ArenaResult` takes a
+`ranked` prop, defaulting true; passing false skips `arena_submit` entirely and
+swaps the standing panel for a practice panel that says where the ranked mode is.
+
+**The ranked pace is per age division**, because boards are already split by
+`age_group` and kid duels already run shorter phrases. Kids duel Steady at 30 wpm,
+teens and adults duel Sharp at 48. Nobody is ever ranked against someone who faced
+a different rival, so comparability is exact within every board, and each division
+gets a rival near its own median where the round term still does work.
+
+**The Lightstream inherits the rule, for a different reason.** Its branch is
+`wpm × 10 + acc × 2`, so no setting hands out free points the way an easy duel
+rival did. What a setting changes there is the *pull*: a 70 wpm CPU rival drags a
+run faster than a 15 wpm one, Adaptive is pegged to your own average and pulls
+not at all, a ghost is a recording of you, and a private room is whoever turned
+up. Ranking all of those together puts a chased run and an unchased one on the
+same list and calls them the same contest. So one CPU pace per division is the
+ranked race — kids race Casual at 28, teens and adults Skilled at 45 — and
+everything else in the hub is practice: real, scored, rewarded, ghost-setting,
+never posted. `RANKED_CPU` in `RaceHub.tsx` holds it, `RaceSetup.ranked` carries
+it into the race, and `RaceLive.tsx` hands it to `ArenaResult`.
+
+The accuracy floor in `arena_submit` (90% for `lightstream`, and the reason its
+comment there talks about ghost and room races posting) predates this and still
+earns its place: it is what stops a ranked race being won by hammering keys. The
+finish screen now applies the same threshold before it decides whether a run was
+ranked, so a floor-missing race says so instead of posting into silence and
+showing no rank.
+
+**No schema support is needed for either.** Since only one pace ever submits, the
+single existing duel board *is* the ranked board. The rejected alternative was a
+`variant` column in the primary key giving one board per pace; with this player
+base that is four boards each holding nobody, and an empty board is worse than no
+board. If a game ever genuinely needs parallel ranked ladders, that is when the
+column earns its migration.
+
+**The client must mirror the SQL exactly.** `duelScore()` in `DuelGame.tsx`
+reproduces the `duel` branch above so the number counting up on the finish screen
+is the number that lands on the board row beneath it. These drifted apart once
+already: the finish screen computed `wpm × 10 + rounds × 100` against the server's
+`rounds × 200 + wpm × 5`, so a 4-0 at 40 wpm counted up to 800 and posted 1000.
 
 **Scope reuses what exists.** `boards` / `board_members` already give a household a
 private board with a code, and the Leaderboard component already knows how to create
@@ -351,6 +419,30 @@ export const ARENA_GAMES: Record<string, ArenaGame>;
 `Games.tsx` already holds four of these five fields in its `COMPETITIVE` / `QUESTS`
 arrays; the registry absorbs those arrays so the hub, the boards, the submit path and
 the docs cannot disagree about what a game is called.
+
+### 6.1 The starter tier
+
+`tier` gained a third value, `starter`, for games built for a player who cannot type
+yet. Letter Fall is the first: one letter falls at a time, the key is lit on an
+on-screen keyboard, a wrong key costs nothing, and the run ends after three letters
+have landed rather than on a clock.
+
+It is a tier and not a difficulty setting because the difference is structural. A
+seven year old spends seconds finding one key, so every game whose unit of play is a
+word is unplayable at that age however slowly the word falls, and no amount of
+slowing Wordfall down turns a five-key search under a draining shield into something
+a child can finish.
+
+The hub puts starters first for a kid profile and last for everyone else. A grown-up
+who meets "catch one falling letter" on the way to the Arena reads it as the product
+being for children; a seven year old who scrolls past four ranked speed games to
+reach the one they can play reads it as the product not being for them.
+
+Starters are ranked like everything else. Boards are already divided by age group, so
+a starter board is Young Explorers competing with each other, and its formula weights
+the count heavily with accuracy as a gentle tiebreak. Speed is deliberately absent
+from it: a child hunting for a key types at a few words a minute, and a board that
+ranked pace here would rank the adults who wandered in.
 
 ---
 
@@ -615,7 +707,8 @@ it is visibly missing rather than silently unranked.
 | 2 ✅ | `src/lib/arena.ts`, `src/lib/arenaBoard.ts`, `src/lib/arenaLive.ts` | nothing user-visible |
 | 3 ✅ | `ArenaBoard`, `ArenaIntro`, `ArenaResult`, `RankBadge`, `Movement` + `arena.css` | Block Stack wired end to end as the reference implementation |
 | 4 ✅ | The remaining six games wired | all games ranked |
-| 5 | Arena hub rebuild, Lightstream standings replacing `StandingsPreview` | the hub |
+| 5a ✅ | The Lightstream ranked and its standings replacing `StandingsPreview` | the race hub's real board |
+| 5b | Arena hub rebuild (`Games.tsx`): standing strip, per-game rank chips, ticker | the hub |
 
 Phase 3 deliberately wires one game before the other seven: the second game is where a
 shared component's wrong assumptions show up, and it is much cheaper to find them

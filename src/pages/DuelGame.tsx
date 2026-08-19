@@ -15,6 +15,14 @@ import type { Rewards } from '../lib/types';
 
 const TARGET_WINS = 4;
 
+/**
+ * The board's own formula, mirrored so the number that counts up on the finish
+ * screen is the number that lands on the row underneath it. This must stay in
+ * step with the `duel` branch of `arena_score()`
+ * (supabase/migrations/20260816120000_arena_boards.sql).
+ */
+const duelScore = (rounds: number, wpm: number) => Math.round(rounds * 200 + wpm * 5);
+
 type Diff = 'gentle' | 'steady' | 'sharp' | 'fierce' | 'matched';
 
 /** Absolute pace tiers, so a rival is never derived from one fluky session. */
@@ -29,6 +37,25 @@ const DIFFS: { id: Diff; name: string; wpm: number; icon: string; desc: string }
 /** A duel is short bursts against a rival that never truly mistypes, so the
  *  matched tier is capped where a human can still realistically out-sprint it. */
 const MATCHED_CAP = 90;
+
+/**
+ * The one pace that posts to the board. Every other pace is practice.
+ *
+ * A duel's board score is `rounds won × 200 + wpm × 5`, so the round term only
+ * ranks anything when the rival sits near the middle of the field it is ranking.
+ * Against Gentle everyone sweeps 4-0 and the term is dead weight; against Fierce
+ * almost nobody wins a round and it is dead weight again. Either way the board
+ * quietly collapses into a plain wpm list, and the duel stops being a duel.
+ *
+ * Boards are already split by age division and kid duels already run shorter
+ * phrases, so the ranked rival is tuned per division too. Nobody is ever ranked
+ * against someone who faced a different rival.
+ */
+const RANKED_PACE: Record<'kid' | 'teen' | 'adult', Diff> = {
+  kid: 'steady',
+  teen: 'sharp',
+  adult: 'sharp',
+};
 
 export default function DuelGame() {
   const data = useData();
@@ -47,15 +74,15 @@ export default function DuelGame() {
   const basePace = data ? recentAvgWpm(data) : 25;
   const matchedWpm = Math.round(Math.max(PACE_MIN + 4, Math.min(MATCHED_CAP, basePace)));
   const paceOf = (d: Diff) => (d === 'matched' ? matchedWpm : DIFFS.find((x) => x.id === d)!.wpm);
-  // Default to the tier just below the learner's pace, so the first duel is winnable.
-  const [diff, setDiff] = useState<Diff>(() => {
-    const p = data ? recentAvgWpm(data) : 25;
-    if (p < 24) return 'gentle';
-    if (p < 40) return 'steady';
-    if (p < 60) return 'sharp';
-    return 'fierce';
-  });
+  // Open on the ranked duel. Picking a tier by the learner's pace used to make
+  // the first duel winnable, but it also meant most players landed on a rival
+  // whose result goes nowhere, and had to opt in to the one that counts.
+  const [diff, setDiff] = useState<Diff>(() => RANKED_PACE[data?.profile.ageGroup ?? 'adult']);
   const rivalWpm = paceOf(diff);
+  const rankedId = RANKED_PACE[data?.profile.ageGroup ?? 'adult'];
+  const rankedDiff = DIFFS.find((d) => d.id === rankedId)!;
+  const practiceDiffs = DIFFS.filter((d) => d.id !== rankedId);
+  const isRanked = diff === rankedId;
 
   const [phase, setPhase] = useState<'intro' | 'ready' | 'live' | 'roundEnd' | 'over'>('intro');
   const [round, setRound] = useState(1);
@@ -64,7 +91,7 @@ export default function DuelGame() {
   const [pos, setPos] = useState(0);
   const [rivalPos, setRivalPos] = useState(0);
   const [banner, setBanner] = useState('');
-  const [overInfo, setOverInfo] = useState<{ won: boolean; rewards: Rewards | null; acc: number; wpm: number } | null>(null);
+  const [overInfo, setOverInfo] = useState<{ won: boolean; rewards: Rewards | null; acc: number; wpm: number; ranked: boolean } | null>(null);
 
   // Refs are the source of truth for anything the key handler touches, so no
   // keystroke can be lost to a stale closure when two arrive before a re-render.
@@ -73,6 +100,7 @@ export default function DuelGame() {
   const phaseRef = useRef<typeof phase>('intro');
   const scoresRef = useRef({ you: 0, rival: 0 });
   const rivalWpmRef = useRef(rivalWpm);
+  const diffRef = useRef(diff);
   const strokes = useRef<GameStroke[]>([]);
   const startedAt = useRef(0);
   const roundDone = useRef(false);
@@ -81,6 +109,10 @@ export default function DuelGame() {
   const nextTimer = useRef(0);
 
   rivalWpmRef.current = rivalWpm;
+  // finishMatch runs off a timer inside a callback that does not list it as a
+  // dependency, so the pace it reports has to come from a ref or a match can be
+  // filed under whichever tier was selected two renders ago.
+  diffRef.current = diff;
   const setPhaseBoth = (p: typeof phase) => { phaseRef.current = p; setPhase(p); };
 
   const clearTimers = () => {
@@ -152,16 +184,23 @@ export default function DuelGame() {
   const finishMatch = (s: { you: number; rival: number }) => {
     clearTimers();
     const won = s.you > s.rival;
-    const result = resultFromStrokes('game', 'Quill Duel', strokes.current, startedAt.current, performance.now(), { game: 'duel', won, rounds: s.you + s.rival, difficulty: diff });
+    const pace = diffRef.current;
+    const ranked = pace === rankedId;
+    const result = resultFromStrokes('game', 'Quill Duel', strokes.current, startedAt.current, performance.now(), { game: 'duel', won, rounds: s.you + s.rival, difficulty: pace });
     const rewards = strokes.current.length > 10 ? recordSession(result) : null;
-    patch((d) => {
-      const cur = d.gameBests['duel'];
-      const score = s.you * 100 + Math.round(result.wpm);
-      if (!cur || score > cur.score) d.gameBests['duel'] = { score, level: s.you };
-    });
+    // The personal best tracks the ranked duel only. A Gentle sweep outscores a
+    // hard-won ranked match on the same formula, so letting practice set the
+    // best would leave a number the real duel can never touch.
+    if (ranked) {
+      patch((d) => {
+        const cur = d.gameBests['duel'];
+        const score = duelScore(s.you, result.wpm);
+        if (!cur || score > cur.score) d.gameBests['duel'] = { score, level: s.you };
+      });
+    }
     if (won) pushToast({ kind: 'record', icon: 'swords', title: 'Duel won!', body: `${s.you}–${s.rival} against ${rival.name}` });
     if (data?.settings.soundOn) (won ? snd.badge() : snd.done());
-    setOverInfo({ won, rewards, acc: result.acc, wpm: result.wpm });
+    setOverInfo({ won, rewards, acc: result.acc, wpm: result.wpm, ranked });
     setPhaseBoth('over');
   };
 
@@ -207,7 +246,7 @@ export default function DuelGame() {
         cta="Draw quills →"
         stats={[
           { label: 'Your pace', value: `${Math.round(basePace)} wpm` },
-          ...(data.gameBests['duel'] ? [{ label: 'Best match', value: data.gameBests['duel'].score }] : []),
+          ...(data.gameBests['duel'] ? [{ label: 'Best ranked duel', value: data.gameBests['duel'].score }] : []),
         ]}
       >
         <p>
@@ -215,8 +254,29 @@ export default function DuelGame() {
           letters move you, so a clean first strike beats a fast messy one.
           Today's rival is <strong>{rival.name}</strong>.
         </p>
-        <div className="duel-diffs" role="radiogroup" aria-label="Rival difficulty">
-          {DIFFS.map((d) => (
+
+        {/* One rival counts and the rest are practice, because a board that mixes
+            an 18 wpm rival with a 70 wpm one is not ranking the same contest. */}
+        <p className="pace-group-label"><Ic n="medal" size={13} /> The ranked duel</p>
+        <div className="duel-diffs duel-diffs-ranked" role="radiogroup" aria-label="The ranked duel">
+          <button
+            type="button"
+            className={`opt-tile duel-diff opt-tile-ranked ${isRanked ? 'on' : ''}`}
+            onClick={() => setDiff(rankedId)}
+            aria-pressed={isRanked}
+            title={rankedDiff.desc}
+          >
+            <span className="opt-ic"><Ic n={rankedDiff.icon} size={17} /></span>
+            <span>
+              <strong>{rankedDiff.name} · {rankedDiff.wpm} wpm</strong>
+              <small>This is the one that reaches the board</small>
+            </span>
+          </button>
+        </div>
+
+        <p className="pace-group-label"><Ic n="sliders" size={13} /> Practice, nothing posted</p>
+        <div className="duel-diffs" role="radiogroup" aria-label="Practice rival pace">
+          {practiceDiffs.map((d) => (
             <button
               key={d.id} type="button"
               className={`opt-tile duel-diff ${diff === d.id ? 'on' : ''}`}
@@ -241,7 +301,9 @@ export default function DuelGame() {
       <ArenaResult
         game="duel"
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: scores.you }}
-        score={overInfo.wpm * 10 + scores.you * 100}
+        score={duelScore(scores.you, overInfo.wpm)}
+        ranked={overInfo.ranked}
+        practiceHint="Play the ranked duel when you want a place on the board."
         title={overInfo.won ? `Victory, ${scores.you}–${scores.rival}!` : `${rival.name} wins ${scores.rival}–${scores.you}`}
         newBest={overInfo.won}
         onAgain={startMatch}
@@ -250,7 +312,7 @@ export default function DuelGame() {
         <p className="small muted" style={{ maxWidth: 430 }}>
           {overInfo.won
             ? 'Sharp quill. Step up to a fiercer rival when that feels comfortable.'
-            : 'Duels reward a clean first strike. Try the Friendly pace, then work up.'}
+            : 'Duels reward a clean first strike. Try a gentler pace, then work up.'}
         </p>
         <Btn kind="soft" onClick={() => setPhaseBoth('intro')}>Change rival pace</Btn>
       </ArenaResult>

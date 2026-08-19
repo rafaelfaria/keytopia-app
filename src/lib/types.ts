@@ -140,6 +140,16 @@ export interface ProfileData {
   unlockedAvatars: string[];
   forge: ForgeItem[];
   gameBests: Record<string, { score: number; level: number }>;
+  /**
+   * Levels cleared per starter game (src/lib/starterLevels.ts), by game id.
+   *
+   * The starters have no boards, so this is the only thing that makes them a
+   * journey rather than six things that end after ninety seconds. It is a
+   * count, not a set: levels unlock in order, so "4" means one to four are done
+   * and five is open. Merged by max across devices, because a level cleared on
+   * the tablet is cleared.
+   */
+  starters?: Record<string, number>;
   race: RaceRecord;
   ghost: GhostRun | null;
   assessment: AssessmentResult | null;

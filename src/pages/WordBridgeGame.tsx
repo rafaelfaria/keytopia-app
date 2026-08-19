@@ -7,6 +7,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
+import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, STARTER_PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -42,9 +43,6 @@ const WORDS = [
   'leaf', 'lion', 'moon', 'nest', 'star', 'tree',
 ];
 
-/** Planks in the bridge. Eight is a crossing; twelve is a commute. */
-const PLANKS = 8;
-
 export default function WordBridgeGame() {
   const data = useData();
   const recordSession = useStore((s) => s.recordSession);
@@ -55,7 +53,8 @@ export default function WordBridgeGame() {
   const [, force] = useState(0);
   const [press, setPress] = useState<{ key: string; ok: boolean; t: number } | null>(null);
   const [overInfo, setOverInfo] = useState<
-    { score: number; built: number; clean: number; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null
+    { score: number; built: number; clean: number; acc: number; wpm: number; rewards: Rewards | null;
+      newBest: boolean; level: number; goal: number; unlocked: boolean } | null
   >(null);
 
   const st = useRef({
@@ -68,6 +67,9 @@ export default function WordBridgeGame() {
   const sceneRef = useRef<HTMLDivElement>(null);
   const pressTimer = useRef(0);
   const nextTimer = useRef(0);
+
+  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('bridge');
+  const PLANKS = level.goal;
 
   const layout = data?.profile.layout ?? 'qwerty';
   const lookup = useMemo(() => makeCharLookup(layout), [layout]);
@@ -93,7 +95,15 @@ export default function WordBridgeGame() {
       if (!prev || cur.score > prev.score) { d.gameBests['bridge'] = { score: cur.score, level: cur.built }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Word Bridge best!' });
-    setOverInfo({ score: cur.score, built: cur.built, clean: cur.clean, acc: result.acc, wpm: result.wpm, rewards, newBest });
+    const won = cur.built >= PLANKS;
+    if (won) {
+      clear(chosen);
+      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+    }
+    setOverInfo({
+      score: cur.score, built: cur.built, clean: cur.clean, acc: result.acc, wpm: result.wpm,
+      rewards, newBest, level: chosen, goal: PLANKS, unlocked: won,
+    });
     setPhase('over');
   };
 
@@ -104,13 +114,13 @@ export default function WordBridgeGame() {
       const j = Math.floor(rng() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-    // Three letters first, four later: the bridge gets harder as it gets longer
-    // without anything on screen announcing a difficulty level.
-    const short = pool.filter((w) => w.length === 3).slice(0, 5);
-    const long = pool.filter((w) => w.length === 4).slice(0, PLANKS - 5);
+    // The level picks the word length. Three letters is a first crossing, four
+    // is the one that hands over to Wordfall.
+    const want = level.len ?? 3;
+    const queue = pool.filter((w) => w.length === want).slice(0, PLANKS);
     st.current = {
       ...st.current,
-      queue: [...short, ...long],
+      queue,
       built: 0, hit: 0, clean: 0, score: 0, slips: 0,
       pal: Math.floor(rng() * 5),
       strokes: [], startedAt: performance.now(), crossing: false,
@@ -181,7 +191,6 @@ export default function WordBridgeGame() {
   useGameKeys(phase === 'run', handleKey, { onEscape: endGame });
 
   if (!data) return null;
-  const best = data.gameBests['bridge'];
 
   if (phase === 'intro') {
     return (
@@ -189,19 +198,24 @@ export default function WordBridgeGame() {
         game="bridge"
         title="Build the bridge, word by word"
         onPlay={start}
-        cta="Lay the first plank →"
-        side={<StarterScene game="bridge" />}
-        stats={best ? [
-          { label: 'Best score', value: best.score },
-          { label: 'Most planks', value: best.level },
-        ] : undefined}
+        cta={`Level ${chosen}: ${level.name} →`}
+        side={(
+          <>
+            <StarterScene game="bridge" />
+            <LevelPicker game="bridge" cleared={cleared} chosen={chosen} onPick={setChosen} />
+          </>
+        )}
+        stats={[
+          { label: 'Levels done', value: `${cleared} of ${total}` },
+          { label: 'Planks this level', value: level.goal },
+        ]}
       >
         <p>
           Each word is a plank, and each letter is a step across it. The letter you need is lit on
           the plank and lit on the keyboard, so there is nothing to remember.
         </p>
         <p>
-          A wrong key never sends you back to the start of the word. Eight words and {pal.name} can
+          A wrong key never sends you back to the start of the word. {level.goal} words and {pal.name} can
           walk all the way over.
         </p>
       </ArenaIntro>
@@ -214,9 +228,15 @@ export default function WordBridgeGame() {
         game="bridge"
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.built }}
         score={overInfo.score}
-        title={overInfo.newBest ? 'Your best bridge yet!' : overInfo.built >= PLANKS ? 'All the way across' : 'A good stretch of bridge'}
+        title={overInfo.unlocked ? 'All the way across' : 'A good stretch of bridge'}
         newBest={overInfo.newBest}
         onAgain={start}
+        standing={(
+          <LevelResult
+            game="bridge" level={overInfo.level} done={overInfo.built}
+            goal={overInfo.goal} cleared={cleared} unlocked={overInfo.unlocked}
+          />
+        )}
       >
         <RewardsBanner rewards={overInfo.rewards} />
         <p className="small muted" style={{ maxWidth: 430 }}>
@@ -239,7 +259,7 @@ export default function WordBridgeGame() {
         hud={(
           <>
             <span><b>{s.built}</b> of {PLANKS} planks</span>
-            <span><b>{s.score}</b> points</span>
+            <span className="lv-hud"><Ic n="map" size={13} /> Level {chosen} <b>{level.name}</b></span>
             <span className="grow" />
             <span className="st-promise"><Ic n="heart" size={14} /> a wrong key never restarts a word</span>
           </>
@@ -253,7 +273,12 @@ export default function WordBridgeGame() {
             <div className="wb-word">
               {word ? word.split('').map((c, i) => (
                 <span key={i} className={`wb-plank ${i < s.hit ? 'wb-walked' : i === s.hit ? 'wb-here' : ''}`}>
-                  {c}
+                  {/* On the bare levels the planks ahead keep their letters to
+                      themselves, so the word cannot be read in one glance and
+                      each letter has to be found as it comes. The one under
+                      your feet always shows, because this is not a memory
+                      test. */}
+                  {level.bare && i > s.hit ? <i className="wb-blank" /> : c}
                   {i === s.hit && <i className="wb-foot" aria-hidden />}
                 </span>
               )) : <span className="wb-plank wb-done"><Ic n="flag" size={28} /></span>}
@@ -287,7 +312,11 @@ export default function WordBridgeGame() {
               <span className="wb-water" aria-hidden><i /><i /><i /></span>
             </div>
             <div className="wb-keys">
-              <KeyboardVisual layout={layout} guide={guide} compact nextChar={ch || undefined} lastPress={press} />
+              <KeyboardVisual
+                layout={layout} guide={guide} compact
+                nextChar={ch || undefined} lastPress={press}
+                hiddenLabels={level.dark ? 'all' : undefined}
+              />
             </div>
           </div>
         )}

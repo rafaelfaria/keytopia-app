@@ -80,6 +80,7 @@ export function freshData(profile: Profile): ProfileData {
     unlockedAvatars: [],
     forge: [],
     gameBests: {},
+    starters: {},
     race: { races: 0, wins: 0, podiums: 0, bestWpm: 0 },
     ghost: null,
     assessment: null,

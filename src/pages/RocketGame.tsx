@@ -6,6 +6,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
+import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -31,7 +32,7 @@ import type { GuideStyle, Rewards } from '../lib/types';
  * moon, and the rocket is standing on it for the rest of the finish screen.
  */
 
-const AZ = 'abcdefghijklmnopqrstuvwxyz'.split('');
+const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 /** The bands the rocket climbs through, as a fraction of the flight. */
 const BANDS = [
@@ -53,7 +54,8 @@ export default function RocketGame() {
   const [, force] = useState(0);
   const [press, setPress] = useState<{ key: string; ok: boolean; t: number } | null>(null);
   const [overInfo, setOverInfo] = useState<
-    { score: number; solo: number; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null
+    { score: number; solo: number; flown: number; acc: number; wpm: number;
+      rewards: Rewards | null; newBest: boolean; level: number; goal: number; unlocked: boolean } | null
   >(null);
 
   const st = useRef({
@@ -63,6 +65,13 @@ export default function RocketGame() {
   const skyRef = useRef<HTMLDivElement>(null);
   const pressTimer = useRef(0);
   const tick = useRef(0);
+
+  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('rocket');
+  /** This level's stretch of the alphabet, in the direction it flies. */
+  const AZ = useMemo(() => {
+    const slice = ALPHABET.slice(level.from ?? 0, level.to ?? 26);
+    return level.reverse ? [...slice].reverse() : slice;
+  }, [level.from, level.to, level.reverse]);
 
   const layout = data?.profile.layout ?? 'qwerty';
   const lookup = useMemo(() => makeCharLookup(layout), [layout]);
@@ -93,7 +102,15 @@ export default function RocketGame() {
       if (!prev || cur.score > prev.score) { d.gameBests['rocket'] = { score: cur.score, level: cur.i }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Alphabet Rocket best!' });
-    setOverInfo({ score: cur.score, solo: cur.solo, acc: result.acc, wpm: result.wpm, rewards, newBest });
+    const won = landed || cur.i >= AZ.length;
+    if (won) {
+      clear(chosen);
+      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+    }
+    setOverInfo({
+      score: cur.score, solo: cur.solo, flown: cur.i, acc: result.acc, wpm: result.wpm,
+      rewards, newBest, level: chosen, goal: AZ.length, unlocked: won,
+    });
     setPhase('over');
   };
 
@@ -165,7 +182,6 @@ export default function RocketGame() {
   useGameKeys(phase === 'run', handleKey, { onEscape: () => endGame(false) });
 
   if (!data) return null;
-  const best = data.gameBests['rocket'];
 
   if (phase === 'intro') {
     return (
@@ -173,12 +189,17 @@ export default function RocketGame() {
         game="rocket"
         title="Fly the alphabet to the moon"
         onPlay={start}
-        cta="Start the countdown →"
-        side={<StarterScene game="rocket" />}
-        stats={best ? [
-          { label: 'Best score', value: best.score },
-          { label: 'Furthest letter', value: (AZ[best.level - 1] ?? 'a').toUpperCase() },
-        ] : undefined}
+        cta={`Level ${chosen}: ${level.name} →`}
+        side={(
+          <>
+            <StarterScene game="rocket" />
+            <LevelPicker game="rocket" cleared={cleared} chosen={chosen} onPick={setChosen} />
+          </>
+        )}
+        stats={[
+          { label: 'Levels done', value: `${cleared} of ${total}` },
+          { label: 'This flight', value: `${AZ[0].toUpperCase()} to ${AZ[AZ.length - 1].toUpperCase()}` },
+        ]}
       >
         <p>
           The rocket climbs one letter at a time, in alphabet order. Press <b>a</b> and it lifts off,
@@ -198,15 +219,21 @@ export default function RocketGame() {
         game="rocket"
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.solo }}
         score={overInfo.score}
-        title={overInfo.newBest ? 'Your best flight yet!' : s.i >= AZ.length ? 'You landed on the moon' : 'Back on the ground'}
+        title={overInfo.unlocked ? 'You landed on the moon' : 'Back on the ground'}
         newBest={overInfo.newBest}
         onAgain={start}
+        standing={(
+          <LevelResult
+            game="rocket" level={overInfo.level} done={overInfo.flown}
+            goal={overInfo.goal} cleared={cleared} unlocked={overInfo.unlocked}
+          />
+        )}
       >
         <RewardsBanner rewards={overInfo.rewards} />
         <p className="small muted" style={{ maxWidth: 430 }}>
-          {overInfo.solo >= AZ.length - 2
+          {overInfo.solo >= overInfo.goal - 2
             ? `You found ${overInfo.solo} letters on your own, with no help at all. You know this keyboard.`
-            : `Found without a hint: ${overInfo.solo} of ${AZ.length}. Every flight, a few more of them are yours.`}
+            : `Found without a hint: ${overInfo.solo} of ${overInfo.goal}. Every flight, a few more of them are yours.`}
         </p>
       </ArenaResult>
     );
@@ -224,7 +251,7 @@ export default function RocketGame() {
         hud={(
           <>
             <span><b>{s.i}</b> of {AZ.length} letters</span>
-            <span><b>{s.score}</b> points</span>
+            <span className="lv-hud"><Ic n="map" size={13} /> Level {chosen} <b>{level.name}</b></span>
             <span className="grow" />
             <span className="ar-band"><Ic n="cloud" size={14} /> {band.name}</span>
           </>
@@ -293,6 +320,7 @@ export default function RocketGame() {
                 compact
                 nextChar={helping ? ch : undefined}
                 lastPress={press}
+                hiddenLabels={level.dark ? 'all' : undefined}
               />
             </div>
           </div>

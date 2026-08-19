@@ -7,6 +7,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
+import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, STARTER_PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -33,10 +34,6 @@ import type { GuideStyle, Rewards } from '../lib/types';
  * answer it out loud long before the last tile goes.
  */
 
-const COLS = 6;
-const ROWS = 4;
-const TILES = COLS * ROWS;
-
 interface Tile { ch: string; gone: boolean }
 
 export default function PaintRevealGame() {
@@ -49,7 +46,8 @@ export default function PaintRevealGame() {
   const [, force] = useState(0);
   const [press, setPress] = useState<{ key: string; ok: boolean; t: number } | null>(null);
   const [overInfo, setOverInfo] = useState<
-    { score: number; cleared: number; who: string; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null
+    { score: number; cleared: number; who: string; acc: number; wpm: number; rewards: Rewards | null;
+      newBest: boolean; level: number; goal: number; unlocked: boolean } | null
   >(null);
 
   const st = useRef({
@@ -59,6 +57,11 @@ export default function PaintRevealGame() {
   });
   const boardRef = useRef<HTMLDivElement>(null);
   const pressTimer = useRef(0);
+
+  const { level, cleared: clearedLevels, chosen, setChosen, clear, total } = useStarterLadder('paint');
+  const COLS = level.cols ?? 6;
+  const ROWS = level.rows ?? 4;
+  const TILES = level.goal;
 
   const layout = data?.profile.layout ?? 'qwerty';
   const guide: GuideStyle = data?.settings.guide === 'hidden' ? 'plain' : (data?.settings.guide ?? 'hands');
@@ -84,7 +87,8 @@ export default function PaintRevealGame() {
   const endGame = () => {
     const cur = st.current;
     if (!cur.startedAt) return;
-    const cleared = TILES - cur.tiles.filter((t) => !t.gone).length;
+    const cleared = cur.tiles.length - cur.tiles.filter((t) => !t.gone).length;
+    const won = cleared >= cur.tiles.length && cur.tiles.length > 0;
     const result = resultFromStrokes('game', 'Paint Reveal', cur.strokes, cur.startedAt, performance.now(), {
       game: 'paint', score: cur.score, cleared,
     });
@@ -95,9 +99,14 @@ export default function PaintRevealGame() {
       if (!prev || cur.score > prev.score) { d.gameBests['paint'] = { score: cur.score, level: cleared }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Paint Reveal best!' });
+    if (won) {
+      clear(chosen);
+      if (chosen === clearedLevels + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+    }
     setOverInfo({
       score: cur.score, cleared, who: STARTER_PALS[cur.pal].name,
       acc: result.acc, wpm: result.wpm, rewards, newBest,
+      level: chosen, goal: TILES, unlocked: won,
     });
     setPhase('over');
   };
@@ -106,7 +115,7 @@ export default function PaintRevealGame() {
     const rng = st.current.rng;
     // Twenty four different letters, so every tile is its own key and pressing
     // one can never be ambiguous about which patch it opens.
-    const pool = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const pool = (level.chars ?? 'abcdefghijklmnopqrstuvwxyz').split('');
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(rng() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -172,7 +181,6 @@ export default function PaintRevealGame() {
   useGameKeys(phase === 'run', handleKey, { onEscape: endGame });
 
   if (!data) return null;
-  const best = data.gameBests['paint'];
 
   if (phase === 'intro') {
     return (
@@ -180,12 +188,17 @@ export default function PaintRevealGame() {
         game="paint"
         title="Uncover the hidden pal"
         onPlay={start}
-        cta="Start scratching →"
-        side={<StarterScene game="paint" />}
-        stats={best ? [
-          { label: 'Best score', value: best.score },
-          { label: 'Most patches', value: best.level },
-        ] : undefined}
+        cta={`Level ${chosen}: ${level.name} →`}
+        side={(
+          <>
+            <StarterScene game="paint" />
+            <LevelPicker game="paint" cleared={clearedLevels} chosen={chosen} onPick={setChosen} />
+          </>
+        )}
+        stats={[
+          { label: 'Levels done', value: `${clearedLevels} of ${total}` },
+          { label: 'Patches this level', value: level.goal },
+        ]}
       >
         <p>
           Somebody is hiding under twenty four painted tiles, and every tile has a letter on it.
@@ -205,21 +218,27 @@ export default function PaintRevealGame() {
         game="paint"
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.cleared }}
         score={overInfo.score}
-        title={overInfo.newBest ? 'Your best painting yet!' : overInfo.cleared >= TILES ? `It was ${overInfo.who}!` : 'Half a picture is still a picture'}
+        title={overInfo.unlocked ? `It was ${overInfo.who}!` : 'Half a picture is still a picture'}
         newBest={overInfo.newBest}
         onAgain={start}
+        standing={(
+          <LevelResult
+            game="paint" level={overInfo.level} done={overInfo.cleared}
+            goal={overInfo.goal} cleared={clearedLevels} unlocked={overInfo.unlocked}
+          />
+        )}
       >
         <RewardsBanner rewards={overInfo.rewards} />
         <p className="small muted" style={{ maxWidth: 430 }}>
-          {overInfo.cleared >= TILES
-            ? `Twenty four letters found, one after another, and ${overInfo.who} was under all of them.`
+          {overInfo.unlocked
+            ? `${overInfo.cleared} letters found, one after another, and ${overInfo.who} was under all of them.`
             : `You uncovered ${overInfo.cleared} patches. Somebody is still under there.`}
         </p>
       </ArenaResult>
     );
   }
 
-  const nearly = left <= 8;
+  const nearly = left <= Math.max(3, Math.round(TILES / 3));
 
   return (
     <>
@@ -230,7 +249,7 @@ export default function PaintRevealGame() {
         hud={(
           <>
             <span><b>{TILES - left}</b> of {TILES} uncovered</span>
-            <span><b>{s.score}</b> points</span>
+            <span className="lv-hud"><Ic n="map" size={13} /> Level {chosen} <b>{level.name}</b></span>
             <span className="grow" />
             <span className="st-promise"><Ic n="heart" size={14} /> any letter works</span>
           </>
@@ -280,7 +299,10 @@ export default function PaintRevealGame() {
               </div>
             </div>
             <div className="pr-keys">
-              <KeyboardVisual layout={layout} guide={guide} compact markChars={marks} lastPress={press} />
+              <KeyboardVisual
+                layout={layout} guide={guide} compact markChars={marks} lastPress={press}
+                hiddenLabels={level.dark ? 'all' : undefined}
+              />
             </div>
           </div>
         )}

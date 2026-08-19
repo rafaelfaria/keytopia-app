@@ -22,7 +22,7 @@ export type SyncSection =
  */
 export const MISC_KEYS = [
   'dailyGoalMin', 'daily', 'unlockedThemes', 'unlockedAvatars', 'forge',
-  'gameBests', 'race', 'ghost', 'assessment', 'planStage', 'customTexts',
+  'gameBests', 'starters', 'race', 'ghost', 'assessment', 'planStage', 'customTexts',
   'seedCleared', 'journey',
 ] as const satisfies readonly (keyof ProfileData)[];
 

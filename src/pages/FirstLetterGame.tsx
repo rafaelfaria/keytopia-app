@@ -7,6 +7,7 @@ import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
+import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -64,9 +65,6 @@ const THINGS: { icon: string; word: string }[] = [
   { icon: 'anchor', word: 'anchor' },
 ];
 
-/** One round. Long enough to meet a good spread of first letters. */
-const ROUND = 12;
-
 export default function FirstLetterGame() {
   const data = useData();
   const recordSession = useStore((s) => s.recordSession);
@@ -77,7 +75,8 @@ export default function FirstLetterGame() {
   const [, force] = useState(0);
   const [press, setPress] = useState<{ key: string; ok: boolean; t: number } | null>(null);
   const [overInfo, setOverInfo] = useState<
-    { score: number; done: number; solo: number; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null
+    { score: number; done: number; solo: number; acc: number; wpm: number; rewards: Rewards | null;
+      newBest: boolean; level: number; goal: number; unlocked: boolean } | null
   >(null);
 
   const st = useRef({
@@ -90,6 +89,9 @@ export default function FirstLetterGame() {
   const pressTimer = useRef(0);
   const tick = useRef(0);
   const nextTimer = useRef(0);
+
+  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('firstletter');
+  const ROUND = level.goal;
 
   const layout = data?.profile.layout ?? 'qwerty';
   const lookup = useMemo(() => makeCharLookup(layout), [layout]);
@@ -121,7 +123,15 @@ export default function FirstLetterGame() {
       if (!prev || cur.score > prev.score) { d.gameBests['firstletter'] = { score: cur.score, level: cur.i }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New First Letter best!' });
-    setOverInfo({ score: cur.score, done: cur.i, solo: cur.solo, acc: result.acc, wpm: result.wpm, rewards, newBest });
+    const won = cur.i >= ROUND;
+    if (won) {
+      clear(chosen);
+      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+    }
+    setOverInfo({
+      score: cur.score, done: cur.i, solo: cur.solo, acc: result.acc, wpm: result.wpm,
+      rewards, newBest, level: chosen, goal: ROUND, unlocked: won,
+    });
     setPhase('over');
   };
 
@@ -205,7 +215,6 @@ export default function FirstLetterGame() {
   useGameKeys(phase === 'run', handleKey, { onEscape: endGame });
 
   if (!data) return null;
-  const best = data.gameBests['firstletter'];
 
   if (phase === 'intro') {
     return (
@@ -213,12 +222,17 @@ export default function FirstLetterGame() {
         game="firstletter"
         title="What does it start with?"
         onPlay={start}
-        cta="Show me the first one →"
-        side={<StarterScene game="firstletter" />}
-        stats={best ? [
-          { label: 'Best score', value: best.score },
-          { label: 'Pictures done', value: best.level },
-        ] : undefined}
+        cta={`Level ${chosen}: ${level.name} →`}
+        side={(
+          <>
+            <StarterScene game="firstletter" />
+            <LevelPicker game="firstletter" cleared={cleared} chosen={chosen} onPick={setChosen} />
+          </>
+        )}
+        stats={[
+          { label: 'Levels done', value: `${cleared} of ${total}` },
+          { label: 'Pictures this level', value: level.goal },
+        ]}
       >
         <p>
           A picture appears. Say what it is, listen to how it starts, then press that letter.
@@ -238,9 +252,15 @@ export default function FirstLetterGame() {
         game="firstletter"
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.solo }}
         score={overInfo.score}
-        title={overInfo.newBest ? 'Your best round yet!' : overInfo.done >= ROUND ? 'All twelve pictures' : 'Good listening'}
+        title={overInfo.unlocked ? 'Every picture answered' : 'Good listening'}
         newBest={overInfo.newBest}
         onAgain={start}
+        standing={(
+          <LevelResult
+            game="firstletter" level={overInfo.level} done={overInfo.done}
+            goal={overInfo.goal} cleared={cleared} unlocked={overInfo.unlocked}
+          />
+        )}
       >
         <RewardsBanner rewards={overInfo.rewards} />
         <p className="small muted" style={{ maxWidth: 430 }}>
@@ -261,7 +281,7 @@ export default function FirstLetterGame() {
         hud={(
           <>
             <span><b>{s.i + (s.got ? 1 : 0)}</b> of {ROUND} pictures</span>
-            <span><b>{s.score}</b> points</span>
+            <span className="lv-hud"><Ic n="map" size={13} /> Level {chosen} <b>{level.name}</b></span>
             <span className="grow" />
             <span className="st-promise"><Ic n="heart" size={14} /> no clock, no losing</span>
           </>
@@ -272,13 +292,20 @@ export default function FirstLetterGame() {
             {/* The word, with its first letter pulled out in front of it. A
                 reader gets the answer, a non-reader gets a shape to match
                 against the keyboard, and both of them get the picture. */}
+            {/* Levels one to four print the word with its first letter carried
+                out in front, which hands a reader the answer. From level five
+                the word goes and the picture has to carry it, which is the
+                whole skill this game is named after. The letter still appears
+                once it has been pressed, so the association still lands. */}
             <p className="fl-word">
-              {thing ? (
-                <>
-                  <b className={`fl-first ${s.got ? 'fl-first-got' : ''}`}>{ch}</b>
-                  <span>{thing.word.slice(1)}</span>
-                </>
-              ) : <span className="muted">…</span>}
+              {!thing ? <span className="muted">…</span>
+                : level.bare && !s.got ? <b className="fl-first fl-first-bare">?</b>
+                : (
+                  <>
+                    <b className={`fl-first ${s.got ? 'fl-first-got' : ''}`}>{ch}</b>
+                    {!level.bare && <span>{thing.word.slice(1)}</span>}
+                  </>
+                )}
             </p>
             <p className="fl-hint">
               {thing && !s.got && info?.key && (helping
@@ -304,6 +331,7 @@ export default function FirstLetterGame() {
                 compact
                 nextChar={helping ? ch : undefined}
                 lastPress={press}
+                hiddenLabels={level.dark ? 'all' : undefined}
               />
             </div>
           </div>

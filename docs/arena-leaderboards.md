@@ -446,6 +446,19 @@ much help a particular child needed today, which is theirs. Ranking it also
 reintroduces the one thing the tier exists to remove, because the way to climb any
 board is to hurry, and every starter promises a child that hurrying is not part of it.
 
+Instead of a board they have a **ladder**: eight levels each, cleared in order and
+kept forever in `ProfileData.starters` (`src/lib/starterLevels.ts`). Without one, a
+starter was ninety seconds long and handed back a points total with nothing to
+compare it to, so a child who played four times had done the same thing four times.
+Every level changes what the game asks, and the four steps are the same four across
+all six games: the letters widen, the goal grows, the crutch goes (the printed word,
+the letters on the planks), and finally the keycaps go blank. The last level of Word
+Bridge is a whole word on an unlabelled keyboard, which is Wordfall with the clock
+taken out, and that is the handover.
+
+Failing to reach a goal leaves the level exactly where it was, which is why `starters`
+is a count of levels cleared and not a score.
+
 So `ranked: false` on all six. `ArenaIntro` drops its board column, `ArenaResult`
 shows the learner's own record in its place, `arena_submit` is never called, and
 `fetchArenaHome` filters them out of the hub standings. They still record sessions,

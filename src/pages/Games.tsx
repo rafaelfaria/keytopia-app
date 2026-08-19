@@ -3,6 +3,7 @@ import { useData } from '../lib/store';
 import { Chip } from '../components/ui';
 import { Ic } from '../components/icons';
 import { ARENA_GAMES, ARENA_LIST, type ArenaGame } from '../lib/arena';
+import { clearedCount, isStarter, ladder } from '../lib/starterLevels';
 
 /**
  * The hub reads the registry rather than keeping a second copy of it.
@@ -161,6 +162,12 @@ function GameArt({ id }: { id: string }) {
 }
 
 function GameCard({ g, i }: { g: ArenaGame; i: number }) {
+  const data = useData();
+  // Where a child is on this game's ladder, on the card they are about to
+  // press. The starters have no board and no score worth showing here; how far
+  // up they are is the only number on this page that means anything to them.
+  const done = isStarter(g.id) ? clearedCount(data?.starters, g.id) : null;
+  const total = isStarter(g.id) ? ladder(g.id).length : 0;
   return (
     <Link to={g.to} className="arena-card" style={{ '--i': i } as React.CSSProperties}>
       <div className="arena-artwrap">
@@ -172,6 +179,11 @@ function GameCard({ g, i }: { g: ArenaGame; i: number }) {
         <p className="small muted">{g.desc}</p>
         <div className="row gap wrap arena-foot">
           <Chip tone="accent">{g.trains}</Chip>
+          {done !== null && (
+            <Chip tone={done >= total ? 'gold' : done > 0 ? 'good' : undefined}>
+              <Ic n="map" size={12} /> {done} of {total} levels
+            </Chip>
+          )}
         </div>
       </div>
     </Link>

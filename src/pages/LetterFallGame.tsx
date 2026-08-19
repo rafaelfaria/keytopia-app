@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useData, useStore, useUi } from '../lib/store';
 import { mulberry32, pick } from '../lib/rng';
-import { STARTER_LETTER_SETS as SETS } from '../lib/words';
 import { Chip } from '../components/ui';
 import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
+import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -82,7 +82,8 @@ export default function LetterFallGame() {
   const [, force] = useState(0);
   const [press, setPress] = useState<{ key: string; ok: boolean; t: number } | null>(null);
   const [overInfo, setOverInfo] = useState<
-    { score: number; caught: number; best: number; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null
+    { score: number; caught: number; best: number; acc: number; wpm: number; rewards: Rewards | null;
+      newBest: boolean; level: number; goal: number; unlocked: boolean } | null
   >(null);
 
   const st = useRef({
@@ -104,6 +105,9 @@ export default function LetterFallGame() {
   const pressTimer = useRef(0);
   const bloomTimers = useRef<number[]>([]);
 
+  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('letterfall');
+  const GOAL = level.goal;
+
   const layout = data?.profile.layout ?? 'qwerty';
   const lookup = useMemo(() => makeCharLookup(layout), [layout]);
   /**
@@ -114,11 +118,10 @@ export default function LetterFallGame() {
   const guide: GuideStyle = data?.settings.guide === 'hidden' ? 'plain' : (data?.settings.guide ?? 'hands');
 
   const patchOf = (caught: number) => Math.floor(caught / PATCH);
-  const setOf = (caught: number) => Math.min(SETS.length - 1, Math.floor(patchOf(caught) / 2));
 
   const spawn = useCallback(() => {
     const s = st.current;
-    const chars = SETS[setOf(s.caught)].chars;
+    const chars = level.chars ?? 'fjdk';
     // Two seeds in the same column are two seeds a child cannot tell apart, and
     // the one they are hunting for is whichever they did not look at.
     let x = 12 + s.rng() * 76;
@@ -136,7 +139,8 @@ export default function LetterFallGame() {
       y: 2,
       // Slow, and barely faster later. The garden growing is the progression;
       // speed is only enough that a run does not feel identical at flower 40.
-      speed: 16 * Math.min(1.7, 1 + patchOf(s.caught) * 0.06),
+      // The level sets the pace; inside a level it only creeps.
+      speed: 16 * (level.speed ?? 1) * Math.min(1.35, 1 + patchOf(s.caught) * 0.05),
       tint: Math.floor(s.rng() * PETALS.length),
       wobble: s.rng() * 6.28,
     });
@@ -157,9 +161,15 @@ export default function LetterFallGame() {
       if (!cur || s.score > cur.score) { d.gameBests['letterfall'] = { score: s.score, level: s.caught }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Letter Fall best!' });
+    const won = s.caught >= GOAL;
+    if (won) {
+      clear(chosen);
+      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+    }
     setOverInfo({
       score: s.score, caught: s.caught, best: s.bestStreak,
       acc: result.acc, wpm: result.wpm, rewards, newBest,
+      level: chosen, goal: GOAL, unlocked: won,
     });
     setPhase('over');
   }, [recordSession, patchData, pushToast]);
@@ -173,7 +183,7 @@ export default function LetterFallGame() {
     s.lastTick = t;
 
     const p = patchOf(s.caught);
-    const room = p < 2 ? 1 : p < 6 ? 2 : 3;
+    const room = level.room ?? 1;
     const live = s.seeds.filter((w) => !w.caught).length;
     /**
      * An empty sky refills fast. The spawn gap is there to keep two or three
@@ -222,7 +232,7 @@ export default function LetterFallGame() {
     if (!low) s.targetId = 0;
 
     force((n) => n + 1);
-  }, [spawn, endGame, data?.settings.soundOn]);
+  }, [spawn, endGame, data?.settings.soundOn, level.room]);
 
   const start = () => {
     st.current = {
@@ -331,6 +341,18 @@ export default function LetterFallGame() {
     }, 420);
     bloomTimers.current.push(bloom);
     if (s.caught % PATCH === 0 && data?.settings.soundOn) window.setTimeout(() => snd.step(), 560);
+    /**
+     * The level's goal ends the run, on a win.
+     *
+     * Before the ladder, the only way out of Letter Fall was three letters
+     * landing, so every single run ended on the thing you were trying to avoid.
+     * Now the last flower goes in and the garden is finished, which is a
+     * different feeling entirely and the one this game was always for.
+     */
+    if (s.caught >= GOAL) {
+      const finish = window.setTimeout(endGame, 900);
+      bloomTimers.current.push(finish);
+    }
   };
 
   const handleKey = (raw: string) => {
@@ -361,7 +383,6 @@ export default function LetterFallGame() {
 
   if (!data) return null;
   const s = st.current;
-  const best = data.gameBests['letterfall'];
   const target = s.seeds.find((w) => w.id === s.targetId && !w.caught) ?? null;
   const info = target ? lookup(target.ch) : null;
   /**
@@ -379,12 +400,17 @@ export default function LetterFallGame() {
         game="letterfall"
         title="Catch the falling letters"
         onPlay={start}
-        cta="Open the basket →"
-        side={<StarterScene game="letterfall" />}
-        stats={best ? [
-          { label: 'Best score', value: best.score },
-          { label: 'Most letters', value: best.level },
-        ] : undefined}
+        cta={`Level ${chosen}: ${level.name} →`}
+        side={(
+          <>
+            <StarterScene game="letterfall" />
+            <LevelPicker game="letterfall" cleared={cleared} chosen={chosen} onPick={setChosen} />
+          </>
+        )}
+        stats={[
+          { label: 'Levels done', value: `${cleared} of ${total}` },
+          { label: 'Catch this level', value: level.goal },
+        ]}
       >
         <p>
           One letter floats down at a time. Find it on the keyboard under the garden and press it,
@@ -404,9 +430,15 @@ export default function LetterFallGame() {
         game="letterfall"
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.caught }}
         score={overInfo.score}
-        title={overInfo.newBest ? 'Your best garden yet!' : 'What a garden'}
+        title={overInfo.unlocked ? 'What a garden' : 'The last one got away'}
         newBest={overInfo.newBest}
         onAgain={start}
+        standing={(
+          <LevelResult
+            game="letterfall" level={overInfo.level} done={overInfo.caught}
+            goal={overInfo.goal} cleared={cleared} unlocked={overInfo.unlocked}
+          />
+        )}
       >
         <RewardsBanner rewards={overInfo.rewards} />
         <p className="small muted" style={{ maxWidth: 430 }}>
@@ -418,7 +450,7 @@ export default function LetterFallGame() {
     );
   }
 
-  const setName = SETS[setOf(s.caught)].name;
+  const setName = level.name;
   const toPatch = PATCH - (s.caught % PATCH);
 
   return (
@@ -429,8 +461,8 @@ export default function LetterFallGame() {
         wide
         hud={(
           <>
-            <span><b>{s.caught}</b> {s.caught === 1 ? 'flower' : 'flowers'}</span>
-            <span><b>{s.score}</b> points</span>
+            <span><b>{s.caught}</b> of {GOAL} flowers</span>
+            <span className="lv-hud"><Ic n="map" size={13} /> Level {chosen} <b>{level.name}</b></span>
             <span className="grow" />
             {/* Lives, as the three flowers that have not been planted yet. A
                 bar would say "you are being damaged"; this says "you have three
@@ -556,6 +588,7 @@ export default function LetterFallGame() {
                 compact
                 nextChar={target?.ch}
                 lastPress={press}
+                hiddenLabels={level.dark ? 'all' : undefined}
               />
             </div>
           </div>

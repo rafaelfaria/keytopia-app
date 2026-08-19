@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useData, useStore, useUi } from '../lib/store';
 import { mulberry32, pick } from '../lib/rng';
-import { STARTER_LETTER_SETS as SETS } from '../lib/words';
 import { Chip } from '../components/ui';
 import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { StarterScene } from '../components/starterScenes';
+import { LevelPicker, LevelResult, useStarterLadder } from '../components/starterLevels';
 import { Ic } from '../components/icons';
 import { MobileKeys, STARTER_PALS as PALS, useGameKeys } from '../components/gamekit';
 import { KeyboardVisual } from '../components/KeyboardVisual';
@@ -39,7 +39,7 @@ const COMMON = PALS.filter((p) => !p.rare);
 const RARE = PALS.filter((p) => p.rare);
 
 /**
- * One expedition: three rows of eight, filling back to front.
+ * One expedition: rows of eight, filling back to front.
  *
  * It was one row of twelve, which finished about a minute after it started and
  * left the meadow looking like a queue rather than a place. Rows give the run a
@@ -52,12 +52,10 @@ const RARE = PALS.filter((p) => p.rare);
  * finish either.
  */
 const ROW = 8;
-const ROWS = 3;
-const FINDS = ROW * ROWS;
 
 /** Where a find stands in the meadow. Later rows are nearer, and larger. */
-function meadowSpot(i: number) {
-  const n = i % FINDS;
+function meadowSpot(i: number, finds: number) {
+  const n = i % Math.max(ROW, finds);
   const col = n % ROW;
   const row = Math.floor(n / ROW);
   const step = 84 / (ROW - 1);
@@ -87,7 +85,8 @@ export default function KeySafariGame() {
   /** The pal who just arrived says their own name, briefly. */
   const [say, setSay] = useState<number | null>(null);
   const [overInfo, setOverInfo] = useState<
-    { score: number; found: number; firstTry: number; acc: number; wpm: number; rewards: Rewards | null; newBest: boolean } | null
+    { score: number; found: number; firstTry: number; acc: number; wpm: number;
+      rewards: Rewards | null; newBest: boolean; level: number; goal: number; unlocked: boolean } | null
   >(null);
 
   const st = useRef({
@@ -105,6 +104,9 @@ export default function KeySafariGame() {
   const sayTimer = useRef(0);
   const bloomTimers = useRef<number[]>([]);
 
+  const { level, cleared, chosen, setChosen, clear, total } = useStarterLadder('keysafari');
+  const FINDS = level.goal;
+
   const layout = data?.profile.layout ?? 'qwerty';
   const lookup = useMemo(() => makeCharLookup(layout), [layout]);
   const guide: GuideStyle = data?.settings.guide === 'hidden' ? 'plain' : (data?.settings.guide ?? 'hands');
@@ -117,7 +119,7 @@ export default function KeySafariGame() {
 
   const hide = useCallback(() => {
     const cur = st.current;
-    const chars = SETS[Math.min(SETS.length - 1, Math.floor(cur.found.length / 4))].chars.split('');
+    const chars = (level.chars ?? 'fjdk').split('');
     let ch = pick(cur.rng, chars);
     for (let i = 0; i < 5 && ch === cur.ch; i++) ch = pick(cur.rng, chars);
     const table = cur.rng() < 0.12 ? RARE : COMMON;
@@ -144,9 +146,17 @@ export default function KeySafariGame() {
       if (!prev || cur.score > prev.score) { d.gameBests['keysafari'] = { score: cur.score, level: cur.found.length }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Key Safari best!' });
+    // The level only goes in if the meadow actually filled. Stopping early
+    // costs nothing and leaves it exactly where it was.
+    const won = cur.found.length >= FINDS;
+    if (won) {
+      clear(chosen);
+      if (chosen === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${chosen} done!` });
+    }
     setOverInfo({
       score: cur.score, found: cur.found.length, firstTry: cur.firstTry,
       acc: result.acc, wpm: result.wpm, rewards, newBest,
+      level: chosen, goal: FINDS, unlocked: won,
     });
     setPhase('over');
   }, [recordSession, patchData, pushToast]);
@@ -241,7 +251,7 @@ export default function KeySafariGame() {
     const meadow = meadowRef.current;
     const wrap = keysRef.current;
     const i = cur.found.length;
-    const spot = meadowSpot(i);
+    const spot = meadowSpot(i, FINDS);
     let dx = 0;
     let dy = 120;
     if (scene && meadow && wrap && peek) {
@@ -334,7 +344,6 @@ export default function KeySafariGame() {
   useGameKeys(phase === 'run', handleKey, { onEscape: endGame });
 
   if (!data) return null;
-  const best = data.gameBests['keysafari'];
 
   if (phase === 'intro') {
     return (
@@ -342,12 +351,17 @@ export default function KeySafariGame() {
         game="keysafari"
         title="Find who is hiding"
         onPlay={start}
-        cta="Go on safari →"
-        side={<StarterScene game="keysafari" />}
-        stats={best ? [
-          { label: 'Best score', value: best.score },
-          { label: 'Animals found', value: best.level },
-        ] : undefined}
+        cta={`Level ${chosen}: ${level.name} →`}
+        side={(
+          <>
+            <StarterScene game="keysafari" />
+            <LevelPicker game="keysafari" cleared={cleared} chosen={chosen} onPick={setChosen} />
+          </>
+        )}
+        stats={[
+          { label: 'Levels done', value: `${cleared} of ${total}` },
+          { label: 'Pals this level', value: level.goal },
+        ]}
       >
         <p>
           One of the pals is hiding behind a key on the keyboard below. Watch for the key that
@@ -369,14 +383,19 @@ export default function KeySafariGame() {
         score={overInfo.score}
         /* Going home early is a choice this game offers, so the finish screen
            must not congratulate you on filling a meadow you did not fill. */
-        title={overInfo.newBest ? 'Your best expedition yet!'
-          : overInfo.found >= FINDS ? 'The meadow is full' : 'What a day out'}
+        title={overInfo.unlocked ? 'The meadow is full' : 'A good day out'}
         newBest={overInfo.newBest}
         onAgain={start}
+        standing={(
+          <LevelResult
+            game="keysafari" level={overInfo.level} done={overInfo.found}
+            goal={overInfo.goal} cleared={cleared} unlocked={overInfo.unlocked}
+          />
+        )}
       >
         <RewardsBanner rewards={overInfo.rewards} />
         <p className="small muted" style={{ maxWidth: 430 }}>
-          {overInfo.firstTry >= FINDS - 2
+          {overInfo.firstTry >= overInfo.found - 1 && overInfo.found > 2
             ? `You found ${overInfo.firstTry} of them on the very first key you pressed. You know where these letters live.`
             : `Found on the first press: ${overInfo.firstTry} of ${overInfo.found}. That number goes up every single time you play.`}
         </p>
@@ -396,7 +415,7 @@ export default function KeySafariGame() {
         hud={(
           <>
             <span><b>{done}</b> of {FINDS} found</span>
-            <span><b>{s.score}</b> points</span>
+            <span className="lv-hud"><Ic n="map" size={13} /> Level {chosen} <b>{level.name}</b></span>
             <span className="grow" />
             <span className="st-promise"><Ic n="heart" size={14} /> nothing to lose here</span>
           </>
@@ -480,6 +499,7 @@ export default function KeySafariGame() {
                 /* The rustle is always on the hiding key. The lit key only
                    arrives once the child has been hunting a while. */
                 markChars={s.ch ? { [s.ch]: 'ks-hiding' } : undefined}
+                hiddenLabels={level.dark ? 'all' : undefined}
                 nextChar={helping ? s.ch : undefined}
                 lastPress={press}
               />

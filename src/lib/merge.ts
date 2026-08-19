@@ -72,6 +72,12 @@ export function mergeProfileData(local: ProfileData, remote: Partial<ProfileData
     records: mergeRecords(local.records, remote.records ?? {}),
     days: mergeDays(local.days, remote.days ?? {}),
     xp: Math.max(local.xp, remote.xp ?? 0),
+    // A level cleared anywhere is cleared. Max rather than last-write-wins, or
+    // an evening on the tablet would take back a morning on the laptop.
+    starters: Object.fromEntries(
+      [...new Set([...Object.keys(local.starters ?? {}), ...Object.keys(remote.starters ?? {})])]
+        .map((k) => [k, Math.max(local.starters?.[k] ?? 0, remote.starters?.[k] ?? 0)]),
+    ),
     unlockedThemes: [...new Set([...local.unlockedThemes, ...(remote.unlockedThemes ?? [])])],
     unlockedAvatars: [...new Set([...local.unlockedAvatars, ...(remote.unlockedAvatars ?? [])])],
     settings: lww('settings', 'settings'),

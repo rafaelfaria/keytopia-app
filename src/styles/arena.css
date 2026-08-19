@@ -1725,6 +1725,7 @@ html[data-rm='1'] .wf-caret { animation: none; }
   box-shadow: 0 6px 0 color-mix(in oklab, var(--gold) 52%, #000), inset 0 4px 0 rgba(255, 255, 255, 0.4);
   transition: background 0.25s ease;
 }
+.fl-first-bare { background: var(--surface2); color: var(--muted); border-color: var(--border); box-shadow: none; }
 .fl-first-got { background: var(--good); border-color: color-mix(in oklab, var(--good) 62%, #000); box-shadow: 0 6px 0 color-mix(in oklab, var(--good) 52%, #000); }
 .fl-hint { margin: 0; min-height: 1.5em; font-size: 0.96rem; font-weight: 640; color: var(--text-dim); }
 .fl-hint strong { color: var(--accent); font-family: var(--font-type); }
@@ -1837,6 +1838,7 @@ html[data-rm='1'] .wf-caret { animation: none; }
   box-shadow: 0 6px 0 color-mix(in oklab, var(--gold) 52%, #000), inset 0 4px 0 rgba(255, 255, 255, 0.4);
   transform: translateY(-4px);
 }
+.wb-blank { display: block; width: 16px; height: 5px; border-radius: 999px; background: color-mix(in oklab, var(--muted) 45%, transparent); font-style: normal; }
 .wb-done { background: color-mix(in oklab, var(--good) 30%, var(--surface2)); color: var(--good); border-color: var(--good); }
 /* Where your feet are, on the plank you are standing on. */
 .wb-foot {
@@ -2057,4 +2059,83 @@ html[data-rm='1'] .wf-caret { animation: none; }
 .st-promise {
   font-size: 0.82rem; font-weight: 650; color: var(--good);
   display: inline-flex; align-items: center; gap: 5px;
+}
+
+/* ---------------------------------------------------------------------------
+   Starter ladders — the levels a child climbs across sessions
+   ---------------------------------------------------------------------------
+   A path, not a progress bar. A bar says how much is left; a path says where
+   you have been, and after a week of five-minute goes the second one is the
+   thing worth looking at. */
+
+.lv-picker { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.lv-title { margin: 0; font-size: 1.3rem; }
+
+.lv-path { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+.lv-nodes {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px;
+  list-style: none; margin: 0; padding: 0;
+}
+/* The line between the stops. Drawn on the node rather than under the row, so
+   it wraps with them instead of running off behind the last one. */
+.lv-node { position: relative; display: flex; }
+.lv-node + .lv-node::before {
+  content: ''; position: absolute; left: -8px; top: 50%; width: 8px; height: 3px;
+  transform: translateY(-50%); background: var(--border);
+}
+.lv-node.lv-done + .lv-node::before,
+.lv-node.lv-done::before { background: color-mix(in oklab, var(--good) 65%, var(--border)); }
+.lv-node button {
+  width: 38px; height: 38px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 0.95rem; font-weight: 800;
+  background: var(--surface2); color: var(--muted);
+  border: 2.5px solid var(--border);
+  cursor: default; padding: 0;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+.lv-open button { cursor: pointer; color: var(--text); }
+.lv-open button:hover, .lv-open button:focus-visible { transform: translateY(-2px); }
+.lv-done button {
+  background: color-mix(in oklab, var(--good) 55%, var(--surface));
+  border-color: color-mix(in oklab, var(--good) 70%, #000);
+  color: #14301f;
+  box-shadow: 0 3px 0 color-mix(in oklab, var(--good) 48%, #000);
+}
+.lv-locked button { opacity: 0.45; }
+/* Where you are about to play. The one node that is a different size. */
+.lv-here button {
+  background: var(--gold); color: #2d2a26;
+  border-color: color-mix(in oklab, var(--gold) 62%, #000);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--gold) 52%, #000);
+  transform: scale(1.12);
+}
+.lv-here.lv-done button { background: var(--gold); color: #2d2a26; }
+.lv-note { margin: 0; font-size: 0.86rem; color: var(--muted); max-width: 34ch; }
+
+/* The finish screen's column. */
+.lv-result { justify-content: center; gap: 12px; text-align: center; align-items: center; }
+.lv-result-name { margin: 0; font-size: 1.15rem; font-weight: 750; }
+.lv-result .arena-result-lines { margin-top: 0; }
+.lv-meter {
+  position: relative; width: min(240px, 90%); height: 26px; border-radius: 999px;
+  background: color-mix(in oklab, var(--muted) 20%, transparent); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.lv-meter > i {
+  position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.lv-meter[data-full='true'] > i { background: linear-gradient(90deg, var(--good), var(--gold)); }
+.lv-meter > b { position: relative; font-size: 0.82rem; font-weight: 750; color: var(--text); }
+
+/* In the running game's HUD. */
+.lv-hud { font-size: 0.82rem; font-weight: 650; color: var(--text-dim); display: inline-flex; align-items: center; gap: 5px; }
+.lv-hud b { color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lv-meter > i { transition: none; }
+  .lv-open button:hover { transform: none; }
+  .lv-here button { transform: none; outline: 3px solid var(--gold); outline-offset: 2px; }
 }

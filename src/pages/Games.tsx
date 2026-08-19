@@ -47,6 +47,18 @@ function GameArt({ id }: { id: string }) {
           <i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" />
         </div>
       );
+    case 'rocket':
+      /* A rocket part way up its own alphabet. */
+      return (
+        <div className="arena-art ga-rocket" aria-hidden>
+          <span className="gr-moon"><Ic n="moon" size={17} /></span>
+          <span className="gr-ship"><Ic n="rocket" size={30} /></span>
+          <i className="gr-mark" style={{ bottom: 16 }}>a</i>
+          <i className="gr-mark" style={{ bottom: 34 }}>b</i>
+          <i className="gr-mark" style={{ bottom: 52 }}>c</i>
+          <span className="gr-ground" />
+        </div>
+      );
     case 'keysafari':
       /* Three keycaps, and one of them has ears. */
       return (

@@ -22,7 +22,7 @@ export type ArenaToken = 'accent' | 'accent2' | 'good' | 'warn' | 'gold' | 'bad'
 export type ArenaGameId =
   | 'lightstream' | 'duel' | 'survivor' | 'wordfall'
   | 'stack' | 'cipher' | 'keyforge' | 'wordflight'
-  | 'letterfall' | 'keysafari';
+  | 'letterfall' | 'keysafari' | 'rocket';
 
 export interface ArenaGame {
   id: ArenaGameId;
@@ -103,6 +103,13 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
     desc: 'Eight typists, four rapid heats, the slowest move to the cheer bench each round. Outlast everyone for the crown.',
     valueLabel: 'heats', unit: plural('heat'), tier: 'competitive',
     hero: { formation: 'stream', tone: ['warn', 'gold', 0.4] },
+  },
+  rocket: {
+    id: 'rocket', name: 'Alphabet Rocket', icon: 'moon', to: '/app/games/rocket',
+    trains: 'The whole alphabet',
+    desc: 'The rocket climbs one letter at a time, a to z. You already know what comes next, so the only job is finding it.',
+    valueLabel: 'solo letters', unit: plural('solo letter'), tier: 'starter',
+    hero: { formation: 'calm', tone: ['accent2', 'gold', 0.4] },
   },
   keysafari: {
     id: 'keysafari', name: 'Key Safari', icon: 'telescope', to: '/app/games/keysafari',

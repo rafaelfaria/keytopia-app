@@ -1424,3 +1424,148 @@ html[data-rm='1'] .wf-caret { animation: none; }
      it takes a ring from the start rather than only once help arrives. */
   .kbd-key.ks-hiding { outline: 3px dashed var(--accent2); outline-offset: 1px; }
 }
+
+/* ---------------------------------------------------------------------------
+   Alphabet Rocket — the starter game with a destination
+   --------------------------------------------------------------------------- */
+
+.ar-scene { flex: 1; display: flex; flex-direction: column; gap: 12px; min-height: 0; width: 100%; }
+
+/* The flight, drawn once and never scrolled: ground at the bottom, moon at the
+   top, and the rocket somewhere between the two. A camera that followed the
+   rocket would hide the thing the climb is for, which is seeing how far up you
+   already are. */
+.ar-sky {
+  position: relative; flex: 1; min-height: 230px; max-height: 440px; overflow: hidden;
+  border-radius: 18px; border: 2px solid var(--border);
+  /* Deep at the top in every theme, not only the dark ones: mixing the theme's
+     own background toward black leaves "space" pale on paper and meadow, and a
+     star field you cannot see is not a star field. The accent keeps it the
+     learner's palette rather than a fixed navy. */
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--accent2) 42%, #0a1030) 0%,
+    color-mix(in oklab, var(--accent2) 40%, #2a3a7a) 26%,
+    color-mix(in oklab, var(--accent) 30%, var(--surface2)) 58%,
+    color-mix(in oklab, var(--gold) 18%, var(--surface2)) 80%,
+    color-mix(in oklab, var(--good) 22%, var(--surface2)) 100%);
+}
+.ar-moon { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); color: var(--gold); filter: drop-shadow(0 0 10px color-mix(in oklab, var(--gold) 60%, transparent)); }
+/* The climb so far, as a line the rocket is sitting on top of. */
+.ar-trail {
+  position: absolute; left: 50%; bottom: 30px; width: 2px;
+  height: calc(var(--flown, 0) * (100% - 118px));
+  transform: translateX(-50%);
+  background: repeating-linear-gradient(180deg,
+    color-mix(in oklab, var(--surface) 70%, transparent) 0 4px, transparent 4px 10px);
+  transition: height 0.45s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.ar-stars {
+  position: absolute; inset: 0 0 45% 0; opacity: 0.75;
+  background-image:
+    radial-gradient(1.6px 1.6px at 18% 22%, #fff, transparent),
+    radial-gradient(1.4px 1.4px at 62% 12%, #fff, transparent),
+    radial-gradient(1.8px 1.8px at 82% 30%, #fff, transparent),
+    radial-gradient(1.3px 1.3px at 34% 38%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 71% 44%, #fff, transparent);
+}
+.ar-cloud {
+  position: absolute; height: 16px; border-radius: 999px;
+  background: color-mix(in oklab, var(--surface) 82%, transparent);
+  opacity: 0.9;
+}
+.ar-cloud-1 { width: 74px; left: 8%; bottom: 42%; }
+.ar-cloud-2 { width: 54px; right: 12%; bottom: 52%; }
+.ar-cloud-3 { width: 62px; left: 26%; bottom: 33%; }
+.ar-ground {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 30px;
+  background: color-mix(in oklab, var(--good) 46%, var(--surface2));
+  border-top: 3px solid color-mix(in oklab, var(--good) 70%, var(--border));
+}
+
+/* Where the rocket is, as a fraction of the alphabet. The transition is the
+   climb: one letter is one visible step upward, which is the entire reward. */
+.ar-rocket {
+  position: absolute; left: 50%; z-index: 3;
+  bottom: calc(28px + var(--flown, 0) * (100% - 118px));
+  transform: translateX(-50%);
+  transition: bottom 0.45s cubic-bezier(0.33, 1, 0.68, 1);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.28));
+}
+.ar-flame { transform-origin: 22px 56px; animation: arBurn 0.32s steps(2, jump-none) infinite alternate; }
+@keyframes arBurn { to { transform: scaleY(0.72) scaleX(1.1); opacity: 0.85; } }
+
+/* Every letter already flown, left where it was pressed. */
+.ar-mark {
+  position: absolute; left: 50%; margin-left: 30px;
+  bottom: calc(28px + var(--n, 0) * (100% - 118px));
+  font-style: normal; font-family: var(--font-type); font-size: 0.82rem; font-weight: 700;
+  color: color-mix(in oklab, var(--text) 55%, transparent);
+  animation: arMark 0.5s ease-out;
+}
+@keyframes arMark { from { opacity: 0; transform: translateX(-8px) scale(0.6); } }
+
+.ar-keys {
+  padding: 10px 12px; border-radius: 16px;
+  background: var(--surface); border: 2px solid var(--border);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.ar-keys-help {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 16%, transparent);
+}
+.ar-keys .kbd-finger-hint { display: none; }
+
+/* The band */
+.arena-stage-main > .ar-band-col {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; gap: 12px; text-align: center;
+}
+.ar-big { min-height: 128px; display: flex; align-items: center; justify-content: center; }
+.ar-big-ch {
+  width: 120px; height: 120px; border-radius: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 4.2rem; font-weight: 800; line-height: 1;
+  color: #2d2a26; background: var(--gold);
+  border: 4px solid color-mix(in oklab, var(--gold) 60%, #000);
+  box-shadow: 0 8px 0 color-mix(in oklab, var(--gold) 52%, #000), 0 18px 30px rgba(0, 0, 0, 0.2),
+    inset 0 6px 0 rgba(255, 255, 255, 0.42);
+}
+.ar-big-done { background: var(--surface2); color: var(--gold); border-color: var(--border); box-shadow: none; }
+.ar-big[data-help='true'] .ar-big-ch { animation: arBreathe 1.15s ease-in-out infinite; }
+@keyframes arBreathe { 50% { transform: scale(1.06); } }
+
+.ar-hint { margin: 0; min-height: 1.5em; font-size: 0.96rem; font-weight: 640; color: var(--text-dim); }
+.ar-hint strong { color: var(--accent); }
+.ar-hint svg { vertical-align: -3px; margin-right: 6px; }
+
+/* The alphabet, as the progress bar and the answer sheet at once. */
+.ar-strip {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 3px;
+  list-style: none; margin: 0; padding: 0; max-width: 340px;
+}
+.ar-strip li {
+  width: 22px; height: 24px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 0.78rem; font-weight: 700;
+  background: var(--surface2); color: var(--muted); border: 1px solid transparent;
+}
+.ar-strip .ar-done { background: color-mix(in oklab, var(--good) 26%, var(--surface2)); color: var(--text); }
+.ar-strip .ar-now {
+  background: var(--gold); color: #2d2a26; border-color: color-mix(in oklab, var(--gold) 60%, #000);
+  transform: scale(1.16);
+}
+.ar-meta { display: flex; align-items: center; gap: 12px; min-height: 30px; }
+.ar-band { font-size: 0.82rem; font-weight: 650; color: var(--text-dim); display: inline-flex; align-items: center; gap: 5px; }
+
+@media (max-width: 900px) {
+  .ar-sky { min-height: 190px; }
+  .ar-big-ch { width: 94px; height: 94px; font-size: 3.2rem; border-radius: 24px; }
+  .ar-big { min-height: 100px; }
+  .ar-keys { padding: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ar-flame, .ar-mark, .ar-big[data-help='true'] .ar-big-ch { animation: none; }
+  .ar-rocket { transition: none; }
+  .ar-big[data-help='true'] .ar-big-ch { outline: 4px solid var(--accent); outline-offset: 5px; }
+}

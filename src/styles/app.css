@@ -787,6 +787,18 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   background: var(--gold); box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent2) 55%, transparent);
 }
 
+/* Alphabet Rocket: part way up its own alphabet */
+.ga-rocket { background: linear-gradient(180deg, color-mix(in oklab, var(--accent2) 24%, var(--surface2)), color-mix(in oklab, var(--good) 12%, var(--surface2))); }
+.gr-moon { position: absolute; top: 10px; right: 16px; color: var(--gold); }
+.gr-ship { position: absolute; left: 50%; transform: translateX(-50%); color: var(--accent); animation: gaLift 5s ease-in-out infinite; }
+@keyframes gaLift { 0%, 100% { bottom: 18px; } 55% { bottom: 62px; } }
+.gr-mark {
+  position: absolute; left: 32%; font-style: normal;
+  font-family: var(--font-type); font-size: 0.8rem; font-weight: 700;
+  color: color-mix(in oklab, var(--text) 45%, transparent);
+}
+.gr-ground { position: absolute; left: 0; right: 0; bottom: 0; height: 13px; background: color-mix(in oklab, var(--good) 52%, var(--surface2)); border-top: 2px solid color-mix(in oklab, var(--good) 70%, var(--border)); }
+
 /* Key Safari: three keycaps, and the middle one has ears */
 .ga-safari { gap: 12px; background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 7%, var(--surface2)), color-mix(in oklab, var(--good) 13%, var(--surface2))); }
 .gsf-key {
@@ -878,7 +890,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   .arena-card { animation: none; }
-  .gw-word, .gl-seed, .gsf-hiding, .ga-forge i, .ga-flight::before, .gf-glider,
+  .gw-word, .gl-seed, .gsf-hiding, .gr-ship, .ga-forge i, .ga-flight::before, .gf-glider,
   .gd-fill, .gs-dot, .gc-tile, .gk-drop { animation: none; }
   .gd-you { width: 62%; }
   .gd-foe { width: 38%; }

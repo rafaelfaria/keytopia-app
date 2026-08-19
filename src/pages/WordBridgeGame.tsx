@@ -85,21 +85,32 @@ export default function WordBridgeGame() {
     const cur = st.current;
     if (!cur.startedAt) return;
     window.clearTimeout(nextTimer.current);
+    const at = active.current;
+    const won = cur.built >= at.level.goal;
+    const first = won && at.n === cleared + 1;
     const result = resultFromStrokes('game', 'Word Bridge', cur.strokes, cur.startedAt, performance.now(), {
-      game: 'bridge', score: cur.score, built: cur.built,
+      game: 'bridge', score: cur.score, built: cur.built, level: at.n,
+      starterCleared: first ? 1 : 0,
     });
-    const rewards = cur.strokes.length > 6 ? recordSession(result) : null;
+    /**
+     * A finished level always counts, however few keys it took.
+     *
+     * The stroke floor is there to stop a run somebody opened and abandoned
+     * from writing a session, and it was quietly eating the whole reward for
+     * the shortest levels: level one of Paint Reveal is six tiles, so it never
+     * reached the floor, never recorded a session, and paid nothing for the
+     * level it had just cleared.
+     */
+    const rewards = (won || cur.strokes.length > 6) ? recordSession(result) : null;
     let newBest = false;
     patchData((d) => {
       const prev = d.gameBests['bridge'];
       if (!prev || cur.score > prev.score) { d.gameBests['bridge'] = { score: cur.score, level: cur.built }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Word Bridge best!' });
-    const at = active.current;
-    const won = cur.built >= at.level.goal;
     if (won) {
       clear(at.n);
-      if (at.n === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
+      if (first) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: cur.score, built: cur.built, clean: cur.clean, acc: result.acc, wpm: result.wpm,

@@ -129,6 +129,22 @@ function xpFor(r: SessionResult, extraStars: number): number {
   if (r.mode === 'lesson') xp += extraStars * 15;
   if (r.mode === 'challenge') xp += 40;
   if (r.mode === 'race') xp += 12;
+  /**
+   * A starter level cleared for the first time.
+   *
+   * The formula above measures minutes typed and words produced, and a starter
+   * game produces neither: Paint Reveal is twenty seconds and seven letters, so
+   * every run landed on the `Math.max(2, ...)` floor below. At two XP a child
+   * needed sixty runs of the games built for them to reach account level two,
+   * while a teen doing lessons gets there in four or five. The games meant for
+   * the youngest learners were the slowest way to unlock anything in the app.
+   *
+   * So the ladder pays, on the same principle as lesson stars: not for time
+   * spent, but for a thing finished. Only the first clear of a level counts —
+   * a replay is welcome and free, and paying for it again would turn level one
+   * into a farm.
+   */
+  if (r.extra?.starterCleared) xp += 25;
   return Math.max(2, Math.min(220, xp));
 }
 

@@ -113,21 +113,32 @@ export default function FirstLetterGame() {
     if (!cur.startedAt) return;
     window.clearInterval(tick.current);
     window.clearTimeout(nextTimer.current);
+    const at = active.current;
+    const won = cur.i >= at.level.goal;
+    const first = won && at.n === cleared + 1;
     const result = resultFromStrokes('game', 'First Letter', cur.strokes, cur.startedAt, performance.now(), {
-      game: 'firstletter', score: cur.score, solo: cur.solo,
+      game: 'firstletter', score: cur.score, solo: cur.solo, level: at.n,
+      starterCleared: first ? 1 : 0,
     });
-    const rewards = cur.strokes.length > 4 ? recordSession(result) : null;
+    /**
+     * A finished level always counts, however few keys it took.
+     *
+     * The stroke floor is there to stop a run somebody opened and abandoned
+     * from writing a session, and it was quietly eating the whole reward for
+     * the shortest levels: level one of Paint Reveal is six tiles, so it never
+     * reached the floor, never recorded a session, and paid nothing for the
+     * level it had just cleared.
+     */
+    const rewards = (won || cur.strokes.length > 4) ? recordSession(result) : null;
     let newBest = false;
     patchData((d) => {
       const prev = d.gameBests['firstletter'];
       if (!prev || cur.score > prev.score) { d.gameBests['firstletter'] = { score: cur.score, level: cur.i }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New First Letter best!' });
-    const at = active.current;
-    const won = cur.i >= at.level.goal;
     if (won) {
       clear(at.n);
-      if (at.n === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
+      if (first) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: cur.score, done: cur.i, solo: cur.solo, acc: result.acc, wpm: result.wpm,

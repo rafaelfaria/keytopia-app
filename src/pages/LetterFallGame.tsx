@@ -151,21 +151,32 @@ export default function LetterFallGame() {
     if (endedRef.current || !s.startedAt) return;
     endedRef.current = true;
     window.clearInterval(timer.current);
+    const at = active.current;
+    const won = s.caught >= at.level.goal;
+    const first = won && at.n === cleared + 1;
     const result = resultFromStrokes('game', 'Letter Fall', s.strokes, s.startedAt, performance.now(), {
-      game: 'letterfall', score: s.score, caught: s.caught,
+      game: 'letterfall', score: s.score, caught: s.caught, level: at.n,
+      starterCleared: first ? 1 : 0,
     });
-    const rewards = s.strokes.length > 6 ? recordSession(result) : null;
+    /**
+     * A finished level always counts, however few keys it took.
+     *
+     * The stroke floor is there to stop a run somebody opened and abandoned
+     * from writing a session, and it was quietly eating the whole reward for
+     * the shortest levels: level one of Paint Reveal is six tiles, so it never
+     * reached the floor, never recorded a session, and paid nothing for the
+     * level it had just cleared.
+     */
+    const rewards = (won || s.strokes.length > 6) ? recordSession(result) : null;
     let newBest = false;
     patchData((d) => {
       const cur = d.gameBests['letterfall'];
       if (!cur || s.score > cur.score) { d.gameBests['letterfall'] = { score: s.score, level: s.caught }; newBest = true; }
     });
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Letter Fall best!' });
-    const at = active.current;
-    const won = s.caught >= at.level.goal;
     if (won) {
       clear(at.n);
-      if (at.n === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
+      if (first) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: s.score, caught: s.caught, best: s.bestStreak,

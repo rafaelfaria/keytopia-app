@@ -136,10 +136,23 @@ export default function KeySafariGame() {
     if (!cur.startedAt) return;
     window.clearInterval(tick.current);
     window.clearTimeout(nextTimer.current);
+    const at = active.current;
+    const won = cur.found.length >= at.level.goal;
+    const first = won && at.n === cleared + 1;
     const result = resultFromStrokes('game', 'Key Safari', cur.strokes, cur.startedAt, performance.now(), {
-      game: 'keysafari', score: cur.score, found: cur.found.length,
+      game: 'keysafari', score: cur.score, found: cur.found.length, level: at.n,
+      starterCleared: first ? 1 : 0,
     });
-    const rewards = cur.strokes.length > 6 ? recordSession(result) : null;
+    /**
+     * A finished level always counts, however few keys it took.
+     *
+     * The stroke floor is there to stop a run somebody opened and abandoned
+     * from writing a session, and it was quietly eating the whole reward for
+     * the shortest levels: level one of Paint Reveal is six tiles, so it never
+     * reached the floor, never recorded a session, and paid nothing for the
+     * level it had just cleared.
+     */
+    const rewards = (won || cur.strokes.length > 6) ? recordSession(result) : null;
     let newBest = false;
     patchData((d) => {
       const prev = d.gameBests['keysafari'];
@@ -148,11 +161,9 @@ export default function KeySafariGame() {
     if (newBest) pushToast({ kind: 'record', icon: 'trophy', title: 'New Key Safari best!' });
     // The level only goes in if the meadow actually filled. Stopping early
     // costs nothing and leaves it exactly where it was.
-    const at = active.current;
-    const won = cur.found.length >= at.level.goal;
     if (won) {
       clear(at.n);
-      if (at.n === cleared + 1) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
+      if (first) pushToast({ kind: 'record', icon: 'map', title: `Level ${at.n} done!` });
     }
     setOverInfo({
       score: cur.score, found: cur.found.length, firstTry: cur.firstTry,

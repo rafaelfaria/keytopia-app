@@ -234,7 +234,10 @@ export default function PaintRevealGame() {
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.cleared }}
         score={overInfo.score}
         title={overInfo.unlocked ? `It was ${overInfo.who}!` : 'Half a picture is still a picture'}
-        newBest={overInfo.newBest}
+        /* The points best is still tracked, but the ribbon only comes out when
+           the level actually went in. "New personal best" over a level you did
+           not finish is two scoreboards disagreeing in front of a child. */
+        newBest={overInfo.unlocked && overInfo.newBest}
         onAgain={() => start()}
         actions={(
           <LevelActions

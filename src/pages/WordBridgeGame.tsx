@@ -242,7 +242,10 @@ export default function WordBridgeGame() {
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.built }}
         score={overInfo.score}
         title={overInfo.unlocked ? 'All the way across' : 'A good stretch of bridge'}
-        newBest={overInfo.newBest}
+        /* The points best is still tracked, but the ribbon only comes out when
+           the level actually went in. "New personal best" over a level you did
+           not finish is two scoreboards disagreeing in front of a child. */
+        newBest={overInfo.unlocked && overInfo.newBest}
         onAgain={() => start()}
         actions={(
           <LevelActions

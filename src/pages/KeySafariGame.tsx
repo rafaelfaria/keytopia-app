@@ -398,7 +398,10 @@ export default function KeySafariGame() {
         /* Going home early is a choice this game offers, so the finish screen
            must not congratulate you on filling a meadow you did not fill. */
         title={overInfo.unlocked ? 'The meadow is full' : 'A good day out'}
-        newBest={overInfo.newBest}
+        /* The points best is still tracked, but the ribbon only comes out when
+           the level actually went in. "New personal best" over a level you did
+           not finish is two scoreboards disagreeing in front of a child. */
+        newBest={overInfo.unlocked && overInfo.newBest}
         onAgain={() => start()}
         actions={(
           <LevelActions

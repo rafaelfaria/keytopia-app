@@ -417,7 +417,7 @@ export const GLOSSARY: GlossaryTerm[] = [
 export const LEGAL_CONTACT = 'contact@keytopia.app';
 
 /** Last substantive revision of the privacy policy and terms. */
-export const LEGAL_EFFECTIVE = '15 August 2026';
+export const LEGAL_EFFECTIVE = '19 August 2026';
 
 /**
  * The sub-processors KeyTopia sends data to. Listed on the privacy page rather
@@ -426,7 +426,8 @@ export const LEGAL_EFFECTIVE = '15 August 2026';
  */
 export const SUBPROCESSORS: { name: string; role: string; data: string }[] = [
   { name: 'Supabase', role: 'Database, authentication and file storage', data: 'Account email address, profile records, lesson and session results, class membership. Hosted in the region shown on the account page.' },
-  { name: 'Vercel', role: 'Website hosting and content delivery', data: 'Standard web-server request data: IP address, user agent, requested URL, timestamp.' },
+  { name: 'Vercel', role: 'Website hosting, content delivery and visitor counts', data: 'Standard web-server request data: IP address, user agent, requested URL, timestamp. For visitor counts these are turned into a one-way hash that changes every day and is then discarded, so the same person cannot be recognised tomorrow.' },
+  { name: 'Google Analytics', role: 'Page and feature counts', data: 'The page being viewed, its title, the site you arrived from, and coarse device and country information derived from your IP address. It runs without cookies or any identifier, so it counts visits rather than people.' },
   { name: 'Resend', role: 'Transactional email delivery', data: 'Account email address, and delivery metadata for sign-in links.' },
   { name: 'Google', role: 'Optional sign-in provider', data: 'Only if you choose to sign in with Google: your email address and account identifier. KeyTopia requests nothing else from your Google account.' },
 ];
@@ -435,7 +436,7 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
   {
     heading: 'The short version',
     paragraphs: [
-      'KeyTopia is free, carries no advertising, and sells nothing to anyone. There are no tracking pixels, no advertising networks and no analytics products following you between sites.',
+      'KeyTopia is free, carries no advertising, and sells nothing to anyone. There are no tracking pixels and no advertising networks. We do count which pages get read and which games get opened, in a way that cannot follow you between sites or recognise you on your next visit.',
       'Every keystroke you make is written to your own browser first, so practice never waits on a network call and keeps working offline. What syncs to our servers is the outcome of a session, not the text you typed. Signing in is what makes a mastery map survive a lost laptop, and it is the only reason we hold an email address at all.',
     ],
     bullets: [
@@ -475,7 +476,7 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
       'Anything you type in the Copy desk mode. Text you paste in to practise with is yours, stays local, and is never uploaded.',
       'Payment details, because there is nothing to buy.',
       'Precise location, contact lists, microphone or camera access.',
-      'Advertising identifiers, cross-site trackers and third-party analytics.',
+      'Advertising identifiers and cross-site trackers. The visit counting described below is deliberately built so that it cannot become one.',
     ],
   },
   {
@@ -490,6 +491,15 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
     paragraphs: [
       'KeyTopia sets no advertising or analytics cookies. It uses your browser\'s local storage to hold your profiles, settings and practice history so the app can start instantly and work offline, and it stores a session token so you are not asked to sign in on every visit. Both are strictly necessary for the service to function.',
       'Clearing your browser data for this site removes the local copy. If you are signed in, your synced records remain in your account and return when you sign in again.',
+    ],
+  },
+  {
+    heading: 'How we count visits',
+    paragraphs: [
+      'We look at which pages are read and which parts of the app are opened, because otherwise we are guessing about what to build next. Both tools that do this are set up so that they measure the visit and not the visitor.',
+      'Google Analytics runs in its consent mode with storage denied, permanently and for everybody. That means it writes no cookie, is given no identifier, and stores nothing on your device, so it cannot tell your second page from somebody else\'s first, cannot recognise you when you come back, and cannot follow you to another site. It receives the address and title of the page, where you arrived from, and the country and device type its servers work out from your IP address.',
+      'Vercel, who host the site, count visitors from a hash of your IP address, your browser and a secret that is regenerated every day and never kept. That produces an honest count of how many people read a page without anything being stored on your device and without the count surviving into tomorrow.',
+      'Neither is joined to your account, your profiles or your learning records, and neither ever sees the text you type. This is why there is still no cookie banner: there is no consent to ask for when nothing is stored and nobody is identified.',
     ],
   },
   {

@@ -61,6 +61,19 @@ export interface ArenaGame {
    */
   tier: 'competitive' | 'quest' | 'starter';
   /**
+   * Whether a run is posted to a board at all.
+   *
+   * The starters are not. A board is a claim that two runs can be compared, and
+   * these six have no clock, no fail state and no speed term: what they measure
+   * is how much help a particular child needed today, which is theirs and is
+   * nobody else's business. Ranking it would also quietly reintroduce the one
+   * thing the tier exists to remove, since the way to climb a board is to hurry.
+   *
+   * They still record sessions, still earn XP and badges, and still keep a
+   * personal best, which is the only comparison a five year old needs.
+   */
+  ranked: boolean;
+  /**
    * The intro screen's 3D backdrop, drawn by the same keycap field the landing
    * and the public pages use (src/pages/public/heroScene.ts). Reusing that scene
    * rather than writing a new one per game keeps a game's front door in the same
@@ -87,98 +100,98 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
     trains: 'Sustained speed under pressure',
     desc: 'Full typing races, the Arena’s main event. One rival pace is the ranked one; ghosts and private rooms are practice.',
     // The board ranks pace, so the count column would only repeat the wpm.
-    valueLabel: null, unit: (v) => `${v} wpm`, tier: 'competitive',
+    valueLabel: null, unit: (v) => `${v} wpm`, ranked: true, tier: 'competitive',
     hero: { formation: 'stream', tone: ['accent', 'accent2', 0] },
   },
   duel: {
     id: 'duel', name: 'Quill Duel', icon: 'swords', to: '/app/games/duel',
     trains: 'Burst speed under pressure',
     desc: 'Best-of-seven phrase duel. First to finish each phrase takes the round, and one rival pace is the ranked one.',
-    valueLabel: 'rounds', unit: plural('round'), tier: 'competitive',
+    valueLabel: 'rounds', unit: plural('round'), ranked: true, tier: 'competitive',
     hero: { formation: 'wave', tone: ['bad', 'accent2', 0.35] },
   },
   survivor: {
     id: 'survivor', name: 'Survivor Sprint', icon: 'crown', to: '/app/games/survivor',
     trains: 'Consistency under pressure',
     desc: 'Eight typists, four rapid heats, the slowest move to the cheer bench each round. Outlast everyone for the crown.',
-    valueLabel: 'heats', unit: plural('heat'), tier: 'competitive',
+    valueLabel: 'heats', unit: plural('heat'), ranked: true, tier: 'competitive',
     hero: { formation: 'stream', tone: ['warn', 'gold', 0.4] },
   },
   keysafari: {
     id: 'keysafari', name: 'Key Safari', icon: 'telescope', to: '/app/games/keysafari',
     trains: 'Where the keys live',
     desc: 'A pal hides behind a key and the key wiggles. Press it and out they hop. No clock, no way to lose, just the hunt.',
-    valueLabel: 'pals', unit: plural('pal'), tier: 'starter',
+    valueLabel: 'pals', unit: plural('pal'), ranked: false, tier: 'starter',
     hero: { formation: 'calm', tone: ['good', 'accent', 0.5] },
   },
   paint: {
     id: 'paint', name: 'Paint Reveal', icon: 'palette', to: '/app/games/paint',
     trains: 'Spotting any letter',
     desc: 'A pal hides under twenty four painted tiles, each with a letter on it. Press any one you can find and that patch comes away.',
-    valueLabel: 'patches', unit: plural('patch', 'patches'), tier: 'starter',
+    valueLabel: 'patches', unit: plural('patch', 'patches'), ranked: false, tier: 'starter',
     hero: { formation: 'terrace', tone: ['accent', 'accent2', 0.5] },
   },
   rocket: {
     id: 'rocket', name: 'Alphabet Rocket', icon: 'moon', to: '/app/games/rocket',
     trains: 'The whole alphabet',
     desc: 'The rocket climbs one letter at a time, a to z. You already know what comes next, so the only job is finding it.',
-    valueLabel: 'solo letters', unit: plural('solo letter'), tier: 'starter',
+    valueLabel: 'solo letters', unit: plural('solo letter'), ranked: false, tier: 'starter',
     hero: { formation: 'calm', tone: ['accent2', 'gold', 0.4] },
   },
   letterfall: {
     id: 'letterfall', name: 'Letter Fall', icon: 'flower', to: '/app/games/letterfall',
     trains: 'Finding the keys',
     desc: 'One letter drifts down at a time and the key you need is lit on the keyboard below. Catch it and it becomes a flower.',
-    valueLabel: 'letters', unit: plural('letter'), tier: 'starter',
+    valueLabel: 'letters', unit: plural('letter'), ranked: false, tier: 'starter',
     hero: { formation: 'calm', tone: ['good', 'gold', 0.35] },
   },
   firstletter: {
     id: 'firstletter', name: 'First Letter', icon: 'apple', to: '/app/games/firstletter',
     trains: 'Sounds into letters',
     desc: 'A picture appears and you press the letter its name starts with. Apple wants an a. Reading and typing in one move.',
-    valueLabel: 'solo pictures', unit: plural('picture'), tier: 'starter',
+    valueLabel: 'solo pictures', unit: plural('picture'), ranked: false, tier: 'starter',
     hero: { formation: 'calm', tone: ['warn', 'good', 0.45] },
   },
   bridge: {
     id: 'bridge', name: 'Word Bridge', icon: 'route', to: '/app/games/bridge',
     trains: 'Whole words, one letter at a time',
     desc: 'Each word is a plank and each letter a step across it. The letter you need is always lit, and a wrong key never sends you back.',
-    valueLabel: 'planks', unit: plural('plank'), tier: 'starter',
+    valueLabel: 'planks', unit: plural('plank'), ranked: false, tier: 'starter',
     hero: { formation: 'terrace', tone: ['good', 'accent2', 0.4] },
   },
   wordfall: {
     id: 'wordfall', name: 'Wordfall Defence', icon: 'shield', to: '/app/games/wordfall',
     trains: 'Accuracy under pressure',
     desc: 'Words drift toward your light-shield. Careless speed weakens it; calm accuracy saves the city.',
-    valueLabel: 'waves', unit: plural('wave'), tier: 'quest',
+    valueLabel: 'waves', unit: plural('wave'), ranked: true, tier: 'quest',
     hero: { formation: 'scatter', tone: ['accent2', 'accent', 0.55] },
   },
   stack: {
     id: 'stack', name: 'Block Stack', icon: 'blocks', to: '/app/games/stack',
     trains: 'Keeping up your pace',
     desc: 'Beat the pace bar and the tower widens. Fall behind and it narrows until the spire snaps.',
-    valueLabel: 'storeys', unit: plural('storey'), tier: 'quest',
+    valueLabel: 'storeys', unit: plural('storey'), ranked: true, tier: 'quest',
     hero: { formation: 'terrace', tone: ['accent2', 'accent', 0.15] },
   },
   cipher: {
     id: 'cipher', name: 'Cipher Run', icon: 'puzzle', to: '/app/games/cipher',
     trains: 'Spelling recall & mapping',
     desc: 'Unscramble rune-words against the clock. Decoding builds the deep letter-map fast typing sits on.',
-    valueLabel: 'runes', unit: plural('rune'), tier: 'quest',
+    valueLabel: 'runes', unit: plural('rune'), ranked: true, tier: 'quest',
     hero: { formation: 'scatter', tone: ['good', 'accent', 0.3] },
   },
   keyforge: {
     id: 'keyforge', name: 'Keyforge', icon: 'hammer', to: '/app/games/keyforge',
     trains: 'Fast, flawless words',
     desc: 'The fire only burns while you type. Misses vent heat, every treasure makes it hungrier. Forge before it goes cold.',
-    valueLabel: 'treasures', unit: plural('treasure'), tier: 'quest',
+    valueLabel: 'treasures', unit: plural('treasure'), ranked: true, tier: 'quest',
     hero: { formation: 'wave', tone: ['warn', 'bad', 0.45] },
   },
   wordflight: {
     id: 'wordflight', name: 'Wordflight', icon: 'send', to: '/app/games/wordflight',
     trains: 'Rhythm & flow',
     desc: 'A little bird over open sea. Every letter beats its wings, and the moment you stop typing it sinks.',
-    valueLabel: 'buoys', unit: plural('buoy'), scoreUnit: 'metres', tier: 'quest',
+    valueLabel: 'buoys', unit: plural('buoy'), scoreUnit: 'metres', ranked: true, tier: 'quest',
     hero: { formation: 'calm', tone: ['accent2', 'good', 0.5] },
   },
 };

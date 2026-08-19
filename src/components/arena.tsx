@@ -521,9 +521,10 @@ export function ArenaIntro({ game, title, children, onPlay, cta, stats, backTo }
   const data = useData();
   const spec = arenaGame(game);
   if (!spec) return null;
-  // With boards switched off the second column has nothing to hold, so the
-  // front door becomes a single centred hero rather than a hero beside a gap.
-  const boards = !data?.settings.hideLeaderboards;
+  // With boards switched off, or in a game that has none by design, the second
+  // column has nothing to hold, so the front door becomes a single centred hero
+  // rather than a hero beside a gap.
+  const boards = spec.ranked && !data?.settings.hideLeaderboards;
   return (
     <ArenaStage
       game={game}
@@ -745,7 +746,7 @@ export function ArenaResult({
   useEffect(() => {
     if (!data) return;
     let live = true;
-    if (!ranked || data.settings.hideLeaderboards) return;
+    if (!ranked || spec?.ranked === false || data.settings.hideLeaderboards) return;
     void (async () => {
       const submit = await submitArena(data, game, run, 'today');
       if (!live) return;
@@ -859,7 +860,46 @@ export function ArenaResult({
     </div>
   );
 
-  const standing = standingSlot ? standingSlot : !ranked ? practice : board && board.rows.length > 0 && !data.settings.hideLeaderboards ? (
+  /**
+   * The column a game with no board by design gets instead.
+   *
+   * Not the practice panel above: that one's job is to point at the ranked mode
+   * this run did not count towards, and for a starter there is no such place
+   * and never will be. The only comparison these games make is with the same
+   * child last time, so that is what the column holds.
+   */
+  const best = data?.gameBests[game];
+  const ownRecord = (
+    <div className="arena-result-board arena-result-own">
+      <h3 className="arena-stage-kicker"><Ic n="star" size={15} /> Your own record</h3>
+      <dl className="arena-figures arena-own-figures">
+        <div>
+          <dt>Best {scoreUnit}</dt>
+          <dd>{Math.max(best?.score ?? 0, score)}</dd>
+        </div>
+        {spec?.valueLabel && (
+          <div>
+            <dt>Best {spec.valueLabel}</dt>
+            <dd>{Math.max(best?.level ?? 0, run.value ?? 0)}</dd>
+          </div>
+        )}
+      </dl>
+      <div className="arena-result-lines">
+        <p className="arena-line">
+          {newBest
+            ? 'That is the best you have ever done at this one.'
+            : `Today: ${score} ${scoreUnit}. Your best still stands.`}
+        </p>
+        <p className="arena-line arena-line-target">
+          <Ic n="heart" size={14} /> Nobody else sees this. It is only ever you and last time.
+        </p>
+      </div>
+    </div>
+  );
+
+  const standing = standingSlot ? standingSlot
+    : spec && !spec.ranked ? ownRecord
+    : !ranked ? practice : board && board.rows.length > 0 && !data.settings.hideLeaderboards ? (
     <div className="arena-result-board">
       <h3 className="arena-stage-kicker"><Ic n="medal" size={15} /> Where that puts you</h3>
       <div className="arena-result-standing">
@@ -965,7 +1005,8 @@ export function ArenaResult({
           {/* One sentence, once, when everything has landed. Announcing each
               beat would narrate an animation instead of reporting a result. */}
           <p className="sr-only" role="status">
-            {!ranked ? `Practice run, ${score} ${scoreUnit}, not posted to a board.`
+            {spec && !spec.ranked ? `${score} ${scoreUnit}.${newBest ? ' A new personal best.' : ''}`
+              : !ranked ? `Practice run, ${score} ${scoreUnit}, not posted to a board.`
               : settled && s ? `${ordinal(s.rank)} of ${s.total} today, ${score} ${scoreUnit}.` : ''}
           </p>
 

@@ -438,11 +438,19 @@ who meets "catch one falling letter" on the way to the Arena reads it as the pro
 being for children; a seven year old who scrolls past four ranked speed games to
 reach the one they can play reads it as the product not being for them.
 
-Starters are ranked like everything else. Boards are already divided by age group, so
-a starter board is Young Explorers competing with each other, and its formula weights
-the count heavily with accuracy as a gentle tiebreak. Speed is deliberately absent
-from it: a child hunting for a key types at a few words a minute, and a board that
-ranked pace here would rank the adults who wandered in.
+**Starters are not ranked, and that is what `ArenaGame.ranked` is for.** They were,
+briefly, with formulas built to avoid speed: letters caught, first-press accuracy,
+letters found before the hint fired. That answered the question from the wrong end.
+A board is a claim that two runs can be compared, and what these games measure is how
+much help a particular child needed today, which is theirs. Ranking it also
+reintroduces the one thing the tier exists to remove, because the way to climb any
+board is to hurry, and every starter promises a child that hurrying is not part of it.
+
+So `ranked: false` on all six. `ArenaIntro` drops its board column, `ArenaResult`
+shows the learner's own record in its place, `arena_submit` is never called, and
+`fetchArenaHome` filters them out of the hub standings. They still record sessions,
+still earn XP and badges, and still keep a `gameBests` entry. A future starter that
+genuinely wants a board only has to set the flag.
 
 ---
 

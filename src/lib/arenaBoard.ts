@@ -214,7 +214,7 @@ export async function fetchArenaHome(
   period: ArenaPeriod,
 ): Promise<{ standings: ArenaStanding[]; simulated: boolean }> {
   const fallback = () => ({
-    standings: ARENA_LIST.map((g) => ({
+    standings: ARENA_LIST.filter((g) => g.ranked).map((g) => ({
       game: g.id, name: g.name, valueLabel: g.valueLabel,
       // Offline, the only truth available is the learner's own local best.
       yourScore: data.gameBests[g.id]?.score ?? null,

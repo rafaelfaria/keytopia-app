@@ -677,8 +677,14 @@ html[data-rm='1'] .arena-skel { animation: none; }
 /* The waiting line belongs under the row, not inside it as a third item. */
 .arena-result-wait { flex-basis: 100%; margin: 0; }
 /* Nothing sits above these lines on a practice run, so pushing them to the foot
-   of the column leaves the panel empty from the heading down. */
-.arena-result-practice .arena-result-lines { margin-top: 0; }
+   of the column leaves the panel empty from the heading down. Same for a
+   starter's own-record panel, which is two figures and two sentences and should
+   sit as one block rather than as a heading and a footer with a hole between. */
+.arena-result-practice .arena-result-lines,
+.arena-result-own .arena-result-lines { margin-top: 0; }
+.arena-result-own { justify-content: center; gap: 14px; }
+.arena-result-own .arena-own-figures { margin: 0; justify-content: flex-start; }
+.arena-result-own .arena-own-figures dd { font-size: 1.55rem; }
 
 
 /* A settings field that is a decision, not a switch. */

@@ -22,7 +22,7 @@ export type ArenaToken = 'accent' | 'accent2' | 'good' | 'warn' | 'gold' | 'bad'
 export type ArenaGameId =
   | 'lightstream' | 'duel' | 'survivor' | 'wordfall'
   | 'stack' | 'cipher' | 'keyforge' | 'wordflight'
-  | 'letterfall' | 'keysafari' | 'rocket' | 'paint';
+  | 'letterfall' | 'keysafari' | 'rocket' | 'paint' | 'firstletter';
 
 export interface ArenaGame {
   id: ArenaGameId;
@@ -103,6 +103,13 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
     desc: 'Eight typists, four rapid heats, the slowest move to the cheer bench each round. Outlast everyone for the crown.',
     valueLabel: 'heats', unit: plural('heat'), tier: 'competitive',
     hero: { formation: 'stream', tone: ['warn', 'gold', 0.4] },
+  },
+  firstletter: {
+    id: 'firstletter', name: 'First Letter', icon: 'apple', to: '/app/games/firstletter',
+    trains: 'Sounds into letters',
+    desc: 'A picture appears and you press the letter its name starts with. Apple wants an a. Reading and typing in one move.',
+    valueLabel: 'solo pictures', unit: plural('picture'), tier: 'starter',
+    hero: { formation: 'calm', tone: ['warn', 'good', 0.45] },
   },
   paint: {
     id: 'paint', name: 'Paint Reveal', icon: 'palette', to: '/app/games/paint',

@@ -47,6 +47,15 @@ function GameArt({ id }: { id: string }) {
           <i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" />
         </div>
       );
+    case 'firstletter':
+      /* A picture and the letter it wants. */
+      return (
+        <div className="arena-art ga-first" aria-hidden>
+          <span className="gfl-thing"><Ic n="apple" size={40} strokeWidth={1.6} /></span>
+          <span className="gfl-arrow"><Ic n="chevron-right" size={20} /></span>
+          <span className="gfl-key">a</span>
+        </div>
+      );
     case 'paint':
       /* Tiles coming away from something underneath. */
       return (

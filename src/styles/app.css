@@ -787,6 +787,19 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   background: var(--gold); box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent2) 55%, transparent);
 }
 
+/* First Letter: a picture, and the letter it wants */
+.ga-first { gap: 10px; background: linear-gradient(180deg, color-mix(in oklab, var(--warn) 16%, var(--surface2)), color-mix(in oklab, var(--good) 14%, var(--surface2))); }
+.gfl-thing { color: var(--bad); animation: gaFirst 4.4s ease-in-out infinite; }
+@keyframes gaFirst { 0%, 100% { transform: none; } 50% { transform: translateY(-5px) rotate(-4deg); } }
+.gfl-arrow { color: var(--muted); }
+.gfl-key {
+  width: 42px; height: 42px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 1.3rem; font-weight: 800; color: #2d2a26;
+  background: var(--gold); border: 2.5px solid color-mix(in oklab, var(--gold) 65%, #000);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--gold) 55%, #000);
+}
+
 /* Paint Reveal: tiles coming away from something underneath */
 .ga-paint {
   display: grid; grid-template-columns: repeat(3, 34px); gap: 5px;
@@ -903,7 +916,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   .arena-card { animation: none; }
-  .gw-word, .gl-seed, .gsf-hiding, .gr-ship, .ga-forge i, .ga-flight::before, .gf-glider,
+  .gw-word, .gl-seed, .gsf-hiding, .gr-ship, .gfl-thing, .ga-forge i, .ga-flight::before, .gf-glider,
   .gd-fill, .gs-dot, .gc-tile, .gk-drop { animation: none; }
   .gd-you { width: 62%; }
   .gd-foe { width: 38%; }

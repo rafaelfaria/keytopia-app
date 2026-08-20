@@ -381,15 +381,70 @@ function Scenery({ kind }: { kind: IslandSkin['decor'] }) {
   );
 }
 
+/**
+ * The arrival party.
+ *
+ * A child finishes a lesson, presses "My World", and lands on a map where the
+ * only thing that changed is that one circle is now filled in. They were
+ * excited on the way here; the map should be too. So the spot they just
+ * finished throws confetti, pops its stars in one at a time, and puts a ribbon
+ * over itself for a few seconds.
+ *
+ * Everything is drawn in the island's own SVG at the node's coordinates, so it
+ * lands exactly where the thing it is celebrating is, and it clears itself.
+ */
+const CHEER_COLORS = ['#ff8fa3', '#ffd166', '#7dd8a0', '#5fc9e0', '#c99cf5', '#ffb26b'];
+
+function Cheer({ stars, complete }: { stars: number; complete: boolean }) {
+  const bits = complete ? 26 : 16;
+  return (
+    <g className="kwm-cheer" aria-hidden>
+      <circle r="6" className="kwm-cheer-ring" />
+      {Array.from({ length: bits }).map((_, i) => {
+        const a = (i / bits) * Math.PI * 2 + (i % 2 ? 0.3 : 0);
+        const dist = 54 + (i % 4) * 16;
+        return (
+          <rect
+            key={i}
+            x={-3} y={-5} width={6} height={10} rx={1.6}
+            fill={CHEER_COLORS[i % CHEER_COLORS.length]}
+            className="kwm-confetti"
+            style={{
+              ['--dx' as string]: `${(Math.cos(a) * dist).toFixed(1)}px`,
+              ['--dy' as string]: `${(Math.sin(a) * dist - 18).toFixed(1)}px`,
+              ['--spin' as string]: `${(i % 2 ? 1 : -1) * (180 + i * 24)}deg`,
+              animationDelay: `${(i % 5) * 0.045}s`,
+            }}
+          />
+        );
+      })}
+      {Array.from({ length: Math.max(1, Math.min(3, stars)) }).map((_, i) => (
+        <text
+          key={`s${i}`}
+          x={(i - (Math.max(1, Math.min(3, stars)) - 1) / 2) * 26}
+          y={-46}
+          textAnchor="middle"
+          className="kwm-cheer-star"
+          style={{ animationDelay: `${0.15 + i * 0.16}s` }}
+        >
+          ★
+        </text>
+      ))}
+    </g>
+  );
+}
+
 // ---------- the map ----------
 
-export function IslandMap({ skin, worldId, stops, currentIdx, youAvatar, complete, onStop }: {
+export function IslandMap({ skin, worldId, stops, currentIdx, youAvatar, complete, cheerId, onStop }: {
   skin: IslandSkin;
   worldId: string;
   stops: StopVM[];
   currentIdx: number;
   youAvatar: string;
   complete: boolean;
+  /** The stop finished moments ago, which the island is about to celebrate. */
+  cheerId?: string | null;
   onStop: (id: string, unlocked: boolean) => void;
 }) {
   const nodes = pickNodes(skin.nodes, stops.length);
@@ -398,7 +453,10 @@ export function IslandMap({ skin, worldId, stops, currentIdx, youAvatar, complet
   const doneD = curveThrough(nodes.slice(0, Math.max(1, Math.min(stops.length, doneCount + 1))));
   const pal = PIXEL_PALS[skin.guardian % PIXEL_PALS.length];
   const cavern = skin.decor === 'cavern';
-  const order = stops.map((_, i) => i).sort((a, b) => (a === currentIdx ? 1 : 0) - (b === currentIdx ? 1 : 0));
+  const cheerIdx = cheerId ? stops.findIndex((x) => x.id === cheerId) : -1;
+  // The celebrating node paints last so its confetti is over everything else.
+  const rank = (i: number) => (i === cheerIdx ? 2 : i === currentIdx ? 1 : 0);
+  const order = stops.map((_, i) => i).sort((a, b) => rank(a) - rank(b));
 
   return (
     <div
@@ -492,6 +550,7 @@ export function IslandMap({ skin, worldId, stops, currentIdx, youAvatar, complet
                   <text y="0.5" textAnchor="middle" dominantBaseline="central" className="kw-num-locked">{i + 1}</text>
                 </>
               )}
+              {i === cheerIdx && <Cheer stars={stop.stars} complete={complete} />}
               {showAvatar && (
                 <>
                   <foreignObject x="-19" y="-66" width="38" height="40">

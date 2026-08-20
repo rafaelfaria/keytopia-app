@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Journey from './Journey';
@@ -31,6 +31,8 @@ export default function KidHome() {
   const nav = useNavigate();
   const patch = useStore((s) => s.patch);
   const celebrate = useUi((s) => s.celebrate);
+  const mapCheer = useUi((s) => s.mapCheer);
+  const clearMapCheer = useUi((s) => s.clearMapCheer);
   if (!data) return null;
 
   const layout = data.profile.layout;
@@ -67,6 +69,22 @@ export default function KidHome() {
     return { id: w.id, unlocked: worldUnlocked(data, w.id), complete: p.complete, active: w.id === activeId, done: p.done, total: p.total };
   });
   const islandsDone = chartWorlds.filter((w) => w.complete).length;
+
+  /**
+   * A spot finished a moment ago gets its party here, once.
+   *
+   * The island opens on the world it happened in, whatever the child was
+   * looking at last, because arriving to confetti on a different island would
+   * be worse than none. It clears itself after the animation so coming back to
+   * the map later is quiet.
+   */
+  useEffect(() => {
+    if (!mapCheer) return;
+    setView('island');
+    setWorldId(mapCheer.worldId);
+    const t = window.setTimeout(clearMapCheer, mapCheer.complete ? 5200 : 3800);
+    return () => window.clearTimeout(t);
+  }, [mapCheer, clearMapCheer]);
 
   const openWorld = (id: string) => {
     setWorldId(id);
@@ -122,6 +140,7 @@ export default function KidHome() {
               currentIdx={currentIdx}
               youAvatar={data.profile.avatar}
               complete={wp.complete}
+              cheerId={mapCheer && mapCheer.worldId === worldId ? mapCheer.lessonId : null}
               onStop={(id, unlocked) => { if (unlocked) nav(`/app/lesson/${id}`); }}
             />
           ) : (

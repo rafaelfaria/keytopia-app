@@ -503,15 +503,28 @@ export interface Toast { id: string; kind: 'badge' | 'record' | 'level' | 'info'
 interface UiState {
   toasts: Toast[];
   celebration: { kind: 'level' | 'badge' | 'stars'; title: string; body: string; icon: string } | null;
+  /**
+   * A spot finished a moment ago, waiting for the island to celebrate it.
+   *
+   * The lesson screen knows a stop was completed; the map is where the child
+   * wants to see it happen, and by the time they get there the run is over and
+   * the news is a filled-in circle they have to notice for themselves. This
+   * carries it across the two screens: set on the finish, spent once by the
+   * island, and cleared.
+   */
+  mapCheer: { lessonId: string; worldId: string; stars: number; complete: boolean; t: number } | null;
   pushToast: (t: Omit<Toast, 'id'>) => void;
   dismissToast: (id: string) => void;
   celebrate: (c: UiState['celebration']) => void;
   clearCelebration: () => void;
+  cheerOnMap: (c: UiState['mapCheer']) => void;
+  clearMapCheer: () => void;
 }
 
 export const useUi = create<UiState>((set) => ({
   toasts: [],
   celebration: null,
+  mapCheer: null,
   pushToast(t) {
     const id = uid();
     set((s) => ({ toasts: [...s.toasts, { ...t, id }].slice(-4) }));
@@ -522,6 +535,8 @@ export const useUi = create<UiState>((set) => ({
   },
   celebrate(c) { set({ celebration: c }); },
   clearCelebration() { set({ celebration: null }); },
+  cheerOnMap(c) { set({ mapCheer: c }); },
+  clearMapCheer() { set({ mapCheer: null }); },
 }));
 
 export function randomKidName(): string {

@@ -25,6 +25,7 @@ function LessonRun({ id }: { id?: string }) {
   const recordSession = useStore((s) => s.recordSession);
   const patch = useStore((s) => s.patch);
   const celebrate = useUi((s) => s.celebrate);
+  const cheerOnMap = useUi((s) => s.cheerOnMap);
   const pushToast = useUi((s) => s.pushToast);
 
   const lesson = data && id ? lessonById(data.profile.layout, id) : undefined;
@@ -75,12 +76,22 @@ function LessonRun({ id }: { id?: string }) {
             }
           });
           if (data.settings.soundOn) (stars >= 3 ? snd.badge() : snd.done());
+          /**
+           * Hand the news to the island, which is where the child is heading
+           * and where finishing a spot is worth seeing rather than reading.
+           *
+           * Only when the spot actually went in. A run that earned no stars
+           * leaves the map exactly as it was, and confetti over a node that did
+           * not change is the map lying to a child about what they just did.
+           */
+          if (stars >= 1) cheerOnMap({ lessonId: lesson.id, worldId: world.id, stars, complete: false, t: Date.now() });
           // World completion beats every other celebration — the plan's "finish the finish"
           const after = activeData();
           const nowComplete = after ? worldProgress(after, world.id).complete : false;
           const kid = data.profile.ageGroup === 'kid' && data.settings.kidWorld !== false;
           const wd = worldDef(world.id);
           if (!wasComplete && nowComplete) {
+            cheerOnMap({ lessonId: lesson.id, worldId: world.id, stars, complete: true, t: Date.now() });
             celebrate({
               kind: 'level',
               icon: kid ? 'rocket' : 'flag',

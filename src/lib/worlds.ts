@@ -37,6 +37,15 @@ export interface IslandSkin {
   road: string;                   // dirt-trail colour on this terrain
   decor: 'meadow' | 'forest' | 'harbor' | 'cavern' | 'sky';
   blurb: string;                  // one kid-worded line for the sea chart
+  /**
+   * What you actually learn there, said to the child rather than about them.
+   *
+   * The spine's tagline is written for a grown-up reading a curriculum
+   * ("Posture, anchors and the home row"), and the blurb above is flavour. This
+   * is the third thing, and the one a seven year old needs to see the voyage as
+   * a plan rather than a row of pretty islands.
+   */
+  teaches: string;
 }
 
 export interface LegSkin {
@@ -64,7 +73,8 @@ const KID_SKINS: Record<string, IslandSkin> = {
       + 'C 560,450 420,448 300,441 C 185,436 66,438 45,392 Z',
     nodes: [[90, 372], [210, 320], [330, 368], [450, 300], [565, 345], [665, 268], [775, 305], [850, 225], [895, 165], [935, 118]],
     landmarkAt: [933, 84],
-    decor: 'meadow', blurb: 'Where every explorer begins',
+    decor: 'meadow', teaches: 'The two bumpy keys your fingers live on, and the whole row around them.',
+    blurb: 'Where every explorer begins',
   },
   w2: {
     kidName: 'Treetop Isle', landmark: 'The Canopy Bridge', guardian: 1,
@@ -76,7 +86,8 @@ const KID_SKINS: Record<string, IslandSkin> = {
       + 'C 604,444 352,442 250,424 Z',
     nodes: [[224, 392], [346, 410], [470, 402], [598, 390], [700, 352], [636, 300], [498, 296], [364, 288], [402, 214], [470, 172]],
     landmarkAt: [470, 128],
-    decor: 'forest', blurb: 'A forest with letters in its leaves',
+    decor: 'forest', teaches: 'The row above and the row below. By the end you have met every letter.',
+    blurb: 'A forest with letters in its leaves',
   },
   w3: {
     kidName: 'Lantern Harbor', landmark: 'The Lighthouse', guardian: 2,
@@ -88,7 +99,8 @@ const KID_SKINS: Record<string, IslandSkin> = {
       + 'C 760,458 556,460 396,452 C 246,444 90,422 70,332 Z',
     nodes: [[132, 300], [204, 258], [286, 268], [356, 332], [452, 396], [560, 394], [660, 328], [730, 262], [820, 276], [868, 338]],
     landmarkAt: [876, 244],
-    decor: 'harbor', blurb: 'A seaside town of words and lights',
+    decor: 'harbor', teaches: 'Big letters, full stops and commas, and your first real sentences.',
+    blurb: 'A seaside town of words and lights',
   },
   w4: {
     kidName: 'Crystal Caverns', landmark: 'The Geode Gate', guardian: 3,
@@ -99,7 +111,8 @@ const KID_SKINS: Record<string, IslandSkin> = {
       + 'L 732,266 L 822,176 L 902,250 L 952,212 L 968,332 L 900,424 L 700,448 L 400,450 L 148,438 Z',
     nodes: [[112, 392], [202, 366], [300, 300], [400, 332], [500, 268], [590, 320], [680, 250], [772, 302], [862, 240], [918, 282]],
     landmarkAt: [922, 200],
-    decor: 'cavern', blurb: 'Numbers and glyphs glow in the dark',
+    decor: 'cavern', teaches: 'The numbers along the top, and the funny symbols hiding above them.',
+    blurb: 'Numbers and glyphs glow in the dark',
   },
   w5: {
     kidName: 'Cloud Castle', landmark: 'The Cloud Castle', guardian: 4,
@@ -112,7 +125,8 @@ const KID_SKINS: Record<string, IslandSkin> = {
       + 'M 788,238 C 770,196 826,164 890,170 C 954,176 974,210 956,246 C 938,282 814,286 788,238 Z',
     nodes: [[128, 366], [204, 362], [302, 338], [372, 314], [442, 310], [522, 320], [604, 270], [674, 266], [828, 208], [898, 202]],
     landmarkAt: [890, 150],
-    decor: 'sky', blurb: 'The island above the clouds',
+    decor: 'sky', teaches: 'Long stretches without stopping, and typing that starts to feel like music.',
+    blurb: 'The island above the clouds',
   },
 };
 

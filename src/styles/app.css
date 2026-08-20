@@ -2154,3 +2154,53 @@ a.who-add-link { text-decoration: none; }
      reduced motion it simply does not happen. */
   .kwm-cheer { display: none; }
 }
+
+/* ---------- the voyage: what is on all five islands ----------
+   The chart says where they are, this says what they hold. Locked islands are
+   described rather than hidden, because knowing what is coming is the point. */
+.kw-voyage { margin-top: 14px; }
+.kw-voyage-head h3 { margin: 0 0 2px; font-size: 1.05rem; }
+.kw-voyage-head p { margin: 0 0 10px; }
+.kw-voyage-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.kw-voyage-row button {
+  width: 100%; display: grid; grid-template-columns: 28px 40px minmax(0, 1fr) auto;
+  align-items: center; gap: 12px; text-align: left;
+  padding: 10px 14px; border-radius: 16px; cursor: pointer; font: inherit;
+  background: var(--surface2); border: 2px solid var(--border); color: var(--text);
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+.kw-voyage-row button:hover:not(:disabled), .kw-voyage-row button:focus-visible:not(:disabled) {
+  transform: translateX(3px); border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+}
+.kw-voyage-row button:disabled { cursor: default; opacity: 0.66; }
+.kw-vr-n {
+  width: 28px; height: 28px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-weight: 800; font-size: 0.9rem;
+  background: var(--surface); border: 2px solid var(--border); color: var(--text-dim);
+}
+.kw-vr-pal { display: flex; align-items: center; justify-content: center; color: var(--muted); }
+.kw-vr-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.kw-vr-txt strong { font-size: 1rem; }
+.kw-vr-teach { font-size: 0.86rem; color: var(--text-dim); }
+.kw-vr-state {
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+  font-size: 0.82rem; font-weight: 700; color: var(--muted);
+}
+.kw-vr-state svg { vertical-align: -2px; }
+/* Done, here, open, fog: four states that must not rely on colour alone, so
+   each one carries its own word and its own icon. */
+.kw-vr-done button { background: color-mix(in oklab, var(--good) 14%, var(--surface2)); border-color: color-mix(in oklab, var(--good) 45%, var(--border)); }
+.kw-vr-done .kw-vr-state { color: var(--good); }
+.kw-vr-done .kw-vr-n { background: color-mix(in oklab, var(--good) 55%, var(--surface)); color: #14301f; border-color: color-mix(in oklab, var(--good) 70%, #000); }
+.kw-vr-here button { background: color-mix(in oklab, var(--gold) 16%, var(--surface2)); border-color: color-mix(in oklab, var(--gold) 55%, var(--border)); }
+.kw-vr-here .kw-vr-state { color: color-mix(in oklab, var(--gold) 70%, var(--text)); }
+.kw-vr-here .kw-vr-n { background: var(--gold); color: #2d2a26; border-color: color-mix(in oklab, var(--gold) 62%, #000); }
+
+@media (max-width: 640px) {
+  .kw-voyage-row button { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 9px; padding: 9px 11px; }
+  .kw-vr-pal { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kw-voyage-row button:hover:not(:disabled) { transform: none; }
+}

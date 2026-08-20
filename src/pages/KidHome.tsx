@@ -16,7 +16,7 @@ import { ClassCard } from '../components/ClassCard';
 import { Avatar, BlockAvatar } from '../components/avatars';
 import { Critter, PIXEL_PALS } from '../components/gamekit';
 import { IslandMap, type StopVM } from '../components/IslandMap';
-import { SeaChart, type ChartWorldVM } from '../components/SeaChart';
+import { SeaChart, VoyagePlan, type ChartWorldVM } from '../components/SeaChart';
 import { Ic } from '../components/icons';
 import { BADGES } from '../lib/badges';
 
@@ -144,7 +144,10 @@ export default function KidHome() {
               onStop={(id, unlocked) => { if (unlocked) nav(`/app/lesson/${id}`); }}
             />
           ) : (
-            <SeaChart worlds={chartWorlds} onOpen={openWorld} />
+            <>
+              <SeaChart worlds={chartWorlds} onOpen={openWorld} />
+              <VoyagePlan worlds={chartWorlds} onOpen={openWorld} />
+            </>
           )}
           {view === 'island' && def.kid.decor !== 'cavern' && (
             <>

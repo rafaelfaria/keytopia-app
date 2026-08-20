@@ -1,6 +1,6 @@
 import { BlockAvatar } from './avatars';
 import { PIXEL_PALS } from './gamekit';
-import { ISLAND, curveThrough } from './IslandMap';
+import { curveThrough } from './IslandMap';
 import { WORLDS } from '../lib/worlds';
 
 /**
@@ -75,8 +75,10 @@ export function SeaChart({ worlds, onOpen }: {
             >
               <ellipse cy="34" rx="66" ry="12" fill="rgba(20, 60, 90, 0.18)" />
               <g transform="scale(0.155) translate(-506 -300)">
+                {/* Each island's own outline, so the chart is five different
+                    shapes on the water rather than the same one five times. */}
                 <path
-                  d={ISLAND}
+                  d={def.kid.shape}
                   fill={w.unlocked ? def.kid.grass : '#b7c4cf'}
                   stroke={w.unlocked ? def.kid.sand : '#a3b2bf'}
                   strokeWidth="22"

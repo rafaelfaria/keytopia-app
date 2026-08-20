@@ -441,6 +441,43 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .kwm-beacon { animation: fireflyglow 1.8s ease-in-out infinite; }
 .kwm-landmark-lit { filter: drop-shadow(0 0 14px rgba(255, 209, 102, 0.75)); }
 
+/* ---------- the living props on each island ----------
+   Slow loops, all on transform and opacity. A child should notice these out of
+   the corner of an eye while reading the map, never be pulled away from it. */
+.kwm-flutter { animation: kwmFlutter 7s ease-in-out infinite alternate; }
+.kwm-wingl { transform-box: fill-box; transform-origin: right center; animation: kwmWingL 0.42s ease-in-out infinite alternate; }
+.kwm-wingr { transform-box: fill-box; transform-origin: left center; animation: kwmWingR 0.42s ease-in-out infinite alternate; }
+@keyframes kwmFlutter { from { transform: translate(0, 0); } to { transform: translate(26px, -14px); } }
+@keyframes kwmWingL { to { transform: scaleX(0.35); } }
+@keyframes kwmWingR { to { transform: scaleX(0.35); } }
+
+.kwm-hop { animation: kwmHop 4.5s ease-in-out infinite; }
+@keyframes kwmHop {
+  0%, 62%, 100% { transform: translateY(0); }
+  70% { transform: translate(9px, -11px); }
+  78% { transform: translate(18px, 0); }
+  86% { transform: translate(27px, -9px); }
+  94% { transform: translate(34px, 0); }
+}
+
+.kwm-perch { transform-box: fill-box; transform-origin: bottom center; animation: kwmPerch 3.6s ease-in-out infinite; }
+@keyframes kwmPerch { 0%, 70%, 100% { transform: rotate(0); } 80% { transform: rotate(-9deg); } 90% { transform: rotate(6deg); } }
+
+.kwm-gull { animation: kwmGull 14s linear infinite; }
+@keyframes kwmGull { from { transform: translate(-40px, 6px); } to { transform: translate(300px, -20px); } }
+
+.kwm-spout { transform-box: fill-box; transform-origin: bottom center; animation: kwmSpout 6s ease-out infinite; }
+@keyframes kwmSpout { 0%, 65% { opacity: 0; transform: scaleY(0.2); } 75% { opacity: 1; transform: scaleY(1); } 100% { opacity: 0; transform: scaleY(1.15); } }
+
+.kwm-bat { animation: kwmBat 11s ease-in-out infinite alternate; }
+@keyframes kwmBat { from { transform: translate(0, 0); } to { transform: translate(120px, 34px); } }
+
+.kwm-balloon { animation: kwmBalloon 18s ease-in-out infinite alternate; }
+@keyframes kwmBalloon { from { transform: translate(0, 0); } to { transform: translate(70px, -22px); } }
+
+.kwm-falls { animation: kwmFalls 1.1s linear infinite; }
+@keyframes kwmFalls { from { transform: translateY(-8px); opacity: 0.3; } 50% { opacity: 0.9; } to { transform: translateY(8px); opacity: 0.3; } }
+
 /* the sea chart */
 .kw-chart svg { border-radius: 18px; }
 .kw-chart-route { fill: none; stroke: #fffdf2; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 0.5 14; opacity: 0.85; }
@@ -1419,6 +1456,8 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   .critter-fly, .cr-wing-l, .cr-wing-r, .kw-guardian-bob, .kw-you,
   .kwm-cloud, .kwm-sunrays, .kwm-road-done, .kw-pulse, .flight-sun,
   .kwm-firefly, .kwm-lantern, .kwm-crystal, .kwm-bird, .kwm-beacon,
+  .kwm-flutter, .kwm-wingl, .kwm-wingr, .kwm-hop, .kwm-perch, .kwm-gull,
+  .kwm-spout, .kwm-bat, .kwm-balloon, .kwm-falls,
   .kw-chart-active, .kw-chart-boat, .trail-pulse, .trail-path-done, .trail-flag-up { animation: none; }
 }
 

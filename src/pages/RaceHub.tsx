@@ -10,6 +10,7 @@ import { Btn, Card, Chip, Modal } from '../components/ui';
 import { ArenaBoard } from '../components/arena';
 import { Ic } from '../components/icons';
 import { Avatar } from '../components/avatars';
+import { BRAND } from '../lib/brand';
 
 function raceText(kid: boolean): string {
   const rng = mulberry32(Date.now() % 1e9);
@@ -267,7 +268,7 @@ export default function RaceHub() {
     // invited is in a messaging app rather than at a second keyboard. Where
     // there is no sheet, copying the link is the same gesture without the menu.
     if (canShare) {
-      void navigator.share({ title: 'KeyTopia race room', text: `Race me in room ${code}`, url }).catch(() => copy('link', url));
+      void navigator.share({ title: `${BRAND.name} race room`, text: `Race me in room ${code}`, url }).catch(() => copy('link', url));
       return;
     }
     copy('link', url);

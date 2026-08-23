@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy KeyTopia's auth email templates to the hosted Supabase project.
+# Deploy the auth email templates to the hosted Supabase project.
 #
 # Local dev needs none of this — config.toml wires the same templates into the
 # Docker stack. This script pushes them to production via the Management API,
@@ -7,7 +7,7 @@
 #
 # Needs in .env.local (or the environment):
 #   SUPABASE_ACCESS_TOKEN   personal token from https://supabase.com/dashboard/account/tokens
-#   SUPABASE_PROJECT_REF    defaults to KeyTopia's project ref
+#   SUPABASE_PROJECT_REF    defaults to the project ref below
 set -euo pipefail
 
 RED=$'\033[0;31m'
@@ -20,7 +20,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 TEMPLATES_DIR="$PROJECT_ROOT/supabase/templates"
-DEFAULT_SUBJECT="KeyTopia"
+
+# The brand lives in brand.config.json — read the subject fallback from there
+# rather than hard-coding a name that a rename would leave stale.
+DEFAULT_SUBJECT="$(node -p "require('$PROJECT_ROOT/brand.config.json').name")"
 
 load_env_file() {
   local file="$1"

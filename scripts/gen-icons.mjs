@@ -1,11 +1,23 @@
 /**
- * Rasterises the KeyTopia brand SVGs in public/ into every icon size a site needs.
+ * Rasterises the brand SVGs in public/ into every icon size a site needs, and
+ * writes the web app manifest.
+ *
+ * The name, tagline and colours come from brand.config.json, and public/og.svg
+ * carries `{{BRAND_NAME}}` / `{{BRAND_TAGLINE}}` placeholders rather than
+ * literals, so a rename does not need any of this edited.
+ *
  * Run with: npm run icons
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 import pngToIco from 'png-to-ico';
+
+const brand = JSON.parse(await readFile(path.resolve('brand.config.json'), 'utf8'));
+const fillBrand = (svg) =>
+  svg
+    .replace(/\{\{BRAND_NAME\}\}/g, brand.name)
+    .replace(/\{\{BRAND_TAGLINE\}\}/g, brand.tagline.charAt(0).toUpperCase() + brand.tagline.slice(1));
 
 const PUB = path.resolve('public');
 const src = (f) => readFile(path.join(PUB, f));
@@ -38,7 +50,7 @@ for (const [svgFile, size, file] of jobs) {
 }
 
 // social card
-await sharp(await src('og.svg'), { density: 192 }).resize(1200, 630).png({ compressionLevel: 9 }).toFile(out('og.png'));
+await sharp(Buffer.from(fillBrand(await src('og.svg').then((b) => b.toString('utf8')))), { density: 192 }).resize(1200, 630).png({ compressionLevel: 9 }).toFile(out('og.png'));
 console.log('  og.png                     1200×630');
 
 // multi-resolution .ico for legacy browsers / bookmarks
@@ -51,8 +63,8 @@ await writeFile(out('site.webmanifest'), `${JSON.stringify({
   // `id` is what app stores and browsers use to identify an installed PWA
   // across start_url changes — omitting it makes an install look like a new app.
   id: '/',
-  name: 'KeyTopia — every keyboard is a world',
-  short_name: 'KeyTopia',
+  name: `${brand.name}: ${brand.tagline}`,
+  short_name: brand.shortName,
   description: 'Learn to type beautifully: adaptive lessons, original games, races and deep analytics for every age.',
   start_url: '/app',
   scope: '/',
@@ -61,8 +73,8 @@ await writeFile(out('site.webmanifest'), `${JSON.stringify({
   orientation: 'any',
   lang: 'en',
   dir: 'ltr',
-  background_color: '#0b1020',
-  theme_color: '#0b1020',
+  background_color: brand.themeColor,
+  theme_color: brand.themeColor,
   categories: ['education', 'games', 'productivity'],
   icons: [
     { src: '/favicon.svg', type: 'image/svg+xml', sizes: 'any' },

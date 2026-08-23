@@ -20,6 +20,14 @@ const root = dirname(fileURLToPath(new URL('../package.json', import.meta.url)))
 const DIST = join(root, 'dist');
 const SSR_ENTRY = join(root, 'dist-ssr', 'entry-prerender.js');
 
+const brand = JSON.parse(await readFile(join(root, 'brand.config.json'), 'utf8'));
+
+/** public/og.svg holds brand placeholders, not literals — see gen-icons.mjs. */
+const fillBrand = (svg) =>
+  svg
+    .replace(/\{\{BRAND_NAME\}\}/g, brand.name)
+    .replace(/\{\{BRAND_TAGLINE\}\}/g, brand.tagline.charAt(0).toUpperCase() + brand.tagline.slice(1));
+
 const esc = (s) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -81,10 +89,10 @@ function cardSvg(template, { heading, sub }) {
     .map((l, i) => `<text x="404" y="${subTop + i * 40}" font-family="Manrope, system-ui, sans-serif" font-size="28" font-weight="500" fill="#22d3ee">${esc(l)}</text>`)
     .join('\n  ');
 
-  const brand = `<text x="404" y="${subTop + subLines.length * 40 + 46}" font-family="Manrope, system-ui, sans-serif" font-size="26" font-weight="600" fill="#8b93b8">keytopia.app</text>`;
+  const domain = `<text x="404" y="${subTop + subLines.length * 40 + 46}" font-family="Manrope, system-ui, sans-serif" font-size="26" font-weight="600" fill="#8b93b8">${brand.domain}</text>`;
 
   // Everything from the first <text> onward in the template is replaced.
-  return template.replace(/\s*<text[\s\S]*?<\/svg>/, `\n  ${head}\n  ${subs}\n  ${brand}\n</svg>`);
+  return template.replace(/\s*<text[\s\S]*?<\/svg>/, `\n  ${head}\n  ${subs}\n  ${domain}\n</svg>`);
 }
 
 async function main() {
@@ -94,7 +102,7 @@ async function main() {
   const pages = PUBLIC_PAGES ?? mod.PUBLIC_PAGES;
   if (!pages) throw new Error('The SSR bundle does not export PUBLIC_PAGES.');
 
-  const template = await readFile(join(root, 'public', 'og.svg'), 'utf8');
+  const template = fillBrand(await readFile(join(root, 'public', 'og.svg'), 'utf8'));
   await mkdir(join(DIST, 'og'), { recursive: true });
 
   for (const page of pages) {
@@ -116,7 +124,7 @@ async function main() {
   }
 
   // Keep the generic card at /og.png for anything not in the registry.
-  const generic = await sharp(await readFile(join(root, 'public', 'og.svg')), { density: 192 })
+  const generic = await sharp(Buffer.from(template), { density: 192 })
     .resize(1200, 630)
     .png({ compressionLevel: 9 })
     .toBuffer();

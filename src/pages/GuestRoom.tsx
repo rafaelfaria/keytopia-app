@@ -11,6 +11,7 @@ import { RACER_NAMES } from '../lib/words';
 import { mulberry32, pick, avatarIndexFor } from '../lib/rng';
 import { useNoIndex } from '../lib/seo/Seo';
 import type { SessionResult } from '../lib/types';
+import { BRAND } from '../lib/brand';
 
 /**
  * The guest door into a private room.
@@ -313,13 +314,13 @@ export default function GuestRoom() {
           thing everybody actually turns to, underneath it. Up here it is
           present the whole visit and in the way of nothing. */}
       <header className="guest-top">
-        <Link to="/" aria-label="KeyTopia home"><Logo /></Link>
+        <Link to="/" aria-label={`${BRAND.name} home`}><Logo /></Link>
         {/* Which room this is, on every stage. A racer who wants to read the
             code out to somebody else, or check they are in the right room, had
             nowhere to look once the race started. */}
         {code && <Chip tone="accent" className="guest-room-tag"><Ic n="ticket" size={13} /> {code}</Chip>}
         <span className="grow" />
-        <Btn to="/signin" kind="soft" className="guest-join"><Ic n="sparkles" size={15} /> Create your KeyTopia</Btn>
+        <Btn to="/signin" kind="soft" className="guest-join"><Ic n="sparkles" size={15} /> Create your {BRAND.name}</Btn>
       </header>
 
       {stage === 'name' && (

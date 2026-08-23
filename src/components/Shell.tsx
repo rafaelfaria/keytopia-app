@@ -11,6 +11,7 @@ import { Avatar } from './avatars';
 import { useNoIndex } from '../lib/seo/Seo';
 import { account, useAccount } from '../lib/account';
 import { useSync, visibleProfileIds } from '../lib/syncEngine';
+import { BRAND } from '../lib/brand';
 
 export function ThemeSync() {
   const data = useData();
@@ -95,7 +96,7 @@ export function AppShell() {
     <div className={`shell ${data.settings.focusMode ? 'focus-mode' : ''} ${kid ? 'kid-mode' : ''}`}>
       <a className="skip-link" href="#main">Skip to content</a>
       <aside className="sidebar" aria-label="Main navigation">
-        <NavLink to="/" className="sidebar-logo" aria-label="KeyTopia home"><Logo size={30} /></NavLink>
+        <NavLink to="/" className="sidebar-logo" aria-label={`${BRAND.name} home`}><Logo size={30} /></NavLink>
         <NavLink to={nextL ? `/app/lesson/${nextL.id}` : '/app/train/adaptive'} className="continue-btn">
           <Ic n="play" size={18} className="continue-ic" />
           <span>
@@ -137,7 +138,7 @@ export function AppShell() {
       </aside>
 
       <header className="topbar">
-        <NavLink to="/" aria-label="KeyTopia home"><Logo size={26} /></NavLink>
+        <NavLink to="/" aria-label={`${BRAND.name} home`}><Logo size={26} /></NavLink>
         <div className="topbar-right">
           {streak > 0 && <span className="streak-pill" title={`${streak}-day streak`}><Ic n="flame" size={13} /> {streak}</span>}
           <span className="xp-pill">Lv {lvl?.level}</span>

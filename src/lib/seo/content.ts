@@ -10,6 +10,8 @@
  * Browser-global free — the Node generators import this directly.
  */
 
+import { BRAND } from '../brand';
+
 export interface Faq {
   question: string;
   answer: string;
@@ -49,7 +51,7 @@ export const PRODUCT_SUMMARY =
   'KeyTopia is a free, browser-based typing tutor. It assesses your typing in 60 seconds, then ' +
   'builds every practice set from your own weak keys and slow letter transitions. It is not a ' +
   'typing test with a leaderboard bolted on: it is a full curriculum (41 lessons across 5 worlds), ' +
-  'fourteen training modes, seven original typing games, CPU racing, and analytics deep enough for ' +
+  'fourteen training modes, nine original typing games, CPU racing, and analytics deep enough for ' +
   'competitive typists. It runs entirely in the browser and is free. Typing itself never waits on ' +
   'the network: every keystroke is written to local storage first, then synced to a free account ' +
   'so progress survives a lost device and follows you to the next one.';
@@ -182,6 +184,8 @@ export const GAMES: GameEntry[] = [
   { name: 'Survivor Sprint', slug: 'survivor', skill: 'Consistency under pressure', description: 'Eight typists, four rapid heats, the slowest eliminated each round. Winning requires repeatable performance rather than one lucky fast run.' },
   { name: 'Cipher Run', slug: 'cipher', skill: 'Spelling recall and letter mapping', description: 'Unscramble rune-words against the clock. Decoding builds the deep letter-to-finger map that fast typing sits on top of.' },
   { name: 'Block Stack', slug: 'stack', skill: 'Word-perfect precision', description: 'Every word becomes a block: clean words build wide and steady, sloppy ones crumble the tower. It makes the cost of an uncorrected error visible.' },
+  { name: 'Tide Line', slug: 'tideline', skill: 'Choosing your next word well', description: 'A shore of word tiles against one rival, with the tide taking a row at a time. A tile claimed beside one you already hold is worth double, so the game asks which word to type next rather than only how fast.' },
+  { name: 'Pearl Dive', slug: 'pearl', skill: 'Going clean for longer', description: 'One descent, and every dive is longer than the last. Land a phrase without a single wrong key and you go deeper; one slip ends the run. It is the only game here with no speed term at all, so a careful typist beats a quick one.' },
 ];
 
 export const AUDIENCES: Audience[] = [
@@ -414,7 +418,7 @@ export const GLOSSARY: GlossaryTerm[] = [
  * The contact address printed on the legal pages and used for data requests.
  * Change it here and every page, JSON-LD node and llms.txt entry follows.
  */
-export const LEGAL_CONTACT = 'contact@keytopia.app';
+export const LEGAL_CONTACT = BRAND.email.legal;
 
 /** Last substantive revision of the privacy policy and terms. */
 export const LEGAL_EFFECTIVE = '19 August 2026';
@@ -449,7 +453,7 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
   {
     heading: 'Who is responsible for your data',
     paragraphs: [
-      `KeyTopia is an independent project. For the purposes of the UK and EU General Data Protection Regulation, the operator of keytopia.app is the data controller for the information described on this page. You can reach a human at ${LEGAL_CONTACT}, and we aim to answer every privacy question within thirty days.`,
+      `KeyTopia is an independent project. For the purposes of the UK and EU General Data Protection Regulation, the operator of ${BRAND.domain} is the data controller for the information described on this page. You can reach a human at ${LEGAL_CONTACT}, and we aim to answer every privacy question within thirty days.`,
       'Where a school deploys KeyTopia to a class, the school is the controller for its pupils\' records and KeyTopia acts as a processor on the school\'s instructions.',
     ],
   },

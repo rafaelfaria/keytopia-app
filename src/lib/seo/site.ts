@@ -3,11 +3,20 @@
  *
  * Everything that needs an absolute URL — canonicals, sitemap entries, OG
  * images, JSON-LD `@id`s, llms.txt links — resolves through here, so the
- * production origin is a single env var (`VITE_SITE_URL`).
+ * production origin is a single env var (`VITE_SITE_URL`), falling back to the
+ * brand's own domain.
+ *
+ * The name, tagline, domain and theme colour are not defined here: they belong
+ * to the brand (src/lib/brand.ts, brand.config.json) and are re-exported so the
+ * SEO layer keeps one import.
  *
  * This module is imported by both the browser bundle and the Node prerender /
  * generator scripts, so it must stay free of browser globals.
  */
+
+import { BRAND, BRAND_TITLE } from '../brand';
+
+export { BRAND };
 
 /** `import.meta.env` in the browser bundle, `process.env` under Node scripts. */
 const env = {
@@ -15,21 +24,21 @@ const env = {
   ...((import.meta as unknown as { env?: Record<string, string> }).env ?? {}),
 };
 
-const RAW_SITE_URL = env.VITE_SITE_URL || 'https://keytopia.app';
+const RAW_SITE_URL = env.VITE_SITE_URL || BRAND.url;
 
 /** Canonical origin, never with a trailing slash. */
 export const SITE_URL = RAW_SITE_URL.replace(/\/+$/, '');
 
-export const SITE_NAME = 'KeyTopia';
-export const SITE_TAGLINE = 'every keyboard is a world';
-export const SITE_TITLE = `${SITE_NAME}: ${SITE_TAGLINE}`;
+export const SITE_NAME = BRAND.name;
+export const SITE_TAGLINE = BRAND.tagline;
+export const SITE_TITLE = BRAND_TITLE;
 export const SITE_LOCALE = 'en';
 export const SITE_OG_LOCALE = 'en_US';
-export const SITE_THEME_COLOR = '#0b1020';
+export const SITE_THEME_COLOR = BRAND.themeColor;
 
 export const SITE_DESCRIPTION =
-  'KeyTopia is a free typing tutor that teaches touch typing properly: a 60-second placement test, ' +
-  'adaptive lessons built from your own weak keys, seven original typing games, races and deep ' +
+  `${SITE_NAME} is a free typing tutor that teaches touch typing properly: a 60-second placement test, ` +
+  'adaptive lessons built from your own weak keys, nine original typing games, races and deep ' +
   'analytics: for kids, teens, adults, schools and competitive typists.';
 
 /** Default social preview image (1200×630). */
@@ -131,9 +140,10 @@ export const PUBLIC_PAGES: PublicPage[] = [
     label: 'Typing games',
     title: 'Typing Games That Actually Train You',
     description:
-      'Wordfall Defence, Keyforge, Wordflight, Quill Duel, Survivor Sprint, Cipher Run and Block Stack. ' +
-      'each typing game is built around one named skill, and tells you which one it is training.',
-    llmsNote: 'The seven original typing games and the specific skill each one trains.',
+      'Wordfall Defence, Keyforge, Wordflight, Quill Duel, Survivor Sprint, Cipher Run, Block Stack, ' +
+      'Tide Line and Pearl Dive. each typing game is built around one named skill, and tells you ' +
+      'which one it is training.',
+    llmsNote: 'The nine original typing games and the specific skill each one trains.',
     priority: 0.8,
     changeFrequency: 'monthly',
     lastModified: TODAY,

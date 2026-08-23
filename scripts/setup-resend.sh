@@ -16,7 +16,7 @@
 #   RESEND_API_KEY          the key from step 3 (starts with re_)
 #   SUPABASE_ACCESS_TOKEN   personal token from https://supabase.com/dashboard/account/tokens
 #   SUPABASE_PROJECT_REF    defaults to KeyTopia's project ref
-#   SMTP_SENDER_EMAIL       falls back to RESEND_FROM_EMAIL, then hello@keytopia.app
+#   SMTP_SENDER_EMAIL       falls back to RESEND_FROM_EMAIL, then brand.config.json email.sender
 #                           (must be on the verified domain)
 set -euo pipefail
 
@@ -56,8 +56,14 @@ load_env_file "$PROJECT_ROOT/supabase/.env.local"
 RESEND_API_KEY="${RESEND_API_KEY:-}"
 SUPABASE_ACCESS_TOKEN="${SUPABASE_ACCESS_TOKEN:-}"
 SUPABASE_PROJECT_REF="${SUPABASE_PROJECT_REF:-xfthivblhhbhokcptygh}"
-SMTP_SENDER_EMAIL="${SMTP_SENDER_EMAIL:-${RESEND_FROM_EMAIL:-hello@keytopia.app}}"
-SMTP_SENDER_NAME="${SMTP_SENDER_NAME:-KeyTopia}"
+# The brand lives in brand.config.json — read the defaults from there rather
+# than hard-coding a name that a rename would leave stale.
+brand() { node -p "require('$PROJECT_ROOT/brand.config.json')$1"; }
+BRAND_NAME="$(brand .name)"
+BRAND_SENDER="$(brand .email.sender)"
+
+SMTP_SENDER_EMAIL="${SMTP_SENDER_EMAIL:-${RESEND_FROM_EMAIL:-$BRAND_SENDER}}"
+SMTP_SENDER_NAME="${SMTP_SENDER_NAME:-$BRAND_NAME}"
 
 if [[ -z "$RESEND_API_KEY" ]]; then
   echo -e "${RED}Error: RESEND_API_KEY is not set.${NC}"

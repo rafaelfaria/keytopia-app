@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { useUi } from '../lib/store';
 import { Ic } from './icons';
 import { LogoMark } from './Brand';
+import { BRAND } from '../lib/brand';
 
 export function Logo({ size = 28, wordmark = true }: { size?: number; wordmark?: boolean }) {
   return (
     <span className="logo" style={{ fontSize: size }}>
       <LogoMark size={size * 1.16} />
-      {wordmark && <span className="logo-word">KeyTopia</span>}
+      {wordmark && <span className="logo-word">{BRAND.name}</span>}
     </span>
   );
 }

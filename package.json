@@ -12,6 +12,7 @@
     "seo:ping": "node scripts/ping-indexnow.mjs",
     "preview": "vite preview",
     "icons": "node scripts/gen-icons.mjs",
+    "rename": "node scripts/rename-brand.mjs",
     "db:start": "set -a && . ./.env.local && set +a && supabase start",
     "db:stop": "supabase stop",
     "db:status": "supabase status",

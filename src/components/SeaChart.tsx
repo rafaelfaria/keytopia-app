@@ -1,7 +1,8 @@
 import { BlockAvatar } from './avatars';
 import { PIXEL_PALS } from './gamekit';
-import { ISLAND, curveThrough } from './IslandMap';
+import { curveThrough } from './IslandMap';
 import { WORLDS } from '../lib/worlds';
+import { Ic } from './icons';
 
 /**
  * The zoomed-out archipelago (plan §3.2): five islands on the sea, the active
@@ -75,8 +76,10 @@ export function SeaChart({ worlds, onOpen }: {
             >
               <ellipse cy="34" rx="66" ry="12" fill="rgba(20, 60, 90, 0.18)" />
               <g transform="scale(0.155) translate(-506 -300)">
+                {/* Each island's own outline, so the chart is five different
+                    shapes on the water rather than the same one five times. */}
                 <path
-                  d={ISLAND}
+                  d={def.kid.shape}
                   fill={w.unlocked ? def.kid.grass : '#b7c4cf'}
                   stroke={w.unlocked ? def.kid.sand : '#a3b2bf'}
                   strokeWidth="22"
@@ -117,6 +120,74 @@ export function SeaChart({ worlds, onOpen }: {
           <path d="M1,-18 L13,-5 L1,-5 Z" fill="#fff" />
         </g>
       </svg>
+    </div>
+  );
+}
+
+/**
+ * The voyage, written out.
+ *
+ * The chart shows where the islands are; this says what is on them. A child
+ * looking at five pretty shapes cannot tell that the fourth one is where the
+ * numbers live, and a parent looking over their shoulder cannot tell what the
+ * whole thing adds up to. Five rows in order, each with what it teaches in the
+ * child's own words, where they are, and what is still in the fog.
+ *
+ * Locked islands are named and described rather than hidden. Knowing what is
+ * coming is the point: this is the list you read to find out what you are
+ * going to be able to do.
+ */
+export function VoyagePlan({ worlds, onOpen }: {
+  worlds: ChartWorldVM[];
+  onOpen: (id: string) => void;
+}) {
+  const here = Math.max(0, worlds.findIndex((w) => w.active));
+  return (
+    <div className="kw-voyage">
+      <div className="kw-voyage-head">
+        <h3>The whole voyage</h3>
+        <p className="muted small">
+          Five islands, and they go in order. You are on island {here + 1}.
+        </p>
+      </div>
+      <ol className="kw-voyage-list">
+        {worlds.map((w, i) => {
+          const def = WORLDS.find((d) => d.id === w.id) ?? WORLDS[0];
+          const pal = PIXEL_PALS[def.kid.guardian % PIXEL_PALS.length];
+          // An island you have explored is one you know, whatever the unlock
+          // rules say afterwards: a row that reads "explored" beside a bank of
+          // fog is the panel arguing with itself.
+          const known = w.unlocked || w.complete;
+          const state = w.complete ? 'done' : w.active ? 'here' : w.unlocked ? 'open' : 'fog';
+          return (
+            <li key={w.id} className={`kw-voyage-row kw-vr-${state}`}>
+              <button
+                type="button"
+                onClick={() => { if (known) onOpen(w.id); }}
+                disabled={!known}
+                aria-label={`Island ${i + 1}, ${def.kid.kidName}. ${def.kid.teaches} ${
+                  w.complete ? 'Explored.' : w.active ? `You are here, ${w.done} of ${w.total} spots done.`
+                    : w.unlocked ? 'Open.' : 'Still in the fog.'}`}
+              >
+                <span className="kw-vr-n">{i + 1}</span>
+                <span className="kw-vr-pal">
+                  {known ? <BlockAvatar preset={pal.preset} size={34} /> : <Ic n="cloud-fog" size={26} />}
+                </span>
+                <span className="kw-vr-txt">
+                  <strong>{def.kid.kidName}</strong>
+                  <span className="kw-vr-teach">{def.kid.teaches}</span>
+                </span>
+                <span className="kw-vr-state">
+                  {w.complete ? <><Ic n="check" size={14} /> explored</>
+                    : w.active ? <><Ic n="footprints" size={14} /> {w.done} of {w.total}</>
+                    : w.unlocked ? <><Ic n="play" size={14} /> open</>
+                    : <><Ic n="lock" size={13} /> in the fog</>}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }

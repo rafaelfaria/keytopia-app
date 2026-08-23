@@ -10,6 +10,8 @@
  * Browser-global free — the Node generators import this directly.
  */
 
+import { BRAND } from '../brand';
+
 export interface Faq {
   question: string;
   answer: string;
@@ -49,7 +51,7 @@ export const PRODUCT_SUMMARY =
   'KeyTopia is a free, browser-based typing tutor. It assesses your typing in 60 seconds, then ' +
   'builds every practice set from your own weak keys and slow letter transitions. It is not a ' +
   'typing test with a leaderboard bolted on: it is a full curriculum (41 lessons across 5 worlds), ' +
-  'fourteen training modes, seven original typing games, CPU racing, and analytics deep enough for ' +
+  'fourteen training modes, nine original typing games, CPU racing, and analytics deep enough for ' +
   'competitive typists. It runs entirely in the browser and is free. Typing itself never waits on ' +
   'the network: every keystroke is written to local storage first, then synced to a free account ' +
   'so progress survives a lost device and follows you to the next one.';
@@ -60,13 +62,13 @@ export const CORE_FEATURES: Feature[] = [
   { name: 'Adaptive practice engine', description: 'Every keystroke updates a per-key mastery map. Practice sets are generated on the fly so weak keys and slow letter-pairs get extra repetitions, wrapped in real words rather than nonsense drills.' },
   { name: '60-second placement assessment', description: 'Reads speed, accuracy, rhythm, hesitation, backspace habits and per-key reflexes, then names your rank and draws your starting map.' },
   { name: '41-lesson curriculum', description: 'Nine regions grouped into five worlds, from the two home-row anchor keys through capitals, numbers, symbols, code, rhythm and endurance.' },
-  { name: 'Fourteen training modes', description: 'Adaptive practice, weak-key workouts, speed sprints, Accuracy Lab, rhythm studio, zen, lights-out, code forge, dictation, numerals, recovery, endurance, real-world desk and copy desk.' },
+  { name: 'Fourteen training modes', description: 'Adaptive practice, weak-key workouts, speed sprints, Accuracy Lab, rhythm studio, zen, lights-out, code forge, numerals, recovery, endurance, camp checkpoints, real-world desk and copy desk.' },
   { name: 'Seven original typing games', description: 'Each game is built around one named skill and tells you which skill it trains. No typing glued onto an unrelated arcade game.' },
   { name: 'Racing with CPU rivals', description: 'Five difficulties plus adaptive, rivals with believable habits, a ghost of your own best run, and private rooms with join codes for friends or a classroom.' },
   { name: 'Deep analytics', description: 'Per-key heatmaps, finger and hand balance, rhythm fingerprints, session echo replay, consistency scoring, records and a practice calendar.' },
   { name: 'A coach that is specific', description: 'Kip reads your actual session data and names the exact keys and transitions holding you back, then prescribes a drill for them.' },
   { name: 'Layout-aware', description: 'QWERTY, QWERTZ, AZERTY, Dvorak and Colemak. The curriculum rebuilds itself around whichever layout you use.' },
-  { name: 'Accessibility as a requirement', description: 'Full keyboard navigation, four text sizes, the Atkinson Hyperlegible typeface, a high-contrast theme, reduced-motion mode, untimed learning, spoken target letters and never colour-only feedback.' },
+  { name: 'Accessibility as a requirement', description: 'Full keyboard navigation, four text sizes, the Atkinson Hyperlegible typeface, a high-contrast theme, reduced-motion mode, untimed learning and never colour-only feedback.' },
   { name: 'Local-first privacy', description: 'Nothing ever blocks on the network: keystrokes are written to your browser first and synced afterwards. One grown-up account covers the whole household, learners never sign in themselves, and everything can be erased in one click.' },
   { name: 'Twelve themes', description: 'Themes change illustration, keyboard, sound and celebration, and are unlocked by learning rather than by paying.' },
 ];
@@ -80,7 +82,6 @@ export const TRAINING_MODES: Feature[] = [
   { name: 'Zen typing', description: 'No scores, just flow' },
   { name: 'Lights out', description: 'Wean off looking down' },
   { name: 'Code forge', description: 'Brackets and symbols' },
-  { name: 'Dictation', description: 'Type what you hear' },
   { name: 'Numeral Peaks', description: 'Numbers and the symbol row' },
   { name: 'Recovery', description: 'Stay calm after misses' },
   { name: 'Endurance', description: 'Long-form stamina' },
@@ -162,7 +163,6 @@ export const MODE_CLUSTERS: ModeCluster[] = [
     modes: [
       { name: 'Rhythm studio', sample: 'e·v·e·n  h·a·n·d·s  w·i·n', skill: 'On the beat', description: 'Type on the beat. Smoothing your inter-key intervals is usually worth more words per minute than any amount of pushing.' },
       { name: 'Zen typing', sample: 'no timer. no score. no rank.', skill: 'Just flow', description: 'No timer, no score, no rank. Just text and the sound of it going right.' },
-      { name: 'Dictation', sample: '♪  type only what you hear', skill: 'Listen & type', description: 'Type what you hear, with replay and speed control. It breaks the habit of reading ahead and typing behind.' },
       { name: 'Endurance', sample: '… and on into minute four', skill: 'Stamina', description: 'Long-form passages, where the interesting question is not how fast you start but what is left of your technique in minute four.' },
     ],
   },
@@ -184,6 +184,8 @@ export const GAMES: GameEntry[] = [
   { name: 'Survivor Sprint', slug: 'survivor', skill: 'Consistency under pressure', description: 'Eight typists, four rapid heats, the slowest eliminated each round. Winning requires repeatable performance rather than one lucky fast run.' },
   { name: 'Cipher Run', slug: 'cipher', skill: 'Spelling recall and letter mapping', description: 'Unscramble rune-words against the clock. Decoding builds the deep letter-to-finger map that fast typing sits on top of.' },
   { name: 'Block Stack', slug: 'stack', skill: 'Word-perfect precision', description: 'Every word becomes a block: clean words build wide and steady, sloppy ones crumble the tower. It makes the cost of an uncorrected error visible.' },
+  { name: 'Tide Line', slug: 'tideline', skill: 'Choosing your next word well', description: 'A shore of word tiles against one rival, with the tide taking a row at a time. A tile claimed beside one you already hold is worth double, so the game asks which word to type next rather than only how fast.' },
+  { name: 'Pearl Dive', slug: 'pearl', skill: 'Going clean for longer', description: 'One descent, and every dive is longer than the last. Land a phrase without a single wrong key and you go deeper; one slip ends the run. It is the only game here with no speed term at all, so a careful typist beats a quick one.' },
 ];
 
 export const AUDIENCES: Audience[] = [
@@ -208,8 +210,6 @@ export const ACCESSIBILITY: string[] = [
   'High-contrast theme',
   'Reduced-motion mode',
   'Untimed learning',
-  'Spoken target letters',
-  'Dictation with replay and speed control',
   'Never colour-only feedback',
   'Hideable leaderboards',
 ];
@@ -368,7 +368,7 @@ export const SCHOOLS_POINTS: Feature[] = [
   { name: 'Only the results a teacher needs', description: 'Raw keystroke timings stay in the browser on the machine the student uses. What reaches a class board is the finished result: lesson, score, accuracy. No text a child typed is uploaded and there is nothing for a stranger to see.' },
   { name: 'Multiple explorers per device', description: 'A shared classroom machine can hold several student profiles side by side, each with its own mastery map, settings and accessibility profile.' },
   { name: 'Private race rooms', description: 'Races use join codes and are limited to the people you share the code with. There is no public matchmaking and no chat.' },
-  { name: 'Per-student accessibility profiles', description: 'Text size, the Atkinson Hyperlegible typeface, high contrast, reduced motion, untimed mode and spoken target letters are per-profile, so an accommodation follows the student rather than the device.' },
+  { name: 'Per-student accessibility profiles', description: 'Text size, the Atkinson Hyperlegible typeface, high contrast, reduced motion and untimed mode are per-profile, so an accommodation follows the student rather than the device.' },
   { name: 'Progress you can actually read', description: 'A guardian and teacher summary built from real session data (per-key mastery, accuracy trends and practice frequency) rather than a participation score.' },
 ];
 
@@ -384,7 +384,7 @@ export const FAQS: Faq[] = [
   { question: 'Is it suitable for children?', answer: 'Yes. There is a dedicated kids world with an island map, quests, a guardian companion, gentler speed targets and kid-appropriate word lists. Children never create an account or give an email address: a parent or teacher signs in and the child gets a profile. There is no chat and no strangers, race rivals are computer-controlled, and rooms are join-code only.' },
   { question: 'Can it be used in a classroom?', answer: 'Yes. Assignable lessons, private race rooms with join codes, multiple student profiles per shared device and per-student accessibility profiles are all supported. Students join with a class code rather than an email address, and only finished results reach the class board. The teacher dashboard is currently a preview.' },
   { question: 'Is there a typing test I can take without signing up?', answer: 'Yes. The free typing test runs in the browser at 15, 30, 60 or 120 seconds and reports WPM, raw WPM, accuracy, consistency and a per-key breakdown. No sign-up, and the result stays on your device.' },
-  { question: 'What accessibility support does KeyTopia have?', answer: 'Full keyboard navigation, four text sizes, the Atkinson Hyperlegible typeface, a high-contrast theme, reduced-motion mode, untimed learning, spoken target letters, dictation with replay and speed control, feedback that is never colour-only, and hideable leaderboards. These are per-profile settings.' },
+  { question: 'What accessibility support does KeyTopia have?', answer: 'Full keyboard navigation, four text sizes, the Atkinson Hyperlegible typeface, a high-contrast theme, reduced-motion mode, untimed learning, feedback that is never colour-only, and hideable leaderboards. These are per-profile settings.' },
   { question: 'Does it work offline?', answer: 'Yes. Once loaded, every lesson, game and analytics view runs from local storage, so practice continues if the connection drops and syncs up quietly when it returns. Only the initial sign-in needs a connection. It is installable as a progressive web app on desktop and mobile.' },
   { question: 'How is WPM calculated?', answer: 'The standard way: correctly typed characters divided by five (the conventional word length), scaled to one minute. Raw WPM applies the same formula to every keystroke including errors, so the gap between raw and net WPM is a direct measure of how much speed your mistakes are costing you.' },
 ];
@@ -418,10 +418,10 @@ export const GLOSSARY: GlossaryTerm[] = [
  * The contact address printed on the legal pages and used for data requests.
  * Change it here and every page, JSON-LD node and llms.txt entry follows.
  */
-export const LEGAL_CONTACT = 'contact@keytopia.app';
+export const LEGAL_CONTACT = BRAND.email.legal;
 
 /** Last substantive revision of the privacy policy and terms. */
-export const LEGAL_EFFECTIVE = '15 August 2026';
+export const LEGAL_EFFECTIVE = '19 August 2026';
 
 /**
  * The sub-processors KeyTopia sends data to. Listed on the privacy page rather
@@ -430,7 +430,8 @@ export const LEGAL_EFFECTIVE = '15 August 2026';
  */
 export const SUBPROCESSORS: { name: string; role: string; data: string }[] = [
   { name: 'Supabase', role: 'Database, authentication and file storage', data: 'Account email address, profile records, lesson and session results, class membership. Hosted in the region shown on the account page.' },
-  { name: 'Vercel', role: 'Website hosting and content delivery', data: 'Standard web-server request data: IP address, user agent, requested URL, timestamp.' },
+  { name: 'Vercel', role: 'Website hosting, content delivery and visitor counts', data: 'Standard web-server request data: IP address, user agent, requested URL, timestamp. For visitor counts these are turned into a one-way hash that changes every day and is then discarded, so the same person cannot be recognised tomorrow.' },
+  { name: 'Google Analytics', role: 'Page and feature counts', data: 'The page being viewed, its title, the site you arrived from, and coarse device and country information derived from your IP address. It runs without cookies or any identifier, so it counts visits rather than people.' },
   { name: 'Resend', role: 'Transactional email delivery', data: 'Account email address, and delivery metadata for sign-in links.' },
   { name: 'Google', role: 'Optional sign-in provider', data: 'Only if you choose to sign in with Google: your email address and account identifier. KeyTopia requests nothing else from your Google account.' },
 ];
@@ -439,7 +440,7 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
   {
     heading: 'The short version',
     paragraphs: [
-      'KeyTopia is free, carries no advertising, and sells nothing to anyone. There are no tracking pixels, no advertising networks and no analytics products following you between sites.',
+      'KeyTopia is free, carries no advertising, and sells nothing to anyone. There are no tracking pixels and no advertising networks. We do count which pages get read and which games get opened, in a way that cannot follow you between sites or recognise you on your next visit.',
       'Every keystroke you make is written to your own browser first, so practice never waits on a network call and keeps working offline. What syncs to our servers is the outcome of a session, not the text you typed. Signing in is what makes a mastery map survive a lost laptop, and it is the only reason we hold an email address at all.',
     ],
     bullets: [
@@ -452,7 +453,7 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
   {
     heading: 'Who is responsible for your data',
     paragraphs: [
-      `KeyTopia is an independent project. For the purposes of the UK and EU General Data Protection Regulation, the operator of keytopia.app is the data controller for the information described on this page. You can reach a human at ${LEGAL_CONTACT}, and we aim to answer every privacy question within thirty days.`,
+      `KeyTopia is an independent project. For the purposes of the UK and EU General Data Protection Regulation, the operator of ${BRAND.domain} is the data controller for the information described on this page. You can reach a human at ${LEGAL_CONTACT}, and we aim to answer every privacy question within thirty days.`,
       'Where a school deploys KeyTopia to a class, the school is the controller for its pupils\' records and KeyTopia acts as a processor on the school\'s instructions.',
     ],
   },
@@ -479,7 +480,7 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
       'Anything you type in the Copy desk mode. Text you paste in to practise with is yours, stays local, and is never uploaded.',
       'Payment details, because there is nothing to buy.',
       'Precise location, contact lists, microphone or camera access.',
-      'Advertising identifiers, cross-site trackers and third-party analytics.',
+      'Advertising identifiers and cross-site trackers. The visit counting described below is deliberately built so that it cannot become one.',
     ],
   },
   {
@@ -494,6 +495,15 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
     paragraphs: [
       'KeyTopia sets no advertising or analytics cookies. It uses your browser\'s local storage to hold your profiles, settings and practice history so the app can start instantly and work offline, and it stores a session token so you are not asked to sign in on every visit. Both are strictly necessary for the service to function.',
       'Clearing your browser data for this site removes the local copy. If you are signed in, your synced records remain in your account and return when you sign in again.',
+    ],
+  },
+  {
+    heading: 'How we count visits',
+    paragraphs: [
+      'We look at which pages are read and which parts of the app are opened, because otherwise we are guessing about what to build next. Both tools that do this are set up so that they measure the visit and not the visitor.',
+      'Google Analytics runs in its consent mode with storage denied, permanently and for everybody. That means it writes no cookie, is given no identifier, and stores nothing on your device, so it cannot tell your second page from somebody else\'s first, cannot recognise you when you come back, and cannot follow you to another site. It receives the address and title of the page, where you arrived from, and the country and device type its servers work out from your IP address.',
+      'Vercel, who host the site, count visitors from a hash of your IP address, your browser and a secret that is regenerated every day and never kept. That produces an honest count of how many people read a page without anything being stored on your device and without the count surviving into tomorrow.',
+      'Neither is joined to your account, your profiles or your learning records, and neither ever sees the text you type. This is why there is still no cookie banner: there is no consent to ask for when nothing is stored and nobody is identified.',
     ],
   },
   {

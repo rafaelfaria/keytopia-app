@@ -16,6 +16,7 @@
  */
 
 import type { ReactNode } from 'react';
+import { BRAND } from '../../lib/brand';
 
 /** The window chrome every mockup sits in. */
 export function Screen({
@@ -61,7 +62,7 @@ const PENDING = ' its own kind of weather';
 /** A live practice session: the typing line, the running stats, the key map. */
 export function MockPractice() {
   return (
-    <Screen app="KeyTopia" title="Train · Adaptive practice">
+    <Screen app={BRAND.name} title="Train · Adaptive practice">
       <div className="mk-app">
         <Rail active="Train" />
         <div className="mk-main">
@@ -124,7 +125,7 @@ export function MockKeymap({ legend = true }: { legend?: boolean }) {
 /** The coach's read-out after a session. */
 export function MockCoach() {
   return (
-    <Screen app="KeyTopia" title="Session report · Kip" tone="violet">
+    <Screen app={BRAND.name} title="Session report · Kip" tone="violet">
       <div className="mk-coach">
         <div className="mk-coach-head">
           <span className="mk-avatar">K</span>
@@ -161,7 +162,7 @@ const MODE_TILES: [string, string, boolean][] = [
 /** The mode picker, with a session about to start. */
 export function MockModes() {
   return (
-    <Screen app="KeyTopia" title="Train · choose a mode">
+    <Screen app={BRAND.name} title="Train · choose a mode">
       <div className="mk-app">
         <Rail active="Train" />
         <div className="mk-main">
@@ -204,7 +205,7 @@ const LANES: [string, number, string, string][] = [
 /** A race in progress: four lanes, a ghost, and the standings rail. */
 export function MockRace() {
   return (
-    <Screen app="KeyTopia" title="Arena · Lightstream race" tone="amber">
+    <Screen app={BRAND.name} title="Arena · Lightstream race" tone="amber">
       <div className="mk-app">
         <Rail active="Arena" />
         <div className="mk-main">
@@ -244,7 +245,7 @@ const SPEED = [108, 100, 96, 84, 88, 70, 58, 52, 38];
 export function MockAnalytics() {
   const pts = SPEED.map((y, i) => `${10 + i * 37.5},${y}`).join(' L ');
   return (
-    <Screen app="KeyTopia" title="Progress · six weeks" tone="violet">
+    <Screen app={BRAND.name} title="Progress · six weeks" tone="violet">
       <div className="mk-app">
         <Rail active="Progress" />
         <div className="mk-main">

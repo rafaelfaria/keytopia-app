@@ -190,6 +190,24 @@ export const PIXEL_PALS = [
   { name: 'Biscuit', kind: 'owl', preset: ANIMAL_START + 4 },
 ];
 
+/**
+ * The pals as the starter games use them: by preset index, with the two rare
+ * ones on the end.
+ *
+ * Kept separate from PIXEL_PALS above, which the worlds index into as guardians
+ * (`guardian % PIXEL_PALS.length`) and whose length is therefore load-bearing.
+ * Two lists is the cheaper mistake here.
+ */
+export const STARTER_PALS: { preset: number; name: string; rare?: boolean }[] = [
+  { preset: ANIMAL_START, name: 'Clementine' },
+  { preset: ANIMAL_START + 1, name: 'Miso' },
+  { preset: ANIMAL_START + 2, name: 'Pip' },
+  { preset: ANIMAL_START + 3, name: 'Waffles' },
+  { preset: ANIMAL_START + 4, name: 'Biscuit' },
+  { preset: 14, name: 'Noodle', rare: true },
+  { preset: 19, name: 'Ember', rare: true },
+];
+
 /** Tiny decorative critter that floats/flutters. Purely ornamental. */
 export function Critter({ kind, style }: { kind: 'butterfly' | 'bee' | 'snail'; style?: React.CSSProperties }) {
   if (kind === 'butterfly') {
@@ -230,6 +248,69 @@ export function Critter({ kind, style }: { kind: 'butterfly' | 'bee' | 'snail'; 
         <circle cx="9" cy="8" r="6" fill="#7dd8a0" />
         <rect x="13" y="6" width="7" height="6" rx="3" fill="#f0a05a" />
         <rect x="18" y="2" width="2" height="4" fill="#f0a05a" />
+      </svg>
+    </span>
+  );
+}
+
+/**
+ * Pearl Dive's diver: horizontal, snorkelled, trailing bubbles.
+ *
+ * Drawn rather than borrowed from the icon set, because the icon set's nearest
+ * thing is a standing person, and a standing figure in a water column reads as
+ * someone waiting at a bus stop underwater. What the game needs said in one
+ * glance is "this person is swimming down through the sea", and the three
+ * things that say it are the horizontal body, the snorkel and the bubbles.
+ *
+ * Every shape carries an ink outline. Without one the suit, the head and the
+ * fin are three fills of similar weight touching each other, and at the size
+ * this actually renders they merge into a single orange lozenge: the first
+ * pass looked like a carrot with a bubble over it. The outline is what makes it
+ * a silhouette rather than a blob, and it is also what keeps the figure legible
+ * against the pale top of the water and the near-black bottom of it.
+ *
+ * Colours come from `--dv-*` custom properties with sensible defaults, so the
+ * same sprite works on the game's column and on the hub card without the two
+ * needing to agree about anything else.
+ */
+export function Diver({ size = 66 }: { size?: number }) {
+  const ink = 'var(--dv-ink, #06293f)';
+  const limb = { fill: 'none', stroke: 'var(--dv-suit, #ff9f4a)', strokeWidth: 3.2, strokeLinecap: 'round' as const };
+  return (
+    <span className="diver" aria-hidden>
+      <svg viewBox="0 0 64 40" width={size} height={size * 0.625}>
+        <circle className="dv-bub dv-bub-a" cx="47" cy="8" r="2.4" />
+        <circle className="dv-bub dv-bub-b" cx="51" cy="8" r="1.7" />
+        <circle className="dv-bub dv-bub-c" cx="44" cy="8" r="1.3" />
+        <path
+          className="dv-snorkel" d="M42 14 V8.6 a3.2 3.2 0 0 1 3.2-3.2 h1.4"
+          fill="none" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"
+        />
+        {/* Two legs in a V, each ending in a blade. One fin behind a torso read
+            as a tail and the whole sprite came out a fish; two legs is the one
+            shape nothing else in the sea has. The group swings from the hip. */}
+        <g className="dv-kick">
+          <path d="M17 19 L8 13.5" {...limb} />
+          <path d="M17 21.5 L8.5 27" {...limb} />
+          <path className="dv-fin" d="M9.5 13.5 L1 9.5 L2.5 17 Z" stroke={ink} strokeWidth="1.4" strokeLinejoin="round" />
+          <path className="dv-fin" d="M10 27 L1.5 31.5 L2.5 24 Z" stroke={ink} strokeWidth="1.4" strokeLinejoin="round" />
+        </g>
+        {/* Swept back, the way a snorkeller's trailing arm sits. Forward and
+            over the head it drew a loop that read as a bag handle. */}
+        <path d="M34 23 C29 26.5, 25 27.5, 21.5 26.5" {...limb} strokeWidth={2.8} />
+        <circle className="dv-hand" cx="20.5" cy="26.4" r="2.1" stroke={ink} strokeWidth="1.2" />
+        <path
+          className="dv-body"
+          d="M14.5 20 C18.5 14.2, 30 13.2, 39 16.4 L40 23.6 C30 26.8, 18.5 25.8, 14.5 20 Z"
+          stroke={ink} strokeWidth="1.5" strokeLinejoin="round"
+        />
+        <circle className="dv-head" cx="45.5" cy="19.4" r="7" stroke={ink} strokeWidth="1.5" />
+        {/* Goggles across the front of the face, with the strap behind. */}
+        <path className="dv-strap" d="M39.5 17.4 h4" stroke={ink} strokeWidth="1.6" strokeLinecap="round" fill="none" />
+        <rect
+          className="dv-mask" x="44.2" y="15.6" width="8.4" height="7.2" rx="2.6"
+          stroke={ink} strokeWidth="1.4" strokeLinejoin="round"
+        />
       </svg>
     </span>
   );

@@ -1,0 +1,27 @@
+{
+  "$comment": "Single source of truth for the brand. Rename here, then run `npm run rename` (scripts/rename-brand.mjs) to sweep the prose and the files that cannot import this one. See docs/renaming.md.",
+
+  "name": "KeyTopia",
+  "shortName": "KeyTopia",
+  "tagline": "every keyboard is a world",
+  "slug": "keytopia",
+  "domain": "keytopia.app",
+  "url": "https://keytopia.app",
+  "themeColor": "#0b1020",
+
+  "email": {
+    "legal": "contact@keytopia.app",
+    "sender": "hello@keytopia.app",
+    "senderName": "KeyTopia"
+  },
+
+  "supabase": {
+    "projectId": "keytopia"
+  },
+
+  "frozen": {
+    "$comment": "NOT part of the brand. These identifiers are baked into data that already exists on other people's machines and servers, so they must survive every rename. Changing one orphans real user data.",
+    "storagePrefix": "keytopia",
+    "note": "localStorage keys (keytopia-v1, keytopia-auth, keytopia-sync-v1, keytopia-last-profile-v1, keytopia-anon-v1, keytopia-board-scope, keytopia-arena-scope, keytopia-arena-period), the daily-challenge seed 'keytopia-daily-', the JWT claim keytopia_alias, and everything already applied in supabase/migrations. To move one, write a migration that copies the old key forward, the way src/lib/store.ts does for typerra-v1."
+  }
+}

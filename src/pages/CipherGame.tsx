@@ -1,12 +1,12 @@
 import { useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useData, useStore, useUi } from '../lib/store';
 import { COMMON_WORDS, KID_WORDS } from '../lib/words';
 import { mulberry32, pick, shuffle } from '../lib/rng';
-import { Btn, Chip, Stat } from '../components/ui';
+import { Btn, Chip } from '../components/ui';
 import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
+import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
 import { Ic } from '../components/icons';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import type { Rewards } from '../lib/types';
@@ -23,7 +23,6 @@ function scrambled(rng: () => number, word: string): string {
 
 export default function CipherGame() {
   const data = useData();
-  const nav = useNavigate();
   const recordSession = useStore((s) => s.recordSession);
   const patch = useStore((s) => s.patch);
   const pushToast = useUi((s) => s.pushToast);
@@ -44,7 +43,24 @@ export default function CipherGame() {
   const [solved, setSolved] = useState(0);
   const [shake, setShake] = useState(false);
   const [timeLeft, setTimeLeft] = useState(DURATION);
-  const [overInfo, setOverInfo] = useState<{ rewards: Rewards | null; newBest: boolean } | null>(null);
+  // The Arena board is posted by <ArenaResult> from these numbers, so the run's
+  // typing quality has to survive into the over phase alongside the game's own
+  // score. See docs/arena-leaderboards.md §10 step 4.
+  const [overInfo, setOverInfo] = useState<
+    { rewards: Rewards | null; newBest: boolean; score: number; solved: number; wpm: number; acc: number } | null
+  >(null);
+  // Score, solved count and phase are read back from the interval's endGame,
+  // which closes over the render that started the run. Mirror them in refs so
+  // the finished run is scored from what actually happened, not from render 1.
+  const scoreRef = useRef(0);
+  const solvedRef = useRef(0);
+  const phaseRef = useRef(phase);
+  phaseRef.current = phase;
+  const bumpScore = (fn: (s: number) => number) => {
+    scoreRef.current = fn(scoreRef.current);
+    setScore(scoreRef.current);
+  };
+
   const strokes = useRef<GameStroke[]>([]);
   const startedAt = useRef(0);
   const wordShownAt = useRef(0);
@@ -62,6 +78,7 @@ export default function CipherGame() {
   const start = () => {
     strokes.current = [];
     startedAt.current = performance.now();
+    scoreRef.current = 0; solvedRef.current = 0;
     setScore(0); setSolved(0); setTimeLeft(DURATION);
     newPuzzle();
     setPhase('run');
@@ -75,26 +92,27 @@ export default function CipherGame() {
 
   const endGame = () => {
     window.clearInterval(timer.current);
-    setPhase((p) => {
-      if (p !== 'run') return p;
-      const result = resultFromStrokes('game', 'Cipher Run', strokes.current, startedAt.current, performance.now(), { game: 'cipher', score, solved });
-      const rewards = strokes.current.length > 8 ? recordSession(result) : null;
-      let newBest = false;
-      patch((d) => {
-        const cur = d.gameBests['cipher'];
-        if (!cur || score > cur.score) { d.gameBests['cipher'] = { score, level: solved }; newBest = true; }
-      });
-      if (newBest) pushToast({ kind: 'record', icon: 'puzzle', title: 'New Cipher Run best!' });
-      setOverInfo({ rewards, newBest });
-      return 'over';
+    if (phaseRef.current !== 'run') return;
+    const finalScore = scoreRef.current;
+    const finalSolved = solvedRef.current;
+    const result = resultFromStrokes('game', 'Cipher Run', strokes.current, startedAt.current, performance.now(), { game: 'cipher', score: finalScore, solved: finalSolved });
+    const rewards = strokes.current.length > 8 ? recordSession(result) : null;
+    let newBest = false;
+    patch((d) => {
+      const cur = d.gameBests['cipher'];
+      if (!cur || finalScore > cur.score) { d.gameBests['cipher'] = { score: finalScore, level: finalSolved }; newBest = true; }
     });
+    if (newBest) pushToast({ kind: 'record', icon: 'puzzle', title: 'New Cipher Run best!' });
+    setOverInfo({ rewards, newBest, score: finalScore, solved: finalSolved, wpm: result.wpm, acc: result.acc });
+    setPhase('over');
   };
 
   const solve = () => {
     const secs = (performance.now() - wordShownAt.current) / 1000;
     const bonus = Math.max(0, Math.round((8 - secs) * 4));
-    setScore((s) => s + answer.length * 12 + bonus);
-    setSolved((n) => n + 1);
+    bumpScore((s) => s + answer.length * 12 + bonus);
+    solvedRef.current += 1;
+    setSolved(solvedRef.current);
     if (data?.settings.soundOn) snd.pop();
     newPuzzle();
   };
@@ -126,7 +144,7 @@ export default function CipherGame() {
         setBuffer('');
         setShake(true);
         setTimeout(() => setShake(false), 260);
-        setScore((s) => Math.max(0, s - 4));
+        bumpScore((s) => Math.max(0, s - 4));
         if (data?.settings.soundOn) snd.err();
       }
     } else {
@@ -140,83 +158,96 @@ export default function CipherGame() {
     if (revealed >= answer.length - 1) return;
     setRevealed((r) => r + 1);
     setBuffer(answer.slice(0, revealed + 1));
-    setScore((s) => Math.max(0, s - 15));
+    bumpScore((s) => Math.max(0, s - 15));
     if (data?.settings.soundOn) snd.thock();
   };
 
   const skip = () => {
-    setScore((s) => Math.max(0, s - 8));
+    bumpScore((s) => Math.max(0, s - 8));
     newPuzzle();
     if (data?.settings.soundOn) snd.thock();
   };
 
   if (!data) return null;
 
-  return (
-    <div className="train-page">
-      <div className="train-top">
-        <Btn kind="ghost" onClick={() => { window.clearInterval(timer.current); nav('/app/games'); }} ariaLabel="Exit game">←</Btn>
-        <h1><Ic n="puzzle" size={20} /> Cipher Run</h1>
-        <Chip tone="accent">Trains: spelling recall & letter mapping</Chip>
-      </div>
+  if (phase === 'intro') {
+    return (
+      <ArenaIntro
+        game="cipher"
+        title="Unscramble the runes"
+        onPlay={start}
+        cta="Crack the first cipher →"
+        stats={data.gameBests['cipher'] ? [
+          { label: 'Best score', value: data.gameBests['cipher'].score },
+          { label: 'Most decoded', value: `${data.gameBests['cipher'].level} runes` },
+        ] : undefined}
+      >
+        <p>
+          Each rune is a real word with its letters shuffled. Type the <strong>true word</strong>:
+          only letters the word actually contains will land, so a wrong letter bounces
+          before it costs you anything.
+        </p>
+        <p>
+          A full guess that is wrong clears the slots. Hints cost 15 points and skips cost 8,
+          and decoding fast is worth a bonus, so the quickest read is the best read.
+        </p>
+      </ArenaIntro>
+    );
+  }
 
-      <div className="game-frame">
-        {phase === 'run' && (
-          <div className="game-hud">
-            <span>Score {score}</span>
-            <span>Solved {solved}</span>
+  if (phase === 'over' && overInfo) {
+    return (
+      <ArenaResult
+        game="cipher"
+        run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.solved }}
+        score={overInfo.score}
+        title={overInfo.newBest ? 'New best decode run!' : `${overInfo.solved} ${overInfo.solved === 1 ? 'rune' : 'runes'} cracked`}
+        newBest={overInfo.newBest}
+        onAgain={start}
+      >
+        <RewardsBanner rewards={overInfo.rewards} />
+        <p className="small muted" style={{ maxWidth: 430 }}>
+          Decoding builds the deep letter-map that fast typing sits on. Sneaky, isn't it?
+        </p>
+      </ArenaResult>
+    );
+  }
+
+  return (
+    <>
+      {/* One column, deliberately. Cipher Run has no second thing to look at:
+          the rune you are reading and the answer you are building have to sit
+          together, and splitting them across two columns would add eye travel
+          to a timed game for the sake of matching a grid. */}
+      <ArenaStage
+        game="cipher"
+        quiet
+        hud={(
+          <>
+            <span><b>{score}</b> points</span>
+            <span><b>{solved}</b> decoded</span>
             <span className="grow" />
-            <span className={timeLeft < 12 ? 'bad' : ''}>{Math.ceil(timeLeft)}s</span>
+            <span className={`arena-hud-clock ${timeLeft < 12 ? 'bad' : ''}`}>{Math.ceil(timeLeft)}s</span>
+          </>
+        )}
+        main={(
+          <div className="cipher-stage">
+            <p className="arena-stage-kicker"><Ic n="puzzle" size={14} /> The scrambled rune</p>
+            <div className="cipher-word">{cipher.split('').map((c, i) => <span key={i} className="cipher-tile">{c}</span>)}</div>
+            <p className="arena-stage-kicker cipher-answer-label"><Ic n="keyboard" size={14} /> Your answer</p>
+            <div className={`cipher-word ${shake ? 'cipher-shake' : ''}`}>
+              {answer.split('').map((_, i) => (
+                <span key={i} className={`cipher-tile cipher-slot ${buffer[i] ? 'filled' : ''}`}>{buffer[i] ?? ''}</span>
+              ))}
+            </div>
+            <div className="row gap cipher-actions">
+              <Btn kind="soft" onClick={hint}><Ic n="bulb" size={15} /> Hint (−15)</Btn>
+              <Btn kind="ghost" onClick={skip}>Skip (−8)</Btn>
+            </div>
           </div>
         )}
-        <div className="game-board" style={{ minHeight: 380 }}>
-          {phase === 'intro' && (
-            <div className="game-over">
-              <Ic n="puzzle" size={52} />
-              <h2>Unscramble the runes</h2>
-              <p className="muted" style={{ maxWidth: 470 }}>
-                Each cipher is a real word with its letters shuffled. Type the <strong>true word</strong>: 
-                only letters the word contains will land. Wrong full guesses bounce. Hints cost 15, skips cost 8.
-              </p>
-              {data.gameBests['cipher'] && <Chip tone="gold">Personal best: {data.gameBests['cipher'].score}</Chip>}
-              <Btn big onClick={start}>Crack the first cipher →</Btn>
-            </div>
-          )}
-          {phase === 'run' && (
-            <div className="cipher-stage">
-              <p className="muted small">the scrambled rune</p>
-              <div className="cipher-word">{cipher.split('').map((c, i) => <span key={i} className="cipher-tile">{c}</span>)}</div>
-              <p className="muted small" style={{ marginTop: 18 }}>your answer</p>
-              <div className={`cipher-word ${shake ? 'cipher-shake' : ''}`}>
-                {answer.split('').map((_, i) => (
-                  <span key={i} className={`cipher-tile cipher-slot ${buffer[i] ? 'filled' : ''}`}>{buffer[i] ?? ''}</span>
-                ))}
-              </div>
-              <div className="row gap" style={{ marginTop: 20, justifyContent: 'center' }}>
-                <Btn kind="soft" onClick={hint}><Ic n="bulb" size={15} /> Hint (−15)</Btn>
-                <Btn kind="ghost" onClick={skip}>Skip (−8)</Btn>
-              </div>
-            </div>
-          )}
-          {phase === 'over' && overInfo && (
-            <div className="game-over">
-              <Ic n={overInfo.newBest ? 'trophy' : 'check'} size={48} />
-              <h2>{overInfo.newBest ? 'New best decode run!' : 'Ciphers cracked'}</h2>
-              <div className="row gap wrap" style={{ justifyContent: 'center' }}>
-                <Stat v={score} l="score" tone="accent" />
-                <Stat v={solved} l="words decoded" />
-              </div>
-              <RewardsBanner rewards={overInfo.rewards} />
-              <p className="small muted" style={{ maxWidth: 430 }}>Decoding builds the deep letter-map that fast typing sits on. Sneaky, isn't it?</p>
-              <div className="row gap">
-                <Btn onClick={start}>↻ Run it again</Btn>
-                <Btn kind="soft" to="/app/games">All games</Btn>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      />
       <MobileKeys active={phase === 'run'} />
-    </div>
+    </>
   );
 }

@@ -54,11 +54,15 @@ function EchoReplay({ result, soundOn }: { result: SessionResult; soundOn: boole
     return () => window.clearTimeout(timer.current);
   }, [playing, idx, speed, tl, soundOn]);
 
-  if (!tl.length) return <p className="muted">No replay was recorded for this session.</p>;
+  if (!tl.length) return <p className="muted small">No replay was recorded for this run.</p>;
+  const pct = Math.round((idx / tl.length) * 100);
   return (
     <div className="echo">
       <p className="muted small">Your typing, played back with its real timing. Long gaps glow: that's hesitation you can hear.</p>
-      <div className="echo-strip" aria-hidden>
+      <div className={`echo-strip ${idx === 0 ? 'idle' : ''}`} aria-hidden>
+        {idx === 0 && tl.slice(0, 90).map((s, i) => (
+          <span key={`g${i}`} className="echo-ch echo-ghost">{displayChar(s.key)}</span>
+        ))}
         {tl.slice(0, idx).slice(-90).map((s, i, arr) => {
           const realIdx = idx - arr.length + i;
           const gap = realIdx > 0 ? tl[realIdx].t - tl[realIdx - 1].t : 0;
@@ -70,12 +74,16 @@ function EchoReplay({ result, soundOn }: { result: SessionResult; soundOn: boole
         })}
         <span className="echo-cursor" />
       </div>
-      <div className="row gap">
+      <div className="echo-controls">
         <Btn kind="soft" onClick={() => { if (idx >= tl.length) setIdx(0); setPlaying((p) => !p); }}>
-          {playing ? '⏸ Pause' : idx >= tl.length ? '↻ Replay' : '▶ Play echo'}
+          {playing
+            ? <><Ic n="pause" size={15} /> Pause</>
+            : idx >= tl.length ? <><Ic n="refresh" size={15} /> Replay</> : <><Ic n="play" size={15} /> Play echo</>}
         </Btn>
-        <Btn kind="ghost" onClick={() => setSpeed((s) => (s === 1 ? 2 : 1))}>{speed}× speed</Btn>
-        <div className="echo-progress"><div style={{ width: `${(idx / tl.length) * 100}%` }} /></div>
+        <Btn kind="ghost" onClick={() => setSpeed((s) => (s === 1 ? 2 : 1))} ariaLabel={`Playback speed ${speed} times, tap to change`}>{speed}× speed</Btn>
+        <div className="echo-progress" role="progressbar" aria-label="Replay position" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+          <div style={{ width: `${pct}%` }} />
+        </div>
       </div>
     </div>
   );
@@ -110,16 +118,25 @@ function EarnedLine({ rewards }: { rewards: Rewards | null }) {
   return <p className="results-earned">{items}</p>;
 }
 
-function Fold({ title, hint, children }: { title: string; hint: string; children: ReactNode }) {
+/** Every block of evidence stays on the page: nothing worth reading hides behind a toggle. */
+function Block({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
   return (
-    <details className="detail-fold">
-      <summary>
-        <span className="fold-title">{title}</span>
-        <span className="fold-hint">{hint}</span>
-        <Ic n="chevron-right" size={16} />
-      </summary>
-      <div className="fold-body">{children}</div>
-    </details>
+    <section className="detail-block">
+      <h3 className="detail-h">
+        {title}
+        {hint && <span className="detail-hint">{hint}</span>}
+      </h3>
+      {children}
+    </section>
+  );
+}
+
+function RunStat({ v, label, tone }: { v: number; label: string; tone?: string }) {
+  return (
+    <div className={`run-stat ${v > 0 && tone ? `rs-${tone}` : ''}`}>
+      <span className="rs-v">{v}</span>
+      <span className="rs-l">{label}</span>
+    </div>
   );
 }
 
@@ -148,6 +165,7 @@ export function ResultsPanel({ result, rewards, insight, next, stars, targets, o
     ? (result.uncorrected === 0 ? 'good' : 'bad')
     : (result.acc >= 95 ? 'good' : result.acc < 88 ? 'bad' : '');
   const record = (rewards?.records.length ?? 0) > 0;
+  const hitTarget = !!targets && result.acc >= targets.acc && result.wpm >= targets.wpm;
 
   return (
     <div className="results" aria-live="polite">
@@ -164,11 +182,17 @@ export function ResultsPanel({ result, rewards, insight, next, stars, targets, o
             <span className="hero-l">{sideL}</span>
           </div>
         </div>
-        <p className="hero-meta">
-          consistency {result.consistency} · {fmtDuration(result.seconds)}
-          {!precisionFirst && <> · {result.raw} raw wpm</>}
-          {targets && <> · target {targets.acc}% at {targets.wpm} wpm</>}
-        </p>
+        <ul className="hero-meta">
+          <li><b>{result.consistency}</b> consistency</li>
+          <li><b>{fmtDuration(result.seconds)}</b> on the keys</li>
+          {!precisionFirst && <li><b>{result.raw}</b> raw wpm</li>}
+          {targets && (
+            <li className={`hero-target ${hitTarget ? 'hit' : ''}`}>
+              {hitTarget && <Ic n="check" size={13} />}
+              target <b>{targets.acc}%</b> at <b>{targets.wpm} wpm</b>
+            </li>
+          )}
+        </ul>
         <EarnedLine rewards={rewards} />
       </section>
 
@@ -181,45 +205,63 @@ export function ResultsPanel({ result, rewards, insight, next, stars, targets, o
         </div>
       </section>
 
-      <section className="results-detail">
-        <h3 className="detail-h">Where the run got messy</h3>
-        <div className="detail-body">
+      <div className="results-detail">
+        <Block title="Where the run got messy">
           {troubleKeys.length > 0 ? (
-            <div className="row wrap gap">
+            <ul className="miss-keys">
               {troubleKeys.map(([k, s]) => (
-                <Chip key={k} tone="warn">{k === ' ' ? 'Space' : displayChar(k)} · {s.e} miss{s.e > 1 ? 'es' : ''}</Chip>
+                <li key={k} className="miss-key">
+                  <span className="miss-cap" aria-hidden>{k === ' ' ? '␣' : displayChar(k)}</span>
+                  <span className="miss-n">{s.e} miss{s.e > 1 ? 'es' : ''}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           ) : result.uncorrected === 0 && result.errors === 0
-            ? <p className="good">✔ No missed keys, a perfectly clean run.</p>
+            ? <p className="detail-clean"><Ic n="check" size={15} /> No missed keys, a perfectly clean run.</p>
             : <p className="muted small">No single key stood out as a problem.</p>}
-          <p className="muted small detail-line">
-            {result.uncorrected} left wrong · {result.corrected} corrected · {result.backspaces} backspaces · {result.hesitations} hesitations
-          </p>
-          {result.slowPairs.length > 0 && (
-            <p className="muted small detail-line">
-              Slowest transitions: {result.slowPairs.slice(0, 3).map(([p, ms]) => `${(p[0] === ' ' ? 'Space' : displayChar(p[0]))}→${(p[1] === ' ' ? 'Space' : displayChar(p[1]))} (${Math.round(ms)}ms)`).join(' · ')}
-            </p>
-          )}
-        </div>
 
-        <Fold title="Rhythm" hint="how even your keystrokes were">
+          <div className="run-stats">
+            <RunStat v={result.uncorrected} label="left wrong" tone="bad" />
+            <RunStat v={result.corrected} label="corrected" tone="warn" />
+            <RunStat v={result.backspaces} label="backspaces" tone="warn" />
+            <RunStat v={result.hesitations} label="hesitations" tone="warn" />
+          </div>
+
+          {result.slowPairs.length > 0 && (
+            <div className="slow-pairs">
+              <span className="muted small">Slowest transitions</span>
+              <ul>
+                {result.slowPairs.slice(0, 3).map(([p, ms]) => (
+                  <li key={`${p[0]}${p[1]}`}>
+                    <b>{p[0] === ' ' ? '␣' : displayChar(p[0])}</b>
+                    <i aria-hidden>→</i>
+                    <b>{p[1] === ' ' ? '␣' : displayChar(p[1])}</b>
+                    <span className="muted">{Math.round(ms)}ms</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </Block>
+
+        <Block title="Rhythm" hint="how even your keystrokes were">
           <div className="rhythm-cols">
-            <div>
+            <div className="rs-col">
               <p className="muted small">Each bar is the gap before a keystroke. Even bars mean a smooth rhythm.</p>
-              <RhythmStrip ikis={result.ikis ?? []} />
+              <RhythmStrip ikis={result.ikis ?? []} height={140} />
             </div>
             <div className="fp-col">
               <p className="muted small">Rhythm fingerprint</p>
               <RhythmFingerprint ikis={result.ikis ?? []} />
+              <p className="muted xsmall">A round ring means steady hands.</p>
             </div>
           </div>
-        </Fold>
+        </Block>
 
-        <Fold title="Typing echo" hint="play the run back at its real speed">
+        <Block title="Typing echo" hint="play the run back at its real speed">
           <EchoReplay result={result} soundOn={soundOn} />
-        </Fold>
-      </section>
+        </Block>
+      </div>
     </div>
   );
 }

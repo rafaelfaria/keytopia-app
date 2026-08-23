@@ -72,12 +72,15 @@ export function boardsAvailable(): boolean {
 export async function submitDailyScore(
   data: ProfileData,
   spec: DailySpec,
-  r: { wpm: number; acc: number; rhythm: number },
+  r: { wpm: number; acc: number; rhythm: number; valid?: boolean },
 ): Promise<boolean> {
   if (!supabase) return false;
   // The learner asked not to be on boards. That has to mean "not uploaded",
   // not merely "not displayed" — otherwise the setting is decoration.
   if (data.settings.hideLeaderboards) return false;
+  // A mashed run keeps its place in the learner's own history, but a board is
+  // a claim against other people and has to be earned.
+  if (r.valid === false) return false;
 
   const row = {
     day_key: spec.key,
@@ -105,9 +108,10 @@ export async function submitDailyScore(
 export async function submitBestDailyScore(
   data: ProfileData,
   spec: DailySpec,
-  r: { wpm: number; acc: number; rhythm: number },
+  r: { wpm: number; acc: number; rhythm: number; valid?: boolean },
 ): Promise<boolean> {
   if (!supabase || data.settings.hideLeaderboards) return false;
+  if (r.valid === false) return false;
   const { data: existing } = await supabase
     .from('daily_scores')
     .select('score')

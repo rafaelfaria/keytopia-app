@@ -1,19 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useData, useStore, useUi } from '../lib/store';
 import { COMMON_WORDS, KID_WORDS, RACER_NAMES } from '../lib/words';
 import { mulberry32, pick, pickN, avatarIndexFor } from '../lib/rng';
 import { recentAvgWpm, PACE_MIN, PACE_MAX } from '../lib/challenge';
-import { Btn, Chip, Stat } from '../components/ui';
+import { Btn } from '../components/ui';
 import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
+import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
+import { arenaRunFigures } from '../lib/arenaBoard';
 import { Ic } from '../components/icons';
 import { Avatar, BlockAvatar } from '../components/avatars';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
 import type { Rewards } from '../lib/types';
 
 const TARGET_WINS = 4;
+
+/**
+ * The board's own formula, mirrored so the number that counts up on the finish
+ * screen is the number that lands on the row underneath it. This must stay in
+ * step with the `duel` branch of `arena_score()`
+ * (supabase/migrations/20260816120000_arena_boards.sql).
+ */
+const duelScore = (rounds: number, wpm: number) => {
+  const f = arenaRunFigures({ wpm, acc: 100, value: rounds });
+  return Math.round(f.value * 200 + f.wpm * 5);
+};
 
 type Diff = 'gentle' | 'steady' | 'sharp' | 'fierce' | 'matched';
 
@@ -30,9 +42,27 @@ const DIFFS: { id: Diff; name: string; wpm: number; icon: string; desc: string }
  *  matched tier is capped where a human can still realistically out-sprint it. */
 const MATCHED_CAP = 90;
 
+/**
+ * The one pace that posts to the board. Every other pace is practice.
+ *
+ * A duel's board score is `rounds won × 200 + wpm × 5`, so the round term only
+ * ranks anything when the rival sits near the middle of the field it is ranking.
+ * Against Gentle everyone sweeps 4-0 and the term is dead weight; against Fierce
+ * almost nobody wins a round and it is dead weight again. Either way the board
+ * quietly collapses into a plain wpm list, and the duel stops being a duel.
+ *
+ * Boards are already split by age division and kid duels already run shorter
+ * phrases, so the ranked rival is tuned per division too. Nobody is ever ranked
+ * against someone who faced a different rival.
+ */
+const RANKED_PACE: Record<'kid' | 'teen' | 'adult', Diff> = {
+  kid: 'steady',
+  teen: 'sharp',
+  adult: 'sharp',
+};
+
 export default function DuelGame() {
   const data = useData();
-  const nav = useNavigate();
   const recordSession = useStore((s) => s.recordSession);
   const patch = useStore((s) => s.patch);
   const pushToast = useUi((s) => s.pushToast);
@@ -48,15 +78,15 @@ export default function DuelGame() {
   const basePace = data ? recentAvgWpm(data) : 25;
   const matchedWpm = Math.round(Math.max(PACE_MIN + 4, Math.min(MATCHED_CAP, basePace)));
   const paceOf = (d: Diff) => (d === 'matched' ? matchedWpm : DIFFS.find((x) => x.id === d)!.wpm);
-  // Default to the tier just below the learner's pace, so the first duel is winnable.
-  const [diff, setDiff] = useState<Diff>(() => {
-    const p = data ? recentAvgWpm(data) : 25;
-    if (p < 24) return 'gentle';
-    if (p < 40) return 'steady';
-    if (p < 60) return 'sharp';
-    return 'fierce';
-  });
+  // Open on the ranked duel. Picking a tier by the learner's pace used to make
+  // the first duel winnable, but it also meant most players landed on a rival
+  // whose result goes nowhere, and had to opt in to the one that counts.
+  const [diff, setDiff] = useState<Diff>(() => RANKED_PACE[data?.profile.ageGroup ?? 'adult']);
   const rivalWpm = paceOf(diff);
+  const rankedId = RANKED_PACE[data?.profile.ageGroup ?? 'adult'];
+  const rankedDiff = DIFFS.find((d) => d.id === rankedId)!;
+  const practiceDiffs = DIFFS.filter((d) => d.id !== rankedId);
+  const isRanked = diff === rankedId;
 
   const [phase, setPhase] = useState<'intro' | 'ready' | 'live' | 'roundEnd' | 'over'>('intro');
   const [round, setRound] = useState(1);
@@ -65,7 +95,7 @@ export default function DuelGame() {
   const [pos, setPos] = useState(0);
   const [rivalPos, setRivalPos] = useState(0);
   const [banner, setBanner] = useState('');
-  const [overInfo, setOverInfo] = useState<{ won: boolean; rewards: Rewards | null; acc: number; wpm: number } | null>(null);
+  const [overInfo, setOverInfo] = useState<{ won: boolean; rewards: Rewards | null; acc: number; wpm: number; ranked: boolean } | null>(null);
 
   // Refs are the source of truth for anything the key handler touches, so no
   // keystroke can be lost to a stale closure when two arrive before a re-render.
@@ -74,6 +104,7 @@ export default function DuelGame() {
   const phaseRef = useRef<typeof phase>('intro');
   const scoresRef = useRef({ you: 0, rival: 0 });
   const rivalWpmRef = useRef(rivalWpm);
+  const diffRef = useRef(diff);
   const strokes = useRef<GameStroke[]>([]);
   const startedAt = useRef(0);
   const roundDone = useRef(false);
@@ -82,6 +113,10 @@ export default function DuelGame() {
   const nextTimer = useRef(0);
 
   rivalWpmRef.current = rivalWpm;
+  // finishMatch runs off a timer inside a callback that does not list it as a
+  // dependency, so the pace it reports has to come from a ref or a match can be
+  // filed under whichever tier was selected two renders ago.
+  diffRef.current = diff;
   const setPhaseBoth = (p: typeof phase) => { phaseRef.current = p; setPhase(p); };
 
   const clearTimers = () => {
@@ -153,16 +188,23 @@ export default function DuelGame() {
   const finishMatch = (s: { you: number; rival: number }) => {
     clearTimers();
     const won = s.you > s.rival;
-    const result = resultFromStrokes('game', 'Quill Duel', strokes.current, startedAt.current, performance.now(), { game: 'duel', won, rounds: s.you + s.rival, difficulty: diff });
+    const pace = diffRef.current;
+    const ranked = pace === rankedId;
+    const result = resultFromStrokes('game', 'Quill Duel', strokes.current, startedAt.current, performance.now(), { game: 'duel', won, rounds: s.you + s.rival, difficulty: pace });
     const rewards = strokes.current.length > 10 ? recordSession(result) : null;
-    patch((d) => {
-      const cur = d.gameBests['duel'];
-      const score = s.you * 100 + Math.round(result.wpm);
-      if (!cur || score > cur.score) d.gameBests['duel'] = { score, level: s.you };
-    });
+    // The personal best tracks the ranked duel only. A Gentle sweep outscores a
+    // hard-won ranked match on the same formula, so letting practice set the
+    // best would leave a number the real duel can never touch.
+    if (ranked) {
+      patch((d) => {
+        const cur = d.gameBests['duel'];
+        const score = duelScore(s.you, result.wpm);
+        if (!cur || score > cur.score) d.gameBests['duel'] = { score, level: s.you };
+      });
+    }
     if (won) pushToast({ kind: 'record', icon: 'swords', title: 'Duel won!', body: `${s.you}–${s.rival} against ${rival.name}` });
     if (data?.settings.soundOn) (won ? snd.badge() : snd.done());
-    setOverInfo({ won, rewards, acc: result.acc, wpm: result.wpm });
+    setOverInfo({ won, rewards, acc: result.acc, wpm: result.wpm, ranked });
     setPhaseBoth('over');
   };
 
@@ -199,17 +241,98 @@ export default function DuelGame() {
   const myPct = (pos / Math.max(1, phrase.length)) * 100;
   const rivalPct = (Math.min(rivalPos, phrase.length) / Math.max(1, phrase.length)) * 100;
 
-  return (
-    <div className="train-page">
-      <div className="train-top">
-        <Btn kind="ghost" onClick={() => { clearTimers(); nav('/app/games'); }} ariaLabel="Exit game">←</Btn>
-        <h1><Ic n="swords" size={20} /> Quill Duel</h1>
-        <Chip tone="accent">Trains: burst speed under pressure</Chip>
-      </div>
+  if (phase === 'intro') {
+    return (
+      <ArenaIntro
+        game="duel"
+        title="First to four phrases wins"
+        onPlay={startMatch}
+        cta="Draw quills →"
+        stats={[
+          { label: 'Your pace', value: `${Math.round(basePace)} wpm` },
+          ...(data.gameBests['duel'] ? [{ label: 'Best ranked duel', value: data.gameBests['duel'].score }] : []),
+        ]}
+      >
+        <p>
+          One phrase per round, and the first to finish it takes the round. Only correct
+          letters move you, so a clean first strike beats a fast messy one.
+          Today's rival is <strong>{rival.name}</strong>.
+        </p>
 
-      <div className="game-frame">
-        {running && (
-          <div className="game-hud">
+        {/* One rival counts and the rest are practice, because a board that mixes
+            an 18 wpm rival with a 70 wpm one is not ranking the same contest. */}
+        <p className="pace-group-label"><Ic n="medal" size={13} /> The ranked duel</p>
+        <div className="duel-diffs duel-diffs-ranked" role="radiogroup" aria-label="The ranked duel">
+          <button
+            type="button"
+            className={`opt-tile duel-diff opt-tile-ranked ${isRanked ? 'on' : ''}`}
+            onClick={() => setDiff(rankedId)}
+            aria-pressed={isRanked}
+            title={rankedDiff.desc}
+          >
+            <span className="opt-ic"><Ic n={rankedDiff.icon} size={17} /></span>
+            <span>
+              <strong>{rankedDiff.name} · {rankedDiff.wpm} wpm</strong>
+              <small>This is the one that reaches the board</small>
+            </span>
+          </button>
+        </div>
+
+        <p className="pace-group-label"><Ic n="sliders" size={13} /> Practice, nothing posted</p>
+        <div className="duel-diffs" role="radiogroup" aria-label="Practice rival pace">
+          {practiceDiffs.map((d) => (
+            <button
+              key={d.id} type="button"
+              className={`opt-tile duel-diff ${diff === d.id ? 'on' : ''}`}
+              onClick={() => setDiff(d.id)}
+              aria-pressed={diff === d.id}
+              title={d.desc}
+            >
+              <span className="opt-ic"><Ic n={d.icon} size={17} /></span>
+              <span>
+                <strong>{d.name} · {paceOf(d.id)} wpm</strong>
+                <small>{d.desc}</small>
+              </span>
+            </button>
+          ))}
+        </div>
+      </ArenaIntro>
+    );
+  }
+
+  if (phase === 'over' && overInfo) {
+    return (
+      <ArenaResult
+        game="duel"
+        run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: scores.you }}
+        score={duelScore(scores.you, overInfo.wpm)}
+        ranked={overInfo.ranked}
+        practiceHint="Play the ranked duel when you want a place on the board."
+        title={overInfo.won ? `Victory, ${scores.you}–${scores.rival}!` : `${rival.name} wins ${scores.rival}–${scores.you}`}
+        newBest={overInfo.won}
+        onAgain={startMatch}
+      >
+        <RewardsBanner rewards={overInfo.rewards} />
+        <p className="small muted" style={{ maxWidth: 430 }}>
+          {overInfo.won
+            ? 'Sharp quill. Step up to a fiercer rival when that feels comfortable.'
+            : 'Duels reward a clean first strike. Try a gentler pace, then work up.'}
+        </p>
+        <Btn kind="soft" onClick={() => setPhaseBoth('intro')}>Change rival pace</Btn>
+      </ArenaResult>
+    );
+  }
+
+  return (
+    <>
+      {/* One column. The duel is you above, the rival below and the phrase
+          between them: that vertical is the whole picture, and putting the
+          lanes in a narrow side panel would flatten it. */}
+      <ArenaStage
+        game="duel"
+        quiet
+        hud={(
+          <>
             <span className="row gap"><Avatar v={data.profile.avatar} size={22} /> You</span>
             <span className="duel-pips" aria-label={`You ${scores.you}, ${rival.name} ${scores.rival}`}>
               {Array.from({ length: TARGET_WINS }).map((_, i) => <i key={`y${i}`} className={i < scores.you ? 'pip pip-you' : 'pip'} />)}
@@ -219,96 +342,43 @@ export default function DuelGame() {
             <span className="row gap"><BlockAvatar preset={rival.avatar} size={22} /> {rival.name}</span>
             <span className="grow" />
             <span>Round {round} · first to {TARGET_WINS}</span>
+          </>
+        )}
+        main={(
+          <div className="duel-arena">
+            {phase === 'ready' && <div className="race-countdown" style={{ fontSize: '2rem' }}>Round {round}…</div>}
+            {banner && phase !== 'ready' && <div className="race-countdown" style={{ fontSize: '2rem' }}>{banner}</div>}
+            <div className="duel-lane">
+              <Avatar v={data.profile.avatar} size={26} />
+              <div className="race-track">
+                <div className="race-trail" style={{ width: `${Math.max(2, myPct)}%` }} />
+                <span className="race-comet" style={{ left: `${Math.max(2, myPct)}%` }} aria-hidden><span className="comet-dot" /></span>
+              </div>
+              <span className="race-wpm">{Math.round(myPct)}%</span>
+            </div>
+            <div className="duel-phrase" aria-live="off">
+              <span className="good">{phrase.slice(0, pos)}</span>
+              <span className="duel-cur">{phrase[pos] === ' ' ? '␣' : phrase[pos] ?? ''}</span>
+              <span className="muted">{phrase.slice(pos + 1)}</span>
+            </div>
+            <div className="duel-lane duel-lane-rival">
+              <BlockAvatar preset={rival.avatar} size={26} />
+              <div className="duel-ghost">
+                <div className="duel-ghostline" aria-hidden>
+                  <span className="gl-done">{phrase.slice(0, Math.min(rivalPos, phrase.length))}</span>
+                  <span className={`gl-caret ${phase === 'live' ? 'gl-live' : ''}`} />
+                  <span className="gl-rest">{phrase.slice(Math.min(rivalPos, phrase.length))}</span>
+                </div>
+                <div className="race-track duel-ghost-track">
+                  <div className="race-trail duel-rival-trail" style={{ width: `${Math.max(2, rivalPct)}%` }} />
+                </div>
+              </div>
+              <span className="race-wpm">{Math.round(rivalPct)}%</span>
+            </div>
           </div>
         )}
-        <div className="game-board" style={{ minHeight: 380 }}>
-          {phase === 'intro' && (
-            <div className="game-over duel-intro">
-              <h2><Ic n="swords" size={22} /> First to four phrases wins</h2>
-              <p className="muted small" style={{ maxWidth: 470 }}>
-                One phrase per round, first to finish takes it. Only correct letters move you.
-                Today's rival is <strong>{rival.name}</strong>.
-              </p>
-              <div className="duel-diffs" role="radiogroup" aria-label="Rival difficulty">
-                {DIFFS.map((d) => (
-                  <button
-                    key={d.id} type="button"
-                    className={`opt-tile duel-diff ${diff === d.id ? 'on' : ''}`}
-                    onClick={() => setDiff(d.id)}
-                    aria-pressed={diff === d.id}
-                    title={d.desc}
-                  >
-                    <span className="opt-ic"><Ic n={d.icon} size={17} /></span>
-                    <span>
-                      <strong>{d.name} · {paceOf(d.id)} wpm</strong>
-                      <small>{d.desc}</small>
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <p className="small muted duel-meta">
-                your recent pace ~{Math.round(basePace)} wpm
-                {data.gameBests['duel'] && <> · <Ic n="trophy" size={12} /> best match {data.gameBests['duel'].score}</>}
-              </p>
-              <Btn big onClick={startMatch}>Draw quills →</Btn>
-            </div>
-          )}
-          {running && (
-            <div className="duel-arena">
-              {phase === 'ready' && <div className="race-countdown" style={{ fontSize: '2rem' }}>Round {round}…</div>}
-              {banner && phase !== 'ready' && <div className="race-countdown" style={{ fontSize: '2rem' }}>{banner}</div>}
-              <div className="duel-lane">
-                <Avatar v={data.profile.avatar} size={26} />
-                <div className="race-track">
-                  <div className="race-trail" style={{ width: `${Math.max(2, myPct)}%` }} />
-                  <span className="race-comet" style={{ left: `${Math.max(2, myPct)}%` }} aria-hidden><span className="comet-dot" /></span>
-                </div>
-                <span className="race-wpm">{Math.round(myPct)}%</span>
-              </div>
-              <div className="duel-phrase" aria-live="off">
-                <span className="good">{phrase.slice(0, pos)}</span>
-                <span className="duel-cur">{phrase[pos] === ' ' ? '␣' : phrase[pos] ?? ''}</span>
-                <span className="muted">{phrase.slice(pos + 1)}</span>
-              </div>
-              <div className="duel-lane duel-lane-rival">
-                <BlockAvatar preset={rival.avatar} size={26} />
-                <div className="duel-ghost">
-                  <div className="duel-ghostline" aria-hidden>
-                    <span className="gl-done">{phrase.slice(0, Math.min(rivalPos, phrase.length))}</span>
-                    <span className={`gl-caret ${phase === 'live' ? 'gl-live' : ''}`} />
-                    <span className="gl-rest">{phrase.slice(Math.min(rivalPos, phrase.length))}</span>
-                  </div>
-                  <div className="race-track duel-ghost-track">
-                    <div className="race-trail duel-rival-trail" style={{ width: `${Math.max(2, rivalPct)}%` }} />
-                  </div>
-                </div>
-                <span className="race-wpm">{Math.round(rivalPct)}%</span>
-              </div>
-            </div>
-          )}
-          {phase === 'over' && overInfo && (
-            <div className="game-over">
-              <Ic n={overInfo.won ? 'trophy' : 'heart'} size={48} />
-              <h2>{overInfo.won ? `Victory, ${scores.you}–${scores.rival}!` : `${rival.name} wins ${scores.rival}–${scores.you}`}</h2>
-              <div className="row gap wrap" style={{ justifyContent: 'center' }}>
-                <Stat v={overInfo.wpm} l="burst wpm" tone="accent" />
-                <Stat v={`${overInfo.acc}%`} l="accuracy" />
-                <Stat v={`${scores.you}–${scores.rival}`} l="rounds" />
-              </div>
-              <RewardsBanner rewards={overInfo.rewards} />
-              <p className="small muted" style={{ maxWidth: 430 }}>
-                {overInfo.won ? 'Sharp quill! Step up to a fiercer rival when that feels comfortable.' : 'Duels reward a clean first strike. Try the Friendly pace, then work up.'}
-              </p>
-              <div className="row gap wrap" style={{ justifyContent: 'center' }}>
-                <Btn onClick={startMatch}>↻ Rematch</Btn>
-                <Btn kind="soft" onClick={() => setPhaseBoth('intro')}>Change rival pace</Btn>
-                <Btn kind="ghost" to="/app/games">All games</Btn>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      />
       <MobileKeys active={running} />
-    </div>
+    </>
   );
 }

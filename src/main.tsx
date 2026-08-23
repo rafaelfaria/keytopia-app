@@ -13,7 +13,9 @@ import './styles/gameart.css';
 import './styles/public.css';
 import './styles/mock.css';
 import './styles/classroom.css';
+import './styles/arena.css';
 import { AppShell, ThemeSync } from './components/Shell';
+import { Boundary } from './components/Boundary';
 import Landing from './pages/Landing';
 import Onboarding from './pages/Onboarding';
 import ProfilePicker from './pages/ProfilePicker';
@@ -24,14 +26,23 @@ import PracticeHub from './pages/PracticeHub';
 import TrainSession from './pages/TrainSession';
 import Games from './pages/Games';
 import WordfallGame from './pages/WordfallGame';
+import LetterFallGame from './pages/LetterFallGame';
+import KeySafariGame from './pages/KeySafariGame';
+import RocketGame from './pages/RocketGame';
+import PaintRevealGame from './pages/PaintRevealGame';
+import FirstLetterGame from './pages/FirstLetterGame';
+import WordBridgeGame from './pages/WordBridgeGame';
 import KeyforgeGame from './pages/KeyforgeGame';
 import WordflightGame from './pages/WordflightGame';
 import DuelGame from './pages/DuelGame';
+import TideLineGame from './pages/TideLineGame';
+import PearlDiveGame from './pages/PearlDiveGame';
 import CipherGame from './pages/CipherGame';
 import StackGame from './pages/StackGame';
 import SurvivorGame from './pages/SurvivorGame';
 import RaceHub from './pages/RaceHub';
 import RaceLive from './pages/RaceLive';
+import GuestRoom from './pages/GuestRoom';
 import Challenge from './pages/Challenge';
 import ProgressHub from './pages/ProgressHub';
 import BadgesPage from './pages/BadgesPage';
@@ -49,6 +60,8 @@ import { AuthCallback, RequireAccount } from './components/Account';
 import SignIn from './pages/SignIn';
 import CreateProfile from './pages/CreateProfile';
 import JoinClass from './pages/JoinClass';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
+import { GtagLoader } from './components/analytics/GtagLoader';
 import { startSync } from './lib/syncEngine';
 import { startClassroomWatch } from './lib/classroom';
 
@@ -74,24 +87,22 @@ function ScrollToTop() {
   return null;
 }
 
-class Boundary extends React.Component<{ children: React.ReactNode }, { err: Error | null }> {
-  state = { err: null as Error | null };
-  static getDerivedStateFromError(err: Error) { return { err }; }
-  render() {
-    if (this.state.err) {
-      return (
-        <div style={{ padding: 40, fontFamily: 'sans-serif' }}>
-          <h1>Something went off the map</h1>
-          <p>{String(this.state.err)}</p>
-          <button onClick={() => { this.setState({ err: null }); location.href = '/'; }}>Back to safety</button>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
+/**
+ * One React root per container, for the life of the page.
+ *
+ * This file exports things that are not components, so Fast Refresh cannot
+ * patch it and Vite re-executes the whole module instead. `createRoot` at
+ * module scope therefore ran again on every edit, mounting a SECOND copy of the
+ * entire app into the same element — React says so in the console — and the
+ * first copy never unmounted. It kept its timers: a countdown that had already
+ * been left behind carried on beeping from a screen that was no longer on
+ * screen, and every interval in it went on running for the rest of the session.
+ *
+ * Caching the root on the element makes a re-execution a re-render instead.
+ */
+const container = document.getElementById('root')! as HTMLElement & { __ktRoot?: ReactDOM.Root };
+container.__ktRoot ??= ReactDOM.createRoot(container);
+container.__ktRoot.render(
   <Boundary>
     <BrowserRouter>
       <ThemeSync />
@@ -117,6 +128,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/typing-glossary" element={<GlossaryPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+
+        {/* A private race room, for somebody who does not have KeyTopia.
+            A room is a Realtime channel and owns no data, so a guest needs no
+            account to stand in one — see src/pages/GuestRoom.tsx. Signed-in
+            visitors are forwarded to /app/race/room/:code by the page itself.
+            Not prerendered and not in the sitemap: the address is one specific
+            room, alive for as long as somebody is standing in it. */}
+        <Route path="/race/room/:code" element={<GuestRoom />} />
 
         {/* --- the account boundary -------------------------------------
             Everything above this line is open to anyone and prerendered for
@@ -145,14 +164,25 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="games" element={<Games />} />
           <Route path="arena" element={<Games />} />
           <Route path="games/wordfall" element={<WordfallGame />} />
+          <Route path="games/letterfall" element={<LetterFallGame />} />
+          <Route path="games/keysafari" element={<KeySafariGame />} />
+          <Route path="games/rocket" element={<RocketGame />} />
+          <Route path="games/paint" element={<PaintRevealGame />} />
+          <Route path="games/firstletter" element={<FirstLetterGame />} />
+          <Route path="games/bridge" element={<WordBridgeGame />} />
           <Route path="games/keyforge" element={<KeyforgeGame />} />
           <Route path="games/wordflight" element={<WordflightGame />} />
           <Route path="games/duel" element={<DuelGame />} />
+          <Route path="games/tideline" element={<TideLineGame />} />
+          <Route path="games/pearl" element={<PearlDiveGame />} />
           <Route path="games/cipher" element={<CipherGame />} />
           <Route path="games/stack" element={<StackGame />} />
           <Route path="games/survivor" element={<SurvivorGame />} />
           <Route path="race" element={<RaceHub />} />
           <Route path="race/live" element={<RaceLive />} />
+          {/* A room is an address, so it can be sent to a friend. Same hub, with
+              the lobby dialog open over it. */}
+          <Route path="race/room/:code" element={<RaceHub />} />
           <Route path="challenge" element={<Challenge />} />
           <Route path="progress" element={<ProgressHub />} />
           <Route path="badges" element={<BadgesPage />} />
@@ -163,6 +193,16 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      {/* Two measurements, deliberately. GA4 runs in Consent Mode with storage
+          denied, which keeps the privacy page's "no analytics cookies" true but
+          leaves it unable to tell one visitor from another: every page view
+          looks like a new person. Vercel identifies a visitor by a hash of IP,
+          user agent and a salt that rotates daily and is then thrown away, so
+          the visitor and bounce numbers are real without anything being stored
+          on the device. GA keeps the event stream; Vercel counts the people. */}
+      <GtagLoader />
+      <VercelAnalytics />
     </BrowserRouter>
   </Boundary>,
 );
@@ -177,3 +217,6 @@ setTimeout(startSync, 0);
 // pushes finished daily-challenge runs to class boards in the background, so no
 // classroom code sits on the typing path (docs/classrooms-plan.md §2.5).
 setTimeout(startClassroomWatch, 0);
+
+
+

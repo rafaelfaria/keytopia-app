@@ -9,16 +9,23 @@ import { Btn, Chip } from '../components/ui';
 import { PauseModal, ResultsPanel } from '../components/ResultsPanel';
 import { sessionInsight, nextAction, encouragement } from '../lib/coach';
 import type { Rewards, SessionResult } from '../lib/types';
-import { snd, speak, stopSpeak } from '../lib/sound';
+import { snd } from '../lib/sound';
 import { Ic } from '../components/icons';
 
 export default function LessonPlayer() {
   const { id } = useParams();
+  // Walking to the next stop keeps the same route, so without a key the run
+  // state (step, parts, results screen) would follow us into the new lesson.
+  return <LessonRun key={id ?? ''} id={id} />;
+}
+
+function LessonRun({ id }: { id?: string }) {
   const nav = useNavigate();
   const data = useData();
   const recordSession = useStore((s) => s.recordSession);
   const patch = useStore((s) => s.patch);
   const celebrate = useUi((s) => s.celebrate);
+  const cheerOnMap = useUi((s) => s.cheerOnMap);
   const pushToast = useUi((s) => s.pushToast);
 
   const lesson = data && id ? lessonById(data.profile.layout, id) : undefined;
@@ -69,12 +76,22 @@ export default function LessonPlayer() {
             }
           });
           if (data.settings.soundOn) (stars >= 3 ? snd.badge() : snd.done());
+          /**
+           * Hand the news to the island, which is where the child is heading
+           * and where finishing a spot is worth seeing rather than reading.
+           *
+           * Only when the spot actually went in. A run that earned no stars
+           * leaves the map exactly as it was, and confetti over a node that did
+           * not change is the map lying to a child about what they just did.
+           */
+          if (stars >= 1) cheerOnMap({ lessonId: lesson.id, worldId: world.id, stars, complete: false, t: Date.now() });
           // World completion beats every other celebration — the plan's "finish the finish"
           const after = activeData();
           const nowComplete = after ? worldProgress(after, world.id).complete : false;
           const kid = data.profile.ageGroup === 'kid' && data.settings.kidWorld !== false;
           const wd = worldDef(world.id);
           if (!wasComplete && nowComplete) {
+            cheerOnMap({ lessonId: lesson.id, worldId: world.id, stars, complete: true, t: Date.now() });
             celebrate({
               kind: 'level',
               icon: kid ? 'rocket' : 'flag',
@@ -92,18 +109,6 @@ export default function LessonPlayer() {
   );
 
   useEffect(() => { session.focus(); }, [stepIdx, seed]);
-  useEffect(() => () => stopSpeak(), []);
-
-  // Speak target letters for accessibility / kids
-  const posRef = useRef(-1);
-  useEffect(() => {
-    if (!data?.settings.speakTargets || !step) return;
-    const ch = session.engine.text[session.engine.pos];
-    if (session.engine.pos !== posRef.current && ch && ch !== ' ') {
-      posRef.current = session.engine.pos;
-      speak(ch === '\n' ? 'enter' : ch, 1.2);
-    }
-  });
 
   if (!data || !lesson || !plan) {
     return <div className="empty"><div className="empty-icon">🧭</div><h3>Lesson not found</h3><p>This trail doesn't exist on your map.</p><Btn to="/app">Back to the map</Btn></div>;

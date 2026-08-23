@@ -17,21 +17,17 @@ export interface StopVM {
   unlocked: boolean;
 }
 
-export const ISLAND =
-  'M 45,392 C 34,332 78,286 138,272 C 205,257 268,264 335,250 C 402,236 455,238 520,228 ' +
-  'C 585,218 640,220 700,202 C 755,186 800,172 842,148 C 872,130 892,96 926,90 ' +
-  'C 958,86 972,132 968,196 C 982,276 968,338 938,384 C 898,428 802,442 700,440 ' +
-  'C 560,450 420,448 300,441 C 185,436 66,438 45,392 Z';
-
-/** Ten hand-placed positions from beach to summit; roads use an even subset. */
-const MASTER_NODES: [number, number][] = [
-  [90, 372], [210, 320], [330, 368], [450, 300], [565, 345],
-  [665, 268], [775, 305], [850, 225], [895, 165], [935, 118],
-];
-
-export function pickNodes(n: number): [number, number][] {
-  if (n <= 1) return [MASTER_NODES[9]];
-  return Array.from({ length: n }, (_, i) => MASTER_NODES[Math.round((i * 9) / (n - 1))]);
+/**
+ * The stops for one island, chosen from its own ten hand-placed positions.
+ *
+ * Every world brings its own set (src/lib/worlds.ts). The route across the land
+ * is as much a part of an island's identity as its colour, and sharing one set
+ * of positions across five worlds is what made them feel like one island
+ * repainted five times.
+ */
+export function pickNodes(master: [number, number][], n: number): [number, number][] {
+  if (n <= 1) return [master[master.length - 1]];
+  return Array.from({ length: n }, (_, i) => master[Math.round((i * (master.length - 1)) / (n - 1))]);
 }
 
 export const curveThrough = (pts: [number, number][]) =>
@@ -84,6 +80,87 @@ const Lantern = ({ x, y, delay = 0 }: { x: number; y: number; delay?: number }) 
   </g>
 );
 
+/**
+ * The living props.
+ *
+ * Scenery a child can name beats scenery they can only look at. Every island
+ * gets creatures of its own, each on a loop slow enough to be noticed rather
+ * than watched, and all of them decorative: nothing here is clickable and
+ * nothing here is progress.
+ */
+const Butterfly = ({ x, y, c = '#f59cd8', d = 0 }: { x: number; y: number; c?: string; d?: number }) => (
+  <g transform={`translate(${x} ${y})`} className="kwm-flutter" style={{ animationDelay: `${d}s` }}>
+    <ellipse cx="-4" cy="0" rx="4.5" ry="6" fill={c} className="kwm-wingl" />
+    <ellipse cx="4" cy="0" rx="4.5" ry="6" fill={c} className="kwm-wingr" />
+    <rect x="-0.8" y="-4" width="1.6" height="9" rx="0.8" fill="#4a3f52" />
+  </g>
+);
+
+const Rabbit = ({ x, y, d = 0 }: { x: number; y: number; d?: number }) => (
+  <g transform={`translate(${x} ${y})`} className="kwm-hop" style={{ animationDelay: `${d}s` }}>
+    <ellipse cx="0" cy="0" rx="8" ry="6" fill="#fff6e8" />
+    <circle cx="7" cy="-5" r="4.5" fill="#fff6e8" />
+    <ellipse cx="6" cy="-11" rx="1.8" ry="5" fill="#fff6e8" />
+    <ellipse cx="9.5" cy="-11" rx="1.8" ry="5" fill="#ffd8e2" />
+    <circle cx="9" cy="-5" r="1" fill="#4a3f52" />
+    <circle cx="-8" cy="0" r="3" fill="#fff" />
+  </g>
+);
+
+const Toucan = ({ x, y, d = 0 }: { x: number; y: number; d?: number }) => (
+  <g transform={`translate(${x} ${y})`} className="kwm-perch" style={{ animationDelay: `${d}s` }}>
+    <ellipse cx="0" cy="0" rx="7" ry="9" fill="#2f2b3a" />
+    <circle cx="2" cy="-8" r="5.5" fill="#2f2b3a" />
+    <path d="M6,-10 L20,-7 L6,-4 Z" fill="#ffb26b" />
+    <circle cx="3" cy="-10" r="1.2" fill="#fff" />
+    <path d="M-6,4 q6 6 12 2" fill="#ffd166" />
+  </g>
+);
+
+const Seagull = ({ x, y, s = 1, d = 0 }: { x: number; y: number; s?: number; d?: number }) => (
+  <g transform={`translate(${x} ${y}) scale(${s})`} className="kwm-gull" style={{ animationDelay: `${d}s` }}>
+    <path d="M-10,0 Q-5,-7 0,-1 Q5,-7 10,0" fill="none" stroke="#fffdf6" strokeWidth="3" strokeLinecap="round" />
+  </g>
+);
+
+const Whale = ({ x, y }: { x: number; y: number }) => (
+  <g transform={`translate(${x} ${y})`} aria-hidden>
+    <path d="M-26,0 Q-10,-13 8,-6 Q24,-2 30,4 Q10,12 -12,8 Z" fill="#6f93c9" />
+    <path d="M28,2 L40,-6 L38,8 Z" fill="#5b7cb0" />
+    <circle cx="-8" cy="-4" r="1.6" fill="#fffdf6" />
+    <g className="kwm-spout">
+      <ellipse cx="-14" cy="-16" rx="3" ry="7" fill="#fffdf6" opacity="0.85" />
+      <circle cx="-14" cy="-24" r="3" fill="#fffdf6" opacity="0.7" />
+    </g>
+  </g>
+);
+
+const Bat = ({ x, y, s = 1, d = 0 }: { x: number; y: number; s?: number; d?: number }) => (
+  <g transform={`translate(${x} ${y}) scale(${s})`} className="kwm-bat" style={{ animationDelay: `${d}s` }}>
+    <path d="M-14,0 q6,-8 8,0 q3,-4 6,0 q2,-8 8,0 q-8,6 -11,2 q-3,4 -11,-2 Z" fill="#3b3358" />
+    <circle cx="0" cy="-1" r="2.4" fill="#3b3358" />
+    <circle cx="-1" cy="-1.5" r="0.7" fill="#ffe9a8" />
+    <circle cx="1.4" cy="-1.5" r="0.7" fill="#ffe9a8" />
+  </g>
+);
+
+const Balloon = ({ x, y, c = '#ff8fa3', d = 0 }: { x: number; y: number; c?: string; d?: number }) => (
+  <g transform={`translate(${x} ${y})`} className="kwm-balloon" style={{ animationDelay: `${d}s` }}>
+    <path d="M0,-26 C14,-26 20,-14 14,-2 L-14,-2 C-20,-14 -14,-26 0,-26 Z" fill={c} />
+    <path d="M0,-26 C6,-26 8,-14 5,-2 L-5,-2 C-8,-14 -6,-26 0,-26 Z" fill="#fffdf6" opacity="0.35" />
+    <path d="M-8,-2 L-4,7 M8,-2 L4,7" stroke="#8a6a4a" strokeWidth="1.4" />
+    <rect x="-5" y="6" width="10" height="7" rx="2" fill="#c9a76a" stroke="#a5814a" strokeWidth="1.2" />
+  </g>
+);
+
+const Waterfall = ({ x, y, h = 40 }: { x: number; y: number; h?: number }) => (
+  <g transform={`translate(${x} ${y})`}>
+    <rect x="-7" y="0" width="14" height={h} rx="6" fill="#bfe8f7" opacity="0.9" />
+    <rect x="-3" y="2" width="3" height={h - 6} rx="1.5" fill="#fffdf6" opacity="0.8" className="kwm-falls" />
+    <ellipse cx="0" cy={h} rx="15" ry="5" fill="#bfe8f7" opacity="0.85" />
+  </g>
+);
+
 const Boat = ({ x, y, s = 1 }: { x: number; y: number; s?: number }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     <path d="M-13,0 Q0,10 13,0 Z" fill="#d97b4f" />
@@ -94,11 +171,12 @@ const Boat = ({ x, y, s = 1 }: { x: number; y: number; s?: number }) => (
 
 // ---------- landmarks: the finale of each island ----------
 
-function Landmark({ kind }: { kind: IslandSkin['decor'] }) {
+function Landmark({ kind, at }: { kind: IslandSkin['decor']; at: [number, number] }) {
+  const at0 = `translate(${at[0]} ${at[1]})`;
   switch (kind) {
     case 'meadow': // The Great Oak
       return (
-        <g transform="translate(933 84)">
+        <g transform={at0}>
           <rect x="-6" y="14" width="12" height="24" rx="4" fill="#8a5a33" />
           <circle cx="-16" cy="8" r="15" fill="#4fae62" />
           <circle cx="16" cy="8" r="15" fill="#6cc77d" />
@@ -109,7 +187,7 @@ function Landmark({ kind }: { kind: IslandSkin['decor'] }) {
       );
     case 'forest': // The Canopy Bridge
       return (
-        <g transform="translate(930 88)">
+        <g transform={at0}>
           <rect x="-34" y="6" width="8" height="34" rx="3" fill="#7a5b3a" />
           <rect x="26" y="6" width="8" height="34" rx="3" fill="#7a5b3a" />
           <path d="M-30,12 Q0,28 30,12" fill="none" stroke="#c9a76a" strokeWidth="5" strokeLinecap="round" />
@@ -120,7 +198,7 @@ function Landmark({ kind }: { kind: IslandSkin['decor'] }) {
       );
     case 'harbor': // The Lighthouse
       return (
-        <g transform="translate(933 82)">
+        <g transform={at0}>
           <path d="M-10,44 L-6,0 L6,0 L10,44 Z" fill="#f2f2f2" stroke="#d0c4b0" strokeWidth="1.5" />
           <path d="M-9,32 L9,32 L10,40 L-10,40 Z" fill="#e0526f" />
           <path d="M-8,12 L8,12 L8.8,20 L-8.8,20 Z" fill="#e0526f" />
@@ -131,7 +209,7 @@ function Landmark({ kind }: { kind: IslandSkin['decor'] }) {
       );
     case 'cavern': // The Geode Gate
       return (
-        <g transform="translate(933 86)">
+        <g transform={at0}>
           <path d="M-24,40 Q-24,-8 0,-14 Q24,-8 24,40 L14,40 Q14,0 0,-2 Q-14,0 -14,40 Z" fill="#5d5484" stroke="#7a70a8" strokeWidth="2" />
           <Crystal x={-20} y={-2} s={0.8} c="#c9a6ff" />
           <Crystal x={20} y={-2} s={0.8} c="#9be8ff" />
@@ -140,7 +218,7 @@ function Landmark({ kind }: { kind: IslandSkin['decor'] }) {
       );
     case 'sky': // The Cloud Castle
       return (
-        <g transform="translate(930 80)">
+        <g transform={at0}>
           <rect x="-26" y="-2" width="52" height="32" rx="3" fill="#f3eef9" stroke="#c9b8e6" strokeWidth="2" />
           <rect x="-33" y="-16" width="15" height="48" rx="3" fill="#faf6ff" stroke="#c9b8e6" strokeWidth="2" />
           <rect x="18" y="-16" width="15" height="48" rx="3" fill="#faf6ff" stroke="#c9b8e6" strokeWidth="2" />
@@ -157,70 +235,83 @@ function Landmark({ kind }: { kind: IslandSkin['decor'] }) {
 // ---------- per-terrain scenery ----------
 
 function Scenery({ kind }: { kind: IslandSkin['decor'] }) {
+  /**
+   * Every prop here is placed against its own island's outline (worlds.ts), not
+   * against a shared one. When the five islands were one silhouette repainted,
+   * one set of coordinates worked everywhere; now trees have to stand on the
+   * land they belong to, and a tree in the sea is the tell that they did not.
+   */
   if (kind === 'forest') {
+    // Treetop Isle: a round hill under a canopy, climbed in switchbacks.
     return (
       <g aria-hidden>
-        <Tree x={140} y={300} s={1.1} c="#3f8a4f" cl="#54a463" cd="#357844" />
-        <Tree x={250} y={260} s={0.9} c="#3f8a4f" cl="#54a463" cd="#357844" />
-        <Tree x={315} y={412} c="#468f55" cl="#5aa869" cd="#3a7d49" />
-        <Tree x={430} y={246} s={0.85} c="#3f8a4f" cl="#54a463" cd="#357844" />
-        <Tree x={520} y={400} s={1.1} c="#468f55" cl="#5aa869" cd="#3a7d49" />
-        <Tree x={620} y={390} s={0.8} c="#3f8a4f" cl="#54a463" cd="#357844" />
-        <Tree x={748} y={378} s={1.05} c="#468f55" cl="#5aa869" cd="#3a7d49" />
-        <Tree x={95} y={300} s={0.7} c="#3f8a4f" cl="#54a463" cd="#357844" />
-        <g transform="translate(368 320)">
-          <rect x="-3" y="0" width="6" height="7" rx="2" fill="#fff3dd" />
-          <path d="M-8,1 Q0,-10 8,1 Z" fill="#c9724f" />
-          <circle cx="-3" cy="-3" r="1.5" fill="#fff" />
-        </g>
-        <g transform="translate(590 300)">
-          <rect x="-3" y="0" width="6" height="7" rx="2" fill="#fff3dd" />
-          <path d="M-8,1 Q0,-10 8,1 Z" fill="#a05ac9" />
-          <circle cx="2" cy="-3" r="1.5" fill="#fff" />
-        </g>
-        {[[200, 350], [480, 330], [700, 340], [830, 290]].map(([x, y], i) => (
+        <Tree x={220} y={392} s={1.15} c="#3f8a4f" cl="#54a463" cd="#357844" />
+        <Tree x={300} y={410} s={0.9} c="#468f55" cl="#5aa869" cd="#3a7d49" />
+        <Tree x={640} y={404} s={1.05} c="#3f8a4f" cl="#54a463" cd="#357844" />
+        <Tree x={718} y={382} s={0.85} c="#468f55" cl="#5aa869" cd="#3a7d49" />
+        <Tree x={214} y={330} s={0.8} c="#3f8a4f" cl="#54a463" cd="#357844" />
+        <Tree x={742} y={330} s={0.75} c="#468f55" cl="#5aa869" cd="#3a7d49" />
+        <Tree x={330} y={232} s={0.7} c="#357844" cl="#4a9a58" cd="#2e6b3c" />
+        <Tree x={606} y={218} s={0.7} c="#357844" cl="#4a9a58" cd="#2e6b3c" />
+        <Waterfall x={760} y={286} h={54} />
+        <Toucan x={286} y={272} />
+        <Toucan x={676} y={286} d={1.6} />
+        <Butterfly x={420} y={352} c="#ffd166" d={0.4} />
+        <Butterfly x={556} y={342} c="#c99cf5" d={1.5} />
+        {[[300, 350], [520, 330], [620, 344], [400, 250]].map(([x, y], i) => (
           <circle key={i} cx={x} cy={y} r="3" fill="#ffe9a8" className="kwm-firefly" style={{ animationDelay: `${i * 0.9}s` }} />
         ))}
       </g>
     );
   }
   if (kind === 'harbor') {
+    // Lantern Harbor: the bay is the notch bitten out of the top of the island.
     return (
       <g aria-hidden>
-        <circle cx="880" cy="52" r="20" fill="#ffb26b" opacity="0.9" />
-        <Boat x={70} y={410} s={1.2} />
-        <Boat x={200} y={430} s={0.9} />
+        <Boat x={446} y={286} s={1.2} />
+        <Boat x={520} y={262} s={0.85} />
+        <Seagull x={300} y={120} s={1.1} />
+        <Seagull x={470} y={92} s={0.8} d={2.2} />
+        <Seagull x={640} y={132} s={0.9} d={4} />
+        <Whale x={140} y={452} />
         <g>
-          <rect x="290" y="360" width="7" height="26" rx="2" fill="#8a6a4a" />
-          <rect x="470" y="330" width="7" height="26" rx="2" fill="#8a6a4a" />
-          <path d="M 294,362 Q 384,392 474,332" fill="none" stroke="#8a6a4a" strokeWidth="2" />
-          <Lantern x={330} y={374} delay={0} />
-          <Lantern x={384} y={384} delay={0.5} />
-          <Lantern x={438} y={358} delay={1} />
+          <rect x="250" y="316" width="7" height="26" rx="2" fill="#8a6a4a" />
+          <rect x="330" y="330" width="7" height="26" rx="2" fill="#8a6a4a" />
+          <path d="M 254,318 Q 296,300 334,332" fill="none" stroke="#8a6a4a" strokeWidth="2" />
+          <Lantern x={272} y={310} delay={0} />
+          <Lantern x={300} y={302} delay={0.5} />
+          <Lantern x={326} y={314} delay={1} />
         </g>
-        <g transform="translate(600 396)">
+        <g transform="translate(660 372)">
           <rect x="-10" y="-10" width="20" height="20" rx="2" fill="#c9a76a" stroke="#a5814a" strokeWidth="1.5" />
           <rect x="12" y="-6" width="16" height="16" rx="2" fill="#d9b988" stroke="#a5814a" strokeWidth="1.5" />
         </g>
-        <Tree x={730} y={380} s={0.9} c="#7dbf6a" cl="#92cf7d" cd="#68a857" />
-        <Flower x={160} y={330} c="#ff8fa3" />
-        <Flower x={540} y={280} c="#ffd166" />
+        <Tree x={170} y={300} s={0.9} c="#7dbf6a" cl="#92cf7d" cd="#68a857" />
+        <Tree x={780} y={356} s={0.85} c="#7dbf6a" cl="#92cf7d" cd="#68a857" />
+        <Flower x={240} y={380} c="#ff8fa3" />
+        <Flower x={600} y={420} c="#ffd166" />
+        <Rabbit x={330} y={404} d={1.2} />
       </g>
     );
   }
   if (kind === 'cavern') {
+    // Crystal Caverns: stalactites overhead, crystals along the shard's peaks.
     return (
       <g aria-hidden>
         {[[120, 0], [310, 0], [520, 0], [760, 0], [930, 0]].map(([x], i) => (
           <polygon key={i} points={`${x},0 ${x + 26},0 ${x + 13},${34 + (i % 3) * 14}`} fill="#3d3760" />
         ))}
-        <Crystal x={150} y={330} c="#9be8ff" />
-        <Crystal x={260} y={280} s={0.7} c="#c9a6ff" />
-        <Crystal x={420} y={340} s={1.2} c="#ffb9e8" />
-        <Crystal x={560} y={280} s={0.8} c="#9be8ff" />
-        <Crystal x={700} y={350} c="#c9a6ff" />
-        <Crystal x={820} y={280} s={0.7} c="#9be8ff" />
-        {[[220, 320], [500, 300], [740, 320], [870, 250]].map(([x, y], i) => (
+        <Crystal x={160} y={368} c="#9be8ff" />
+        <Crystal x={266} y={320} s={0.7} c="#c9a6ff" />
+        <Crystal x={352} y={300} s={1.2} c="#ffb9e8" />
+        <Crystal x={520} y={252} s={0.85} c="#9be8ff" />
+        <Crystal x={636} y={238} c="#c9a6ff" />
+        <Crystal x={800} y={244} s={0.75} c="#9be8ff" />
+        <Crystal x={886} y={296} s={0.9} c="#ffb9e8" />
+        <Bat x={230} y={140} s={1.1} />
+        <Bat x={560} y={110} s={0.85} d={2.4} />
+        <Bat x={790} y={150} s={0.95} d={4.2} />
+        {[[240, 348], [470, 300], [700, 300], [860, 330]].map(([x, y], i) => (
           <circle key={`g${i}`} cx={x} cy={y} r="2.5" fill="#b9f2ff" className="kwm-firefly" style={{ animationDelay: `${i * 1.1}s` }} />
         ))}
         <g transform="translate(80 60)">
@@ -232,25 +323,27 @@ function Scenery({ kind }: { kind: IslandSkin['decor'] }) {
     );
   }
   if (kind === 'sky') {
+    // Cloud Castle: nothing stands on the sea here, only on the four platforms.
     return (
       <g aria-hidden>
         <path d="M 120,180 A 320,320 0 0 1 700,120" fill="none" strokeWidth="10" stroke="#ff8fa3" opacity="0.5" />
         <path d="M 126,192 A 316,316 0 0 1 694,132" fill="none" strokeWidth="10" stroke="#ffd166" opacity="0.5" />
         <path d="M 132,204 A 312,312 0 0 1 688,144" fill="none" strokeWidth="10" stroke="#7dd8a0" opacity="0.5" />
-        <ellipse cx="180" cy="430" rx="90" ry="20" fill="#ffffff" opacity="0.9" />
-        <ellipse cx="520" cy="446" rx="120" ry="22" fill="#ffffff" opacity="0.85" />
-        <ellipse cx="840" cy="426" rx="80" ry="18" fill="#ffffff" opacity="0.9" />
-        <Tree x={200} y={330} s={0.9} c="#7dd8a0" cl="#95e2b2" cd="#66c489" />
-        <Tree x={620} y={380} s={0.8} c="#7dd8a0" cl="#95e2b2" cd="#66c489" />
-        <Flower x={340} y={330} c="#ff8fa3" />
-        <Flower x={500} y={300} c="#c99cf5" />
-        <Flower x={720} y={330} c="#ffd166" />
+        <Tree x={166} y={342} s={0.75} c="#7dd8a0" cl="#95e2b2" cd="#66c489" />
+        <Tree x={470} y={300} s={0.7} c="#7dd8a0" cl="#95e2b2" cd="#66c489" />
+        <Tree x={700} y={252} s={0.65} c="#7dd8a0" cl="#95e2b2" cd="#66c489" />
+        <Flower x={236} y={356} c="#ff8fa3" />
+        <Flower x={396} y={318} c="#c99cf5" />
+        <Flower x={620} y={276} c="#ffd166" />
+        <Balloon x={250} y={140} c="#ff8fa3" />
+        <Balloon x={620} y={110} c="#5fc9e0" d={5} />
+        <Butterfly x={380} y={250} c="#ffd166" d={0.8} />
         <g className="kwm-bird" transform="translate(300 120)"><path d="M-8,0 Q-4,-6 0,0 Q4,-6 8,0" fill="none" stroke="#5c7a99" strokeWidth="2.5" strokeLinecap="round" /></g>
         <g className="kwm-bird" style={{ animationDelay: '1.4s' }} transform="translate(560 90)"><path d="M-8,0 Q-4,-6 0,0 Q4,-6 8,0" fill="none" stroke="#5c7a99" strokeWidth="2.5" strokeLinecap="round" /></g>
       </g>
     );
   }
-  // meadow — the original island's scenery
+  // Meadow Isle: the long low beach every explorer starts on.
   return (
     <g aria-hidden>
       <ellipse cx="540" cy="404" rx="52" ry="16" fill="#8fd0f0" stroke="#6db6dd" strokeWidth="2.5" />
@@ -272,6 +365,10 @@ function Scenery({ kind }: { kind: IslandSkin['decor'] }) {
       <Flower x={560} y={262} c="#c99cf5" />
       <Flower x={838} y={368} c="#ff8fa3" />
       <Flower x={128} y={336} c="#5fc9e0" />
+      <Butterfly x={250} y={352} c="#f59cd8" />
+      <Butterfly x={470} y={330} c="#ffd166" d={1.8} />
+      <Rabbit x={620} y={330} />
+      <Rabbit x={880} y={330} d={2.6} />
       <g transform="translate(368 320)">
         <rect x="-3" y="0" width="6" height="7" rx="2" fill="#fff3dd" />
         <path d="M-8,1 Q0,-10 8,1 Z" fill="#ff6b6b" />
@@ -284,24 +381,82 @@ function Scenery({ kind }: { kind: IslandSkin['decor'] }) {
   );
 }
 
+/**
+ * The arrival party.
+ *
+ * A child finishes a lesson, presses "My World", and lands on a map where the
+ * only thing that changed is that one circle is now filled in. They were
+ * excited on the way here; the map should be too. So the spot they just
+ * finished throws confetti, pops its stars in one at a time, and puts a ribbon
+ * over itself for a few seconds.
+ *
+ * Everything is drawn in the island's own SVG at the node's coordinates, so it
+ * lands exactly where the thing it is celebrating is, and it clears itself.
+ */
+const CHEER_COLORS = ['#ff8fa3', '#ffd166', '#7dd8a0', '#5fc9e0', '#c99cf5', '#ffb26b'];
+
+function Cheer({ stars, complete }: { stars: number; complete: boolean }) {
+  const bits = complete ? 26 : 16;
+  return (
+    <g className="kwm-cheer" aria-hidden>
+      <circle r="6" className="kwm-cheer-ring" />
+      {Array.from({ length: bits }).map((_, i) => {
+        const a = (i / bits) * Math.PI * 2 + (i % 2 ? 0.3 : 0);
+        const dist = 54 + (i % 4) * 16;
+        return (
+          <rect
+            key={i}
+            x={-3} y={-5} width={6} height={10} rx={1.6}
+            fill={CHEER_COLORS[i % CHEER_COLORS.length]}
+            className="kwm-confetti"
+            style={{
+              ['--dx' as string]: `${(Math.cos(a) * dist).toFixed(1)}px`,
+              ['--dy' as string]: `${(Math.sin(a) * dist - 18).toFixed(1)}px`,
+              ['--spin' as string]: `${(i % 2 ? 1 : -1) * (180 + i * 24)}deg`,
+              animationDelay: `${(i % 5) * 0.045}s`,
+            }}
+          />
+        );
+      })}
+      {Array.from({ length: Math.max(1, Math.min(3, stars)) }).map((_, i) => (
+        <text
+          key={`s${i}`}
+          x={(i - (Math.max(1, Math.min(3, stars)) - 1) / 2) * 26}
+          y={-46}
+          textAnchor="middle"
+          className="kwm-cheer-star"
+          style={{ animationDelay: `${0.15 + i * 0.16}s` }}
+        >
+          ★
+        </text>
+      ))}
+    </g>
+  );
+}
+
 // ---------- the map ----------
 
-export function IslandMap({ skin, worldId, stops, currentIdx, youAvatar, complete, onStop }: {
+export function IslandMap({ skin, worldId, stops, currentIdx, youAvatar, complete, cheerId, onStop }: {
   skin: IslandSkin;
   worldId: string;
   stops: StopVM[];
   currentIdx: number;
   youAvatar: string;
   complete: boolean;
+  /** The stop finished moments ago, which the island is about to celebrate. */
+  cheerId?: string | null;
   onStop: (id: string, unlocked: boolean) => void;
 }) {
-  const nodes = pickNodes(stops.length);
+  const nodes = pickNodes(skin.nodes, stops.length);
   const roadD = curveThrough(nodes);
   const doneCount = stops.filter((s) => s.stars >= 1).length;
   const doneD = curveThrough(nodes.slice(0, Math.max(1, Math.min(stops.length, doneCount + 1))));
   const pal = PIXEL_PALS[skin.guardian % PIXEL_PALS.length];
   const cavern = skin.decor === 'cavern';
-  const order = stops.map((_, i) => i).sort((a, b) => (a === currentIdx ? 1 : 0) - (b === currentIdx ? 1 : 0));
+  const cheerIdx = cheerId ? stops.findIndex((x) => x.id === cheerId) : -1;
+  // The celebrating node paints last so its confetti is over everything else.
+  const rank = (i: number) => (i === cheerIdx ? 2 : i === currentIdx ? 1 : 0);
+  const order = stops.map((_, i) => i).sort((a, b) => rank(a) - rank(b));
 
   return (
     <div
@@ -338,16 +493,16 @@ export function IslandMap({ skin, worldId, stops, currentIdx, youAvatar, complet
         ))}
         {skin.decor === 'meadow' && <Boat x={24} y={244} />}
 
-        <path d={ISLAND} fill={skin.grass} stroke={skin.sand} strokeWidth="16" strokeLinejoin="round" />
+        <path d={skin.shape} fill={skin.grass} stroke={skin.sand} strokeWidth="16" strokeLinejoin="round" />
         <ellipse cx="220" cy="360" rx="70" ry="22" fill={skin.grassLight} opacity="0.7" />
         <ellipse cx="520" cy="300" rx="90" ry="26" fill={skin.grassLight} opacity="0.7" />
         <ellipse cx="780" cy="345" rx="70" ry="22" fill={skin.grassLight} opacity="0.7" />
         <ellipse cx="885" cy="185" rx="52" ry="18" fill={skin.grassLight} opacity="0.6" />
 
         <Scenery kind={skin.decor} />
-        <g className={complete ? 'kwm-landmark-lit' : ''}><Landmark kind={skin.decor} /></g>
+        <g className={complete ? 'kwm-landmark-lit' : ''}><Landmark kind={skin.decor} at={skin.landmarkAt} /></g>
         {complete && (
-          <g transform="translate(960 96)">
+          <g transform={`translate(${skin.landmarkAt[0] + 34} ${skin.landmarkAt[1] + 6})`}>
             <rect x="-1.5" y="-30" width="3" height="30" fill="#8a6a4a" />
             <path d="M1.5,-30 L20,-24 L1.5,-18 Z" fill="#ffd166" stroke="#e0a33a" strokeWidth="1" />
           </g>
@@ -395,6 +550,7 @@ export function IslandMap({ skin, worldId, stops, currentIdx, youAvatar, complet
                   <text y="0.5" textAnchor="middle" dominantBaseline="central" className="kw-num-locked">{i + 1}</text>
                 </>
               )}
+              {i === cheerIdx && <Cheer stars={stop.stars} complete={complete} />}
               {showAvatar && (
                 <>
                   <foreignObject x="-19" y="-66" width="38" height="40">

@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { useUi } from '../lib/store';
 import { Ic } from './icons';
 import { LogoMark } from './Brand';
+import { BRAND } from '../lib/brand';
 
 export function Logo({ size = 28, wordmark = true }: { size?: number; wordmark?: boolean }) {
   return (
     <span className="logo" style={{ fontSize: size }}>
       <LogoMark size={size * 1.16} />
-      {wordmark && <span className="logo-word">KeyTopia</span>}
+      {wordmark && <span className="logo-word">{BRAND.name}</span>}
     </span>
   );
 }
@@ -99,7 +100,12 @@ export function Toggle({ on, onChange, label, desc }: { on: boolean; onChange: (
   );
 }
 
-export function Modal({ open, onClose, children, wide, labelledBy }: { open: boolean; onClose: () => void; children: ReactNode; wide?: boolean; labelledBy?: string }) {
+/**
+ * `closeLabel`: what closing this dialog actually does, when it is more than
+ * dismissing it. The room dialog's X hands the room back, and a screen reader
+ * announcing "close dialog" would undersell that.
+ */
+export function Modal({ open, onClose, children, wide, labelledBy, closeLabel = 'Close dialog' }: { open: boolean; onClose: () => void; children: ReactNode; wide?: boolean; labelledBy?: string; closeLabel?: string }) {
   useEffect(() => {
     if (!open) return;
     const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -110,7 +116,7 @@ export function Modal({ open, onClose, children, wide, labelledBy }: { open: boo
   return (
     <div className="modal-bg" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className={`modal ${wide ? 'modal-wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby={labelledBy}>
-        <button className="modal-x" onClick={onClose} aria-label="Close dialog">✕</button>
+        <button className="modal-x" onClick={onClose} aria-label={closeLabel} title={closeLabel}>✕</button>
         {children}
       </div>
     </div>

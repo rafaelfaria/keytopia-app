@@ -11,7 +11,7 @@ export type ThemeId =
 
 export type SessionMode =
   | 'lesson' | 'adaptive' | 'weakkeys' | 'speed' | 'accuracy' | 'rhythm' | 'zen'
-  | 'endurance' | 'realworld' | 'code' | 'numbers' | 'dictation' | 'copy'
+  | 'endurance' | 'realworld' | 'code' | 'numbers' | 'copy'
   | 'blind' | 'recovery' | 'checkpoint' | 'game' | 'race' | 'challenge' | 'assessment';
 
 export interface Profile {
@@ -24,6 +24,13 @@ export interface Profile {
   experience: 'new' | 'some' | 'confident';
   layout: LayoutId;
   competitive: boolean;
+  /**
+   * What boards of strangers call you. Empty means the default for the
+   * division: a generated handle for a kid, the account name for everyone else.
+   * A name someone picked is the only option that is both real to them and not
+   * necessarily their real name, which is why it is offered to every age.
+   */
+  boardName?: string;
   coach: CoachStyle;
   createdAt: number;
 }
@@ -41,10 +48,15 @@ export interface Settings {
   caret: CaretStyle;
   correction: Correction;
   focusMode: boolean;
-  speakTargets: boolean;
   untimed: boolean;
   unlockAll: boolean;
   hideLeaderboards: boolean;
+  /**
+   * Boards of strangers only. Family and class boards keep working, and the
+   * setting stops the upload rather than merely hiding the result — a setting
+   * that only hides is decoration. See docs/arena-leaderboards.md §12.
+   */
+  hideGlobalBoards: boolean;
   coachFreq: 'high' | 'normal' | 'low' | 'off';
   showLiveWpm: boolean;
   kidWorld?: boolean;
@@ -72,7 +84,13 @@ export interface SessionResult {
   wpm: number;
   raw: number;
   acc: number;                  // 0..100
-  adjusted: number;
+  /**
+   * False when the run was mashed rather than typed — accuracy far below any
+   * real attempt, or more strokes spent erasing than typing. Such a run still
+   * shows its score and stays in history, but is kept out of the long-term key
+   * stats that drive the adaptive drills, and earns no XP or streak credit.
+   */
+  valid: boolean;
   consistency: number;          // 0..100
   rhythm: number;               // 0..100
   hesitations: number;
@@ -122,6 +140,16 @@ export interface ProfileData {
   unlockedAvatars: string[];
   forge: ForgeItem[];
   gameBests: Record<string, { score: number; level: number }>;
+  /**
+   * Levels cleared per starter game (src/lib/starterLevels.ts), by game id.
+   *
+   * The starters have no boards, so this is the only thing that makes them a
+   * journey rather than six things that end after ninety seconds. It is a
+   * count, not a set: levels unlock in order, so "4" means one to four are done
+   * and five is open. Merged by max across devices, because a level cleared on
+   * the tablet is cleared.
+   */
+  starters?: Record<string, number>;
   race: RaceRecord;
   ghost: GhostRun | null;
   assessment: AssessmentResult | null;

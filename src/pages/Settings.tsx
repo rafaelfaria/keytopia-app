@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useData, useStore, levelInfo, useUi } from '../lib/store';
+import { useData, useStore, useUi } from '../lib/store';
 import { THEMES } from '../lib/themes';
 import { Btn, Card, Chip, Modal, Seg, Toggle } from '../components/ui';
 import { LAYOUT_NAMES } from '../lib/keyboard';
 import type { CaretStyle, Correction, GuideStyle, LayoutId, ThemeId } from '../lib/types';
-import { snd, speak } from '../lib/sound';
+import { snd } from '../lib/sound';
 import { Ic } from '../components/icons';
 
 export default function Settings() {
@@ -15,7 +15,6 @@ export default function Settings() {
   const [confirmClear, setConfirmClear] = useState(false);
   if (!data) return null;
   const s = data.settings;
-  const lvl = levelInfo(data.xp);
 
   const set = <K extends keyof typeof s>(k: K, v: (typeof s)[K]) => patch((d) => { (d.settings as unknown as Record<string, unknown>)[k as string] = v; });
 
@@ -30,17 +29,15 @@ export default function Settings() {
 
       <Card className="settings-section">
         <h3><Ic n="palette" size={17} /> Theme gallery</h3>
-        <p className="small muted" style={{ marginBottom: 12 }}>Unlock more worlds as you level up (you're level {lvl.level}).</p>
+        <p className="small muted" style={{ marginBottom: 12 }}>Pick any world you like. They're all yours.</p>
         <div className="theme-grid">
           {THEMES.map((t) => {
-            const locked = !data.unlockedThemes.includes(t.id) && t.level > 0;
             const on = s.theme === t.id;
             return (
               <button
                 key={t.id} type="button"
                 className={`theme-tile ${on ? 'on' : ''}`}
-                onClick={() => { if (!locked) { set('theme', t.id as ThemeId); } }}
-                disabled={locked}
+                onClick={() => { set('theme', t.id as ThemeId); }}
                 aria-pressed={on}
                 title={t.desc}
               >
@@ -50,7 +47,7 @@ export default function Settings() {
                 </span>
                 <span className="theme-name">
                   {t.name}
-                  {locked ? <span className="theme-lock">🔒 Lv{t.level}</span> : on ? <span style={{ color: 'var(--accent)' }}>✓</span> : null}
+                  {on ? <span style={{ color: 'var(--accent)' }}>✓</span> : null}
                 </span>
               </button>
             );
@@ -70,8 +67,13 @@ export default function Settings() {
         <Toggle on={s.dyslexiaFont} onChange={(v) => set('dyslexiaFont', v)} label="High-legibility font" desc="Atkinson Hyperlegible across the whole app, including typing text" />
         <Toggle on={s.reducedMotion} onChange={(v) => set('reducedMotion', v)} label="Reduce motion" desc="Minimises animation everywhere, including the landing page" />
         <Toggle on={s.untimed} onChange={(v) => set('untimed', v)} label="Untimed learning" desc="Hides timers in lessons and practice (speed sprints stay timed)" />
-        <Toggle on={s.speakTargets} onChange={(v) => set('speakTargets', v)} label="Speak target letters" desc="Reads each expected key aloud during lessons" />
         <Toggle on={s.hideLeaderboards} onChange={(v) => set('hideLeaderboards', v)} label="Hide leaderboards" desc="Removes all ranked boards and comparisons" />
+        {!s.hideLeaderboards && (
+          <>
+            <Toggle on={s.hideGlobalBoards} onChange={(v) => set('hideGlobalBoards', v)} label="Hide boards of strangers" desc="Keeps family and class boards, leaves the global Arena boards. Your scores stop being uploaded to them too" />
+            {!s.hideGlobalBoards && <BoardNameField />}
+          </>
+        )}
         <p className="small muted" style={{ marginTop: 10 }}>Success and errors are always shown with symbols and text, never colour alone. High-contrast lives in the theme gallery above.</p>
       </Card>
 
@@ -87,7 +89,6 @@ export default function Settings() {
             aria-label="Sound volume"
           />
         </div>
-        <Btn kind="ghost" onClick={() => { if (!speak('Welcome to KeyTopia. Dictation and spoken letters sound like this.')) pushToast({ kind: 'info', icon: 'warn', title: 'Speech not available in this browser' }); }}><Ic n="chat" size={15} /> Test speech voice</Btn>
       </Card>
 
       <Card className="settings-section">
@@ -162,5 +163,69 @@ export default function Settings() {
         </div>
       </Modal>
     </div>
+  );
+}
+
+/**
+ * The name boards of strangers show.
+ *
+ * Offered to every age, because the alias-or-real-name split solved the child
+ * case and left an adult who would rather not be identified with no option at
+ * all. A name someone picked is the only one of the three that is both real to
+ * them and not necessarily their real name.
+ *
+ * For a kid the field starts empty, which means the generated handle: the safe
+ * default stays the default, and changing it is a deliberate act by whoever is
+ * sitting there. The copy says plainly who sees it, because that is the whole
+ * decision being made.
+ */
+function BoardNameField() {
+  const data = useData();
+  const patch = useStore((st) => st.patch);
+  const [draft, setDraft] = useState<string | null>(null);
+  if (!data) return null;
+
+  const kid = data.profile.ageGroup === 'kid';
+  const saved = data.profile.boardName ?? '';
+  const value = draft ?? saved;
+  // Mirrors the CHECK in 20260816120000_arena_boards.sql. Wide enough for a
+  // handle, too narrow to carry an email address or a link to somewhere else.
+  const ok = value === '' || /^[A-Za-z0-9][A-Za-z0-9 ._-]{1,19}$/.test(value);
+  const fallback = kid ? 'a nickname we pick for you' : data.profile.name;
+
+  // Saves as you type, like every other control on this page. Committing only
+  // on blur meant a name typed and then navigated away from was silently lost,
+  // which on a phone is most of the time. The draft exists only to let someone
+  // type through an invalid intermediate state without it being rejected.
+  const onType = (v: string) => {
+    setDraft(v);
+    const next = v.trim().slice(0, 20);
+    if (next !== '' && !/^[A-Za-z0-9][A-Za-z0-9 ._-]{1,19}$/.test(next)) return;
+    patch((d) => { d.profile.boardName = next; });
+  };
+
+  return (
+    <label className="set-field">
+      <span className="set-field-label">Name on boards of strangers</span>
+      <input
+        className="ob-input"
+        value={value}
+        maxLength={20}
+        placeholder={fallback}
+        autoComplete="off"
+        spellCheck={false}
+        aria-invalid={!ok}
+        onChange={(e) => onType(e.target.value)}
+        onBlur={() => setDraft(null)}
+        onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+      />
+      <small className={ok ? 'muted' : 'warnline'}>
+        {!ok
+          ? 'Letters, numbers, spaces, dots, dashes and underscores. Two to twenty characters.'
+          : value === ''
+            ? <>Leave it empty and the board shows <strong>{fallback}</strong>. Family and class boards always show your real name.</>
+            : <>Strangers see <strong>{value}</strong>. Family and class boards still show your real name.</>}
+      </small>
+    </label>
   );
 }

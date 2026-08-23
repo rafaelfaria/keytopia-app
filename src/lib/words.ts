@@ -41,6 +41,21 @@ export const COMMON_WORDS = (
   'weather weight west wheel whole wide wife wild window wing winter wire wish woman wonder wood wrote yard yellow yet'
 ).split(/\s+/).filter((w, i, a) => w && a.indexOf(w) === i);
 
+/**
+ * The letter pool the starter games widen as a child gets going.
+ *
+ * Shared by Letter Fall and Key Safari so a child who has met f, j, d and k in
+ * one meets the same four first in the other, and so neither game can drift
+ * into teaching a different alphabet from the Journey's first lesson.
+ */
+export const STARTER_LETTER_SETS: { chars: string; name: string }[] = [
+  { chars: 'fjdk', name: 'the four home keys' },
+  { chars: 'fjdksla', name: 'the whole home row' },
+  { chars: 'fjdkslaeiou', name: 'the home row and the vowels' },
+  { chars: 'fjdkslaeiourtnmpbcgw', name: 'most of the keyboard' },
+  { chars: 'abcdefghijklmnopqrstuvwxyz', name: 'every letter there is' },
+];
+
 export const KID_WORDS = (
   'cat dog sun fox hat bug cup pig bee owl ant egg jam kit map nap pen pot red run sit six toy van wig zip ' +
   'ball bear bird boat cake corn dino duck fish frog goat kite lamb leaf lion milk moon nest park play pond puppy rain ' +

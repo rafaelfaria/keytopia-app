@@ -1,0 +1,20 @@
+-- Block Stack counts storeys, not blocks.
+--
+-- The game was rebuilt so that word speed sets the width of each storey, and
+-- every piece of client copy moved with it: `src/lib/arena.ts` has said
+-- `valueLabel: 'storeys'` and `unit: plural('storey')` since. `arena_games` was
+-- never told, so it has been sitting on 'blocks' ever since the original
+-- migration.
+--
+-- Nothing was visibly broken, which is the interesting part and the reason this
+-- went unnoticed: every board surface reads `spec.valueLabel` out of the client
+-- registry, and the `value_label` that `arena_home` returns is carried into
+-- `HomeStanding` and then read by nobody. So the column is only ever consulted
+-- by a developer diffing the two lists, which is exactly the job the header
+-- comment in 20260816120000_arena_boards.sql says it exists to do. A reference
+-- list that disagrees with the thing it is meant to verify is worse than no
+-- reference list.
+--
+-- Data is untouched: `value_label` names the count, it does not compute it, so
+-- no score changes and nothing needs re-ranking.
+update arena_games set value_label = 'storeys' where id = 'stack';

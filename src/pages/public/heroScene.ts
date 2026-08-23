@@ -23,6 +23,33 @@ export interface HeroOpts {
   hue: string;
   /** Second light, for the colour separation the landing uses. */
   hue2: string;
+  /**
+   * Theme colours, for callers outside the public pages. Those pages are always
+   * dark (`.pub-root` pins the midnight palette), so they omit these and get the
+   * values that were hardcoded here. The Arena boards render inside the app,
+   * where a learner may be on any of twelve themes including three light ones,
+   * and a field of near-black keycaps fogged to #0b1020 sits on a cream page
+   * like a hole. Passing the live tokens is what makes the same scene belong in
+   * both places.
+   */
+  fog?: string;
+  surfaceA?: string;
+  surfaceB?: string;
+  /**
+   * How hard the field tints toward `hue`, 0..1. Omitted, the public pages keep
+   * their existing behaviour: a whisper of hue, except in `terrace`, where the
+   * five plateaus take the five WORLD colours because there they *mean* the five
+   * curriculum worlds. Inside a game that meaning is wrong and the result is a
+   * dark smudge, so the Arena passes a strength and gets one coherent colour.
+   */
+  tint?: number;
+  /**
+   * How fast the field animates, as a multiplier on time. 1 is the pace the
+   * public pages use, where the scene is the only thing on screen and a lively
+   * field reads as craft. Behind a game's front door it reads as restlessness,
+   * so the Arena slows the busier formations down.
+   */
+  speed?: number;
 }
 
 /** The five world colours, matching the curriculum and the landing's regions. */
@@ -74,7 +101,7 @@ export function createHeroScene(canvas: HTMLCanvasElement, opts: HeroOpts, stati
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(new THREE.Color('#0b1020'), 11, 26);
+  scene.fog = new THREE.Fog(new THREE.Color(opts.fog || '#0b1020'), 11, 26);
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 60);
 
   const geo = keycapGeometry();
@@ -84,7 +111,8 @@ export function createHeroScene(canvas: HTMLCanvasElement, opts: HeroOpts, stati
   mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 
   const hue = new THREE.Color(opts.hue);
-  const surface = new THREE.Color('#1a2244');
+  const surface = new THREE.Color(opts.surfaceA || '#1a2244');
+  const surfaceHi = new THREE.Color(opts.surfaceB || '#242e59');
   const cells: Cell[] = [];
   const colour = new THREE.Color();
 
@@ -103,8 +131,12 @@ export function createHeroScene(canvas: HTMLCanvasElement, opts: HeroOpts, stati
       band,
     });
 
-    colour.copy(surface).lerp(new THREE.Color('#242e59'), hashN(i) * 0.8);
-    if (opts.formation === 'terrace') {
+    colour.copy(surface).lerp(surfaceHi, hashN(i) * 0.8);
+    if (opts.tint !== undefined) {
+      // One hue across the field, varied per cell so it reads as a material
+      // rather than a flat colour fill.
+      colour.lerp(hue, opts.tint * (0.55 + hashN(i + 31) * 0.75));
+    } else if (opts.formation === 'terrace') {
       colour.lerp(new THREE.Color(WORLDS[band]), 0.26);
     } else {
       colour.lerp(hue, 0.06 + hashN(i + 31) * 0.14);
@@ -195,7 +227,10 @@ export function createHeroScene(canvas: HTMLCanvasElement, opts: HeroOpts, stati
     raf = requestAnimationFrame(frame);
     const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016;
     last = now;
-    t += dt;
+    // Scaling time rather than each formation's constants: every formation is
+    // written as a function of `t`, so one multiplier slows the drift, the
+    // ripple and the tumble together and none of them can drift out of step.
+    t += dt * (opts.speed ?? 1);
     layout();
     renderer.render(scene, camera);
   }

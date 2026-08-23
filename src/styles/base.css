@@ -350,6 +350,21 @@ img, svg { max-width: 100%; display: block; }
 .tt-ok { color: var(--text); }
 .tt-cur { color: var(--text); background: color-mix(in oklab, var(--accent) 22%, transparent); box-shadow: 0 2px 0 var(--accent); }
 .tt-bad { color: var(--bad); background: color-mix(in oklab, var(--bad) 16%, transparent); text-decoration: underline wavy color-mix(in oklab, var(--bad) 70%, transparent) 1.5px; text-underline-offset: 4px; }
+/* Strict correction: the wrong key did not move the cursor, so the character
+   you are stuck on says so. Without this the caret just stops responding,
+   which reads as a broken keyboard rather than as a rejected keystroke. It
+   holds until the right key arrives, the way it does on a typing race. */
+.tt-stuck {
+  color: var(--bad); background: color-mix(in oklab, var(--bad) 26%, transparent);
+  box-shadow: 0 2px 0 var(--bad);
+  animation: ttStuck 180ms ease;
+}
+@keyframes ttStuck {
+  0% { transform: translateX(0); } 30% { transform: translateX(-2.5px); }
+  60% { transform: translateX(2.5px); } 100% { transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) { .tt-stuck { animation: none; } }
+html[data-rm='1'] .tt-stuck { animation: none; }
 .tt-fixed { color: var(--warn); text-decoration: underline dotted 1.5px; text-underline-offset: 4px; }
 .tt-nl { opacity: 0.6; }
 .caret { position: absolute; top: 0; left: 0; background: var(--accent); width: 2.5px; border-radius: 2px; transition: transform 0.07s ease-out; z-index: 2; }
@@ -443,7 +458,7 @@ i.cal-l4 { background: var(--accent); }
 .rb-off { fill: var(--warn); opacity: 0.8; }
 .rb-pause { fill: var(--bad); opacity: 0.75; }
 .rhythm-med { stroke: var(--muted); stroke-dasharray: 4 4; opacity: 0.5; }
-.fingerprint { width: 100%; max-width: 190px; height: auto; margin: 0 auto; display: block; }
+.fingerprint { width: 100%; max-width: 158px; height: auto; margin: 0 auto; display: block; }
 .fp-core { fill: color-mix(in oklab, var(--accent) 20%, var(--surface2)); }
 .fp-ray { stroke: var(--accent); stroke-width: 4; stroke-linecap: round; }
 .hbl { display: flex; flex-direction: column; gap: 9px; }
@@ -483,7 +498,12 @@ i.cal-l4 { background: var(--accent); }
 .hero-good .hero-v2 { color: var(--good); }
 .hero-bad .hero-v2 { color: var(--bad); }
 .hero-l { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 6px; }
-.hero-meta { color: var(--muted); font-size: 0.85rem; margin-top: 14px; }
+.hero-meta { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 16px 0 0; padding: 0; }
+.hero-meta li { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; background: var(--surface2); color: var(--muted); font-size: 0.83rem; }
+.hero-meta b { color: var(--text-dim); font-weight: 700; }
+.hero-target.hit { background: color-mix(in oklab, var(--good) 14%, var(--surface2)); color: var(--good); }
+.hero-target.hit b { color: var(--good); }
+.stars .star-on { text-shadow: 0 2px 10px color-mix(in oklab, var(--gold) 45%, transparent); }
 .results-earned { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; margin-top: 12px; font-size: 0.85rem; color: var(--muted); }
 .results-earned > span { display: inline-flex; align-items: center; gap: 5px; }
 .earned-xp, .earned-badge { color: var(--gold); font-weight: 650; }
@@ -493,30 +513,50 @@ i.cal-l4 { background: var(--accent); }
 .results-next { display: flex; flex-direction: column; gap: 14px; }
 .results-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-/* Tier 3 — evidence, laid out in the page instead of behind tabs. */
-.results-detail { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
-.detail-h { font-size: 0.82rem; font-weight: 750; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 12px; }
-.detail-body { display: flex; flex-direction: column; gap: 10px; }
-.detail-line { margin: 0; }
-.detail-fold { border-top: 1px solid var(--border); margin-top: 16px; }
-.detail-fold > summary { display: flex; align-items: center; gap: 10px; min-height: 48px; cursor: pointer; list-style: none; font-weight: 650; }
-.detail-fold > summary::-webkit-details-marker { display: none; }
-.detail-fold > summary:hover .fold-title { color: var(--accent); }
-.detail-fold > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
-.fold-hint { color: var(--muted); font-size: 0.85rem; font-weight: 400; }
-.detail-fold > summary svg { color: var(--muted); margin-left: auto; flex: none; transition: transform 0.18s ease; }
-.detail-fold[open] > summary svg { transform: rotate(90deg); }
-.fold-body { padding: 4px 0 14px; }
-@media (prefers-reduced-motion: reduce) { .detail-fold > summary svg { transition: none; } }
-@media (max-width: 560px) { .fold-hint { display: none; } }
-.rhythm-cols { display: grid; grid-template-columns: 1fr 200px; gap: 18px; align-items: start; }
-.fp-col { text-align: center; }
+/* Tier 3 — evidence, laid out in the page. Nothing readable hides behind a toggle. */
+.results-detail { display: flex; flex-direction: column; gap: 4px; }
+.detail-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.detail-h { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; font-size: 0.82rem; font-weight: 750; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin: 0; }
+.detail-hint { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.85rem; color: var(--muted); opacity: 0.85; }
+.detail-clean { display: inline-flex; align-items: center; gap: 7px; color: var(--good); font-weight: 650; }
+
+/* Missed keys: the key itself reads as a keycap, the count sits beside it. */
+.miss-keys { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; }
+.miss-key { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 6px; border-radius: 999px; background: color-mix(in oklab, var(--warn) 12%, var(--surface2)); border: 1px solid color-mix(in oklab, var(--warn) 34%, transparent); }
+.miss-cap { display: grid; place-items: center; min-width: 26px; height: 26px; padding: 0 5px; border-radius: 7px; background: var(--surface); border: 1px solid color-mix(in oklab, var(--warn) 45%, var(--border)); box-shadow: 0 1.5px 0 color-mix(in oklab, var(--warn) 45%, var(--border)); font-family: var(--font-type); font-weight: 700; font-size: 0.92rem; color: var(--text); }
+.miss-n { font-size: 0.86rem; font-weight: 600; color: var(--text-dim); }
+
+/* Four counts that used to be one run-on sentence. */
+.run-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.run-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; background: var(--surface2); border-radius: 12px; }
+.rs-v { font-size: 1.32rem; font-weight: 750; line-height: 1; letter-spacing: -0.02em; }
+.rs-l { font-size: 0.74rem; color: var(--muted); text-align: center; }
+.rs-bad .rs-v { color: var(--bad); }
+.rs-warn .rs-v { color: var(--warn); }
+@media (max-width: 460px) { .run-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.slow-pairs { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
+.slow-pairs ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; }
+.slow-pairs li { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; background: var(--surface2); font-size: 0.85rem; }
+.slow-pairs b { font-family: var(--font-type); font-weight: 700; }
+.slow-pairs i { color: var(--muted); font-style: normal; }
+
+.rhythm-cols { display: grid; grid-template-columns: minmax(0, 1fr) 176px; gap: 20px; align-items: center; }
+.rs-col, .fp-col { display: flex; flex-direction: column; gap: 8px; }
+.fp-col { text-align: center; align-items: center; }
+.xsmall { font-size: 0.76rem; }
 @media (max-width: 640px) { .rhythm-cols { grid-template-columns: 1fr; } }
-.echo-strip { font-family: var(--font-type); background: var(--surface2); border-radius: 12px; padding: 12px 14px; min-height: 84px; margin: 10px 0; display: flex; flex-wrap: wrap; gap: 2px; align-content: flex-start; }
+
+.echo { display: flex; flex-direction: column; gap: 12px; }
+.echo-strip { font-family: var(--font-type); background: var(--surface2); border-radius: 12px; padding: 12px 14px; min-height: 62px; display: flex; flex-wrap: wrap; gap: 2px; align-content: flex-start; }
 .echo-ch { padding: 0 2px; border-radius: 4px; }
 .echo-ch.ok { color: var(--text); }
 .echo-ch.bad { color: var(--bad); background: color-mix(in oklab, var(--bad) 14%, transparent); }
 .echo-pause { box-shadow: 0 0 0 1.5px var(--warn); margin-left: 8px; }
+.echo-ghost { color: var(--muted); opacity: 0.45; }
 .echo-cursor { width: 2px; background: var(--accent); animation: blink 0.9s infinite; }
-.echo-progress { flex: 1; height: 6px; background: var(--ring-track); border-radius: 999px; overflow: hidden; }
+.echo-strip.idle .echo-cursor { display: none; }
+.echo-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.echo-progress { flex: 1 1 140px; height: 6px; background: var(--ring-track); border-radius: 999px; overflow: hidden; }
 .echo-progress div { height: 100%; background: var(--accent); transition: width 0.2s; }
+@media (prefers-reduced-motion: reduce) { .echo-cursor { animation: none; } .echo-progress div { transition: none; } }

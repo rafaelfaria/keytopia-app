@@ -1,48 +1,34 @@
 import { Link } from 'react-router-dom';
 import { useData } from '../lib/store';
-import { Card, Chip } from '../components/ui';
+import { Chip } from '../components/ui';
 import { Ic } from '../components/icons';
+import { Diver } from '../components/gamekit';
+import { ARENA_GAMES, ARENA_LIST, type ArenaGame } from '../lib/arena';
+import { clearedCount, isStarter, ladder } from '../lib/starterLevels';
 
-const COMPETITIVE = [
-  {
-    id: 'duel', name: 'Quill Duel', icon: 'swords', to: '/app/games/duel',
-    desc: 'Best-of-seven phrase duel against a rival matched to your pace. First to finish each phrase takes the round.',
-    trains: 'Burst speed under pressure',
-  },
-  {
-    id: 'survivor', name: 'Survivor Sprint', icon: 'crown', to: '/app/games/survivor',
-    desc: 'Eight typists, four rapid heats, the slowest move to the cheer bench each round. Outlast everyone for the crown.',
-    trains: 'Consistency under pressure',
-  },
-];
-
-const QUESTS = [
-  {
-    id: 'wordfall', name: 'Wordfall Defence', icon: 'shield', to: '/app/games/wordfall',
-    desc: 'Words drift toward your light-shield. Careless speed weakens it; calm accuracy saves the city.',
-    trains: 'Accuracy under pressure',
-  },
-  {
-    id: 'stack', name: 'Block Stack', icon: 'blocks', to: '/app/games/stack',
-    desc: 'Every word becomes a block. Clean words build wide and steady, sloppy ones crumble the tower.',
-    trains: 'Word-perfect precision',
-  },
-  {
-    id: 'cipher', name: 'Cipher Run', icon: 'puzzle', to: '/app/games/cipher',
-    desc: 'Unscramble rune-words against the clock. Decoding builds the deep letter-map fast typing sits on.',
-    trains: 'Spelling recall & mapping',
-  },
-  {
-    id: 'keyforge', name: 'Keyforge', icon: 'hammer', to: '/app/games/keyforge',
-    desc: 'The fire only burns while you type. Misses vent heat, every treasure makes it hungrier. Forge before it goes cold.',
-    trains: 'Fast, flawless words',
-  },
-  {
-    id: 'wordflight', name: 'Wordflight', icon: 'send', to: '/app/games/wordflight',
-    desc: 'A glider that climbs when your rhythm is even and wobbles when you rush. Thread the golden gates.',
-    trains: 'Rhythm & flow',
-  },
-];
+/**
+ * The hub reads the registry rather than keeping a second copy of it.
+ *
+ * It used to hold its own list of every game's name, blurb and trained skill,
+ * and the two drifted the moment either was edited alone: this page went on
+ * selling Block Stack as "every word becomes a block, clean words build wide"
+ * long after the pace bar replaced that design, so the last thing a learner
+ * read before pressing play described a game that no longer existed.
+ *
+ * The Lightstream is filtered out of the competitive row because it is the
+ * banner directly above it, not a third card beside its own two.
+ */
+const LIGHTSTREAM = ARENA_GAMES.lightstream;
+const COMPETITIVE = ARENA_LIST.filter((g) => g.tier === 'competitive' && g.id !== LIGHTSTREAM.id);
+const QUESTS = ARENA_LIST.filter((g) => g.tier === 'quest');
+/**
+ * Games for a player who cannot type yet. They lead the hub for a kid profile
+ * and close it for everyone else, because a grown-up scrolling past "catch one
+ * falling letter" on the way to the Arena reads it as the product being for
+ * children, and a seven year old scrolling past four ranked speed games on the
+ * way to the one they can play reads it as the product not being for them.
+ */
+const STARTERS = ARENA_LIST.filter((g) => g.tier === 'starter');
 
 /* Little living scene per game, same vocabulary as the landing page's
    play-art tiles but drawn with theme tokens so every app theme works. */
@@ -56,6 +42,32 @@ function GameArt({ id }: { id: string }) {
           <span className="gd-lane"><i className="gd-fill gd-foe" /></span>
         </div>
       );
+    case 'tideline':
+      /* A shore part taken: two lights of yours already touching, one of
+         theirs, and the water partway up the bottom row. */
+      return (
+        <div className="arena-art ga-tide" aria-hidden>
+          <span className="gt-grid">
+            <i className="gt-you" /><i className="gt-you" /><i /><i />
+            <i className="gt-you" /><i /><i className="gt-foe" /><i />
+            <i /><i /><i className="gt-foe" /><i />
+            <i /><i /><i /><i />
+          </span>
+          <span className="gt-water" />
+        </div>
+      );
+    case 'pearl':
+      /* The descent: three rungs of a lengthening ladder, and a diver on the
+         way past the second. */
+      return (
+        <div className="arena-art ga-pearl" aria-hidden>
+          {/* The rungs, not payouts: each dive is longer than the one above it. */}
+          <span className="gpd-line" style={{ top: '22%' }}><b>4</b></span>
+          <span className="gpd-line" style={{ top: '50%' }}><b>11</b></span>
+          <span className="gpd-line" style={{ top: '76%' }}><b>22</b></span>
+          <span className="gpd-diver"><Diver size={64} /></span>
+        </div>
+      );
     case 'survivor':
       return (
         <div className="arena-art ga-sprint" aria-hidden>
@@ -63,10 +75,81 @@ function GameArt({ id }: { id: string }) {
           <i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" /><i className="gs-dot" />
         </div>
       );
+    case 'bridge':
+      /* Planks going in over the water, one word at a time. */
+      return (
+        <div className="arena-art ga-bridge" aria-hidden>
+          <span className="gb-deck">
+            <i className="gb-laid" /><i className="gb-laid" /><i className="gb-laid" /><i /><i />
+          </span>
+          <span className="gb-walk"><Ic n="person" size={22} /></span>
+          <span className="gb-water" />
+        </div>
+      );
+    case 'firstletter':
+      /* A picture and the letter it wants. */
+      return (
+        <div className="arena-art ga-first" aria-hidden>
+          <span className="gfl-thing"><Ic n="apple" size={40} strokeWidth={1.6} /></span>
+          <span className="gfl-arrow"><Ic n="chevron-right" size={20} /></span>
+          <span className="gfl-key">a</span>
+        </div>
+      );
+    case 'paint':
+      /* Tiles coming away from something underneath. */
+      return (
+        <div className="arena-art ga-paint" aria-hidden>
+          {['a', 'm', 'e', 'r', 't', 'o', 'k', 's', 'i'].map((c, i) => (
+            <i key={c} className={`gp-tile ${i === 2 || i === 4 || i === 7 ? 'gp-off' : ''}`}>{c}</i>
+          ))}
+        </div>
+      );
+    case 'rocket':
+      /* A rocket part way up its own alphabet. */
+      return (
+        <div className="arena-art ga-rocket" aria-hidden>
+          <span className="gr-moon"><Ic n="moon" size={17} /></span>
+          <span className="gr-ship"><Ic n="rocket" size={30} /></span>
+          <i className="gr-mark" style={{ bottom: 16 }}>a</i>
+          <i className="gr-mark" style={{ bottom: 34 }}>b</i>
+          <i className="gr-mark" style={{ bottom: 52 }}>c</i>
+          <span className="gr-ground" />
+        </div>
+      );
+    case 'keysafari':
+      /* Three keycaps, and one of them has ears. */
+      return (
+        <div className="arena-art ga-safari" aria-hidden>
+          <span className="gsf-key">a</span>
+          <span className="gsf-key gsf-hiding">
+            <i className="gsf-ears" />
+            f
+          </span>
+          <span className="gsf-key">j</span>
+          <span className="gsf-grass" />
+        </div>
+      );
+    case 'letterfall':
+      /* Single letters dropping into a garden. This art was Wordfall's until
+         Letter Fall existed, and it was always drawing this game: five separate
+         letters falling one at a time is exactly what Wordfall is not. */
+      return (
+        <div className="arena-art ga-letterfall" aria-hidden>
+          <span className="gl-seed">f</span><span className="gl-seed">j</span><span className="gl-seed">d</span>
+          <i className="gl-flower" style={{ left: '22%' }} /><i className="gl-flower" style={{ left: '48%' }} />
+          <i className="gl-flower" style={{ left: '71%' }} />
+          <span className="gl-grass" />
+        </div>
+      );
     case 'wordfall':
+      /* Whole words falling on a wall, which is the game: the threat is a word
+         you have to finish, and the thing at risk is underneath it. */
       return (
         <div className="arena-art ga-wordfall" aria-hidden>
-          <span>w</span><span>o</span><span>r</span><span>d</span><span>s</span>
+          <span className="gw-word">storm</span>
+          <span className="gw-word">lantern</span>
+          <span className="gw-word">shield</span>
+          <span className="gw-wall" />
         </div>
       );
     case 'stack':
@@ -84,7 +167,7 @@ function GameArt({ id }: { id: string }) {
       return (
         <div className="arena-art ga-cipher" aria-hidden>
           {([['h', 'c'], ['p', 'i'], ['c', 'p'], ['i', 'h'], ['r', 'e'], ['e', 'r']] as const).map(([a, b], i) => (
-            <span className="gc-tile" key={i} style={{ animationDelay: `${i * 0.22}s` }}><b>{a}</b><i>{b}</i></span>
+            <span className="gc-tile" key={i} style={{ animationDelay: `${i * 0.4}s` }}><b>{a}</b><i>{b}</i></span>
           ))}
         </div>
       );
@@ -105,19 +188,29 @@ function GameArt({ id }: { id: string }) {
   }
 }
 
-function GameCard({ g, best, i }: { g: typeof QUESTS[number]; best?: { score: number }; i: number }) {
+function GameCard({ g, i }: { g: ArenaGame; i: number }) {
+  const data = useData();
+  // Where a child is on this game's ladder, on the card they are about to
+  // press. The starters have no board and no score worth showing here; how far
+  // up they are is the only number on this page that means anything to them.
+  const done = isStarter(g.id) ? clearedCount(data?.starters, g.id) : null;
+  const total = isStarter(g.id) ? ladder(g.id).length : 0;
   return (
     <Link to={g.to} className="arena-card" style={{ '--i': i } as React.CSSProperties}>
       <div className="arena-artwrap">
         <GameArt id={g.id} />
         <span className="arena-play">Play →</span>
-        {best && <span className="arena-best"><Ic n="trophy" size={12} /> {best.score}</span>}
       </div>
       <div className="arena-body">
         <h3><Ic n={g.icon} size={17} /> {g.name}</h3>
         <p className="small muted">{g.desc}</p>
         <div className="row gap wrap arena-foot">
           <Chip tone="accent">{g.trains}</Chip>
+          {done !== null && (
+            <Chip tone={done >= total ? 'gold' : done > 0 ? 'good' : undefined}>
+              <Ic n="map" size={12} /> {done} of {total} levels
+            </Chip>
+          )}
         </div>
       </div>
     </Link>
@@ -128,53 +221,72 @@ export default function Games() {
   const data = useData();
   if (!data) return null;
   const kid = data.profile.ageGroup === 'kid';
-  const bests = Object.keys(data.gameBests).length;
   return (
     <div>
       <header className="arena-head">
         <div className="arena-head-txt">
           <div className="dash-kicker">{kid ? 'Playtime' : 'The Arena'}</div>
-          <h1>{kid ? 'Pick a game, hero.' : 'Seven games. Seven real skills.'}</h1>
-          <p>Every game here is built around one real typing skill, and tells you which. Not typing glued onto someone else's game.</p>
+          <h1>{kid ? 'Pick a game, hero.' : 'Every game trains one real skill.'}</h1>
+          <p>And each one tells you which. Not typing glued onto someone else's game.</p>
         </div>
         <div className="arena-head-stats">
-          <span className="arena-stat"><Ic n="swords" size={15} /> 7 games</span>
-          <span className="arena-stat"><Ic n="trophy" size={15} /> {bests} personal {bests === 1 ? 'best' : 'bests'}</span>
           {data.race.wins > 0 && <span className="arena-stat arena-stat-gold"><Ic n="rocket" size={15} /> {data.race.wins} race {data.race.wins === 1 ? 'win' : 'wins'}</span>}
         </div>
       </header>
 
+      {kid && STARTERS.length > 0 && (
+        <>
+          <h2 className="section-title"><Ic n="sprout" size={19} /> First keys</h2>
+          <div className="arena-grid">
+            {STARTERS.map((g, i) => <GameCard key={g.id} g={g} i={i} />)}
+          </div>
+        </>
+      )}
+
       <h2 className="section-title"><Ic n="swords" size={19} /> Competitive</h2>
-      <Link to="/app/race" className="race-hall" aria-label="Open the Race hub">
-        <span className="rh-sky" aria-hidden>
-          <i className="rh-comet" /><i className="rh-comet" /><i className="rh-comet" />
-        </span>
-        <span className="race-banner-rocket"><Ic n="rocket" size={40} /></span>
-        <span className="race-banner-txt">
-          <strong className="race-hall-title">The Lightstream</strong>
-          <span className="race-hall-sub">Full typing races, the Arena's main event. CPU rivals matched to your pace, your own ghost, private rooms with friends.</span>
-          <span className="row gap wrap race-hall-chips">
-            <Chip tone="accent">Sustained speed under pressure</Chip>
-            {data.race.wins > 0 && <Chip tone="gold"><Ic n="trophy" size={12} /> {data.race.wins} wins</Chip>}
+      <Link to={LIGHTSTREAM.to} className="race-hall" aria-label="Open the Race hub">
+        <span className="race-hall-main">
+          <span className="race-banner-rocket"><Ic n={LIGHTSTREAM.icon} size={40} /></span>
+          <span className="race-banner-txt">
+            <strong className="race-hall-title">{LIGHTSTREAM.name}</strong>
+            <span className="race-hall-sub">{LIGHTSTREAM.desc}</span>
+            <span className="row gap wrap race-hall-chips">
+              <Chip tone="accent">{LIGHTSTREAM.trains}</Chip>
+              {data.race.wins > 0 && <Chip tone="gold"><Ic n="trophy" size={12} /> {data.race.wins} wins</Chip>}
+            </span>
           </span>
+          <span className="race-hall-cta">Enter the Race hub →</span>
         </span>
-        <span className="race-hall-cta">Enter the Race hub →</span>
+        {/* What a race actually looks like: three lanes creeping toward the
+            finish, yours in front. Sits below the copy, never under it. */}
+        <span className="rh-track" aria-hidden>
+          <i className="rh-lane rh-lane-you"><b /></i>
+          <i className="rh-lane rh-lane-2"><b /></i>
+          <i className="rh-lane rh-lane-3"><b /></i>
+          <span className="rh-finish"><Ic n="flag" size={13} /></span>
+        </span>
       </Link>
       <div className="arena-grid race-hall-underlings">
-        {COMPETITIVE.map((g, i) => <GameCard key={g.id} g={g} best={data.gameBests[g.id]} i={i} />)}
+        {COMPETITIVE.map((g, i) => <GameCard key={g.id} g={g} i={i} />)}
       </div>
 
       <h2 className="section-title"><Ic n="map" size={19} /> Skill quests</h2>
       <div className="arena-grid">
-        {QUESTS.map((g, i) => <GameCard key={g.id} g={g} best={data.gameBests[g.id]} i={i + 2} />)}
+        {QUESTS.map((g, i) => <GameCard key={g.id} g={g} i={i + 2} />)}
       </div>
 
-      {!kid && (
-        <Card style={{ marginTop: 18 }} className="card">
-          <h3><Ic n="users" size={17} /> Cooperative missions</h3>
-          <p className="small muted">Team typing missions, where two players share one transmission and type alternating lines, are designed and coming with online play. <Chip>Concept preview</Chip></p>
-        </Card>
+      {!kid && STARTERS.length > 0 && (
+        <>
+          <h2 className="section-title"><Ic n="sprout" size={19} /> First keys</h2>
+          <p className="small muted" style={{ marginTop: -6 }}>
+            For a child who has not typed before. One letter at a time, the keyboard on screen, and no clock.
+          </p>
+          <div className="arena-grid">
+            {STARTERS.map((g, i) => <GameCard key={g.id} g={g} i={i} />)}
+          </div>
+        </>
       )}
+
     </div>
   );
 }

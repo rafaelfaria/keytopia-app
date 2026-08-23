@@ -9,10 +9,10 @@ import { Ic } from '../components/icons';
 
 /**
  * Train (plan §4.2, density pass): one recommended session up top, then every
- * mode as a compact row inside four named groups — 15 modes without the wall.
+ * mode as a compact row inside four named groups — 14 modes without the wall.
  *
  * Each row carries the learner's own history on the right (best speed, or an
- * unmistakable "New"), because fifteen identically-shaped rows give the eye
+ * unmistakable "New"), because fourteen identically-shaped rows give the eye
  * nothing to sort by. The numbers come from real sessions only: a mode never
  * touched says so rather than showing a zero.
  */
@@ -39,7 +39,7 @@ const COLUMNS: Group[][] = [
   ],
   [
     { title: 'Speed & precision', blurb: 'Measured runs with clear scores', ids: ['speed', 'accuracy', 'rhythm'] },
-    { title: 'Real-world', blurb: 'The typing days are made of', ids: ['realworld', 'code', 'numbers', 'dictation', 'copy'] },
+    { title: 'Real-world', blurb: 'The typing days are made of', ids: ['realworld', 'code', 'numbers', 'copy'] },
   ],
 ];
 
@@ -81,7 +81,7 @@ export default function PracticeHub() {
       <div className="page-head">
         <div>
           <h1>Train</h1>
-          <p>Fifteen ways to practise, one recommendation. Every mode names the skill it builds.</p>
+          <p>Fourteen ways to practise, one recommendation. Every mode names the skill it builds.</p>
         </div>
         {tried > 0 && (
           <span className="train-tally" title="Modes you have practised at least once">
@@ -108,10 +108,13 @@ export default function PracticeHub() {
           </div>
         </div>
         <div className="train-hero-go">
-          {/* Straight into the run: this button already said Start, and the mode
-              it names has just been explained above it. The rows below still land
-              on the intro, because browsing is what they are for. */}
-          <Btn big to={`/app/train/${rec.id}?start=1`}><Ic n="play" size={17} /> Start</Btn>
+          {/* The intro, like every other route into a mode. This used to skip
+              straight to the run on the grounds that a second Start button was
+              a wasted screen, and it was: the intro said the mode's name and
+              little else. It now carries your last runs in that mode, ranked,
+              and the gap to your best, which is the thing you would want to see
+              before starting rather than after finishing. */}
+          <Btn big to={`/app/train/${rec.id}`}><Ic n="play" size={17} /> Start</Btn>
           <Link to={`/app/train/${alt.id}`} className="train-hero-alt">or {alt.name.toLowerCase()}</Link>
         </div>
       </section>
@@ -148,7 +151,7 @@ export default function PracticeHub() {
                           </span>
                         ) : tried > 0 ? (
                           /* "New" only means something once something else is old:
-                             on a fresh profile all fifteen are new and the badge is noise. */
+                             on a fresh profile all fourteen are new and the badge is noise. */
                           <span className="train-row-new">New</span>
                         ) : null}
                         <Ic n="chevron-right" size={16} className="train-row-go" />

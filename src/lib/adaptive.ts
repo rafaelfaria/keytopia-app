@@ -4,17 +4,42 @@ import { mulberry32, pick, pickN, shuffle, weightedPick, type Rng } from './rng'
 import { median } from './metrics';
 import { allLessons, knownKeysAt } from './curriculum';
 
+/**
+ * How many recent attempts a key's error rate is judged on. Totals are held to
+ * this window rather than accumulated for life, so a key reflects how it is
+ * going lately instead of averaging in every rep since the profile was made.
+ *
+ * Without a window one bad session never washes out: a key that got hammered
+ * once keeps enough historic errors to sit in "needs review" for months, and
+ * the drill generator keeps prescribing it long after the learner fixed it.
+ * The window has to stay comfortably above the 50 attempts `masteryOf` wants
+ * before it will call a key mastered.
+ */
+const RECENT_ATTEMPTS = 120;
+
 export function mergeKeyStats(base: Record<string, KeyStat>, agg: Record<string, KeyStat>): void {
   for (const [k, s] of Object.entries(agg)) {
     const cur = base[k] ?? { a: 0, e: 0, ms: 0, n: 0 };
-    const a = cur.a + s.a;
-    const e = cur.e + s.e;
+    // Fade what is already banked to make room for the new attempts, keeping
+    // its error rate intact — only its weight shrinks.
+    let baseA = cur.a;
+    let baseE = cur.e;
+    const room = Math.max(0, RECENT_ATTEMPTS - s.a);
+    if (baseA > room) {
+      const fade = room / baseA;
+      baseA *= fade;
+      baseE *= fade;
+    }
+    const a = Math.round((baseA + s.a) * 10) / 10;
+    const e = Math.round((baseE + s.e) * 10) / 10;
     let ms = cur.ms;
     if (s.n > 0) {
       const w = Math.min(0.5, s.n / Math.max(1, cur.n + s.n));
       ms = cur.ms === 0 ? s.ms : cur.ms * (1 - w) + s.ms * w;
     }
-    base[k] = { a, e, ms: Math.round(ms), n: cur.n + s.n };
+    // Timing samples are windowed too, or the average above stops responding
+    // once a long-lived key has banked thousands of them.
+    base[k] = { a, e, ms: Math.round(ms), n: Math.min(RECENT_ATTEMPTS, cur.n + s.n) };
   }
 }
 
@@ -182,10 +207,6 @@ export function buildModeText(mode: SessionMode, data: ProfileData, opts?: { sec
     }
     case 'numbers': {
       return { text: numberDrill(rng, kid ? 12 : 20), why: 'Number-row control: quantities, times and decimals.', label: 'Numeral Peaks drill' };
-    }
-    case 'dictation': {
-      const s = pickN(rng, sent, 2).join(' ');
-      return { text: s, why: 'Listen and type. Replay as often as you need: spelling from sound builds deep recall.', label: 'Dictation' };
     }
     case 'blind': {
       const pool = poolFor(data);

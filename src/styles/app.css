@@ -150,9 +150,20 @@
 .game-hud { display: flex; gap: 18px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; font-weight: 700; font-variant-numeric: tabular-nums; }
 .game-hud .grow { flex: 1; }
 .game-board { position: relative; min-height: 420px; overflow: hidden; user-select: none; }
-.wf-word { position: absolute; font-family: var(--font-type); font-weight: 600; font-size: 1.15rem; padding: 5px 12px; border-radius: 999px; background: var(--surface2); border: 1px solid var(--border); white-space: nowrap; transform: translateX(-50%); }
+/* z-index: above the tether that points at it (app.css .wf-tether). */
+.wf-word { position: absolute; z-index: 3; font-family: var(--font-type); font-weight: 600; font-size: 1.15rem; padding: 5px 12px; border-radius: 999px; background: var(--surface2); border: 1px solid var(--border); white-space: nowrap; transform: translateX(-50%); }
 .wf-word .hit { color: var(--accent); }
 .wf-target { border-color: var(--accent); background: color-mix(in oklab, var(--accent) 16%, var(--surface2)); box-shadow: 0 0 18px color-mix(in oklab, var(--accent) 30%, transparent); }
+/* The armed word, ringed. Five pill-shaped words in a sky and one of them tinted
+   was not enough to find at a glance while typing it. */
+.wf-target::before {
+  content: ''; position: absolute; inset: -5px; border-radius: 999px;
+  border: 1.5px solid color-mix(in oklab, var(--accent) 55%, transparent);
+  animation: wfLock 1.5s ease-in-out infinite;
+}
+@keyframes wfLock { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.045); } }
+@media (prefers-reduced-motion: reduce) { .wf-target::before { animation: none; } }
+html[data-rm='1'] .wf-target::before { animation: none; }
 .wf-shield { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: linear-gradient(0deg, color-mix(in oklab, var(--accent) 32%, transparent), transparent); border-top: 2.5px solid var(--accent); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; }
 .wf-city { font-size: 1.6rem; letter-spacing: 6px; }
 .wf-pop { animation: wfpop 0.4s ease forwards; }
@@ -190,6 +201,45 @@
 .race-wpm { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 0.88rem; }
 .race-countdown { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 5rem; font-weight: 800; z-index: 5; background: color-mix(in oklab, var(--bg) 55%, transparent); backdrop-filter: blur(3px); border-radius: 20px; animation: countpop 0.5s ease; }
 @keyframes countpop { from { transform: scale(1.6); opacity: 0; } }
+
+/* The race start cue. Unlike the countdown above — which is the duel's round
+   banner, where nothing is moving yet — this one sits over a track that is
+   about to move, so it never frosts the card: the veil pools behind the numeral
+   and fades out where the lanes are. */
+.race-cue {
+  position: absolute; inset: 0; z-index: 5; display: grid; place-items: center;
+  pointer-events: none; border-radius: 20px;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--bg) 78%, transparent), transparent 72%);
+}
+.race-cue-num {
+  font-size: clamp(3.4rem, 11vw, 5.5rem); font-weight: 800; line-height: 1;
+  font-variant-numeric: tabular-nums; color: var(--text);
+  animation: cueTick 0.75s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.race-cue-go {
+  font-size: clamp(2.6rem, 9vw, 4.2rem); font-weight: 800; letter-spacing: 0.04em;
+  color: var(--good); background: none;
+  animation: cueGo 0.55s ease-out forwards;
+}
+@keyframes cueTick { from { transform: scale(1.45); opacity: 0.15; } 60% { opacity: 1; } to { transform: scale(1); opacity: 0.92; } }
+@keyframes cueGo { from { transform: scale(0.9); opacity: 0; } 25% { transform: scale(1.04); opacity: 1; } to { transform: scale(1.02); opacity: 0; } }
+
+/* The clock, in the corner the cue vacates: during the count it says Ready, and
+   from GO! onward it is the only thing on the strip that keeps moving on its own. */
+.race-clock {
+  position: absolute; top: 10px; right: 14px; z-index: 4;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  color: var(--text-dim); background: color-mix(in oklab, var(--bg) 60%, transparent);
+  border-radius: 999px; padding: 3px 9px;
+}
+.race-clock-idle { color: var(--muted); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .race-cue-num { animation: none; }
+  .race-cue-go { animation: cueGoQuiet 0.55s linear forwards; }
+  @keyframes cueGoQuiet { from { opacity: 1; } to { opacity: 0; } }
+}
 .podium { display: flex; gap: 10px; align-items: flex-end; justify-content: center; margin: 20px 0; }
 .podium-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .podium-block { width: 86px; border-radius: 12px 12px 0 0; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; font-weight: 800; }
@@ -232,7 +282,6 @@
 .theme-swatch { height: 62px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .theme-swatch i { width: 20px; height: 20px; border-radius: 6px; display: block; }
 .theme-name { padding: 8px 10px; font-size: 0.82rem; font-weight: 650; display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
-.theme-lock { color: var(--muted); font-size: 0.72rem; }
 .avatar-grid { display: flex; flex-wrap: wrap; gap: 8px; }
 .avatar-pick { font-size: 1.7rem; width: 54px; height: 54px; border-radius: 16px; border: 2px solid var(--border); background: var(--surface2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s, border-color 0.1s; position: relative; }
 .avatar-pick:hover { transform: scale(1.08); }
@@ -312,6 +361,200 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .pip-you { background: var(--accent); }
 .pip-rival { background: var(--accent2); }
 
+/* ---------- Tide Line ----------
+   The shore is the game, so it gets the whole stage and the typed letters sit
+   under it. Water is a single element climbing the grid rather than a class on
+   each drowned tile, because the tide has to read as one thing arriving. */
+.tl-arena { position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 18px clamp(10px, 3vw, 28px); }
+.tl-grid { position: relative; display: grid; gap: 7px; width: 100%; max-width: 620px; overflow: hidden; border-radius: 16px; padding: 7px; background: color-mix(in oklab, var(--surface2) 55%, transparent); }
+.tl-tile {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center; gap: 2px;
+  min-height: 54px; padding: 6px 4px;
+  font-family: var(--font-type); font-size: clamp(0.72rem, 2vw, 0.92rem); font-weight: 650;
+  text-align: center; word-break: break-all;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 11px;
+  transition: background 140ms ease, border-color 140ms ease, opacity 140ms ease, transform 140ms ease;
+}
+.tl-tile b { color: var(--accent); }
+.tl-match { border-color: var(--accent); background: color-mix(in oklab, var(--accent) 14%, var(--surface)); transform: translateY(-2px); }
+.tl-dim { opacity: 0.42; }
+.tl-you { background: color-mix(in oklab, var(--accent) 30%, var(--surface)); border-color: var(--accent); color: var(--text); }
+.tl-rival { background: color-mix(in oklab, var(--accent2) 26%, var(--surface)); border-color: var(--accent2); }
+.tl-tide { background: transparent; border-style: dashed; border-color: color-mix(in oklab, var(--border) 70%, transparent); color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1.5px; opacity: 0.75; }
+/* Worth two, and said with a dot rather than only a shade, so the doubling is
+   never carried by colour alone. */
+.tl-chain-dot { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+.tl-water {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 0;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent2) 30%, transparent), color-mix(in oklab, var(--accent2) 12%, transparent));
+  border-top: 2px solid color-mix(in oklab, var(--accent2) 60%, transparent);
+  /* Short and linear: the level is redrawn from the clock every 80ms, so this
+     only smooths between ticks. A long eased transition made the water lurch,
+     because each tick restarted an animation the next one interrupted. */
+  transition: height 140ms linear;
+}
+@media (prefers-reduced-motion: reduce) { .tl-water { transition: none; } }
+.tl-buffer { min-height: 34px; display: flex; align-items: center; justify-content: center; }
+.tl-typed { font-family: var(--font-type); font-size: 1.5rem; font-weight: 700; letter-spacing: 0.06em; color: var(--accent); border-bottom: 3px solid var(--accent); }
+.tl-buffer-live { animation: keyshake 0.24s ease; }
+.tl-dry { display: inline-flex; align-items: center; gap: 6px; }
+.tl-dry .ic { color: var(--accent2); }
+.tl-bar { display: inline-flex; width: min(180px, 26vw); height: 8px; border-radius: 999px; overflow: hidden; background: var(--ring-track); }
+.tl-bar-you { background: var(--accent); }
+.tl-bar-foe { background: var(--accent2); }
+
+/* ---------- Pearl Dive ----------
+   The phrase and the breath meter on the left, the water column on the right.
+   Depth is drawn rather than counted: how far down the diver is IS how far
+   through the phrase you are. */
+.pv-band { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 20px clamp(12px, 3vw, 28px); }
+/* The ladder on the front door: what the descent asks for, as four rungs. It
+   replaced three depth buttons, which is the point of the game now. */
+.pv-ladder { display: flex; flex-direction: column; gap: 4px; width: min(100%, 320px); }
+.pv-rung {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 12px; border-radius: 10px;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--accent2) 14%, transparent), transparent);
+}
+/* Each rung sits a little deeper than the one above it, so the list reads as a
+   descent rather than as four options. */
+.pv-rung:nth-child(2) { margin-left: 14px; }
+.pv-rung:nth-child(3) { margin-left: 28px; }
+.pv-rung:nth-child(4) { margin-left: 42px; }
+.pv-rung-n {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 21px; padding: 0 6px; border-radius: 999px;
+  background: var(--gold); color: #2a1e05; font-size: 0.68rem; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.pv-rung-name { font-weight: 650; }
+/* ---- the surfacing card, between one dive and the next ---- */
+.pv-card {
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  width: min(100%, 460px); padding: 20px 24px 22px;
+  text-align: center;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 18px;
+  animation: pvcard 220ms ease both;
+}
+@keyframes pvcard { from { opacity: 0; transform: translateY(7px); } }
+@media (prefers-reduced-motion: reduce) { .pv-card { animation: none; } }
+.pv-card-ic { display: flex; }
+.pv-card-landed { border-color: color-mix(in oklab, var(--good) 55%, var(--border)); }
+.pv-card-landed .pv-card-ic .ic { color: var(--gold); }
+.pv-card-slipped, .pv-card-drowned { border-color: color-mix(in oklab, var(--warn) 45%, var(--border)); }
+.pv-card-slipped .pv-card-ic .ic, .pv-card-drowned .pv-card-ic .ic { color: var(--accent2); }
+.pv-card-head { font-size: 1.35rem; line-height: 1.15; }
+.pv-card-line { font-weight: 650; }
+.pv-card-slipped .pv-card-line { color: var(--bad); }
+/* The phrase reprinted with the break in it. Monospace so the marked letter
+   sits where it sat while they were typing it. */
+.pv-card-phrase {
+  font-family: var(--font-type); font-size: 0.95rem; line-height: 1.7;
+  max-width: 40ch; word-break: break-word;
+}
+.pv-card-break {
+  color: var(--bad); font-weight: 800;
+  border-bottom: 3px solid var(--bad); padding-bottom: 1px;
+}
+.pv-card-stop { color: var(--warn); font-weight: 800; border-bottom: 3px dotted var(--warn); }
+.pv-card-cost { font-size: 0.84rem; color: var(--muted); }
+.pv-card-go { margin-top: 4px; }
+/* Only offered once the keys actually do anything, so it is never a lie. */
+.pv-card-hint { opacity: 0; transition: opacity 200ms ease; }
+.pv-card-hint.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .pv-card-hint { transition: none; } }
+.pv-depth-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); }
+.pv-phrase { font-family: var(--font-type); font-size: clamp(1.15rem, 3vw, 1.7rem); line-height: 1.6; max-width: 46ch; letter-spacing: 0.02em; }
+.pv-cur { border-bottom: 3px solid var(--accent); color: var(--text); }
+.pv-breath { width: min(100%, 320px); height: 9px; border-radius: 999px; background: var(--ring-track); overflow: hidden; }
+.pv-breath i { display: block; height: 100%; background: var(--accent2); transition: width 120ms linear; }
+.pv-breath i.pv-breath-low { background: var(--bad); }
+@media (prefers-reduced-motion: reduce) { .pv-breath i { transition: none; } }
+.pv-hud-pearls { display: inline-flex; align-items: center; gap: 6px; }
+.pv-hud-pearls .ic { color: var(--gold); }
+.pv-tiers { display: flex; gap: 8px; flex-wrap: wrap; }
+.pv-tier { flex: 1 1 120px; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; }
+.pv-tier small { color: var(--muted); }
+.pv-tier-ic .ic { color: var(--accent); }
+.pv-tier-trench .pv-tier-ic .ic { color: var(--gold); }
+.pv-scene { display: flex; flex-direction: column; gap: 12px; height: 100%; min-height: 0; }
+
+/* The sea is blue in all twelve themes, and that is a deliberate exception to
+   the Arena's "tint from theme tokens, never a fixed hue" rule (src/lib/arena.ts).
+   That rule protects things that are UI: a keycap field is the product wearing
+   the learner's palette, so a fixed violet is wrong in meadow and wrong again in
+   paper. This is not UI, it is a picture of water. Tinting it from --accent2
+   made the sea orange in this theme and green in wildwood, which does not read
+   as "your palette", it reads as a bug. The tokens still do the work everywhere
+   the panel meets the app: the border, the pearls and the depth badges. */
+.pv-water {
+  --sea-shallow: #7cc9ea;
+  --sea-deep: #072f4d;
+  --sea-line: #bfe6f7;
+  position: relative; flex: 1; min-height: 220px;
+  border-radius: 16px; overflow: hidden;
+  background: linear-gradient(180deg, var(--sea-shallow), #2c7fae 46%, var(--sea-deep));
+  border: 1.5px solid var(--border);
+}
+.pv-surface { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: #d6f0fb; }
+.pv-floor { position: absolute; bottom: 0; left: 0; right: 0; height: 10px; background: #04202f; }
+.pv-mark {
+  position: absolute; left: 0; right: 0;
+  display: flex; align-items: center; gap: 7px; padding-left: 12px;
+  font-size: 0.72rem; font-weight: 700;
+  /* White with a shadow rather than a pale blue. One label sits on the lit top
+     of the water and another on the near-black bottom of it, so a single tint
+     is washed out at one end whatever it is; the shadow is what carries the
+     top one. */
+  color: #fff; text-shadow: 0 1px 2px rgba(4, 32, 47, 0.6);
+  border-top: 1.5px dashed color-mix(in oklab, var(--sea-line) 50%, transparent);
+}
+.pv-mark b {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px;
+  background: var(--gold); color: #2a1e05; font-size: 0.62rem; font-weight: 800;
+}
+.pv-mark.on { color: #fff; border-top-color: var(--gold); }
+.pv-diver { position: absolute; left: 50%; transform: translateX(-50%); transition: top 140ms ease; }
+@media (prefers-reduced-motion: reduce) { .pv-diver { transition: none; } }
+
+/* ---------- the diver sprite (components/gamekit.tsx) ---------- */
+.diver { display: block; line-height: 0; }
+.diver svg { overflow: visible; display: block; }
+.dv-body { fill: var(--dv-suit, #ff9f4a); }
+/* The fin is the suit a shade down, so the leg reads as behind the body even
+   where the two silhouettes touch. */
+.dv-fin { fill: var(--dv-fin, #e07f2e); }
+.dv-arm { stroke: var(--dv-suit, #ff9f4a); }
+.dv-snorkel { stroke: var(--dv-gear, #ffd34a); }
+.dv-head, .dv-hand { fill: var(--dv-skin, #f7d8b6); }
+.dv-mask { fill: var(--dv-glass, #9fe4ff); }
+.dv-bub { fill: rgba(255, 255, 255, 0.82); }
+.dv-kick { transform-origin: 13px 20px; animation: dvkick 1.15s ease-in-out infinite alternate; }
+@keyframes dvkick { from { transform: rotate(-13deg); } to { transform: rotate(13deg); } }
+.dv-bub { animation: dvbub 2.4s ease-out infinite; }
+.dv-bub-b { animation-delay: 0.7s; }
+.dv-bub-c { animation-delay: 1.4s; }
+@keyframes dvbub {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  18% { opacity: 0.85; }
+  100% { transform: translateY(-22px) scale(1); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dv-kick { animation: none; }
+  .dv-bub { animation: none; opacity: 0.7; }
+}
+.pv-purse { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; min-height: 22px; justify-content: center; }
+.pv-pearl { width: 11px; height: 11px; border-radius: 50%; background: radial-gradient(circle at 32% 30%, #fff, var(--gold)); }
+.pv-log { display: flex; flex-direction: column; gap: 4px; width: min(100%, 380px); margin: 4px 0; }
+.pv-log-row { display: flex; align-items: center; gap: 10px; font-size: 0.84rem; padding: 5px 10px; border-radius: 9px; background: var(--surface2); }
+.pv-log-n { width: 16px; color: var(--muted); }
+.pv-log-name { display: inline-flex; align-items: center; gap: 6px; flex: 1; font-variant-numeric: tabular-nums; }
+.pv-log-out { font-weight: 700; }
+.pv-log-landed .pv-log-out { color: var(--good); }
+.pv-log-slipped .pv-log-out, .pv-log-drowned .pv-log-out { color: var(--muted); }
+
 /* ---------- Cipher ---------- */
 .cipher-stage { text-align: center; padding: 30px 14px; }
 .cipher-word { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
@@ -320,14 +563,10 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .cipher-slot.filled { border-style: solid; border-color: var(--accent); background: color-mix(in oklab, var(--accent) 12%, transparent); }
 .cipher-shake { animation: keyshake 0.24s ease; }
 
-/* ---------- Stack ---------- */
-.stack-stage { display: flex; flex-direction: column; align-items: center; padding: 18px 12px 0; min-height: 400px; }
+/* ---------- Stack ----------
+   The tower itself is a WebGL canvas (stackScene.ts). What is left here is the
+   word being typed; the layout around both lives in arena.css. */
 .stack-word { font-family: var(--font-type); font-size: clamp(1.4rem, 3.6vw, 2rem); display: flex; align-items: center; gap: 10px; padding: 6px 0 14px; }
-.stack-tower { display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; flex: 1; width: min(420px, 92%); gap: 3px; padding-bottom: 12px; }
-.stack-block { height: 30px; border-radius: 8px; color: #0b1020; font-weight: 750; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; animation: popin 0.25s cubic-bezier(0.2, 1.4, 0.4, 1); overflow: hidden; white-space: nowrap; }
-.stack-gold { box-shadow: 0 0 16px color-mix(in oklab, var(--gold) 55%, transparent); }
-.stack-ground { width: 100%; height: 8px; border-radius: 999px; background: var(--surface2); border: 1px solid var(--border); order: -1; }
-.stack-wobble { animation: keyshake 0.4s ease 2; }
 
 /* ---------- Survivor ---------- */
 .surv-stage { padding: 20px clamp(12px, 3vw, 28px); position: relative; min-height: 360px; }
@@ -395,6 +634,43 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 @keyframes birdglide { from { transform: translate(0, 0); } to { transform: translate(60px, -14px); } }
 .kwm-beacon { animation: fireflyglow 1.8s ease-in-out infinite; }
 .kwm-landmark-lit { filter: drop-shadow(0 0 14px rgba(255, 209, 102, 0.75)); }
+
+/* ---------- the living props on each island ----------
+   Slow loops, all on transform and opacity. A child should notice these out of
+   the corner of an eye while reading the map, never be pulled away from it. */
+.kwm-flutter { animation: kwmFlutter 7s ease-in-out infinite alternate; }
+.kwm-wingl { transform-box: fill-box; transform-origin: right center; animation: kwmWingL 0.42s ease-in-out infinite alternate; }
+.kwm-wingr { transform-box: fill-box; transform-origin: left center; animation: kwmWingR 0.42s ease-in-out infinite alternate; }
+@keyframes kwmFlutter { from { transform: translate(0, 0); } to { transform: translate(26px, -14px); } }
+@keyframes kwmWingL { to { transform: scaleX(0.35); } }
+@keyframes kwmWingR { to { transform: scaleX(0.35); } }
+
+.kwm-hop { animation: kwmHop 4.5s ease-in-out infinite; }
+@keyframes kwmHop {
+  0%, 62%, 100% { transform: translateY(0); }
+  70% { transform: translate(9px, -11px); }
+  78% { transform: translate(18px, 0); }
+  86% { transform: translate(27px, -9px); }
+  94% { transform: translate(34px, 0); }
+}
+
+.kwm-perch { transform-box: fill-box; transform-origin: bottom center; animation: kwmPerch 3.6s ease-in-out infinite; }
+@keyframes kwmPerch { 0%, 70%, 100% { transform: rotate(0); } 80% { transform: rotate(-9deg); } 90% { transform: rotate(6deg); } }
+
+.kwm-gull { animation: kwmGull 14s linear infinite; }
+@keyframes kwmGull { from { transform: translate(-40px, 6px); } to { transform: translate(300px, -20px); } }
+
+.kwm-spout { transform-box: fill-box; transform-origin: bottom center; animation: kwmSpout 6s ease-out infinite; }
+@keyframes kwmSpout { 0%, 65% { opacity: 0; transform: scaleY(0.2); } 75% { opacity: 1; transform: scaleY(1); } 100% { opacity: 0; transform: scaleY(1.15); } }
+
+.kwm-bat { animation: kwmBat 11s ease-in-out infinite alternate; }
+@keyframes kwmBat { from { transform: translate(0, 0); } to { transform: translate(120px, 34px); } }
+
+.kwm-balloon { animation: kwmBalloon 18s ease-in-out infinite alternate; }
+@keyframes kwmBalloon { from { transform: translate(0, 0); } to { transform: translate(70px, -22px); } }
+
+.kwm-falls { animation: kwmFalls 1.1s linear infinite; }
+@keyframes kwmFalls { from { transform: translateY(-8px); opacity: 0.3; } 50% { opacity: 0.9; } to { transform: translateY(8px); opacity: 0.3; } }
 
 /* the sea chart */
 .kw-chart svg { border-radius: 18px; }
@@ -470,7 +746,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .who-note .ic { vertical-align: -2px; margin-right: 5px; }
 
 /* ---------- Duel difficulty picker ---------- */
-.duel-diffs { display: grid; gap: 8px; width: 100%; max-width: 430px; margin: 4px 0; }
+.duel-diffs { display: grid; gap: 8px; width: 100%; max-width: 430px; }
 .duel-diffs .opt-tile { padding: 11px 14px; }
 .duel-diffs .opt-tile strong { font-size: 0.9rem; }
 .duel-lane .race-wpm { min-width: 44px; }
@@ -502,8 +778,44 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .fx-bolt { width: 26px; height: 5px; border-radius: 999px; background: linear-gradient(90deg, transparent, var(--accent)); box-shadow: 0 0 12px var(--accent); }
 
 /* ---------- Wordfall scene ---------- */
-.wf-board { overflow: hidden; }
+/* Words spawn at y -30 and the panel clips at its border, so every word used to
+   arrive as a rectangle sliced in half by a hard edge. The mask lets them come
+   out of the sky instead. Bottom stays hard: the wall is where the drop ends and
+   a fade there would soften exactly the line that matters. */
+.wf-board {
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 44px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 44px);
+}
 .wf-base { position: absolute; left: 0; right: 0; bottom: 0; height: 104px; pointer-events: none; }
+/* The ground glow, keyed to the wall's condition (--wf-danger, set on the
+   board). At full shield it is the game's own accent, at nothing left it is a
+   red hem under the whole city. */
+.wf-base::before {
+  content: ''; position: absolute; inset: auto 0 0; height: 74px;
+  background: linear-gradient(0deg,
+    color-mix(in oklab, var(--bad) calc(var(--wf-danger, 0) * 46%), transparent),
+    transparent 82%);
+  opacity: calc(0.25 + var(--wf-danger, 0) * 0.75);
+  transition: opacity 360ms ease;
+}
+/* Where a word starts costing you. Aligned with the loop's own impact test
+   (h - 108), which is why it is 108px and not a rounder number. */
+.wf-danger-line {
+  position: absolute; left: 0; right: 0; bottom: 108px; height: 0; z-index: 1;
+  border-top: 1.5px dashed color-mix(in oklab,
+    var(--bad) calc(28% + var(--wf-danger, 0) * 52%),
+    color-mix(in oklab, var(--muted) 40%, transparent));
+  opacity: calc(0.5 + var(--wf-danger, 0) * 0.5);
+  transition: opacity 360ms ease;
+}
+/* The lock, as a line from the muzzle to the word. Thin, dashed and behind the
+   words: it should be findable at a glance and invisible while reading. */
+.wf-tether { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+.wf-tether line {
+  stroke: color-mix(in oklab, var(--accent) 60%, transparent);
+  stroke-width: 1.5; stroke-dasharray: 4 7; stroke-linecap: round;
+}
 .wf-wall { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 40px; }
 .cannon { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 5; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35)); }
 .cannon-barrel { transform-origin: 45px 48px; transition: transform 0.12s ease-out; }
@@ -667,48 +979,137 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 }
 .arena-card:hover .arena-play, .arena-card:focus-visible .arena-play { opacity: 1; transform: none; }
 @media (hover: none) { .arena-play { display: none; } }
-.arena-best {
-  position: absolute; left: 10px; top: 10px; z-index: 3;
-  display: inline-flex; align-items: center; gap: 5px;
-  background: color-mix(in oklab, var(--surface) 85%, transparent); border: 1px solid color-mix(in oklab, var(--gold) 55%, var(--border));
-  color: var(--gold); border-radius: 999px; padding: 3px 10px; font-size: 0.76rem; font-weight: 750;
-  backdrop-filter: blur(4px);
+/* Wordfall: whole words falling on the wall they threaten */
+.ga-wordfall { gap: 14px; }
+.gw-word {
+  font-family: var(--font-type); font-size: 0.86rem; font-weight: 600; color: var(--text-dim);
+  background: var(--surface); border: 1px solid var(--border); padding: 3px 10px; border-radius: 8px;
+  animation: gaFall 5s linear infinite;
+}
+.gw-word:nth-child(2) { animation-delay: 1.7s; }
+.gw-word:nth-child(3) { animation-delay: 3.4s; }
+.gw-wall {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 20px;
+  --wall: color-mix(in oklab, var(--text) 22%, var(--surface));
+  /* Merlons in the top 7px, solid wall below: the first layer is transparent
+     where the notches are and lets the second layer's teeth through. */
+  background:
+    linear-gradient(180deg, transparent 0 7px, var(--wall) 7px),
+    repeating-linear-gradient(90deg, var(--wall) 0 12px, transparent 12px 21px);
+  box-shadow: 0 -8px 18px color-mix(in oklab, var(--accent2) 22%, transparent);
+}
+@keyframes gaFall { from { transform: translateY(-58px); opacity: 0.35; } 55% { opacity: 1; } to { transform: translateY(52px); opacity: 0; } }
+
+/* Letter Fall: one letter at a time, landing as a flower */
+.ga-letterfall { gap: 18px; background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 8%, var(--surface2)), color-mix(in oklab, var(--good) 12%, var(--surface2))); }
+.gl-seed {
+  font-family: var(--font-type); font-size: 1.28rem; font-weight: 800; color: var(--text);
+  width: 40px; height: 40px; border-radius: 999px; display: flex; align-items: center; justify-content: center;
+  background: var(--surface); border: 2.5px solid var(--border);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--border) 70%, transparent), inset 0 3px 0 rgba(255, 255, 255, 0.35);
+  animation: gaSeed 5.1s linear infinite;
+}
+.gl-seed:nth-child(2) { animation-delay: 1.7s; }
+.gl-seed:nth-child(3) { animation-delay: 3.4s; }
+@keyframes gaSeed { from { transform: translateY(-56px); opacity: 0.3; } 45% { opacity: 1; } 88%, 100% { transform: translateY(44px); opacity: 0; } }
+.gl-grass { position: absolute; left: 0; right: 0; bottom: 0; height: 15px; background: color-mix(in oklab, var(--good) 55%, var(--surface2)); border-top: 2px solid color-mix(in oklab, var(--good) 70%, var(--border)); }
+.gl-flower {
+  position: absolute; bottom: 11px; width: 11px; height: 11px; border-radius: 999px;
+  background: var(--gold); box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent2) 55%, transparent);
 }
 
-/* Wordfall: word pills drifting down */
-.ga-wordfall span {
-  font-family: var(--font-type); font-size: 0.92rem; color: var(--text-dim);
-  background: var(--surface); border: 1px solid var(--border); padding: 3px 9px; border-radius: 999px;
-  animation: gaFall 2.6s linear infinite;
+/* Word Bridge: planks going in over the water */
+.ga-bridge { background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 14%, var(--surface2)) 55%, color-mix(in oklab, var(--accent2) 30%, var(--surface2)) 55%); }
+.gb-deck { position: absolute; left: 8%; right: 8%; top: 52%; display: flex; gap: 4px; }
+.gb-deck i { flex: 1; height: 9px; border-radius: 3px; background: color-mix(in oklab, var(--text) 12%, transparent); }
+.gb-deck .gb-laid { background: color-mix(in oklab, var(--warn) 62%, var(--surface)); box-shadow: 0 2px 0 color-mix(in oklab, var(--warn) 45%, #000); }
+.gb-walk { position: absolute; left: 34%; top: 30%; color: var(--accent); animation: gaWalk 4.6s ease-in-out infinite; }
+@keyframes gaWalk { 0%, 100% { transform: translateX(-14px); } 50% { transform: translateX(14px); } }
+.gb-water { position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: repeating-linear-gradient(90deg, transparent 0 12px, color-mix(in oklab, #fff 22%, transparent) 12px 20px); opacity: 0.5; }
+
+/* First Letter: a picture, and the letter it wants */
+.ga-first { gap: 10px; background: linear-gradient(180deg, color-mix(in oklab, var(--warn) 16%, var(--surface2)), color-mix(in oklab, var(--good) 14%, var(--surface2))); }
+.gfl-thing { color: var(--bad); animation: gaFirst 4.4s ease-in-out infinite; }
+@keyframes gaFirst { 0%, 100% { transform: none; } 50% { transform: translateY(-5px) rotate(-4deg); } }
+.gfl-arrow { color: var(--muted); }
+.gfl-key {
+  width: 42px; height: 42px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 1.3rem; font-weight: 800; color: #2d2a26;
+  background: var(--gold); border: 2.5px solid color-mix(in oklab, var(--gold) 65%, #000);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--gold) 55%, #000);
 }
-.ga-wordfall span:nth-child(2) { animation-delay: 0.5s; } .ga-wordfall span:nth-child(3) { animation-delay: 1s; }
-.ga-wordfall span:nth-child(4) { animation-delay: 1.5s; } .ga-wordfall span:nth-child(5) { animation-delay: 2s; }
-@keyframes gaFall { from { transform: translateY(-64px); opacity: 0.4; } 60% { opacity: 1; } to { transform: translateY(64px); opacity: 0; } }
+
+/* Paint Reveal: tiles coming away from something underneath */
+.ga-paint {
+  display: grid; grid-template-columns: repeat(3, 34px); gap: 5px;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 22%, var(--surface2)), color-mix(in oklab, var(--accent2) 26%, var(--surface2)));
+}
+.gp-tile {
+  width: 34px; height: 26px; border-radius: 6px; font-style: normal;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 0.82rem; font-weight: 700;
+  color: var(--text-dim); background: var(--surface); border: 1.5px solid var(--border);
+}
+.gp-off { opacity: 0; }
+
+/* Alphabet Rocket: part way up its own alphabet */
+.ga-rocket { background: linear-gradient(180deg, color-mix(in oklab, var(--accent2) 24%, var(--surface2)), color-mix(in oklab, var(--good) 12%, var(--surface2))); }
+.gr-moon { position: absolute; top: 10px; right: 16px; color: var(--gold); }
+.gr-ship { position: absolute; left: 50%; transform: translateX(-50%); color: var(--accent); animation: gaLift 5s ease-in-out infinite; }
+@keyframes gaLift { 0%, 100% { bottom: 18px; } 55% { bottom: 62px; } }
+.gr-mark {
+  position: absolute; left: 32%; font-style: normal;
+  font-family: var(--font-type); font-size: 0.8rem; font-weight: 700;
+  color: color-mix(in oklab, var(--text) 45%, transparent);
+}
+.gr-ground { position: absolute; left: 0; right: 0; bottom: 0; height: 13px; background: color-mix(in oklab, var(--good) 52%, var(--surface2)); border-top: 2px solid color-mix(in oklab, var(--good) 70%, var(--border)); }
+
+/* Key Safari: three keycaps, and the middle one has ears */
+.ga-safari { gap: 12px; background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 7%, var(--surface2)), color-mix(in oklab, var(--good) 13%, var(--surface2))); }
+.gsf-key {
+  position: relative; width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-size: 1.1rem; font-weight: 750; color: var(--text-dim);
+  background: var(--surface); border: 2px solid var(--border);
+  box-shadow: 0 3px 0 color-mix(in oklab, var(--border) 75%, transparent);
+}
+.gsf-hiding { color: var(--text); border-color: color-mix(in oklab, var(--accent) 60%, var(--border)); animation: gaWiggle 2.6s ease-in-out infinite; }
+/* Two ears over the cap, which is the whole game in one shape. */
+.gsf-ears {
+  position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+  width: 26px; height: 10px;
+  background:
+    radial-gradient(circle at 5px 10px, var(--accent2) 5px, transparent 5px),
+    radial-gradient(circle at 21px 10px, var(--accent2) 5px, transparent 5px);
+}
+@keyframes gaWiggle { 0%, 68%, 100% { transform: none; } 76% { transform: rotate(-6deg); } 88% { transform: rotate(6deg); } }
+.gsf-grass { position: absolute; left: 0; right: 0; bottom: 0; height: 13px; background: color-mix(in oklab, var(--good) 52%, var(--surface2)); border-top: 2px solid color-mix(in oklab, var(--good) 70%, var(--border)); }
 
 /* Keyforge: warm hearth, sparks rising */
 .ga-forge { background: radial-gradient(circle at 50% 78%, color-mix(in oklab, var(--warn) 24%, var(--surface2)), var(--surface2) 72%); }
-.ga-forge i { position: absolute; font-style: normal; color: var(--gold); font-size: 0.9rem; animation: gaSpark 1.6s ease-in-out infinite; }
-.ga-forge i:nth-of-type(1) { left: 38%; animation-delay: 0.3s; }
-.ga-forge i:nth-of-type(2) { left: 56%; animation-delay: 0.8s; }
-.ga-forge i:nth-of-type(3) { left: 47%; animation-delay: 1.2s; }
+.ga-forge i { position: absolute; font-style: normal; color: var(--gold); font-size: 0.9rem; animation: gaSpark 3s ease-in-out infinite; }
+.ga-forge i:nth-of-type(1) { left: 38%; animation-delay: 0.5s; }
+.ga-forge i:nth-of-type(2) { left: 56%; animation-delay: 1.5s; }
+.ga-forge i:nth-of-type(3) { left: 47%; animation-delay: 2.2s; }
 @keyframes gaSpark { 0% { transform: translateY(20px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(-32px); opacity: 0; } }
 
 /* Wordflight: gates slide past a bobbing glider */
 .ga-flight::before {
   content: ''; position: absolute; inset: 0;
   background: repeating-linear-gradient(90deg, transparent 0 34px, color-mix(in oklab, var(--gold) 28%, transparent) 34px 37px);
-  animation: gaGate 3s linear infinite;
+  animation: gaGate 5.5s linear infinite;
 }
 @keyframes gaGate { to { transform: translateX(-37px); } }
-.gf-glider { position: relative; z-index: 1; animation: gaGlide 3s ease-in-out infinite alternate; }
+.gf-glider { position: relative; z-index: 1; animation: gaGlide 5.5s ease-in-out infinite alternate; }
 @keyframes gaGlide { from { transform: translateY(7px) rotate(-5deg); } to { transform: translateY(-9px) rotate(4deg); } }
 
 /* Quill Duel: two typing lanes racing, medallion between */
 .ga-duel { flex-direction: column; gap: 24px; }
 .gd-lane { position: relative; width: 72%; height: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
-.gd-fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; animation: gaType 2.5s ease-in-out infinite; }
+.gd-fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; animation: gaType 4.6s ease-in-out infinite; }
 .gd-you { background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 25%, transparent), var(--accent)); }
-.gd-foe { background: linear-gradient(90deg, color-mix(in oklab, var(--accent2) 25%, transparent), var(--accent2)); animation-duration: 3.1s; }
+.gd-foe { background: linear-gradient(90deg, color-mix(in oklab, var(--accent2) 25%, transparent), var(--accent2)); animation-duration: 5.7s; }
 @keyframes gaType { 0% { width: 3%; opacity: 1; } 80% { width: 97%; opacity: 1; } 92% { width: 97%; opacity: 0; } 100% { width: 3%; opacity: 0; } }
 .gd-badge {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;
@@ -718,19 +1119,45 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 }
 .gd-badge .ic { color: var(--gold); }
 
+/* Tide Line: a shore part taken, with the water partway up it */
+.ga-tide { flex-direction: column; }
+.gt-grid { display: grid; grid-template-columns: repeat(4, 22px); gap: 5px; position: relative; z-index: 1; }
+.gt-grid i { width: 22px; height: 22px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); }
+.gt-you { background: var(--accent) !important; border-color: var(--accent) !important; }
+.gt-foe { background: var(--accent2) !important; border-color: var(--accent2) !important; }
+.gt-water {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 26%;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent2) 34%, transparent), color-mix(in oklab, var(--accent2) 10%, transparent));
+  border-top: 2px solid color-mix(in oklab, var(--accent2) 60%, transparent);
+  animation: gaTide 6.4s ease-in-out infinite alternate;
+}
+@keyframes gaTide { from { height: 16%; } to { height: 44%; } }
+
+/* Pearl Dive: three depth lines, and a diver going past the second */
+/* Same sea as the game's own column, same reason it is not a theme token. */
+.ga-pearl { background: linear-gradient(180deg, #7cc9ea, #2c7fae 46%, #072f4d); }
+.gpd-line { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: 6px; padding-left: 10px; border-top: 1.5px dashed rgba(191, 230, 247, 0.42); font-size: 0.62rem; font-weight: 700; color: rgba(191, 230, 247, 0.85); }
+.gpd-line b {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+  background: var(--gold); color: #2a1e05; font-size: 0.6rem; font-weight: 800;
+}
+.gpd-diver { position: absolute; left: 34%; animation: gaDive 6s ease-in-out infinite alternate; }
+@keyframes gaDive { from { top: 14%; } to { top: 58%; } }
+
 /* Survivor Sprint: dots race toward the crown */
 .ga-sprint::before { content: ''; position: absolute; inset: 12px 0; background: repeating-linear-gradient(180deg, transparent 0 24px, color-mix(in oklab, var(--text) 7%, transparent) 24px 25px); }
 .gs-finish { position: absolute; right: 9%; top: 6px; bottom: 6px; border-left: 2px dashed color-mix(in oklab, var(--gold) 50%, transparent); color: var(--gold); padding: 2px 0 0 5px; }
-.gs-dot { position: absolute; width: 11px; height: 11px; border-radius: 999px; left: 5%; animation: gaRace 2.5s linear infinite; }
+.gs-dot { position: absolute; width: 11px; height: 11px; border-radius: 999px; left: 5%; animation: gaRace 5s linear infinite; }
 .gs-dot:nth-of-type(1) { top: 20px; background: var(--accent); }
-.gs-dot:nth-of-type(2) { top: 44px; background: var(--gold); animation-duration: 3s; }
-.gs-dot:nth-of-type(3) { top: 68px; background: var(--accent2); animation-duration: 3.6s; }
-.gs-dot:nth-of-type(4) { top: 92px; background: var(--bad); animation-duration: 4.3s; }
+.gs-dot:nth-of-type(2) { top: 44px; background: var(--gold); animation-duration: 5.8s; }
+.gs-dot:nth-of-type(3) { top: 68px; background: var(--accent2); animation-duration: 6.6s; }
+.gs-dot:nth-of-type(4) { top: 92px; background: var(--bad); animation-duration: 7.6s; }
 @keyframes gaRace { 0% { left: 4%; opacity: 0; } 10% { opacity: 1; } 88% { left: 84%; opacity: 1; } 100% { left: 87%; opacity: 0; } }
 
 /* Cipher Run: tiles flip from scramble to solved */
 .ga-cipher { gap: 7px; perspective: 400px; }
-.gc-tile { position: relative; width: 28px; height: 36px; transform-style: preserve-3d; animation: gaFlip 3.6s ease-in-out infinite; font-family: var(--font-type); font-size: 1rem; }
+.gc-tile { position: relative; width: 28px; height: 36px; transform-style: preserve-3d; animation: gaFlip 6.4s ease-in-out infinite; font-family: var(--font-type); font-size: 1rem; }
 .gc-tile b, .gc-tile i {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   border-radius: 8px; backface-visibility: hidden; font-style: normal; font-weight: 600;
@@ -742,7 +1169,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 /* Block Stack: a fresh block keeps dropping onto the tower */
 .gk-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 94px; }
 .gk-b { height: 14px; border-radius: 4px; background: var(--surface); border: 1px solid var(--border); }
-.gk-drop { width: 50px; height: 14px; border-radius: 4px; background: color-mix(in oklab, var(--accent) 80%, transparent); transform-origin: bottom; animation: gaDrop 2.3s ease-in infinite; }
+.gk-drop { width: 50px; height: 14px; border-radius: 4px; background: color-mix(in oklab, var(--accent) 80%, transparent); transform-origin: bottom; animation: gaDrop 4.2s ease-in infinite; }
 @keyframes gaDrop {
   0% { transform: translateY(-54px); opacity: 0; } 18% { opacity: 1; }
   42% { transform: translateY(0); } 52% { transform: translateY(0) scaleY(0.8); } 60% { transform: translateY(0) scaleY(1); }
@@ -755,7 +1182,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   .arena-card { animation: none; }
-  .ga-wordfall span, .ga-forge i, .ga-flight::before, .gf-glider,
+  .gw-word, .gl-seed, .gsf-hiding, .gr-ship, .gfl-thing, .gb-walk, .ga-forge i, .ga-flight::before, .gf-glider,
   .gd-fill, .gs-dot, .gc-tile, .gk-drop { animation: none; }
   .gd-you { width: 62%; }
   .gd-foe { width: 38%; }
@@ -773,39 +1200,65 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
    a faint lane sky, and a real CTA pill instead of a text link. */
 .race-hall {
   position: relative; overflow: hidden;
-  margin-top: 12px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  margin-top: 12px; display: flex; flex-direction: column; gap: 20px;
   border: 1.5px solid color-mix(in oklab, var(--accent) 35%, var(--border));
   background: linear-gradient(100deg, color-mix(in oklab, var(--accent2) 13%, var(--surface)), color-mix(in oklab, var(--accent) 9%, var(--surface)) 60%, var(--surface));
-  border-radius: 20px; padding: 26px clamp(18px, 2.6vw, 30px);
+  border-radius: 20px; padding: 26px clamp(18px, 2.6vw, 30px) 22px;
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
 .race-hall:hover {
   border-color: var(--accent); transform: translateY(-2px);
   box-shadow: 0 14px 30px color-mix(in oklab, var(--accent) 16%, transparent);
 }
-.race-hall > * { position: relative; }
+.race-hall-main { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .race-hall .ic { color: var(--accent); }
-.rh-sky {
-  position: absolute; inset: 0; pointer-events: none;
-  background: repeating-linear-gradient(180deg, transparent 0 30px, color-mix(in oklab, var(--text) 4%, transparent) 30px 31px);
+
+/* The race itself, drawn small: three lanes, a finish line, yours ahead. */
+.rh-track {
+  position: relative; display: flex; flex-direction: column; gap: 7px;
+  padding-right: 28px;
 }
-.rh-comet {
-  position: absolute; top: 20%; height: 3px; width: 110px; border-radius: 999px; opacity: 0.75;
-  background: linear-gradient(90deg, transparent, var(--accent));
-  box-shadow: 0 0 12px color-mix(in oklab, var(--accent) 55%, transparent);
-  animation: rhFly 3.4s linear infinite;
+.rh-lane {
+  position: relative; height: 4px; border-radius: 999px;
+  background: color-mix(in oklab, var(--text) 9%, transparent);
 }
-.rh-comet:nth-of-type(2) {
-  top: 52%; animation-duration: 4.6s; animation-delay: 1.2s;
-  background: linear-gradient(90deg, transparent, var(--accent2));
-  box-shadow: 0 0 12px color-mix(in oklab, var(--accent2) 55%, transparent);
+.rh-lane b {
+  position: absolute; top: 50%; left: 0; width: 9px; height: 9px; margin-top: -4.5px;
+  border-radius: 999px; background: var(--muted); transform: translateX(-50%);
+  animation: rhRun 11s cubic-bezier(0.4, 0, 0.5, 1) infinite;
 }
-.rh-comet:nth-of-type(3) {
-  top: 82%; animation-duration: 5.6s; animation-delay: 0.6s;
-  background: linear-gradient(90deg, transparent, var(--gold));
-  box-shadow: 0 0 12px color-mix(in oklab, var(--gold) 50%, transparent);
+.rh-lane-you b {
+  background: var(--accent); width: 11px; height: 11px; margin-top: -5.5px;
+  box-shadow: 0 0 10px color-mix(in oklab, var(--accent) 55%, transparent);
+  animation-duration: 9s;
 }
-@keyframes rhFly { from { left: -12%; } to { left: 104%; } }
+.rh-lane-2 b { background: var(--accent2); animation-duration: 10s; animation-delay: -1.4s; }
+.rh-lane-3 b { background: var(--gold); animation-duration: 12s; animation-delay: -3s; }
+/* The lane fills behind each runner, so progress reads even mid-loop. */
+.rh-lane::after {
+  content: ''; position: absolute; inset: 0 auto 0 0; border-radius: 999px;
+  background: color-mix(in oklab, var(--text) 22%, transparent);
+  animation: rhFill 11s cubic-bezier(0.4, 0, 0.5, 1) infinite;
+}
+.rh-lane-you::after { background: color-mix(in oklab, var(--accent) 55%, transparent); animation-duration: 9s; }
+.rh-lane-2::after { background: color-mix(in oklab, var(--accent2) 40%, transparent); animation-duration: 10s; animation-delay: -1.4s; }
+.rh-lane-3::after { background: color-mix(in oklab, var(--gold) 40%, transparent); animation-duration: 12s; animation-delay: -3s; }
+/* Runners fade out at the line and fade back in at the start, so the loop
+   never snaps. */
+@keyframes rhRun {
+  0% { left: 0; opacity: 0; } 7% { opacity: 1; }
+  84% { left: 100%; opacity: 1; } 94%, 100% { left: 100%; opacity: 0; }
+}
+@keyframes rhFill {
+  0% { width: 0; opacity: 0; } 7% { opacity: 1; }
+  84% { width: 100%; opacity: 1; } 94%, 100% { width: 100%; opacity: 0; }
+}
+.rh-finish {
+  position: absolute; right: 0; top: -5px; bottom: -5px;
+  display: flex; align-items: center; padding-left: 6px;
+  border-left: 2px dashed color-mix(in oklab, var(--gold) 45%, transparent);
+}
+.rh-finish .ic { color: var(--gold); }
 .race-banner-txt { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 2px; }
 .race-hall-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em; }
 .race-hall-sub { color: var(--text-dim); max-width: 58ch; }
@@ -820,14 +1273,29 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 }
 .race-hall:hover .race-hall-cta { box-shadow: 0 10px 24px color-mix(in oklab, var(--accent) 45%, transparent); }
 @media (prefers-reduced-motion: reduce) {
-  .rh-comet { animation: none; left: 68%; }
-  .rh-comet:nth-of-type(2) { left: 38%; }
-  .rh-comet:nth-of-type(3) { left: 14%; }
+  .rh-lane b, .rh-lane::after { animation: none; }
+  .rh-lane-you b { left: 78%; } .rh-lane-you::after { width: 78%; }
+  .rh-lane-2 b { left: 54%; } .rh-lane-2::after { width: 54%; }
+  .rh-lane-3 b { left: 36%; } .rh-lane-3::after { width: 36%; }
 }
 
 /* ---------- Duel intro: compact, fits without scrolling ---------- */
 .duel-intro { padding: 22px 16px 24px; gap: 10px; }
 .duel-intro h2 { font-size: 1.3rem; }
+/* The ranked rival is one tile on its own row, carrying the accent the rest of
+   the Arena uses for "this is the thing that counts". The practice tiers stay
+   the quiet grid they already were. Shared by the duel's rival picker and the
+   Lightstream's, because they are the same rule wearing two names. */
+.pace-group-label {
+  display: flex; align-items: center; gap: 6px; margin: 12px 0 5px;
+  font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase;
+  font-weight: 800; color: var(--muted);
+}
+.duel-diffs-ranked { grid-template-columns: minmax(0, 1fr); }
+.opt-tile-ranked { border-color: color-mix(in oklab, var(--accent) 40%, var(--border)); }
+.opt-tile-ranked .opt-ic { color: var(--accent); }
+.opt-tile-ranked small { color: color-mix(in oklab, var(--accent) 62%, var(--text-dim)); }
+
 .duel-diffs { display: grid; grid-template-columns: repeat(2, minmax(180px, 1fr)); gap: 7px; max-width: 480px; }
 .duel-diffs .duel-diff { padding: 8px 12px; border-radius: 11px; gap: 9px; }
 .duel-diffs .duel-diff strong { font-size: 0.86rem; display: block; }
@@ -861,6 +1329,11 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   background: repeating-conic-gradient(#e8e8f0 0% 25%, #14182b 0% 50%) 0 0 / 8px 8px; opacity: 0.85; }
 .road-done-flag { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); color: var(--gold); }
 .race-lane { grid-template-columns: 150px 1fr 70px; }
+/* Somebody who walked out mid-race. The lane stays, because a row vanishing
+   from under a race in progress is more startling than a car greyed out, and
+   the word beside it says what happened. */
+.race-lane-left { opacity: 0.45; }
+.race-lane-left .road-car { filter: grayscale(1); }
 
 /* ---------- The Lightstream: race hub ---------- */
 /* The hero repeats the comet band from the Arena card the learner just clicked,
@@ -888,104 +1361,299 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .ls-career dd.good { color: var(--good); }
 .ls-career dd.accent { color: var(--accent); }
 
-.ls-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 16px; align-items: start; }
-@media (max-width: 900px) { .ls-grid { grid-template-columns: 1fr; } }
+/* Ranked above practice on the left, standings holding the whole right column.
+   The board is what the two short cards used to leave a hole under, and it is
+   also the one thing on this page that answers "where am I". */
+.ls-grid {
+  display: grid; gap: 14px; align-items: start;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+/* The modes own their own stacking, so the board beside them cannot stretch
+   the rows they sit in. */
+.ls-modes { display: flex; flex-direction: column; gap: 14px; min-width: 0; container-type: inline-size; }
+.ls-ways { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: stretch; }
+.ls-boardcol { position: sticky; top: 12px; }
+@media (max-width: 900px) {
+  /* Modes first, board last: a board must never sit between a learner and a
+     race, and on one column "beside" becomes "in front of". */
+  .ls-grid { grid-template-columns: 1fr; }
+  .ls-boardcol { position: static; }
+}
+/* Two-up only when the mode column is actually wide enough for it. This is a
+   container query rather than a page breakpoint because the column's width is
+   set by the board beside it, not by the window: at 1000px the page is still
+   two columns and these cards are ~200px each, which is where "Ghost race"
+   starts wrapping around its own chip. */
+@container (min-width: 520px) { .ls-ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* The ranked race, at the weight of the thing the page is for. */
+.ls-ranked {
+  border: 1.5px solid color-mix(in oklab, var(--accent) 34%, var(--border));
+  background:
+    radial-gradient(120% 90% at 100% 0%, color-mix(in oklab, var(--accent) 11%, transparent), transparent 62%),
+    var(--surface);
+}
+.ls-ranked-title { display: flex; align-items: center; gap: 9px; font-size: 1.18rem; }
+.ls-ranked-title .ic { color: var(--accent); }
+.ls-ranked-lead { margin-top: 6px; color: var(--text-dim); max-width: 56ch; line-height: 1.55; }
+.ls-ranked-lead strong { color: var(--text); }
+
+/* Three facts, not three sentences: what it takes to post, what is scored, and
+   who you are up against. Each is one line with its own mark. */
+.ls-facts { list-style: none; margin: 10px 0 14px; padding: 0; display: grid; gap: 6px; }
+.ls-facts li {
+  display: grid; grid-template-columns: 22px 1fr; align-items: start; gap: 8px;
+  font-size: 0.88rem; color: var(--text-dim); line-height: 1.45;
+}
+.ls-facts .ic { color: var(--accent); margin-top: 1px; }
+.ls-facts strong { color: var(--text); }
+
+/* The other two modes. Same card weight as the ranked race, minus its accent:
+   equally reachable, visibly not the thing that ranks you. */
+.ls-way { display: flex; flex-direction: column; gap: 8px; }
+.ls-way h3 { font-size: 1rem; white-space: nowrap; }
+.ls-way .ls-card-head .chip { flex: none; white-space: nowrap; }
+.ls-way > p { min-height: 2.6em; }
+.ls-way-cta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+/* Create above, join below, each on one line: in a half-width card the two
+   actions and the code field wrapped into three ragged rows. */
+.ls-room .ls-way-cta { flex-direction: column; align-items: stretch; gap: 8px; }
+.ls-join { display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+.ls-join-label { font-size: 0.72rem; color: var(--muted); }
+.ls-join-row { display: flex; align-items: center; gap: 6px; }
+.ls-room .ls-code-input { flex: 1 1 auto; min-width: 0; max-width: none; }
+.ls-join-row .btn { flex: 0 0 auto; }
+
+/* Paces: one strip of pills. The least important choice on the page, sized like
+   it — pressing one starts that race, which is all a pace ever had to do. */
+/* A block like the cards above it. Loose on the page background, the strip read
+   as leftovers rather than as the third thing this column offers — a group with
+   no edge is a group only by proximity, and proximity ran out at the fold. It
+   stays quieter than the mode cards: same surface, no shadow, one flat border. */
+.ls-practice {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 14px clamp(12px, 1.6vw, 16px);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+}
+.ls-practice .pace-group-label { margin: 0; }
+.ls-paces { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Inside a panel the pills need their own ground, or a pill on a surface of the
+   same colour is a label with a border round it. */
+.ls-practice .ls-pace-pill { background: var(--surface2); }
+.ls-pace-pill {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 44px;
+  padding: 8px 14px; border-radius: 999px; cursor: pointer; font: inherit;
+  border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim);
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+.ls-pace-pill strong { font-size: 0.86rem; color: var(--text); font-weight: 700; }
+.ls-pace-pill .ic { color: var(--muted); }
+.ls-pace-pill:hover {
+  border-color: color-mix(in oklab, var(--accent) 34%, var(--border));
+  background: color-mix(in oklab, var(--accent) 7%, var(--surface2));
+}
+.ls-pace-pill:hover .ic { color: var(--accent); }
+.ls-pace-pill:active { transform: translateY(1px); }
 .ls-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 2px; }
 .ls-card-head h3 { display: flex; align-items: center; gap: 8px; }
 
-/* Two columns of difficulty tiles: the same five choices at half the height,
-   which is what lets the CPU card sit level with the column beside it. */
-.ls-diffs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 13px 0 15px; }
-.ls-diffs .opt-tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
-@media (max-width: 520px) { .ls-diffs { grid-template-columns: 1fr; } }
 .ls-pace { color: var(--muted); font-weight: 600; font-size: 0.82rem; white-space: nowrap; }
 .ls-cta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: auto; }
-.ls-cpu { display: flex; flex-direction: column; }
 .ls-ghost-on { border-color: color-mix(in oklab, var(--accent) 28%, var(--border)); }
 
-.ls-room-actions { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-top: 13px; }
-.ls-join { display: flex; flex-direction: column; gap: 5px; }
-.ls-join-label { font-size: 0.78rem; color: var(--muted); }
 .ls-code-input { max-width: 140px; padding: 9px 12px; font-family: var(--font-type); letter-spacing: 0.08em; text-transform: uppercase; }
 .warnline { display: flex; align-items: center; gap: 6px; color: var(--warn, var(--gold)); margin-top: 10px; }
 .warnline.center { justify-content: center; }
 
-/* Standings: a locked shape, not a claim. Skeleton rows say "ranks will live
-   here" without ever showing a number that could be mistaken for real. */
-.ls-standings { margin-top: 16px; }
-.ls-standings-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 12px 0 14px; }
-.ls-board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.ls-board-row {
-  display: grid; grid-template-columns: 34px 26px 1fr auto; gap: 12px; align-items: center;
-  padding: 9px 12px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--border);
+/* The real board, in the panel the locked mockup used to fill. It brings its own
+   head, switchers and target line from arena.css; the hub only has to give it a
+   card to sit in. */
+.ls-hub .arena-board {
+  padding: 18px clamp(14px, 2vw, 20px);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
 }
-.ls-board-locked { opacity: 0.55; }
-.ls-rank {
-  display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px;
-  font-weight: 800; font-size: 0.85rem; background: color-mix(in oklab, var(--text) 8%, transparent); color: var(--muted);
-}
-.ls-rank-1 { background: color-mix(in oklab, var(--gold) 26%, transparent); color: var(--gold); }
-.ls-rank-2, .ls-rank-3 { background: color-mix(in oklab, var(--text) 13%, transparent); color: var(--text-dim); }
-.ls-rank-you { background: color-mix(in oklab, var(--accent) 18%, transparent); color: var(--accent); }
-.ls-board-you { border-color: color-mix(in oklab, var(--accent) 40%, var(--border)); background: color-mix(in oklab, var(--accent) 7%, var(--surface2)); }
-.ls-board-name { display: flex; align-items: center; gap: 8px; font-weight: 600; }
-.ls-board-wpm { font-variant-numeric: tabular-nums; color: var(--text-dim); font-size: 0.9rem; }
-.ls-skel { display: block; height: 11px; border-radius: 999px; background: color-mix(in oklab, var(--text) 14%, transparent); }
-.ls-skel-av { width: 26px; height: 26px; border-radius: 50%; }
-.ls-skel-name { width: min(46%, 190px); }
-.ls-skel-wpm { width: 58px; }
-.ls-standings-foot { margin-top: 14px; max-width: 76ch; }
-.concept-tag-inline { flex: none; }
 
-/* Lobby */
-.ls-lobby { max-width: 640px; margin: 0 auto; }
-.lobby-code-btn {
-  display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; max-width: 360px;
-  margin: 10px auto 14px; cursor: pointer; color: inherit; white-space: nowrap;
-  font-size: 1.7rem; letter-spacing: 0.22em;
-  transition: border-color 0.15s ease, background 0.15s ease;
+/* The guest room: a whole page for somebody who has never seen KeyTopia, so it
+   carries its own frame rather than borrowing the app shell they have no
+   account for. One column, generous, nothing to navigate. */
+.guest-page {
+  min-height: 100dvh; padding: 20px clamp(14px, 4vw, 32px) 40px;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  background:
+    radial-gradient(120% 70% at 50% 0%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 60%),
+    var(--bg);
 }
-.lobby-code-btn:hover { background: color-mix(in oklab, var(--accent) 10%, var(--surface2)); }
+.guest-top {
+  width: 100%; max-width: 720px; display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
+}
+.guest-room-tag { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.guest-top .grow { flex: 1; }
+.guest-card {
+  width: 100%; max-width: 720px; display: flex; flex-direction: column; gap: 12px;
+  padding: clamp(18px, 3vw, 28px); border-radius: 20px;
+  background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+.guest-card h1 { display: flex; align-items: center; gap: 10px; font-size: clamp(1.3rem, 4vw, 1.7rem); }
+.guest-card > p { max-width: 56ch; color: var(--text-dim); }
+.guest-name { display: flex; flex-direction: column; gap: 6px; max-width: 340px; }
+.guest-name .ob-input { font-size: 1.05rem; }
+.guest-race { gap: 16px; }
+/* The account invitation, at logo level. Present on every stage, loud on none:
+   as the big button on the results card it stood where the standings belong. */
+.guest-join { flex: none; }
+@media (max-width: 460px) {
+  /* Room for the logo first. The label goes, the icon and the link stay. */
+  .guest-join { font-size: 0; padding: 9px 12px; gap: 0; }
+  .guest-join .ic { font-size: 1rem; }
+}
+
+/* The finish, as a race rather than as a test result: everybody, in order.
+   Rivals who have not landed keep counting up, so a screen you reach by
+   finishing first is also the screen you watch the rest of the race on. */
+.guest-standings {
+  list-style: none; margin: 6px 0 0; padding: 0;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+}
+.guest-standings li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+.guest-standings li:last-child { border-bottom: none; }
+.guest-standings li.is-you { background: color-mix(in oklab, var(--accent) 9%, transparent); }
+.guest-pos {
+  flex: none; width: 26px; text-align: center;
+  font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-dim);
+}
+.guest-standings li.is-you .guest-pos { color: var(--accent); }
+.guest-racer { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Same treatment as the Arena board's own "(you)": a tag on the name, in the
+   accent, never a replacement for it. */
+.guest-you { color: var(--accent); font-weight: 700; }
+.guest-line { font-size: 0.86rem; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Out of a room that cannot be raced in. Quiet, because trying the code again
+   is the answer more often than giving up is. */
+.guest-cancel {
+  background: none; border: none; cursor: pointer; padding: 6px 10px;
+  font: inherit; font-size: 0.88rem; font-weight: 650; color: var(--muted);
+  text-decoration: underline; text-underline-offset: 3px;
+  transition: color 140ms ease;
+}
+.guest-cancel:hover { color: var(--text-dim); }
+.guest-cancel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+.guest-again { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 6px; }
+.guest-again > button { width: 100%; max-width: 340px; justify-content: center; }
+.guest-again > p { text-align: center; max-width: 46ch; }
+
+/* Lobby, inside the room dialog. A room is a short wait for one friend, so it
+   sits over the Lightstream rather than replacing it. */
+.ls-lobby h2 { display: flex; align-items: center; gap: 9px; }
+.ls-lobby > p { max-width: 46ch; }
+.lobby-share {
+  margin: 14px 0 4px; padding: 14px; border-radius: 16px;
+  background: color-mix(in oklab, var(--accent) 6%, var(--surface2));
+  border: 1px solid color-mix(in oklab, var(--accent) 22%, var(--border));
+  text-align: center;
+}
+/* The code is the object on this screen, so it holds its own copy button
+   rather than delegating to a full-width one underneath. */
+.lobby-share .lobby-code {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin: 0 auto; max-width: 100%;
+  font-size: clamp(1.3rem, 5vw, 1.8rem); padding: 8px 10px 8px 18px;
+  border-style: dashed;
+}
+/* The negative right margin eats the trailing letter-space, which would
+   otherwise push the code visually left of the button beside it. */
+.lobby-share .lobby-code > span { letter-spacing: 0.2em; margin-right: -0.2em; user-select: all; }
+
+/* One control shape for every copy and share affordance here: a 36px square
+   that carries an icon and nothing else. They are aria-labelled rather than
+   captioned, because three captioned buttons are what made this dialog read as
+   a form when it is a code and a guest list. */
 .lobby-copy {
-  display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-ui, inherit);
-  font-size: 0.72rem; letter-spacing: 0; color: var(--muted); text-transform: uppercase;
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: transparent; border: 1px solid transparent; color: var(--text-dim);
+  cursor: pointer; transition: color 140ms ease, background 140ms ease, border-color 140ms ease;
 }
-.lobby-list { margin-top: 6px; }
+.lobby-copy:hover { color: var(--text); background: color-mix(in oklab, var(--accent) 12%, transparent); }
+.lobby-copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The address, printed. A share sheet is the whole answer on a phone and none
+   of it on a desktop, where the link used to exist only inside a button. */
+.lobby-url {
+  display: flex; align-items: center; gap: 4px;
+  margin: 10px auto 0; max-width: 100%; width: fit-content;
+  padding: 2px 4px 2px 12px; border-radius: 999px;
+  background: color-mix(in oklab, var(--bg) 55%, transparent);
+  border: 1px solid var(--border);
+}
+.lobby-url-txt {
+  font-size: 0.86rem; color: var(--text-dim); user-select: all;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Only ever present when the clipboard refused. A copy that worked is confirmed
+   by the tick on the button that did it. */
+.lobby-share-note { margin: 9px 0 0; }
+/* The confirmation, on the control that performed it. */
+.lobby-copy.is-done { color: var(--good); background: color-mix(in oklab, var(--good) 14%, transparent); }
+
+.lobby-list { margin-top: 16px; }
+/* A name, two chips and a state pill do not fit one line on a phone. The name
+   takes the slack and truncates; the state pill wraps to its own line rather
+   than being clipped by the dialog's edge. */
+.lobby-player { flex-wrap: wrap; row-gap: 6px; }
+.lobby-player > strong { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lobby-player > .grow { flex: 1 0 0; }
+.lobby-player .lobby-ready { flex: none; }
+/* Your own row's readiness is a control; everyone else's is a readout. Same
+   shape either way, so the list reads as one column of states. */
+.lobby-ready {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 13px; border-radius: 999px; min-height: 36px;
+  font-size: 0.84rem; font-weight: 700; color: var(--text-dim);
+  background: var(--surface2); border: 1px solid var(--border);
+  cursor: pointer; transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+.lobby-ready .ready-dot { margin-left: 0; }
+.lobby-ready.is-ready { color: var(--good); border-color: color-mix(in oklab, var(--good) 45%, var(--border)); }
+.lobby-ready:not(.lobby-ready-flat):hover { color: var(--text); border-color: color-mix(in oklab, var(--accent) 45%, var(--border)); }
+.lobby-ready:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lobby-ready-flat { background: transparent; border-color: transparent; cursor: default; font-weight: 600; }
+/* The guest room's own list still prints readiness as plain text. */
 .lobby-ready-txt { min-width: 68px; text-align: right; }
+
 .lobby-waiting { display: flex; align-items: center; gap: 8px; padding-top: 10px; }
 .lobby-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: lobbyPulse 1.4s ease-in-out infinite; }
 @keyframes lobbyPulse { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
-.lobby-actions { margin-top: 16px; align-items: center; }
+/* One action. Leaving is the dialog's X, and the three near-equal buttons that
+   used to sit here left nothing looking like the thing to press. */
+.lobby-actions {
+  margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.lobby-actions > button { width: 100%; justify-content: center; }
 
 @media (prefers-reduced-motion: reduce) {
   .lobby-pulse { animation: none; opacity: 0.9; }
 }
 
-/* ---------- Block Stack: split blueprint / construction site ---------- */
-.stack-split { display: grid; grid-template-columns: 1fr 360px; gap: 14px; padding: 16px; align-items: stretch; }
-@media (max-width: 760px) { .stack-split { grid-template-columns: 1fr; } .stack-site { height: 320px !important; } }
-.stack-typepanel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
-.stack-typepanel .stack-word { font-size: clamp(1.6rem, 3.8vw, 2.3rem); padding: 0; }
+/* ---------- Block Stack: the construction site ----------
+   The band above it lives in arena.css with the rest of the stage; the split
+   layout it used to sit in is gone, the stage owns that now. */
+/* No border of its own: the stage's side panel is already a framed rectangle,
+   and two rounded frames around one canvas read as a picture of a game rather
+   than a game. Just the sky the tower stands against. */
 .stack-site {
-  position: relative; border-radius: 16px; overflow: hidden;
-  background:
-    linear-gradient(180deg, color-mix(in oklab, var(--accent2) 7%, transparent), transparent 40%),
-    color-mix(in oklab, var(--text) 3%, var(--bg));
-  border: 1px solid var(--border);
+  position: relative; border-radius: 12px; overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent2) 14%, transparent), transparent 62%);
 }
-.stack-crane2 { position: absolute; top: 0; left: 0; right: 0; height: 64px; z-index: 5; }
-.stack-crane2 .stack-crane-arm { position: absolute; top: 10px; left: 4%; right: 4%; height: 7px; border-radius: 4px; background: var(--surface2); border: 1px solid var(--border); }
-.stack-crane2 .stack-crane-cable { position: absolute; top: 17px; left: 50%; width: 2px; height: 16px; background: var(--muted); }
-.stack-crane2 .stack-preview { top: 33px; height: 27px; font-size: 0.85rem; }
-.stack-world { position: absolute; left: 0; right: 0; bottom: 0; transition: transform 0.4s ease; }
-.stack-column { display: flex; flex-direction: column-reverse; align-items: center; gap: 3px; padding-bottom: 14px; }
-.stack-column .stack-block { height: 27px; flex: none; }
-.stack-marks { position: absolute; inset: 0; pointer-events: none; }
-.stack-mark { position: absolute; right: 8px; font-size: 0.68rem; color: var(--muted); opacity: 0.7; }
-.stack-mark::before { content: ''; position: absolute; right: 18px; top: 50%; width: 26px; height: 1.5px; background: color-mix(in oklab, var(--muted) 45%, transparent); }
-.stack-bestline { position: absolute; left: 6%; right: 6%; height: 0; }
-.stack-bestline i { position: absolute; left: 0; right: 0; border-top: 2px dashed color-mix(in oklab, var(--gold) 65%, transparent); }
-.stack-bestline em { position: absolute; left: 0; top: -18px; font-style: normal; font-size: 0.68rem; font-weight: 750; color: var(--gold); }
+/* The canvas fills the site exactly. Its own drawing buffer is sized from the
+   element, so it must not be allowed to size itself from the buffer. */
+.stack-canvas { display: block; width: 100%; height: 100%; }
 
 /* ---------- Keyforge heat gauge ---------- */
 .forge-heatbar { position: relative; max-width: 440px; height: 22px; margin: 0 auto 12px; border-radius: 999px; background: var(--ring-track); border: 1px solid var(--border); overflow: hidden; }
@@ -1008,6 +1676,8 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
   .critter-fly, .cr-wing-l, .cr-wing-r, .kw-guardian-bob, .kw-you,
   .kwm-cloud, .kwm-sunrays, .kwm-road-done, .kw-pulse, .flight-sun,
   .kwm-firefly, .kwm-lantern, .kwm-crystal, .kwm-bird, .kwm-beacon,
+  .kwm-flutter, .kwm-wingl, .kwm-wingr, .kwm-hop, .kwm-perch, .kwm-gull,
+  .kwm-spout, .kwm-bat, .kwm-balloon, .kwm-falls,
   .kw-chart-active, .kw-chart-boat, .trail-pulse, .trail-path-done, .trail-flag-up { animation: none; }
 }
 
@@ -1018,20 +1688,72 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .jn-head h1 { font-size: clamp(1.5rem, 3.4vw, 2rem); margin: 2px 0; }
 .jn-stats { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 
-.jn-elev { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.jn-leg { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 8px 10px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 6px; color: var(--text); font: inherit; transition: border-color 0.15s, transform 0.15s; }
-.jn-leg:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-2px); }
-.jn-leg.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.jn-leg.locked { opacity: 0.55; cursor: default; }
-.jn-leg-name { font-size: 0.78rem; font-weight: 750; display: flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.jn-leg.done .jn-leg-name { color: var(--good); }
-.jn-leg-bar { height: 5px; border-radius: 999px; background: var(--ring-track); overflow: hidden; }
-.jn-leg-bar i { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
-.jn-leg.done .jn-leg-bar i { background: var(--good); }
+/* The legs read as a ridge line: each block sits a little higher than the one
+   before it, so the strip is an elevation profile rather than five tabs. The
+   lift is a bottom margin against `align-items: end`, which keeps every block
+   the same height and lets the row wrap without any of it mattering. */
+.jn-elev { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: end; }
+.jn-leg {
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 10px 12px 11px; cursor: pointer; text-align: left;
+  display: flex; flex-direction: column; gap: 8px; color: var(--text); font: inherit;
+  position: relative; overflow: hidden;
+  transition: border-color 0.18s, transform 0.18s, background 0.18s, box-shadow 0.18s;
+}
+.jn-leg:nth-child(2) { margin-bottom: 5px; }
+.jn-leg:nth-child(3) { margin-bottom: 10px; }
+.jn-leg:nth-child(4) { margin-bottom: 15px; }
+.jn-leg:nth-child(5) { margin-bottom: 20px; }
+.jn-leg:hover:not(:disabled) { border-color: color-mix(in oklab, var(--accent) 55%, var(--border)); transform: translateY(-3px); box-shadow: var(--shadow); }
+.jn-leg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.jn-leg.on {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 10%, var(--surface));
+  box-shadow: 0 0 0 1px var(--accent), var(--shadow);
+}
+/* a summit cap on the selected leg — the one bit of colour the eye lands on */
+.jn-leg.on::before { content: ''; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.jn-leg.done { border-color: color-mix(in oklab, var(--good) 40%, var(--border)); }
+.jn-leg.locked { cursor: default; background: var(--bg2); border-style: dashed; }
 
-.jn-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; align-items: start; }
-@media (max-width: 960px) { .jn-grid { grid-template-columns: 1fr; } .jn-elev { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
+.jn-leg-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.jn-leg-badge {
+  flex: none; width: 21px; height: 21px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--surface2); color: var(--text-dim);
+  font-size: 0.72rem; font-weight: 800; line-height: 1;
+}
+.jn-leg.on .jn-leg-badge { background: var(--accent); color: var(--accent-ink); }
+.jn-leg.done .jn-leg-badge { background: var(--good); color: var(--accent-ink); }
+.jn-leg.locked .jn-leg-badge { background: transparent; box-shadow: inset 0 0 0 1.5px var(--border); color: var(--muted); }
+.jn-leg-name { font-size: 0.82rem; font-weight: 750; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jn-leg.locked .jn-leg-name { color: var(--muted); }
+.jn-leg-meta { font-size: 0.7rem; font-weight: 650; color: var(--muted); letter-spacing: 0.01em; }
+.jn-leg.on .jn-leg-meta { color: var(--text-dim); }
+.jn-leg.done .jn-leg-meta { color: var(--good); }
+.jn-leg-bar { height: 6px; border-radius: 999px; background: var(--ring-track); overflow: hidden; }
+.jn-leg-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.jn-leg.done .jn-leg-bar i { background: var(--good); }
+@media (prefers-reduced-motion: reduce) {
+  .jn-leg, .jn-leg-bar i { transition: none; }
+  .jn-leg:hover:not(:disabled) { transform: none; }
+}
+
+/* Both columns end on the same line. Whichever side is taller sets the height,
+   and the map card is the one thing on the left allowed to grow, so the slack
+   lands in the map rather than as a gap under the last card. */
+.jn-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; align-items: stretch; }
+@media (max-width: 960px) {
+  .jn-grid { grid-template-columns: 1fr; }
+  /* the ridge only reads on one line, so below the fold it becomes a swipeable
+     row: same blocks, no wrapped stair-step. */
+  .jn-elev { display: flex; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+  .jn-elev::-webkit-scrollbar { display: none; }
+  .jn-leg { flex: 0 0 clamp(140px, 44vw, 190px); scroll-snap-align: start; }
+  .jn-leg:nth-child(n) { margin-bottom: 0; }
+}
 .jn-left { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.jn-map-card { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 .jn-rail { display: flex; flex-direction: column; gap: 14px; }
 .jn-continue h2 { margin: 4px 0 6px; }
 
@@ -1042,8 +1764,16 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .jn-mission-bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
 .jn-mission.done .jn-mission-bar i { background: var(--good); }
 
-/* the trail map itself */
-.trail-map svg { width: 100%; height: auto; }
+/* The trail map itself. The drawing keeps its aspect ratio, so when the card is
+   taller than the drawing the terrain sits on the floor and the slack above it
+   becomes sky — a gradient, so the extra height reads as air over the ridge
+   rather than as a blank strip. */
+.trail-map {
+  flex: 1; display: flex; align-items: flex-end; min-height: 0;
+  border-radius: var(--radius-s); overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent2) 7%, var(--surface)) 0%, var(--surface) 62%);
+}
+.trail-map svg { width: 100%; height: auto; max-height: 100%; }
 .trail-massif { fill: color-mix(in oklab, var(--accent) 7%, var(--surface)); }
 .trail-massif2 { fill: color-mix(in oklab, var(--accent) 12%, var(--surface)); }
 .trail-contour { fill: none; stroke: var(--border); stroke-width: 1.5; opacity: 0.5; }
@@ -1459,21 +2189,24 @@ a.who-add-link { text-decoration: none; }
 
 .xb-panel { padding-top: 8px; }
 .xb-tabs {
-  display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--border);
-  margin: 0 -6px 16px; padding: 0 6px 8px; scrollbar-width: thin;
+  display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--border);
+  margin: 0 -6px 16px; padding: 0 6px 8px;
 }
 .xb-tab {
-  flex: none; min-width: 72px; min-height: 56px;
+  flex: 1 1 auto; min-height: 56px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  padding: 8px 10px; border: none; border-radius: 12px; background: none;
+  padding: 8px 6px; border: none; border-radius: 12px; background: none;
   color: var(--muted); cursor: pointer; position: relative;
   transition: background 0.15s ease, color 0.15s ease;
 }
 .xb-tab:hover { background: var(--surface2); color: var(--text); }
-.xb-tab small { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.xb-tab small {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 .xb-tab.on { color: var(--accent); background: color-mix(in oklab, var(--accent) 12%, transparent); }
 .xb-tab.on::after {
-  content: ''; position: absolute; left: 12px; right: 12px; bottom: -9px;
+  content: ''; position: absolute; left: 12px; right: 12px; bottom: 4px;
   height: 2px; border-radius: 2px; background: var(--accent);
 }
 
@@ -1542,3 +2275,152 @@ a.who-add-link { text-decoration: none; }
 /* The explorer you are signed in as: listed, but not a button to press. */
 .opt-tile.is-you { cursor: default; border-color: color-mix(in oklab, var(--accent) 45%, var(--border)); }
 .opt-tile.is-you:hover { transform: none; }
+
+/* ---------- Crash screen (components/Boundary.tsx) ----------
+   Themed like the rest of the app on purpose: a crash that renders in browser
+   defaults reads as "this website is gone", which is a worse message than the
+   error itself. */
+.errs {
+  min-height: 100vh; min-height: 100dvh;
+  display: grid; place-items: center;
+  padding: calc(24px + env(safe-area-inset-top)) var(--gutter) calc(24px + env(safe-area-inset-bottom));
+  background: radial-gradient(1200px 600px at 50% -10%, var(--bg2), var(--bg));
+  color: var(--text); font-family: var(--font-ui);
+}
+.errs-card {
+  width: 100%; max-width: 560px; text-align: center;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: clamp(24px, 5vw, 40px);
+}
+.errs-kip { animation: errs-wobble 2.6s ease-in-out infinite; }
+@keyframes errs-wobble {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+.errs-title {
+  margin: 10px 0 6px; font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.2;
+}
+.errs-title:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 8px; }
+.errs-lede { color: var(--text-dim); font-size: 1.02rem; line-height: 1.55; margin: 0 auto; max-width: 42ch; }
+.errs-actions {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px;
+}
+/* 44px minimum on every control, including the one wrapped onto its own row. */
+.errs-actions .btn { min-height: 48px; flex: 1 1 auto; min-width: 150px; }
+
+.errs-details { margin-top: 22px; text-align: left; }
+.errs-details > summary {
+  cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 4px;
+  font-size: 0.86rem; font-weight: 650; color: var(--muted);
+}
+.errs-details > summary::-webkit-details-marker { display: none; }
+.errs-details > summary::before { content: '▸'; transition: transform 0.15s ease; }
+.errs-details[open] > summary::before { transform: rotate(90deg); }
+.errs-details > summary:hover { color: var(--text-dim); }
+.errs-details > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.errs-trace {
+  margin-top: 8px; padding: 12px; max-height: 210px; overflow: auto;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-s);
+  font-family: var(--font-type); font-size: 0.76rem; line-height: 1.5;
+  color: var(--text-dim); white-space: pre-wrap; word-break: break-word;
+}
+.errs-copy { margin-top: 8px; min-height: 44px; font-size: 0.84rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .errs-kip { animation: none; }
+  .errs-details > summary::before { transition: none; }
+}
+
+/* ---------- the arrival party on the island ----------
+   A spot finished a moment ago throws confetti where it stands. Everything is
+   transform and opacity, everything clears itself, and none of it is
+   information: the filled node and its stars are what actually say the spot is
+   done. This just makes the map as pleased about it as the child is. */
+.kwm-cheer-ring {
+  fill: none; stroke: #fffdf6; stroke-width: 4;
+  animation: kwmRing 0.75s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+@keyframes kwmRing {
+  from { r: 6; opacity: 0.95; stroke-width: 8; }
+  to { r: 64; opacity: 0; stroke-width: 1; }
+}
+.kwm-confetti {
+  transform-box: fill-box; transform-origin: center;
+  animation: kwmConfetti 1.35s cubic-bezier(0.15, 0.7, 0.3, 1) forwards;
+}
+@keyframes kwmConfetti {
+  0% { transform: translate(0, 0) rotate(0) scale(0.4); opacity: 0; }
+  12% { opacity: 1; }
+  60% { transform: translate(var(--dx), var(--dy)) rotate(var(--spin)) scale(1); opacity: 1; }
+  100% { transform: translate(calc(var(--dx) * 1.12), calc(var(--dy) + 46px)) rotate(var(--spin)) scale(0.9); opacity: 0; }
+}
+.kwm-cheer-star {
+  fill: #ffd166; stroke: #e0a33a; stroke-width: 1.2; font-size: 26px;
+  paint-order: stroke; opacity: 0;
+  animation: kwmCheerStar 1.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes kwmCheerStar {
+  0% { opacity: 0; transform: translateY(14px) scale(0.2); }
+  22% { opacity: 1; transform: translateY(-4px) scale(1.25); }
+  34% { transform: translateY(0) scale(1); }
+  82% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-12px) scale(0.95); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The party is decoration on top of a node that already changed. Under
+     reduced motion it simply does not happen. */
+  .kwm-cheer { display: none; }
+}
+
+/* ---------- the voyage: what is on all five islands ----------
+   The chart says where they are, this says what they hold. Locked islands are
+   described rather than hidden, because knowing what is coming is the point. */
+.kw-voyage { margin-top: 14px; }
+.kw-voyage-head h3 { margin: 0 0 2px; font-size: 1.05rem; }
+.kw-voyage-head p { margin: 0 0 10px; }
+.kw-voyage-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.kw-voyage-row button {
+  width: 100%; display: grid; grid-template-columns: 28px 40px minmax(0, 1fr) auto;
+  align-items: center; gap: 12px; text-align: left;
+  padding: 10px 14px; border-radius: 16px; cursor: pointer; font: inherit;
+  background: var(--surface2); border: 2px solid var(--border); color: var(--text);
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+.kw-voyage-row button:hover:not(:disabled), .kw-voyage-row button:focus-visible:not(:disabled) {
+  transform: translateX(3px); border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+}
+.kw-voyage-row button:disabled { cursor: default; opacity: 0.66; }
+.kw-vr-n {
+  width: 28px; height: 28px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type); font-weight: 800; font-size: 0.9rem;
+  background: var(--surface); border: 2px solid var(--border); color: var(--text-dim);
+}
+.kw-vr-pal { display: flex; align-items: center; justify-content: center; color: var(--muted); }
+.kw-vr-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.kw-vr-txt strong { font-size: 1rem; }
+.kw-vr-teach { font-size: 0.86rem; color: var(--text-dim); }
+.kw-vr-state {
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+  font-size: 0.82rem; font-weight: 700; color: var(--muted);
+}
+.kw-vr-state svg { vertical-align: -2px; }
+/* Done, here, open, fog: four states that must not rely on colour alone, so
+   each one carries its own word and its own icon. */
+.kw-vr-done button { background: color-mix(in oklab, var(--good) 14%, var(--surface2)); border-color: color-mix(in oklab, var(--good) 45%, var(--border)); }
+.kw-vr-done .kw-vr-state { color: var(--good); }
+.kw-vr-done .kw-vr-n { background: color-mix(in oklab, var(--good) 55%, var(--surface)); color: #14301f; border-color: color-mix(in oklab, var(--good) 70%, #000); }
+.kw-vr-here button { background: color-mix(in oklab, var(--gold) 16%, var(--surface2)); border-color: color-mix(in oklab, var(--gold) 55%, var(--border)); }
+.kw-vr-here .kw-vr-state { color: color-mix(in oklab, var(--gold) 70%, var(--text)); }
+.kw-vr-here .kw-vr-n { background: var(--gold); color: #2d2a26; border-color: color-mix(in oklab, var(--gold) 62%, #000); }
+
+@media (max-width: 640px) {
+  .kw-voyage-row button { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 9px; padding: 9px 11px; }
+  .kw-vr-pal { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kw-voyage-row button:hover:not(:disabled) { transform: none; }
+}

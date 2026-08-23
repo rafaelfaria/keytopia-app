@@ -15,7 +15,7 @@ import { Ic } from '../components/icons';
 
 const MODE_ICONS: Record<string, string> = {
   lesson: 'book', adaptive: 'brain', weakkeys: 'dumbbell', speed: 'zap', accuracy: 'target', rhythm: 'waves', zen: 'flower',
-  endurance: 'route', realworld: 'clipboard', code: 'braces', numbers: 'peaks', dictation: 'headphones', copy: 'file',
+  endurance: 'route', realworld: 'clipboard', code: 'braces', numbers: 'peaks', copy: 'file',
   blind: 'eye-off', recovery: 'lifebuoy', game: 'gamepad', race: 'rocket', challenge: 'calendar', assessment: 'compass',
 };
 

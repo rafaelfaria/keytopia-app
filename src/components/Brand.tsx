@@ -1,10 +1,12 @@
 /**
- * KeyTopia brand mark — an orbit ring sweeping around a tilted keycap bearing the K,
+ * The brand mark — an orbit ring sweeping around a tilted keycap bearing the K,
  * with a spark at the crest. Pure vector so it renders identically from 16px favicons
  * to the 512px app icon. Colours are fixed (brand identity), independent of theme.
  */
 
-export const BRAND = {
+import { BRAND } from '../lib/brand';
+
+export const BRAND_COLORS = {
   cyan: '#22d3ee',
   blue: '#3b82f6',
   indigo: '#6366f1',
@@ -24,17 +26,17 @@ const SPARK_PATH = 'M50 2 C53.5 30 57 44.5 98 50 C57 55.5 53.5 70 50 98 C46.5 70
 export function LogoMark({ size = 32, idPrefix = 'kt', flat = false }: { size?: number; idPrefix?: string; flat?: boolean }) {
   const p = idPrefix;
   return (
-    <svg width={size} height={size} viewBox="0 0 512 512" role="img" aria-label="KeyTopia" className="logo-mark">
+    <svg width={size} height={size} viewBox="0 0 512 512" role="img" aria-label={BRAND.name} className="logo-mark">
       <defs>
         <linearGradient id={`${p}-ring`} x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0%" stopColor={BRAND.cyan} />
-          <stop offset="45%" stopColor={BRAND.blue} />
-          <stop offset="100%" stopColor={BRAND.violet} />
+          <stop offset="0%" stopColor={BRAND_COLORS.cyan} />
+          <stop offset="45%" stopColor={BRAND_COLORS.blue} />
+          <stop offset="100%" stopColor={BRAND_COLORS.violet} />
         </linearGradient>
         <linearGradient id={`${p}-ring2`} x1="1" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={BRAND.indigo} />
-          <stop offset="55%" stopColor={BRAND.blue} />
-          <stop offset="100%" stopColor={BRAND.cyan} />
+          <stop offset="0%" stopColor={BRAND_COLORS.indigo} />
+          <stop offset="55%" stopColor={BRAND_COLORS.blue} />
+          <stop offset="100%" stopColor={BRAND_COLORS.cyan} />
         </linearGradient>
         <linearGradient id={`${p}-cap`} x1="0.15" y1="0" x2="0.85" y2="1">
           <stop offset="0%" stopColor="#ffffff" />
@@ -43,8 +45,8 @@ export function LogoMark({ size = 32, idPrefix = 'kt', flat = false }: { size?: 
         </linearGradient>
         <linearGradient id={`${p}-spark`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#fde68a" />
-          <stop offset="45%" stopColor={BRAND.gold} />
-          <stop offset="100%" stopColor={BRAND.amber} />
+          <stop offset="45%" stopColor={BRAND_COLORS.gold} />
+          <stop offset="100%" stopColor={BRAND_COLORS.amber} />
         </linearGradient>
         {!flat && (
           <filter id={`${p}-shadow`} x="-30%" y="-30%" width="160%" height="160%">
@@ -66,7 +68,7 @@ export function LogoMark({ size = 32, idPrefix = 'kt', flat = false }: { size?: 
         <rect x="124" y="118" width="264" height="264" rx="62" fill={`url(#${p}-cap)`} />
         <rect x="124" y="118" width="264" height="264" rx="62" fill="none" stroke="#ffffff" strokeWidth="7" opacity="0.85" />
         <g transform="translate(159 152) scale(1.94)">
-          <path d={K_PATH} fill={BRAND.ink} stroke={BRAND.ink} strokeWidth="7" strokeLinejoin="round" strokeLinecap="round" />
+          <path d={K_PATH} fill={BRAND_COLORS.ink} stroke={BRAND_COLORS.ink} strokeWidth="7" strokeLinejoin="round" strokeLinecap="round" />
         </g>
       </g>
 

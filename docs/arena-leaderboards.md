@@ -1,0 +1,1011 @@
+# The Arena Boards — one leaderboard system for every mini game
+
+> **Two more competitive games shipped, 2026-08-20: Tide Line and Pearl Dive**
+> (§13). They were added strictly by the §10 checklist, one migration each, and
+> they exist because the three competitive games before them all ranked the same
+> axis in three costumes.
+>
+> **Status: phases 1–4 and 5a shipped.** Every one of the nine mini games opens
+> on an `ArenaIntro`, plays inside an `ArenaStage` and ends on an `ArenaResult`,
+> and **the Lightstream now ranks too**: its locked `StandingsPreview` mockup is a
+> real `ArenaBoard`, and its finish screen is an `ArenaResult`. What is left is
+> the Arena hub rebuild in `Games.tsx` (5b).
+>
+> **Quill Duel ranks one rival pace and treats the other four as practice**
+> (§3, "A game with difficulty settings"). Sharp at 48 wpm for teens and adults,
+> Steady at 30 for kids. No schema change was needed for it.
+>
+> **The Lightstream ranks one CPU pace** — Skilled at 45, Casual at 28 for kids —
+> and treats the other paces, ghost races and private rooms as practice. Same §3
+> rule, different reason: the duel's easy rival gave away free points, while the
+> Lightstream's rival pace changes how hard a run is *pulled*.
+>
+> Three stage variants cover every game, and which one a game takes is a
+> gameplay judgement rather than a layout preference:
+>
+> | variant | games | why |
+> |---|---|---|
+> | split | Block Stack, Keyforge, Wordflight, Pearl Dive | the world reads fine in half the width |
+> | `wide` | Wordfall, Survivor Sprint, Wordflight | a horizontal world (a sky, a track) needs the room |
+> | solo | Cipher Run, Quill Duel, Tide Line | splitting would separate things that must be read together |
+>
+> Playfields that the game's own arithmetic measures against a fixed height —
+> Wordfall's fall distance, Wordflight's sky — are **capped and centred rather
+> than stretched**. A full-height column silently turned a 460px drop into an
+> 800px one, which is a difficulty change disguised as a layout change.
+>
+> **Bespoke 3D scenes are still per-game work.** Block Stack has `stackScene.ts`;
+> the other six keep their existing DOM and SVG artwork inside the new stage.
+> That preserves each game's identity now and leaves the 3D upgrade as six
+> separate design jobs rather than six rushed ones.
+>
+> **Status (2026-08-16): phases 1–3 shipped.** The schema, the four RPCs, the
+> realtime channel, the client layer and the three shared surfaces are built, and
+> **Block Stack is wired end to end** as the reference implementation. Phases 4
+> and 5 (the remaining seven games, and the Arena hub rebuild that replaces the
+> locked `StandingsPreview` mockup) are **not built**.
+>
+> Shipped: `supabase/migrations/20260816120000_arena_boards.sql`,
+> `supabase/tests/arena_rls.sql` (15 sections, all passing), `src/lib/arena.ts`,
+> `src/lib/arenaBoard.ts`, `src/lib/arenaLive.ts`, `src/components/arena.tsx`,
+> `src/styles/arena.css`, the `hideGlobalBoards` setting, and the intro/result
+> panels in `src/pages/StackGame.tsx`.
+>
+> **Revised 2026-08-16 after review.** The first pass made the pre-game panel a
+> short two-column card with the board floating in its top third, and the finish
+> screen one centred column of undifferentiated figures. Both were rebuilt:
+> §7.5 (the game's front door, with the 3D backdrop) and §9 are what shipped.
+>
+> Three deviations from this document as written, all deliberate:
+> `arena_scores` gained a `last_at` column separate from `updated_at` (§3 below
+> explains why a rate limit that only sees improvements has a hole);
+> `ArenaIntro` takes a `title` rather than reusing the registry's game name,
+> because every game page already carries its name and "trains" chip in the
+> header above the panel; and the finish screen falls back to the *board's* next
+> target when the server could not be reached, so rule 2 survives being offline.
+>
+> **Revised a third time.** The stage (§7.4) now wraps all three phases, so a
+> game keeps one layout from front door to finish. "Blueprint" is gone from
+> Block Stack's interface. Board names are chosen by the learner at any age
+> (§12.2). Every screen was checked at 375px.
+>
+> **Revised again after a second review.** Five changes, all in §7.5 / §8 / §12:
+> the 3D field now tints from theme tokens rather than fixed hex; boards show a
+> top ten and page with "show more"; teen and adult global boards show real
+> names (kids stay aliased); the "Trains:" chip moved off the persistent header
+> onto the intro; and the intro lost its card — it is the page.
+>
+> **Verified end to end through a signed-in session** against the local stack:
+> a run posts, ranks, and the board comes back with real rows. This also turned
+> up that `hideLeaderboards` was being honoured by showing a *simulated* board —
+> a board of invented rivals with a target line, which is the comparison the
+> setting exists to switch off. Boards are now absent entirely when it is on.
+
+This is the design contract. Section 10 is the checklist every future mini game
+follows, and it is the reason this document exists: before it, each game invented
+its own ending and none of them ranked you.
+
+Eight play surfaces exist. **The Lightstream** (`RaceHub.tsx` → `RaceLive.tsx`) is
+the headline, then Quill Duel and Survivor Sprint under Competitive, then five skill
+quests: Wordfall Defence, Block Stack, Cipher Run, Keyforge, Wordflight. Every one of
+them ends with a number nobody else will ever see.
+
+---
+
+## 1. What exists today (honest audit)
+
+- **`gameBests` is a local shrug.** `ProfileData.gameBests: Record<string, {score, level}>`
+  (`src/lib/types.ts:124`) is written by seven games in seven slightly different ways
+  and read back as a single gold chip on the intro screen. It syncs to Supabase as an
+  opaque blob (`src/lib/sync.ts:25`). Nothing compares it to anyone.
+- **A real leaderboard already ships, for one feature.** `daily_scores` +
+  `daily_board_global()` / `daily_board_group()`
+  (`supabase/migrations/20260814120000_daily_leaderboards.sql`) back the Daily
+  Challenge, with the two rules that govern everything below: **the client never
+  states its own score** (generated column), and **a child's real name never reaches
+  a stranger** (`keytopia_alias()`). `boards` / `board_members` give households a
+  private board with a six-character code. All of this is reusable as-is.
+- ~~**The Lightstream's standings are a mockup.**~~ They were: `StandingsPreview` in
+  `RaceHub.tsx` rendered four deliberately locked skeleton rows under a "Coming soon"
+  chip. It is now a real `ArenaBoard`, and the ranked-race rule below is what made it
+  one honest board rather than three kinds of race on one list.
+- **Realtime is already proven here.** `src/lib/room.ts` runs private race rooms on a
+  Supabase Realtime channel with presence and broadcast, degrading to simulated
+  friends when no project is configured. The Arena boards borrow its shape wholesale,
+  including the degrade rule.
+- **Every game shares one skeleton.** `phase: 'intro' | 'run' | 'over'`, with intro
+  and over both rendered as a `.game-over` panel inside `.game-frame`. That is the
+  insertion point: two panels, eight games, one component each.
+
+---
+
+## 2. Principles
+
+1. **The board never blocks play.** Press "Play" and you play. Boards load beside the
+   button, never in front of it. Every fetch degrades to a local view rather than an
+   error, the way `fetchBoard()` already does.
+2. **One number you are chasing.** A rank with no target is a scoreboard. A rank with
+   "14 points to pass Bright Kestrel" is a game. Every board surface ends in a
+   *next target* line, and that line is the design's centre of gravity.
+3. **You are always on screen.** Outside the top N, your row is pinned below an
+   explicit gap. A board that drops you reads as "you did not count".
+4. **Rank is never carried by colour alone.** Podium tints decorate a numeral.
+   Movement is an arrow *and* a number *and* a screen-reader sentence.
+5. **The server ranks, the client renders.** The client posts raw metrics and gets a
+   rank back in the same round trip. It never computes a position it then has to
+   defend.
+6. **Pseudonymous by default, real names only where everyone was invited.** Inherited
+   from the Daily Challenge, unchanged, and it is what makes a global board safe for a
+   nine-year-old.
+7. **Social, not stakes.** Runs happen in a browser. Clamps and generated scores stop
+   casual forgery; they do not make this a ranked ladder with prizes, and the copy
+   never pretends otherwise.
+
+---
+
+## 3. Data model
+
+One table for every game, including the Lightstream. Adding a game is a row in a
+registry and a `when` branch in one function, not a new table.
+
+```sql
+-- supabase/migrations/2026XXXX_arena_boards.sql
+
+-- Which games may be ranked, and how their runs are described. A table rather
+-- than a CHECK list so the client registry and the database can be diffed.
+create table arena_games (
+  id          text primary key,          -- 'lightstream' | 'stack' | ...
+  name        text not null,
+  -- Labels for the two game-specific metrics on the board. NULL hides the column.
+  value_label text,                      -- 'height', 'waves', 'gates', 'rounds'
+  active      boolean not null default true
+);
+
+create table arena_scores (
+  game        text not null references arena_games (id),
+  -- 'd:2026-08-16' | 'w:2026-W33' | 'all'. One row per learner per bucket, so
+  -- "today", "this week" and "all time" are the same query with a different key.
+  period      text not null check (period ~ '^(d:\d{4}-\d{2}-\d{2}|w:\d{4}-W\d{2}|all)$'),
+  profile_id  text not null references profiles (id) on delete cascade,
+  owner       uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  age_group   text not null check (age_group in ('kid','teen','adult')),
+
+  -- What a client may state. Bounds are what a human hand can produce.
+  wpm         real not null check (wpm  >= 0 and wpm <= 250),
+  acc         real not null check (acc  >= 0 and acc <= 100),
+  value       real not null default 0 check (value >= 0 and value <= 100000),
+  runs        integer not null default 1 check (runs >= 0 and runs <= 100000),
+
+  -- What it may not.
+  score       integer not null generated always as (arena_score(game, wpm, acc, value)) stored,
+  alias       text    not null generated always as (keytopia_alias(profile_id)) stored,
+  display_name text   not null check (length(display_name) between 1 and 40),
+  avatar      text    not null check (length(avatar) <= 64),
+
+  first_at    timestamptz not null default now(),
+  -- When the BEST changed. A ranking input: ties break on the earlier posting,
+  -- so a run that fails to improve must not touch it.
+  updated_at  timestamptz not null default now(),
+  -- When a run was last posted at all. What the rate limit reads, and separate
+  -- from updated_at precisely because a limiter that only sees improvements has
+  -- a hole exactly the shape of a forger posting in a loop.
+  last_at     timestamptz not null default now(),
+  primary key (game, period, profile_id)
+);
+
+create index arena_scores_board on arena_scores (game, period, age_group, score desc, updated_at asc);
+create index arena_scores_by_profile on arena_scores (profile_id);
+```
+
+`arena_score()` is `immutable` (a generated column requires it) and holds one branch
+per game — the same shape as the `case mode` already in `daily_scores`:
+
+```sql
+create or replace function arena_score(p_game text, p_wpm real, p_acc real, p_value real)
+returns integer language sql immutable as $$
+  select (case p_game
+    when 'lightstream' then round(p_wpm * 10 + p_acc * 2)          -- speed, accuracy as tiebreak
+    when 'duel'        then round(p_value * 200 + p_wpm * 5)       -- rounds won, then pace
+    when 'survivor'    then round(p_value * 150 + p_wpm * 5)       -- heats survived
+    when 'wordfall'    then round(p_value * 60 + p_acc * 6)        -- waves held
+    when 'stack'       then round(p_value * 40 + p_acc * 4)        -- blocks stacked
+    when 'cipher'      then round(p_value * 50 + p_wpm * 3)        -- runes solved
+    when 'keyforge'    then round(p_value * 45 + p_wpm * 4)        -- treasures forged
+    when 'wordflight'  then round(p_value * 55 + p_acc * 5)        -- buoys passed
+    else round(p_wpm * 10 + p_acc)
+  end)::integer;
+$$;
+```
+
+**This is deliberately a migration per new game.** The alternative — a formula string
+read from `arena_games` — cannot back a generated column, and the moment the formula
+is data the client can be told what it is, which is halfway to the client stating its
+own score. The cost is one `case` branch; the benefit is that a tampered client cannot
+put a number on a stranger's screen.
+
+### A game with difficulty settings ranks one of them and practises the rest
+
+Quill Duel is the case that forced this rule, and any game that later grows a
+difficulty picker inherits it.
+
+The duel branch is `rounds won × 200 + wpm × 5`, and the round term only ranks
+anything when the rival sits near the middle of the field it is ranking. The duel
+offers five rival paces. Against Gentle at 18 wpm every player sweeps 4-0, so the
+term is a constant. Against Fierce at 70 almost nobody wins a round, so it is a
+constant again. Either way the board silently degrades into a plain wpm list, and
+worse, the cheapest route to the top is to pick the weakest rival: your wpm is your
+own either way, so an easy bot is free points. A board that rewards choosing the
+easy setting is not a leaderboard.
+
+**One pace is ranked and the rest are practice.** Practice runs are real, scored,
+rewarded and saved to local `gameBests`, and never posted. `ArenaResult` takes a
+`ranked` prop, defaulting true; passing false skips `arena_submit` entirely and
+swaps the standing panel for a practice panel that says where the ranked mode is.
+
+**The ranked pace is per age division**, because boards are already split by
+`age_group` and kid duels already run shorter phrases. Kids duel Steady at 30 wpm,
+teens and adults duel Sharp at 48. Nobody is ever ranked against someone who faced
+a different rival, so comparability is exact within every board, and each division
+gets a rival near its own median where the round term still does work.
+
+**The Lightstream inherits the rule, for a different reason.** Its branch is
+`wpm × 10 + acc × 2`, so no setting hands out free points the way an easy duel
+rival did. What a setting changes there is the *pull*: a 70 wpm CPU rival drags a
+run faster than a 15 wpm one, Adaptive is pegged to your own average and pulls
+not at all, a ghost is a recording of you, and a private room is whoever turned
+up. Ranking all of those together puts a chased run and an unchased one on the
+same list and calls them the same contest. So one CPU pace per division is the
+ranked race — kids race Casual at 28, teens and adults Skilled at 45 — and
+everything else in the hub is practice: real, scored, rewarded, ghost-setting,
+never posted. `RANKED_CPU` in `RaceHub.tsx` holds it, `RaceSetup.ranked` carries
+it into the race, and `RaceLive.tsx` hands it to `ArenaResult`.
+
+The accuracy floor in `arena_submit` (90% for `lightstream`, and the reason its
+comment there talks about ghost and room races posting) predates this and still
+earns its place: it is what stops a ranked race being won by hammering keys. The
+finish screen now applies the same threshold before it decides whether a run was
+ranked, so a floor-missing race says so instead of posting into silence and
+showing no rank.
+
+**Tide Line inherits it too, on the Lightstream's reasoning rather than the
+duel's.** Its branch is `lights × 60 + wpm × 5`, and a slow rival does not hand
+out free lights the way an easy duel rival handed out free rounds. What it does
+is leave the shore standing: against Gentle at 18 wpm almost every tile is still
+there when you reach it, so a run posts lights that were never contested. One
+pace per division is ranked, matching the duel exactly (kids Steady at 30, teens
+and adults Sharp at 48) and for the same comparability reason. `RANKED_PACE` in
+`TideLineGame.tsx` holds it.
+
+**Pearl Dive is the game this rule cannot apply to, because it has no settings
+at all.** It briefly had three depths, which looked exactly like a difficulty
+picker; §13 covers why they went. What is left is one path with nothing to elect,
+which is the strongest possible version of this rule rather than an exception to
+it: every run on that board is the same run.
+
+**No schema support is needed for any of them.** Since only one pace ever submits, the
+single existing duel board *is* the ranked board. The rejected alternative was a
+`variant` column in the primary key giving one board per pace; with this player
+base that is four boards each holding nobody, and an empty board is worse than no
+board. If a game ever genuinely needs parallel ranked ladders, that is when the
+column earns its migration.
+
+**The client must mirror the SQL exactly.** `duelScore()` in `DuelGame.tsx`
+reproduces the `duel` branch above so the number counting up on the finish screen
+is the number that lands on the board row beneath it. These drifted apart once
+already: the finish screen computed `wpm × 10 + rounds × 100` against the server's
+`rounds × 200 + wpm × 5`, so a 4-0 at 40 wpm counted up to 800 and posted 1000.
+
+**Scope reuses what exists.** `boards` / `board_members` already give a household a
+private board with a code, and the Leaderboard component already knows how to create
+and join one. The Arena adds no second invitation concept: `scope=global` is your age
+division under aliases, `scope=board` is a `boards` row under real names. Classroom
+boards stay in the Classroom product, as they do today.
+
+**RLS is unchanged in shape.** Own rows only, restrictive "no anonymous writes",
+cross-learner reads exclusively through the security-definer functions in §4. Anonymous
+school seats may read a board and never appear on one, exactly as with `daily_scores`.
+
+---
+
+## 4. RPCs — one round trip per screen
+
+The performance answer the whole system rests on: no screen issues N queries.
+
+### `arena_home(p_profile_id, p_age, p_period)` → one row per game
+Backs the entire Games/Arena hub. Returns, per active game: your best score, your
+rank, total ranked players, the leader's alias and score, and your rank in the
+previous period so the hub can show movement. One `lateral` per game over the covering
+index; it is one statement and a handful of index scans.
+
+### `arena_board(p_game, p_period, p_scope, p_board_id, p_age, p_profile_id, p_limit)`
+The board itself. Returns top N *plus* your row when it fell outside, plus your two
+neighbours (rank−1 and rank+1) so the "next target" line needs no second call.
+Columns: `rank, name, avatar, wpm, acc, value, score, you, is_neighbour`.
+
+### `arena_submit(p_game, p_profile_id, p_age, p_wpm, p_acc, p_value, p_name, p_avatar)`
+The important one. It writes the day / week / all-time rows **and returns the finish
+screen in the same response**:
+
+```
+returns table (
+  period        text,     -- one row per bucket written
+  score         int,      -- what this run scored
+  best          int,      -- your best in this bucket after the write
+  improved      boolean,  -- did this run beat it
+  rank          int,      -- your rank now
+  prev_rank     int,      -- your rank before this run (null if unranked)
+  passed        int,      -- how many people you overtook
+  passed_name   text,     -- the nearest one, for the copy line
+  total         int,      -- ranked players in this bucket
+  next_rank     int,      -- the rank above you
+  next_gap      int       -- points needed to take it
+)
+```
+
+The client therefore knows, before it paints a single pixel of the finish screen, that
+you went from 22nd to 14th, passed eight people including Bright Kestrel, and are 18
+points off 13th. No polling, no second fetch, no flicker. Writes are upserts keeping
+the best per bucket, so retrying is safe and the "fire and forget" posture from
+`submitDailyScore()` carries over.
+
+**Results and identity are kept on different clocks.** The run's figures, and the
+`updated_at` that breaks ties, only move when the run beat what was there. The
+display name, avatar, board name and the global-boards flag refresh on *every*
+posted run, improving or not: those are not results, they are how you appear, and
+an explorer someone just built would otherwise sit stale on the board until the
+day they happened to beat their own record. The avatar column is bounded at 160
+characters for the same reason — a built explorer encodes to around 98, and
+truncating one does not shrink a picture, it cuts a field in half and brings the
+explorer back in the wrong colour.
+
+`arena_submit` also rate-limits: reject a second submission for the same
+`(game, profile)` inside three seconds. A run cannot legitimately be that short and a
+loop that can is the cheapest possible forgery.
+
+All four are `security definer`, `revoke execute … from public` **then** grant to
+`authenticated`, and re-check `is_anonymous` in the body — because definer rights mean
+RLS is not doing it for us. That trap is documented in the existing migration and in
+memory; it is repeated here because it is repeated in every one of these functions.
+
+---
+
+## 5. Realtime
+
+**Broadcast, not postgres_changes.** RLS on `arena_scores` is "own rows only", so
+Postgres change events would deliver a learner nothing but their own writes — and a
+firehose of every score in the product is the wrong shape regardless.
+
+A trigger on `arena_scores` calls `realtime.send()` to a topic per board:
+
+```
+arena:<game>:<period>:<age_group>
+```
+
+with a payload carrying only what the board already shows to that division:
+`{ alias, avatar, score, wpm, value }`. No profile id, no display name, no owner. The
+same row also lands on the topic for each `boards` row the profile belongs to, where
+the payload may carry the display name because everyone there was invited.
+
+The client (`src/lib/arenaLive.ts`) subscribes to the topic of the board currently on
+screen, and on each message:
+
+1. merges the score into its local rows and re-ranks **optimistically** — the row
+   glides to its new position immediately, which is the whole point of the feature;
+2. schedules a trailing 2-second authoritative `arena_board` refetch, so an optimistic
+   merge can never drift from the truth for longer than a blink.
+
+Presence rides the same channel and gives the board a genuinely alive header:
+"**7 typists on this board right now**". It costs one `track()` call and it is the
+cheapest liveness signal available.
+
+Subscriptions are dropped on unmount and while a game is in `phase: 'run'` — nothing
+re-renders behind a typing test. Dropping one means `removeChannel`, **not**
+`unsubscribe`: supabase-js keys channels by topic and hands back the existing
+instance, so unsubscribing without removing left a dead channel in the registry
+and the next board on that topic was given it back. Adding a listener to an
+already-subscribed channel throws, which took the whole board down with an error
+boundary. The subscribe path also clears any stale instance for its topic first,
+so a remount — navigating away and straight back, a hot reload, StrictMode's
+double effect — is idempotent.
+
+**Degrade rule, unchanged:** no project, no session, or no network means the board
+falls back to the locally simulated rivals with the honest "practice rivals" chip. A
+leaderboard is never worth a blocked page.
+
+---
+
+## 6. The client registry
+
+`src/lib/arena.ts` is the single place a game declares itself:
+
+```ts
+export interface ArenaGame {
+  id: string;
+  name: string;
+  icon: string;
+  to: string;
+  /** What the run trains. Already written per game in Games.tsx. */
+  trains: string;
+  /** Label for the third metric column. Null hides it. */
+  valueLabel: string | null;
+  /** How the finish screen phrases the achievement. */
+  unit: (v: number) => string;      // 14 => '14 blocks'
+  /** Pulled from the game's own result object at submit time. */
+  metric: 'height' | 'waves' | 'gates' | 'rounds' | 'heats' | 'solved' | 'items' | 'wpm';
+}
+export const ARENA_GAMES: Record<string, ArenaGame>;
+```
+
+`Games.tsx` already holds four of these five fields in its `COMPETITIVE` / `QUESTS`
+arrays; the registry absorbs those arrays so the hub, the boards, the submit path and
+the docs cannot disagree about what a game is called.
+
+### 6.1 The starter tier
+
+`tier` gained a third value, `starter`, for games built for a player who cannot type
+yet. Letter Fall is the first: one letter falls at a time, the key is lit on an
+on-screen keyboard, a wrong key costs nothing, and the run ends after three letters
+have landed rather than on a clock.
+
+It is a tier and not a difficulty setting because the difference is structural. A
+seven year old spends seconds finding one key, so every game whose unit of play is a
+word is unplayable at that age however slowly the word falls, and no amount of
+slowing Wordfall down turns a five-key search under a draining shield into something
+a child can finish.
+
+The hub puts starters first for a kid profile and last for everyone else. A grown-up
+who meets "catch one falling letter" on the way to the Arena reads it as the product
+being for children; a seven year old who scrolls past four ranked speed games to
+reach the one they can play reads it as the product not being for them.
+
+**Starters are not ranked, and that is what `ArenaGame.ranked` is for.** They were,
+briefly, with formulas built to avoid speed: letters caught, first-press accuracy,
+letters found before the hint fired. That answered the question from the wrong end.
+A board is a claim that two runs can be compared, and what these games measure is how
+much help a particular child needed today, which is theirs. Ranking it also
+reintroduces the one thing the tier exists to remove, because the way to climb any
+board is to hurry, and every starter promises a child that hurrying is not part of it.
+
+Instead of a board they have a **ladder**: eight levels each, cleared in order and
+kept forever in `ProfileData.starters` (`src/lib/starterLevels.ts`). Without one, a
+starter was ninety seconds long and handed back a points total with nothing to
+compare it to, so a child who played four times had done the same thing four times.
+Every level changes what the game asks, and the four steps are the same four across
+all six games: the letters widen, the goal grows, the crutch goes (the printed word,
+the letters on the planks), and finally the keycaps go blank. The last level of Word
+Bridge is a whole word on an unlabelled keyboard, which is Wordfall with the clock
+taken out, and that is the handover.
+
+Failing to reach a goal leaves the level exactly where it was, which is why `starters`
+is a count of levels cleared and not a score.
+
+So `ranked: false` on all six. `ArenaIntro` drops its board column, `ArenaResult`
+shows the learner's own record in its place, `arena_submit` is never called, and
+`fetchArenaHome` filters them out of the hub standings. They still record sessions,
+still earn XP and badges, and still keep a `gameBests` entry. A future starter that
+genuinely wants a board only has to set the flag.
+
+---
+
+## 7. Surface one — the Arena hub
+
+`Games.tsx` becomes a standings floor rather than a menu.
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│  THE ARENA                        Rising Stars · this week     │
+│  Eight games. One ladder.                                      │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐           │
+│  │ #14      │ │ ▲ 8      │ │ 4 of 8   │ │ 312      │           │  ← your standing strip
+│  │ best rank│ │ this week│ │ ranked   │ │ arena pts│           │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘           │
+│                                                                │
+│  ● live   Bright Kestrel just took #3 in Keyforge      ─────────│  ← realtime ticker
+├────────────────────────────────────────────────────────────────┤
+│  THE LIGHTSTREAM                              [ full board → ] │
+│  ╔══════════════════════════════════════════════════════════╗  │
+│  ║ 1  ▮ Swift Otter      88 wpm  98%   902                  ║  │  ← real standings,
+│  ║ 2  ▮ Calm Comet       81 wpm  97%   838                  ║  │    replacing the
+│  ║ 3  ▮ Bold Falcon      79 wpm  95%   819                  ║  │    locked mockup
+│  ║ ···                                                      ║  │
+│  ║ 14 ▮ You              62 wpm  94%   638   ▲8             ║  │
+│  ║    18 points to pass Merry Willow at #13                 ║  │  ← next target
+│  ╚══════════════════════════════════════════════════════════╝  │
+│                                        [ Enter the Lightstream ]│
+├────────────────────────────────────────────────────────────────┤
+│  ┌────────────┐ ┌────────────┐ ┌────────────┐                  │
+│  │  [art]     │ │  [art]     │ │  [art]     │                  │  ← existing GameArt
+│  │ #7 ▲2      │ │ #22 ▼1     │ │  unranked  │                  │    + rank strip
+│  │ Block Stack│ │ Keyforge   │ │ Cipher Run │                  │
+│  │ 640 · #7 of│ │ 410 · #22  │ │ post a run │                  │
+│  │ 214        │ │ of 198     │ │ to enter   │                  │
+│  └────────────┘ └────────────┘ └────────────┘                  │
+└────────────────────────────────────────────────────────────────┘
+```
+
+Decisions worth stating:
+
+- **The Lightstream gets the board inline, the quests get a strip.** The hub's job is
+  to answer "where am I, and where is the nearest rung" in one glance; eight full
+  boards would answer nothing.
+- **"Arena points" is the only cross-game number**: `sum over games of max(0, 101 −
+  your rank)`, capped at 100 per game. It rewards breadth without pretending a Cipher
+  Run point equals a Lightstream point, and it makes the hub's headline stat something
+  you can move today by playing the game you are worst at.
+- **Unranked is an invitation, not a blank.** "Post a run to enter" with the game's
+  player count beside it.
+- The ticker is the realtime channel for the division, rendered as one line that
+  swaps with a 200ms cross-fade. It is decoration and it is the first thing to go
+  under `prefers-reduced-motion` (it becomes a static "14 runs posted in the last
+  hour").
+
+---
+
+## 7.4 The stage
+
+All three phases of a mini game share one shell, `<ArenaStage>`:
+
+| | left column | right column |
+|---|---|---|
+| **intro** | what this is, your record, play | the board |
+| **run** | what to type | the game world |
+| **over** | what you scored | the board, and where you landed |
+
+Plus a constant backdrop, a constant way out, and a HUD strip for the running
+game's score and clock. Before this, a game changed shape three times: a hero
+page to start, a bordered card to play in, a centred column to finish on. Three
+layouts for one activity meant the screen reorganised itself twice while the
+learner was still in it, and finishing a run felt like arriving somewhere else.
+
+**The backdrop holds still while you play.** `quiet` stops the field's animation
+loop and thickens the veil: the same world, stepped back. Scenery must not
+compete with the word someone is trying to type, and no frame budget should be
+spent behind a keystroke.
+
+**Game words go in the interface, game metaphors go in the artwork.** Block Stack
+labelled the word you had to type "blueprint" — naming the input after the thing
+it builds, which is a riddle at the exact moment someone needs an instruction.
+It says "Type this".
+
+---
+
+## 7.5 The 3D backdrop
+
+Each game's front door is drawn over the **same keycap field the landing and the
+public pages use** (`src/pages/public/heroScene.ts`), in that game's formation and
+hue: `stack` climbs in terraces, `lightstream` streams sideways, `wordfall`
+scatters, `wordflight` sits calm. Reusing that scene rather than writing a new one
+per game is what keeps a game's front door in the same world as the rest of the
+product, and it costs one dynamic import.
+
+Three things make WebGL safe in front of a typing game:
+
+- it is imported dynamically, so three.js is in no bundle a learner downloads
+  before opening a game;
+- it is one `InstancedMesh` and therefore one draw call, whatever the field does;
+- it is disposed the moment the intro unmounts, which is the moment play starts.
+  Nothing renders behind someone who is typing.
+
+Under `prefers-reduced-motion` (or the in-app switch) the scene draws a single
+static frame and never asks for another, so the game still has a front door
+rather than a blank panel.
+
+**Each game's colour comes from the theme, not from a hex.** The registry names
+two theme *tokens* and a blend between them (`tone: ['accent2', 'accent', 0.15]`),
+resolved at mount from the live custom properties. Fixed colours gave every game
+one identity and twelve wrong themes: a violet field is right on midnight and
+fights meadow's greens and paper's browns. Tokens mean each game still reads as
+itself, in whatever palette the learner chose, including themes added later.
+
+The scene gained four optional inputs for this: `fog`, `surfaceA`/`surfaceB` and
+`tint`. The public pages omit all three and are unchanged. The Arena passes live
+theme tokens, because a learner may be on any of twelve themes including three
+light ones and a field fogged to `#0b1020` sits on a cream page like a hole; and
+it passes a tint because `terrace`'s five plateaus otherwise take the five
+*curriculum world* colours, which is the wrong meaning inside a game.
+
+**The busy formations run slower behind a game than on a marketing page.**
+`wave`, `stream` and `scatter` animate at 0.35–0.4× the pace the public pages
+use. A ripple crossing the field, a sideways drift or cells tumbling on two axes
+is the point of a marketing hero; on a game's front door the same motion
+competes with the copy you are meant to read and the button you are meant to
+press, and it reads as restlessness rather than craft. `terrace` and `calm` were
+already gentle and are unchanged. The scene takes one `speed` multiplier applied
+to its time accumulator, so every formation slows in step and none can drift out
+of phase with another.
+
+**Contrast is guaranteed by a veil, not by luck.** `.arena-hero-veil` is opaque
+exactly where copy sits and thins out everywhere else. It is anchored left on
+desktop, where the text column is, and becomes a top-down band on mobile, where
+the column is centred and full width.
+
+---
+
+## 8. Surface two — the pre-game board
+
+Replaces the `phase === 'intro'` panel in every game with one shared component,
+`<ArenaIntro game="stack" onPlay={start} />`. Two columns on desktop, stacked on
+mobile with the board **below** the button.
+
+```
+┌───────────────────────────────┬──────────────────────────────┐
+│  ▮ Build the word tower       │  Today  Week  All time       │  ← Seg (period)
+│                               │  Global  ·  The Okonkwo house│  ← Seg (scope)
+│  Type the blueprint and the   │  ──────────────────────────  │
+│  crane drops a block. Clean   │  ● 7 here now                │  ← presence
+│  words drop wide. Under 55%   │  1 ▮ Swift Otter        902  │
+│  the top crumbles.            │  2 ▮ Calm Comet         838  │
+│                               │  3 ▮ Bold Falcon        819  │
+│  Trains: word-perfect         │  4 ▮ Merry Willow       656  │
+│  precision                    │  5 ▮ Quiet Ember        640  │
+│                               │  ···                         │
+│  Your best: 640 · 21 blocks   │  14 ▮ You  ▲8           638  │
+│                               │  ──────────────────────────  │
+│  [   Lay the first block →  ] │  18 points to reach #13      │  ← next target
+└───────────────────────────────┴──────────────────────────────┘
+```
+
+- The play button is above the fold on every breakpoint, always. Rule 1.
+- **The board runs to the bottom of the panel.** The column stretches, the rows
+  take the slack and the target line is pinned to the bottom edge. A board that
+  stops a third of the way down a tall card reads as an afterthought.
+- **Open places fill the rest.** Any board holding fewer learners than it has
+  slots draws the remaining ones as numbered empty seats, the treatment the
+  Lightstream's standings preview established. A board that simply stops after
+  two real entries reads as broken; one that says "nobody has posted a score
+  yet" reads as dead; empty numbered seats read as an invitation, and they keep
+  the board the same height whether it holds one learner or fifty. With nobody
+  on it at all, every seat is open and the learner's own row is already drawn at
+  the bottom, waiting for a number.
+- **A top ten, then "show more".** Ten rows, with any unheld places drawn as
+  open seats. Beyond that the window grows by ten at a time rather than paging:
+  a leaderboard's meaning lives at the top and around your own row, and page 7
+  of 41 is a place nobody navigates to on purpose. The button says how many are
+  still below you, so it is a decision rather than a shrug. `arena_board` takes
+  `p_offset` and returns the board's true `total` on every row, so growing the
+  window never needs a second call to know when to stop.
+- **The rows scroll inside the column; the header, pager and target line do
+  not.** On a short window a ten-row board would otherwise push the play button
+  off screen, and rule 1 says the board never moves the game.
+- **Both columns start at the top.** An earlier pass centred the left column
+  vertically to stop the CTA stranding on the bottom edge; the real cause was
+  stretching the CTA with `margin-top: auto`, and centring cost the page its
+  shared top edge.
+- A personal best is shown as figures under labels, not as a sentence.
+- Period and scope selections persist per profile in `localStorage`, the way
+  `SCOPE_KEY` already does in `Leaderboard.tsx`.
+- Skeleton rows while loading — never a spinner, never a collapsed panel that shoves
+  the button down when data lands. Reserve the height.
+
+---
+
+## 9. Surface three — the rank reveal
+
+The finish screen, and the reason `arena_submit` returns what it returns. Replaces the
+`phase === 'over'` panel. One component, `<ArenaResult submit={…} onAgain={…} />`.
+
+**Two labelled zones, because the first version had none.** "Your run" holds the
+score and the run's three figures; "Where that puts you" holds the standing, the
+board and the target. Each is introduced by a small-caps label between two rules.
+The first pass stacked a score, three inline figures, two kinds of chip, a rank
+badge and a board in one centred column, and nothing told the reader which number
+answered which question. The run's figures are now tiles — figure over label —
+because "42 wpm 83% accurate 29 blocks" reads as one phrase rather than three
+measurements. Rewards and the coaching line are grouped under the run as
+footnotes to it, not as more results.
+
+Beat by beat (total ~1.9s, every beat skippable by click or key):
+
+| ms | Beat | Motion |
+|---|---|---|
+| 0 | Score lands | count 0 → 640, 700ms, `expo.out`; the game's own icon, or `trophy` on a personal best |
+| 250 | Run stats fade in | `wpm 62 · 94% · 21 blocks`, stagger 0.04 |
+| 700 | Board slides in **with you at your old rank** | y 16 → 0, 300ms, `power2.out` |
+| 1000 | Your row travels to its new rank | translateY over 550ms `power3.inOut`; passed rows shift down 90ms behind it |
+| 1400 | Passed line | "You passed Bright Kestrel and 7 others" |
+| 1600 | Percentile ribbon | "Top 12% of Rising Stars this week" |
+| 1750 | Next target + CTAs | `[ Build again ]  [ Full board ]  [ All games ]` |
+
+- **The travel is the whole idea.** Seeing your row physically climb past the rows you
+  beat is what a static "you are 14th" can never be. It uses `transform` only, so it
+  stays on the compositor.
+- **`prefers-reduced-motion` renders the final state immediately** — new rank, passed
+  line, target, all present, nothing moves. The information is never carried by the
+  animation alone.
+- **A dropped rank is stated plainly, once**: "13th, down two. Your best this week is
+  still 638." No sad theatre. Games get replayed by people who feel capable.
+- Offline or signed out, the panel keeps the score, the personal best and the CTAs,
+  and swaps the board for the honest "practice rivals, saved on this device" note.
+- `aria-live="polite"` announces one sentence when the sequence settles, not each
+  beat: "14th of 214 this week, up 8 places."
+
+---
+
+## 10. Adding a mini game — the checklist
+
+Every future game does exactly this, and nothing else:
+
+1. **Migration**: add the row to `arena_games` and the `when` branch to
+   `arena_score()`. Post a score in a test and confirm it ranks.
+2. **Registry**: add the `ArenaGame` entry in `src/lib/arena.ts`.
+3. **Intro**: render `<ArenaIntro game="<id>" onPlay={start} />` for `phase === 'intro'`.
+4. **Submit**: on game over, call `submitArena(data, '<id>', { wpm, acc, value })` with
+   `value` being the game's own headline count. Keep the existing local `gameBests`
+   write — it is what makes the game work offline.
+5. **Result**: render `<ArenaResult …>` for `phase === 'over'`.
+6. **Copy**: one sentence of coaching, in the app's voice, no em dashes.
+
+A game that skips step 1 does not appear on any board, which is the correct failure:
+it is visibly missing rather than silently unranked.
+
+---
+
+## 11. Delivery
+
+| Phase | Contents | Ships as |
+|---|---|---|
+| 1 ✅ | Migration, `arena_score`, RLS, four RPCs, `supabase/tests/arena_rls.sql` | nothing user-visible |
+| 2 ✅ | `src/lib/arena.ts`, `src/lib/arenaBoard.ts`, `src/lib/arenaLive.ts` | nothing user-visible |
+| 3 ✅ | `ArenaBoard`, `ArenaIntro`, `ArenaResult`, `RankBadge`, `Movement` + `arena.css` | Block Stack wired end to end as the reference implementation |
+| 4 ✅ | The remaining six games wired | all games ranked |
+| 5a ✅ | The Lightstream ranked and its standings replacing `StandingsPreview` | the race hub's real board |
+| 5b | Arena hub rebuild (`Games.tsx`): standing strip, per-game rank chips, ticker | the hub |
+
+Phase 3 deliberately wires one game before the other seven: the second game is where a
+shared component's wrong assumptions show up, and it is much cheaper to find them
+before the eighth.
+
+---
+
+## 12. Decisions
+
+1. **The Lightstream ranks your best wpm at ≥90% accuracy**, whatever you raced.
+   A CPU race, a ghost race and a five-friend room all post to the same board, because
+   the alternative splits a small pool three ways and invites farming the easiest
+   division. Runs under 90% accuracy still save locally and still count toward your
+   race record; they just do not post. `arena_score('lightstream', …)` therefore reads
+   `round(wpm * 10 + acc * 2)` with the accuracy floor enforced at submit time.
+2. **The learner chooses their board name, at any age.** Two earlier rules —
+   alias for everyone, then alias-for-kids-real-name-for-adults — each solved
+   one case and left another stranded: the second gave adults realness but gave
+   an adult who would rather not be identified no option at all. A name someone
+   picked is the only one of the three that is both real to them and not
+   necessarily their real name, so it is offered to everybody.
+
+   `Profile.boardName` feeds `arena_scores.board_name`, and
+   `arena_public_name()` falls back per division when it is empty: a generated
+   handle for a kid, the account name for everyone else. **The safe default
+   stays the default** — a kid who changes nothing keeps the handle, and
+   changing it is a deliberate act by whoever is sitting there. `alias` remains
+   a generated column so a tampered client can never influence the fallback.
+
+   **What this does not solve, and should not be presented as solving:** the
+   charset (`^[A-Za-z0-9][A-Za-z0-9 ._-]{1,19}$`, enforced in a CHECK *and* in
+   the submit function) is wide enough for a handle and too narrow to carry an
+   email address, a URL or an @handle somewhere else — but nothing stops a child
+   typing their own full name into it. That is a real loosening of the guarantee
+   the first rule made, taken deliberately. A reporting path and a name
+   blocklist are the missing pieces before this is exposed to a public board of
+   strangers at any scale.
+3. **Kids get a global board, and households can switch it off.** Aliases only, no
+   avatars from strangers, the same machinery the Daily Challenge already trusts. A
+   new `Settings.hideGlobalBoards` sits beside `hideLeaderboards`: it hides *and*
+   stops uploading to global boards, while family and class boards keep working. A
+   setting that only hides is decoration.
+4. **Weekly reset stays ISO (Monday).** `w:YYYY-Www` matches what Postgres and the
+   client both compute for free, and Monday is the school week.
+
+*(Open: whether Arena points should decay across weeks. Deferred until there is a
+real distribution to look at.)*
+
+---
+
+## 13. The stage left the Arena
+
+`ArenaStage` turned out to be two ideas welded together: *this activity keeps
+one frame across its three phases*, and *this game has a moving keycap field
+behind it*. Only the second is about games. The first is about anything with a
+front door, a run and a finish, and the fifteen training modes had all three
+phases wearing three different shapes.
+
+So the shell moved to `src/components/stage.tsx` as `<Stage>`, with the backdrop
+as a slot. `ArenaStage` is now `<Stage>` plus `<ArenaHero>` and behaves exactly
+as it did. Training passes no backdrop and gets the same veil over a still wash:
+same frame, same back link in the same corner, same kicker-over-headline rhythm,
+same two columns, **no WebGL and nothing moving**. A practice mode neither needs
+an identity as strong as a game's nor deserves to spend a frame budget saying so.
+
+Two additions the training phases needed and games did not:
+
+- **`tall`** lets a stage grow past the viewport. A game's phases each fit one
+  screen by design; a session's finish screen carries a full breakdown under the
+  figures, and clipping it at `100dvh` would hide the half that explains the
+  other half.
+- **`<TrainRecord>`** fills the column a game gives its leaderboard. Practice is
+  solo, so the rivals are your own past runs: the five best in *this* mode,
+  ranked, your last run pinned to the board wherever it landed, and rule 2's
+  target line underneath as "3 wpm off your best". Nothing is submitted and
+  nothing is compared to another learner. It is absent for Zen, whose whole
+  promise is not keeping score, and it ranks by accuracy rather than speed in the
+  Accuracy Lab, because a panel sorted by wpm would contradict the screen it sits
+  beside.
+
+---
+
+## 12b. Two currencies, and the rule that keeps them apart
+
+A finished run has two totals and they are not the same measurement.
+
+**The game's own points** are the game's own: Survivor totals a champion bonus,
+flags taken and pace; Cipher Run and Wordfall run a score you watch climb in the
+HUD. That number is what the finish screen's headline counts up to, what any
+breakdown under it adds to, and what `gameBests` records, so a game's score is
+followable from the first keystroke to the personal best.
+
+**The board score** is `arena_score()`, one formula per game, and it exists so
+that two learners can be compared. It is the only figure in an `arena_scores`
+row.
+
+Both used to be printed as bare "points" on the same screen. Survivor put
+**1362** in the headline and **1850** in the learner's own row eight
+centimetres to the right, for one run, and nothing on the page said which was
+theirs. Four games avoided it only by mirroring the SQL formula on the client
+(`duelScore`, `tideScore`, `pearlScore`, `lightstreamScore`); five did not.
+
+**The rule: the standing panel names its number and the headline keeps its own.**
+The panel prints the run's board score under the rank, labelled, taken from the
+SERVER's submit response, which is definitionally the number in the row below
+it. Every other "points" in that panel became "on the board". The screen-reader
+sentence carried the same defect in one line — the rank came from the server and
+the figure beside it from the game — and now names both.
+
+**A mirror that skips the clamps is not a mirror.** `submitArena` clamps wpm to
+250 before posting, so a run above it scores the clamped figure on the board
+while a client mirror counts up to the raw one: a 402 wpm Tide Line run put 3870
+on screen and 3110 in the row. All four mirrors now go through
+`arenaRunFigures()`, which is the same function the submit path clamps with, so
+the two cannot drift apart again. No human reaches 250 wpm, which is exactly why
+this would have sat there unnoticed.
+
+---
+
+## 13. The two games that fixed the competitive tier
+
+Added 2026-08-20. Both went through §10 unchanged; this section is the *why*,
+which the checklist deliberately does not ask for.
+
+### The problem
+
+The tier held the Lightstream (sustained pace), Quill Duel (a burst of it) and
+Survivor Sprint (holding it steady). Three different costumes, one axis. Whatever
+each front door says it trains, the fastest hands win all three, and there was no
+competitive game at all for a careful 30 wpm typist. A relay or team race was
+considered and rejected in the same pass: it fits the class rooms well, but
+`arena_scores` is keyed per learner, so ranking it means either a team-keyed board
+or crediting one player for four people's typing. That is a schema decision rather
+than a game, and it is still available if it ever earns one.
+
+### Tide Line — `tideline`, `lights × 60 + wpm × 5`
+
+A shore of word tiles (5×5, or 4×4 for kids), one rival, and the tide climbing a
+row at a time from the bottom. Type any tile's word to plant a light there. There
+is no cursor and nothing to click: every unclaimed word starting with what you
+have typed stays lit, and a letter none of them wants is a miss that costs the
+letters you had going. Committing to a word before starting it is the skill.
+
+**The countable is lights, not tiles, and that difference is the whole game.** A
+tile claimed beside one you already hold is worth two lights instead of one, so
+ranking tiles would make the correct move "always take the shortest word left",
+which is a reaction test with a grid drawn round it. Ranking lights makes the
+cheap word in the far corner frequently wrong, and gives the Arena its first
+board where there is a decision between one word and the next.
+
+Three things it needed that were not obvious:
+
+- **No word on the shore may be a prefix of another.** A grid holding both `in`
+  and `into` has a tile that can never be claimed, because the exact match fires
+  on the shorter word every time. `buildShore()` filters for it.
+- **The rival needs a think delay, not just a wpm.** It reads the whole shore
+  instantly and can start the next word in the frame it finished the last, which
+  no human can. An idle board went to the rival 23-0 in under forty seconds.
+  `RIVAL_THINK` is ~1.4-2.2s per tile, and together with the pace it is what makes
+  a 20 wpm human competitive against a 30 wpm rival.
+- **The tide has to arrive while the game is still live.** Two players clear a
+  shore in roughly `tiles × 3` seconds between them, so a row lasts 9s for kids
+  and 11s otherwise: the water reliably takes the last row or two, and takes far
+  more than that from anyone who spent the opening in one corner.
+
+The stage is solo. The shore is the game and the letters you have typed have to
+be read against it, so there is nothing beside it — and note that the solo stage
+centres its column with `margin: 0 auto`, which makes it shrink to fit: a column
+of prose fills the 62ch on its own but a grid of short words hugs them, and the
+shore came out 282px wide until the override added an explicit `width: 100%`.
+
+### Pearl Dive — `pearl`, `pearls × 30 + acc × 6`
+
+One descent. Dive one is four words, every dive after it is longer than the last,
+and landing one without a single wrong key takes you deeper. One slip, or one
+empty breath, ends the run where it stands. Every word brought up clean is a
+pearl, so the board's countable and the thing the game is about are the same
+number, and the board is simply how deep you got.
+
+**It shipped as six bets and that was wrong.** The first build asked the player
+to choose shallow, deep or trench before each of six dives, for one, four or ten
+pearls, and the pitch was six honest judgements about what you could type clean.
+The arithmetic disagreed: above roughly 85% per-word accuracy the trench has the
+best expected value every single time, because the pearl values climb far faster
+than the odds of landing the phrase fall. So the "choice" was a formality with
+three buttons, performed six times. Worse, two runs on the same board could be
+six trench dives or six shallow ones, which are not the same effort and were
+never comparable. **A choice that has one right answer is not a decision, it is a
+step**, and six of them is a game that feels confusing precisely because the
+player keeps looking for the trade-off and it is not there.
+
+Replacing it with one path fixed the ranking as a side effect. There is nothing
+to elect, so every run on the board is the same run, and the number that separates
+two of them is how far down each got.
+
+**This is the only branch in `arena_score()` with no speed term, and that is the
+point of the game rather than an oversight.** The breath meter already bounds a
+dive, so a thirty-word phrase cannot become thirty words typed at leisure; adding
+wpm on top would hand this board straight back to the same hands that hold the
+other three. Accuracy is the tiebreak, because between two divers who reached the
+same depth the one who never fumbled at all is the better diver.
+
+**The ladder is gentle at the top and steep further down** (4, 6, 8, 11, 14, 18,
+22, 27, 32, 38, then +8 a rung; kids 3, 4, 6, 8, 10, 13, 16, 19, 23, 27, then
++5). At a fixed per-word accuracy the chance of landing a phrase falls off a
+cliff with length, so a linear ladder gives a long boring stretch and then a
+wall. Past the written rungs it keeps climbing, so an exceptional run is never
+cut short by the table running out.
+
+Breath is 3.5s per word, 5s for kids: roughly double what a 20 wpm typist needs.
+It must never be the thing that decides a dive for someone typing at a sensible
+pace; it exists only to stop the clock being irrelevant.
+
+**Every dive ends on a card the player dismisses**, and that is not padding. The
+first build booked the result and moved straight on, so a slip was over in the
+same frame as the mistake: the only trace was one line of text above the next
+screen, and a player genuinely could not tell whether they had mistyped or the
+breath had run out. The card names what happened, reprints the phrase with the
+break marked, and says what it means for the run, because the useful thing after
+a lost dive is not "you slipped" but *where*. Three words in with five to go is a
+different lesson from the last letter of the last word.
+
+It is dismissed by any key, after a 750ms grace window. Without the window the
+keystroke already in flight when the dive ended skipped the explanation before it
+rendered, which hit fast typists every time and they are the group most likely to
+need reading what they did.
+
+**The sea is blue in all twelve themes, and that is a deliberate exception** to
+the registry's "tint from theme tokens, never a fixed hue" rule. That rule
+protects things that are UI: a keycap field is the product wearing the learner's
+palette, so a fixed violet is wrong in meadow and wrong again in paper. A water
+column is not UI, it is a picture of water, and tinting it from `--accent2` made
+the sea orange in one theme and green in another, which does not read as "your
+palette" so much as a bug. The tokens still do every job where the panel meets
+the app: the border, the pearls, the depth badges.
+
+The diver is drawn in `gamekit.tsx` rather than taken from the icon set, whose
+nearest figure is a standing person, and a standing figure in a water column
+reads as someone waiting at a bus stop underwater. Two things it took three
+passes to learn: every shape needs an ink outline, or the suit, head and limbs
+merge into one orange lozenge at the size it actually renders; and the legs must
+be **two, in a V, each with a blade**, because one fin behind a torso reads as a
+tail and the whole sprite comes out a fish.
+
+The stage is split, with the phrase and the breath meter on the left and the
+water column on the right. The column may stretch, unlike Wordfall's fall or
+Wordflight's sky, because nothing in the game's arithmetic measures against it:
+the diver's position is the depth held after the last landing plus this dive's
+progress toward the next, so how deep the figure is *is* how far into the run you
+are.
+
+**Changing this required a migration even though the formula did not change**
+(`20260820092000_pearl_dive_descent.sql`, plus store `version: 5` for the local
+best). `pearls × 30 + acc × 6` used to score a route the player picked and now
+scores a depth they reached; those are not the same measurement, and old rows on
+the same board would be a different game wearing this one's name. The local
+`gameBests['pearl'].level` had the same problem in miniature: it was a pearl
+total and is now dives landed, so an untouched row advertised "deepest run: 4
+dives" for a run that reached one.

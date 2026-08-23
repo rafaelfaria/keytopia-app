@@ -52,10 +52,10 @@ function defaultSettings(age: AgeGroup): Settings {
     caret: 'bar',
     correction: 'standard',
     focusMode: false,
-    speakTargets: false,
     untimed: false,
     unlockAll: false,
     hideLeaderboards: false,
+    hideGlobalBoards: false,
     coachFreq: age === 'kid' ? 'high' : 'normal',
     showLiveWpm: age !== 'kid',
     kidWorld: age === 'kid',
@@ -80,6 +80,7 @@ export function freshData(profile: Profile): ProfileData {
     unlockedAvatars: [],
     forge: [],
     gameBests: {},
+    starters: {},
     race: { races: 0, wins: 0, podiums: 0, bestWpm: 0 },
     ghost: null,
     assessment: null,
@@ -121,13 +122,40 @@ export interface RootState {
 }
 
 function xpFor(r: SessionResult, extraStars: number): number {
-  let xp = Math.round((r.seconds / 60) * 12 + r.correct / 22);
+  if (!r.valid) return 0;
+  let xp = Math.round((r.seconds / 60) * 12 + (r.words * 5) / 22);
   if (r.acc >= 98) xp = Math.round(xp * 1.35);
   else if (r.acc >= 95) xp = Math.round(xp * 1.2);
   if (r.mode === 'lesson') xp += extraStars * 15;
   if (r.mode === 'challenge') xp += 40;
   if (r.mode === 'race') xp += 12;
+  /**
+   * A starter level cleared for the first time.
+   *
+   * The formula above measures minutes typed and words produced, and a starter
+   * game produces neither: Paint Reveal is twenty seconds and seven letters, so
+   * every run landed on the `Math.max(2, ...)` floor below. At two XP a child
+   * needed sixty runs of the games built for them to reach account level two,
+   * while a teen doing lessons gets there in four or five. The games meant for
+   * the youngest learners were the slowest way to unlock anything in the app.
+   *
+   * So the ladder pays, on the same principle as lesson stars: not for time
+   * spent, but for a thing finished. Only the first clear of a level counts —
+   * a replay is welcome and free, and paying for it again would turn level one
+   * into a farm.
+   */
+  if (r.extra?.starterCleared) xp += 25;
   return Math.max(2, Math.min(220, xp));
+}
+
+/**
+ * A run that produced no real text still belongs in history so the learner
+ * sees what happened, but it must not teach the adaptive engine: every slot
+ * mashed past charges an error against that letter, which is enough to drag
+ * a healthy key down to "needs review" and hijack the next drill's focus.
+ */
+function countsTowardLearning(r: SessionResult): boolean {
+  return r.valid;
 }
 
 function applySession(d: ProfileData, r: SessionResult): Rewards {
@@ -146,10 +174,10 @@ function applySession(d: ProfileData, r: SessionResult): Rewards {
     if (d.sessions[i].ikis && withTimeline > 8) delete d.sessions[i].ikis;
   }
 
-  mergeKeyStats(d.keyStats, r.keyAgg);
+  if (countsTowardLearning(r)) mergeKeyStats(d.keyStats, r.keyAgg);
 
   const dk = dayKey(r.endedAt);
-  d.days[dk] = (d.days[dk] ?? 0) + r.seconds / 60;
+  if (countsTowardLearning(r)) d.days[dk] = (d.days[dk] ?? 0) + r.seconds / 60;
 
   // Records
   const rec = (key: string, v: number, min = 0) => {
@@ -176,7 +204,7 @@ function applySession(d: ProfileData, r: SessionResult): Rewards {
   if (d.missions.week !== wk) d.missions = rollMissions(d.profile.ageGroup, new Date(r.endedAt));
   const daysThisWeek = Object.keys(d.days).filter((k) => weekKey(new Date(k + 'T12:00:00')) === wk && d.days[k] > 0).length;
   for (const m of d.missions.list) {
-    if (m.done) continue;
+    if (m.done || !countsTowardLearning(r)) continue;
     if (m.id === 'days') m.progress = daysThisWeek;
     if (m.id === 'minutes') m.progress += r.seconds / 60;
     if (m.id === 'cleanwords' && r.acc >= 95) m.progress += r.words;
@@ -244,7 +272,7 @@ function seedHistory(d: ProfileData, a: AssessmentResult): void {
         corrected: Math.round(typed * (1 - acc / 100) * 0.6), uncorrected: Math.round(typed * (1 - acc / 100) * 0.4),
         backspaces: Math.round(typed * 0.05), words: Math.round(typed / 5),
         wpm: Math.round(wpm * 10) / 10, raw: Math.round(wpm * 1.08 * 10) / 10,
-        acc: Math.round(acc * 10) / 10, adjusted: Math.round(wpm * (acc / 100) * 10) / 10,
+        acc: Math.round(acc * 10) / 10, valid: true,
         consistency: Math.round(42 + progress * 22 + rng() * 14), rhythm: Math.round(40 + progress * 24 + rng() * 14),
         hesitations: Math.floor(rng() * 6), keyAgg: {}, slowPairs: [], errorPairs: [], seeded: true,
       };
@@ -420,7 +448,7 @@ export const useStore = create<RootState>()(
     })),
     {
       name: STORE_KEY,
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ activeId: s.activeId, profiles: s.profiles }),
       migrate: (persisted) => {
@@ -444,6 +472,15 @@ export const useStore = create<RootState>()(
           d.journey ??= {};
           d.touched ??= {};
           for (const sess of d.sessions ?? []) sess.id ||= uid();
+          // v5: Pearl Dive stopped being six chosen depths and became one
+          // descent, so its stored best counts a different thing. `level` was a
+          // pearl total and is now dives landed, which means an untouched row
+          // shows "deepest run: 4 dives" for a run that reached one. The score
+          // moved scale with it. Dropping it is the honest option: a personal
+          // best that describes a game that no longer exists is worse than no
+          // personal best. Matches the server side, which cleared its rows in
+          // supabase/migrations/20260820092000_pearl_dive_descent.sql.
+          if (d.gameBests) delete d.gameBests['pearl'];
         }
         return s;
       },
@@ -475,15 +512,28 @@ export interface Toast { id: string; kind: 'badge' | 'record' | 'level' | 'info'
 interface UiState {
   toasts: Toast[];
   celebration: { kind: 'level' | 'badge' | 'stars'; title: string; body: string; icon: string } | null;
+  /**
+   * A spot finished a moment ago, waiting for the island to celebrate it.
+   *
+   * The lesson screen knows a stop was completed; the map is where the child
+   * wants to see it happen, and by the time they get there the run is over and
+   * the news is a filled-in circle they have to notice for themselves. This
+   * carries it across the two screens: set on the finish, spent once by the
+   * island, and cleared.
+   */
+  mapCheer: { lessonId: string; worldId: string; stars: number; complete: boolean; t: number } | null;
   pushToast: (t: Omit<Toast, 'id'>) => void;
   dismissToast: (id: string) => void;
   celebrate: (c: UiState['celebration']) => void;
   clearCelebration: () => void;
+  cheerOnMap: (c: UiState['mapCheer']) => void;
+  clearMapCheer: () => void;
 }
 
 export const useUi = create<UiState>((set) => ({
   toasts: [],
   celebration: null,
+  mapCheer: null,
   pushToast(t) {
     const id = uid();
     set((s) => ({ toasts: [...s.toasts, { ...t, id }].slice(-4) }));
@@ -494,6 +544,8 @@ export const useUi = create<UiState>((set) => ({
   },
   celebrate(c) { set({ celebration: c }); },
   clearCelebration() { set({ celebration: null }); },
+  cheerOnMap(c) { set({ mapCheer: c }); },
+  clearMapCheer() { set({ mapCheer: null }); },
 }));
 
 export function randomKidName(): string {

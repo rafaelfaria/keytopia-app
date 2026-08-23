@@ -201,7 +201,7 @@ export default function CipherGame() {
         game="cipher"
         run={{ wpm: overInfo.wpm, acc: overInfo.acc, value: overInfo.solved }}
         score={overInfo.score}
-        title={overInfo.newBest ? 'New best decode run!' : `${overInfo.solved} runes cracked`}
+        title={overInfo.newBest ? 'New best decode run!' : `${overInfo.solved} ${overInfo.solved === 1 ? 'rune' : 'runes'} cracked`}
         newBest={overInfo.newBest}
         onAgain={start}
       >

@@ -1,6 +1,11 @@
 # The Arena Boards — one leaderboard system for every mini game
 
-> **Status: phases 1–4 and 5a shipped.** Every one of the seven mini games opens
+> **Two more competitive games shipped, 2026-08-20: Tide Line and Pearl Dive**
+> (§13). They were added strictly by the §10 checklist, one migration each, and
+> they exist because the three competitive games before them all ranked the same
+> axis in three costumes.
+>
+> **Status: phases 1–4 and 5a shipped.** Every one of the nine mini games opens
 > on an `ArenaIntro`, plays inside an `ArenaStage` and ends on an `ArenaResult`,
 > and **the Lightstream now ranks too**: its locked `StandingsPreview` mockup is a
 > real `ArenaBoard`, and its finish screen is an `ArenaResult`. What is left is
@@ -20,9 +25,9 @@
 >
 > | variant | games | why |
 > |---|---|---|
-> | split | Block Stack, Keyforge, Wordflight | the world reads fine in half the width |
+> | split | Block Stack, Keyforge, Wordflight, Pearl Dive | the world reads fine in half the width |
 > | `wide` | Wordfall, Survivor Sprint, Wordflight | a horizontal world (a sky, a track) needs the room |
-> | solo | Cipher Run, Quill Duel | splitting would separate things that must be read together |
+> | solo | Cipher Run, Quill Duel, Tide Line | splitting would separate things that must be read together |
 >
 > Playfields that the game's own arithmetic measures against a fixed height —
 > Wordfall's fall distance, Wordflight's sky — are **capped and centred rather
@@ -262,7 +267,22 @@ finish screen now applies the same threshold before it decides whether a run was
 ranked, so a floor-missing race says so instead of posting into silence and
 showing no rank.
 
-**No schema support is needed for either.** Since only one pace ever submits, the
+**Tide Line inherits it too, on the Lightstream's reasoning rather than the
+duel's.** Its branch is `lights × 60 + wpm × 5`, and a slow rival does not hand
+out free lights the way an easy duel rival handed out free rounds. What it does
+is leave the shore standing: against Gentle at 18 wpm almost every tile is still
+there when you reach it, so a run posts lights that were never contested. One
+pace per division is ranked, matching the duel exactly (kids Steady at 30, teens
+and adults Sharp at 48) and for the same comparability reason. `RANKED_PACE` in
+`TideLineGame.tsx` holds it.
+
+**Pearl Dive is the game this rule cannot apply to, because it has no settings
+at all.** It briefly had three depths, which looked exactly like a difficulty
+picker; §13 covers why they went. What is left is one path with nothing to elect,
+which is the strongest possible version of this rule rather than an exception to
+it: every run on that board is the same run.
+
+**No schema support is needed for any of them.** Since only one pace ever submits, the
 single existing duel board *is* the ranked board. The rejected alternative was a
 `variant` column in the primary key giving one board per pace; with this player
 base that is four boards each holding nobody, and an empty board is worse than no
@@ -809,3 +829,183 @@ Two additions the training phases needed and games did not:
   promise is not keeping score, and it ranks by accuracy rather than speed in the
   Accuracy Lab, because a panel sorted by wpm would contradict the screen it sits
   beside.
+
+---
+
+## 12b. Two currencies, and the rule that keeps them apart
+
+A finished run has two totals and they are not the same measurement.
+
+**The game's own points** are the game's own: Survivor totals a champion bonus,
+flags taken and pace; Cipher Run and Wordfall run a score you watch climb in the
+HUD. That number is what the finish screen's headline counts up to, what any
+breakdown under it adds to, and what `gameBests` records, so a game's score is
+followable from the first keystroke to the personal best.
+
+**The board score** is `arena_score()`, one formula per game, and it exists so
+that two learners can be compared. It is the only figure in an `arena_scores`
+row.
+
+Both used to be printed as bare "points" on the same screen. Survivor put
+**1362** in the headline and **1850** in the learner's own row eight
+centimetres to the right, for one run, and nothing on the page said which was
+theirs. Four games avoided it only by mirroring the SQL formula on the client
+(`duelScore`, `tideScore`, `pearlScore`, `lightstreamScore`); five did not.
+
+**The rule: the standing panel names its number and the headline keeps its own.**
+The panel prints the run's board score under the rank, labelled, taken from the
+SERVER's submit response, which is definitionally the number in the row below
+it. Every other "points" in that panel became "on the board". The screen-reader
+sentence carried the same defect in one line — the rank came from the server and
+the figure beside it from the game — and now names both.
+
+**A mirror that skips the clamps is not a mirror.** `submitArena` clamps wpm to
+250 before posting, so a run above it scores the clamped figure on the board
+while a client mirror counts up to the raw one: a 402 wpm Tide Line run put 3870
+on screen and 3110 in the row. All four mirrors now go through
+`arenaRunFigures()`, which is the same function the submit path clamps with, so
+the two cannot drift apart again. No human reaches 250 wpm, which is exactly why
+this would have sat there unnoticed.
+
+---
+
+## 13. The two games that fixed the competitive tier
+
+Added 2026-08-20. Both went through §10 unchanged; this section is the *why*,
+which the checklist deliberately does not ask for.
+
+### The problem
+
+The tier held the Lightstream (sustained pace), Quill Duel (a burst of it) and
+Survivor Sprint (holding it steady). Three different costumes, one axis. Whatever
+each front door says it trains, the fastest hands win all three, and there was no
+competitive game at all for a careful 30 wpm typist. A relay or team race was
+considered and rejected in the same pass: it fits the class rooms well, but
+`arena_scores` is keyed per learner, so ranking it means either a team-keyed board
+or crediting one player for four people's typing. That is a schema decision rather
+than a game, and it is still available if it ever earns one.
+
+### Tide Line — `tideline`, `lights × 60 + wpm × 5`
+
+A shore of word tiles (5×5, or 4×4 for kids), one rival, and the tide climbing a
+row at a time from the bottom. Type any tile's word to plant a light there. There
+is no cursor and nothing to click: every unclaimed word starting with what you
+have typed stays lit, and a letter none of them wants is a miss that costs the
+letters you had going. Committing to a word before starting it is the skill.
+
+**The countable is lights, not tiles, and that difference is the whole game.** A
+tile claimed beside one you already hold is worth two lights instead of one, so
+ranking tiles would make the correct move "always take the shortest word left",
+which is a reaction test with a grid drawn round it. Ranking lights makes the
+cheap word in the far corner frequently wrong, and gives the Arena its first
+board where there is a decision between one word and the next.
+
+Three things it needed that were not obvious:
+
+- **No word on the shore may be a prefix of another.** A grid holding both `in`
+  and `into` has a tile that can never be claimed, because the exact match fires
+  on the shorter word every time. `buildShore()` filters for it.
+- **The rival needs a think delay, not just a wpm.** It reads the whole shore
+  instantly and can start the next word in the frame it finished the last, which
+  no human can. An idle board went to the rival 23-0 in under forty seconds.
+  `RIVAL_THINK` is ~1.4-2.2s per tile, and together with the pace it is what makes
+  a 20 wpm human competitive against a 30 wpm rival.
+- **The tide has to arrive while the game is still live.** Two players clear a
+  shore in roughly `tiles × 3` seconds between them, so a row lasts 9s for kids
+  and 11s otherwise: the water reliably takes the last row or two, and takes far
+  more than that from anyone who spent the opening in one corner.
+
+The stage is solo. The shore is the game and the letters you have typed have to
+be read against it, so there is nothing beside it — and note that the solo stage
+centres its column with `margin: 0 auto`, which makes it shrink to fit: a column
+of prose fills the 62ch on its own but a grid of short words hugs them, and the
+shore came out 282px wide until the override added an explicit `width: 100%`.
+
+### Pearl Dive — `pearl`, `pearls × 30 + acc × 6`
+
+One descent. Dive one is four words, every dive after it is longer than the last,
+and landing one without a single wrong key takes you deeper. One slip, or one
+empty breath, ends the run where it stands. Every word brought up clean is a
+pearl, so the board's countable and the thing the game is about are the same
+number, and the board is simply how deep you got.
+
+**It shipped as six bets and that was wrong.** The first build asked the player
+to choose shallow, deep or trench before each of six dives, for one, four or ten
+pearls, and the pitch was six honest judgements about what you could type clean.
+The arithmetic disagreed: above roughly 85% per-word accuracy the trench has the
+best expected value every single time, because the pearl values climb far faster
+than the odds of landing the phrase fall. So the "choice" was a formality with
+three buttons, performed six times. Worse, two runs on the same board could be
+six trench dives or six shallow ones, which are not the same effort and were
+never comparable. **A choice that has one right answer is not a decision, it is a
+step**, and six of them is a game that feels confusing precisely because the
+player keeps looking for the trade-off and it is not there.
+
+Replacing it with one path fixed the ranking as a side effect. There is nothing
+to elect, so every run on the board is the same run, and the number that separates
+two of them is how far down each got.
+
+**This is the only branch in `arena_score()` with no speed term, and that is the
+point of the game rather than an oversight.** The breath meter already bounds a
+dive, so a thirty-word phrase cannot become thirty words typed at leisure; adding
+wpm on top would hand this board straight back to the same hands that hold the
+other three. Accuracy is the tiebreak, because between two divers who reached the
+same depth the one who never fumbled at all is the better diver.
+
+**The ladder is gentle at the top and steep further down** (4, 6, 8, 11, 14, 18,
+22, 27, 32, 38, then +8 a rung; kids 3, 4, 6, 8, 10, 13, 16, 19, 23, 27, then
++5). At a fixed per-word accuracy the chance of landing a phrase falls off a
+cliff with length, so a linear ladder gives a long boring stretch and then a
+wall. Past the written rungs it keeps climbing, so an exceptional run is never
+cut short by the table running out.
+
+Breath is 3.5s per word, 5s for kids: roughly double what a 20 wpm typist needs.
+It must never be the thing that decides a dive for someone typing at a sensible
+pace; it exists only to stop the clock being irrelevant.
+
+**Every dive ends on a card the player dismisses**, and that is not padding. The
+first build booked the result and moved straight on, so a slip was over in the
+same frame as the mistake: the only trace was one line of text above the next
+screen, and a player genuinely could not tell whether they had mistyped or the
+breath had run out. The card names what happened, reprints the phrase with the
+break marked, and says what it means for the run, because the useful thing after
+a lost dive is not "you slipped" but *where*. Three words in with five to go is a
+different lesson from the last letter of the last word.
+
+It is dismissed by any key, after a 750ms grace window. Without the window the
+keystroke already in flight when the dive ended skipped the explanation before it
+rendered, which hit fast typists every time and they are the group most likely to
+need reading what they did.
+
+**The sea is blue in all twelve themes, and that is a deliberate exception** to
+the registry's "tint from theme tokens, never a fixed hue" rule. That rule
+protects things that are UI: a keycap field is the product wearing the learner's
+palette, so a fixed violet is wrong in meadow and wrong again in paper. A water
+column is not UI, it is a picture of water, and tinting it from `--accent2` made
+the sea orange in one theme and green in another, which does not read as "your
+palette" so much as a bug. The tokens still do every job where the panel meets
+the app: the border, the pearls, the depth badges.
+
+The diver is drawn in `gamekit.tsx` rather than taken from the icon set, whose
+nearest figure is a standing person, and a standing figure in a water column
+reads as someone waiting at a bus stop underwater. Two things it took three
+passes to learn: every shape needs an ink outline, or the suit, head and limbs
+merge into one orange lozenge at the size it actually renders; and the legs must
+be **two, in a V, each with a blade**, because one fin behind a torso reads as a
+tail and the whole sprite comes out a fish.
+
+The stage is split, with the phrase and the breath meter on the left and the
+water column on the right. The column may stretch, unlike Wordfall's fall or
+Wordflight's sky, because nothing in the game's arithmetic measures against it:
+the diver's position is the depth held after the last landing plus this dive's
+progress toward the next, so how deep the figure is *is* how far into the run you
+are.
+
+**Changing this required a migration even though the formula did not change**
+(`20260820092000_pearl_dive_descent.sql`, plus store `version: 5` for the local
+best). `pearls × 30 + acc × 6` used to score a route the player picked and now
+scores a depth they reached; those are not the same measurement, and old rows on
+the same board would be a different game wearing this one's name. The local
+`gameBests['pearl'].level` had the same problem in miniature: it was a pearl
+total and is now dives landed, so an untouched row advertised "deepest run: 4
+dives" for a run that reached one.

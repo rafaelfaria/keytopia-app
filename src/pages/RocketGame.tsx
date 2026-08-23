@@ -255,7 +255,7 @@ export default function RocketGame() {
         <RewardsBanner rewards={overInfo.rewards} />
         <p className="small muted" style={{ maxWidth: 430 }}>
           {overInfo.solo >= overInfo.goal - 2
-            ? `You found ${overInfo.solo} letters on your own, with no help at all. You know this keyboard.`
+            ? `You found ${overInfo.solo} ${overInfo.solo === 1 ? 'letter' : 'letters'} on your own, with no help at all. You know this keyboard.`
             : `Found without a hint: ${overInfo.solo} of ${overInfo.goal}. Every flight, a few more of them are yours.`}
         </p>
       </ArenaResult>

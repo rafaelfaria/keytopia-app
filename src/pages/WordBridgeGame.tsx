@@ -263,7 +263,7 @@ export default function WordBridgeGame() {
         <RewardsBanner rewards={overInfo.rewards} />
         <p className="small muted" style={{ maxWidth: 430 }}>
           {overInfo.clean >= overInfo.built && overInfo.built > 0
-            ? `Every one of those ${overInfo.built} words came out perfectly first time. You are typing words now, not letters.`
+            ? `Every one of those ${overInfo.built} ${overInfo.built === 1 ? 'word' : 'words'} came out perfectly first time. You are typing words now, not letters.`
             : `${overInfo.clean} of ${overInfo.built} words with no wrong keys at all. Whole words are the next thing, and you are doing them.`}
         </p>
       </ArenaResult>

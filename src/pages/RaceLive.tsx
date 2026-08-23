@@ -5,6 +5,7 @@ import { getRaceSetup, setRaceSetup } from '../lib/race';
 import { GhostInput, TypingText, useTypingSession } from '../components/typing';
 import { Btn, Chip } from '../components/ui';
 import { ArenaResult } from '../components/arena';
+import { arenaRunFigures } from '../lib/arenaBoard';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { snd } from '../lib/sound';
 import { Ic } from '../components/icons';
@@ -20,7 +21,10 @@ import type { Rewards, SessionResult } from '../lib/types';
  * the `lightstream` branch of `arena_score()`
  * (supabase/migrations/20260816120000_arena_boards.sql).
  */
-const lightstreamScore = (wpm: number, acc: number) => Math.round(wpm * 10 + acc * 2);
+const lightstreamScore = (wpm: number, acc: number) => {
+  const f = arenaRunFigures({ wpm, acc });
+  return Math.round(f.wpm * 10 + f.acc * 2);
+};
 
 /**
  * `arena_submit` drops a Lightstream run below this accuracy without saying so,

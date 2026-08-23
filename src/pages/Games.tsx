@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useData } from '../lib/store';
 import { Chip } from '../components/ui';
 import { Ic } from '../components/icons';
+import { Diver } from '../components/gamekit';
 import { ARENA_GAMES, ARENA_LIST, type ArenaGame } from '../lib/arena';
 import { clearedCount, isStarter, ladder } from '../lib/starterLevels';
 
@@ -39,6 +40,32 @@ function GameArt({ id }: { id: string }) {
           <span className="gd-lane"><i className="gd-fill gd-you" /></span>
           <span className="gd-badge"><Ic n="swords" size={16} /></span>
           <span className="gd-lane"><i className="gd-fill gd-foe" /></span>
+        </div>
+      );
+    case 'tideline':
+      /* A shore part taken: two lights of yours already touching, one of
+         theirs, and the water partway up the bottom row. */
+      return (
+        <div className="arena-art ga-tide" aria-hidden>
+          <span className="gt-grid">
+            <i className="gt-you" /><i className="gt-you" /><i /><i />
+            <i className="gt-you" /><i /><i className="gt-foe" /><i />
+            <i /><i /><i className="gt-foe" /><i />
+            <i /><i /><i /><i />
+          </span>
+          <span className="gt-water" />
+        </div>
+      );
+    case 'pearl':
+      /* The descent: three rungs of a lengthening ladder, and a diver on the
+         way past the second. */
+      return (
+        <div className="arena-art ga-pearl" aria-hidden>
+          {/* The rungs, not payouts: each dive is longer than the one above it. */}
+          <span className="gpd-line" style={{ top: '22%' }}><b>4</b></span>
+          <span className="gpd-line" style={{ top: '50%' }}><b>11</b></span>
+          <span className="gpd-line" style={{ top: '76%' }}><b>22</b></span>
+          <span className="gpd-diver"><Diver size={64} /></span>
         </div>
       );
     case 'survivor':

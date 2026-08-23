@@ -2,8 +2,8 @@
  * The animated art for each game, and the racing lanes.
  *
  * This lived inline in Landing.tsx, which meant /typing-games — the page
- * actually about the games, and the one search sends people to — showed seven
- * paragraphs in plain boxes while the home page showed the game moving. The
+ * actually about the games, and the one search sends people to — showed the
+ * games as paragraphs in plain boxes while the home page showed the game moving. The
  * art is now shared, so the two pages cannot drift apart again.
  *
  * Pure markup and CSS keyframes: no canvas, no library, no measurement. That is
@@ -15,6 +15,7 @@
  */
 
 import { Ic } from '../icons';
+import { Diver } from '../gamekit';
 
 /** Keyed by the slug used in `GAMES` (src/lib/seo/content.ts). */
 export function GameArt({ slug }: { slug: string }) {
@@ -65,6 +66,27 @@ export function GameArt({ slug }: { slug: string }) {
             <i className="pst-b" style={{ width: 42 }} />
             <i className="pst-b" style={{ width: 66 }} />
           </span>
+        </div>
+      );
+    case 'tideline':
+      return (
+        <div className="play-art pa-tide" aria-hidden>
+          <span className="pt-grid">
+            <i className="pt-you" /><i className="pt-you" /><i /><i />
+            <i className="pt-you" /><i /><i className="pt-foe" /><i />
+            <i /><i /><i className="pt-foe" /><i />
+            <i /><i /><i /><i />
+          </span>
+          <span className="pt-water" />
+        </div>
+      );
+    case 'pearl':
+      return (
+        <div className="play-art pa-pearl" aria-hidden>
+          <span className="ppd-line" style={{ top: '26%' }}><b>4</b></span>
+          <span className="ppd-line" style={{ top: '54%' }}><b>11</b></span>
+          <span className="ppd-line" style={{ top: '82%' }}><b>22</b></span>
+          <span className="ppd-diver"><Diver size={62} /></span>
         </div>
       );
     default:

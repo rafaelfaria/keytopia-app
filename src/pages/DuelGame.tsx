@@ -8,6 +8,7 @@ import { resultFromStrokes, type GameStroke } from '../components/typing';
 import { snd } from '../lib/sound';
 import { RewardsBanner } from '../components/ResultsPanel';
 import { ArenaIntro, ArenaResult, ArenaStage } from '../components/arena';
+import { arenaRunFigures } from '../lib/arenaBoard';
 import { Ic } from '../components/icons';
 import { Avatar, BlockAvatar } from '../components/avatars';
 import { MobileKeys, useGameKeys } from '../components/gamekit';
@@ -21,7 +22,10 @@ const TARGET_WINS = 4;
  * step with the `duel` branch of `arena_score()`
  * (supabase/migrations/20260816120000_arena_boards.sql).
  */
-const duelScore = (rounds: number, wpm: number) => Math.round(rounds * 200 + wpm * 5);
+const duelScore = (rounds: number, wpm: number) => {
+  const f = arenaRunFigures({ wpm, acc: 100, value: rounds });
+  return Math.round(f.value * 200 + f.wpm * 5);
+};
 
 type Diff = 'gentle' | 'steady' | 'sharp' | 'fierce' | 'matched';
 

@@ -110,14 +110,15 @@ export async function submitArena(
   if (data.settings.hideLeaderboards) return null;
 
   const keys = submitKeys();
+  const figures = arenaRunFigures(run);
   try {
     const { data: rows, error } = await supabase.rpc('arena_submit', {
       p_game: game,
       p_profile_id: data.profile.id,
       p_age: data.profile.ageGroup,
-      p_wpm: clamp(run.wpm, 0, 250),
-      p_acc: clamp(run.acc, 0, 100),
-      p_value: clamp(run.value ?? 0, 0, 100000),
+      p_wpm: figures.wpm,
+      p_acc: figures.acc,
+      p_value: figures.value,
       p_name: data.profile.name.slice(0, 40),
       p_avatar: data.profile.avatar.slice(0, 160),
       p_day: keys.day,
@@ -333,6 +334,24 @@ function simulatedBoard(
 // ---------------------------------------------------------------------------
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, Number.isFinite(v) ? v : 0));
+
+/**
+ * The exact figures `arena_submit` will receive, for a client that mirrors the
+ * server's formula on a finish screen.
+ *
+ * A mirror that skips this is not a mirror. `submitArena` clamps wpm to 250
+ * before it posts, so a run above that scores the clamped figure on the board
+ * while the headline counts up to the raw one: a 402 wpm Tide Line run put
+ * 3870 on the screen and 3110 in the row underneath it. No human reaches the
+ * clamp, which is exactly why this would have sat there unnoticed.
+ */
+export function arenaRunFigures(run: { wpm: number; acc: number; value?: number }) {
+  return {
+    wpm: clamp(run.wpm, 0, 250),
+    acc: clamp(run.acc, 0, 100),
+    value: clamp(run.value ?? 0, 0, 100000),
+  };
+}
 
 export interface RawBoardRow {
   rank: number; name: string; avatar: string;

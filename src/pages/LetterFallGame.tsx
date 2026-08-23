@@ -465,7 +465,7 @@ export default function LetterFallGame() {
         <RewardsBanner rewards={overInfo.rewards} />
         <p className="small muted" style={{ maxWidth: 430 }}>
           {overInfo.best >= 6
-            ? `You caught ${overInfo.best} letters in a row without missing one. Your fingers are learning where the keys live.`
+            ? `You caught ${overInfo.best} ${overInfo.best === 1 ? 'letter' : 'letters'} in a row without missing one. Your fingers are learning where the keys live.`
             : 'Every letter you find takes a little less looking next time. That is the whole trick.'}
         </p>
       </ArenaResult>

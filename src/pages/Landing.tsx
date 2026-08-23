@@ -690,6 +690,18 @@ export default function Landing() {
               <p>Unscramble rune-words against the clock. Decoding builds the deep letter-map fast typing sits on.</p>
               <Chip tone="accent">Spelling recall & mapping</Chip>
             </article>
+            <article className="play-card rv" data-speed={0.2}>
+              <GameArt slug="tideline" />
+              <h3><Ic n="waves" size={18} /> Tide Line</h3>
+              <p>A shore of word tiles against one rival. A tile taken beside one you hold is worth double, and the tide takes the rest.</p>
+              <Chip tone="accent">Choosing your next word well</Chip>
+            </article>
+            <article className="play-card rv" data-speed={-0.4}>
+              <GameArt slug="pearl" />
+              <h3><Ic n="shell" size={18} /> Pearl Dive</h3>
+              <p>One descent, and every dive is longer than the last. Land one and you go deeper. A single wrong key ends the run.</p>
+              <Chip tone="accent">Going clean for longer</Chip>
+            </article>
             <article className="play-card rv" data-speed={-0.5}>
               <GameArt slug="stack" />
               <h3><Ic n="blocks" size={18} /> Block Stack</h3>

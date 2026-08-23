@@ -20,7 +20,7 @@ import type { ProfileData } from './types';
 export type ArenaToken = 'accent' | 'accent2' | 'good' | 'warn' | 'gold' | 'bad';
 
 export type ArenaGameId =
-  | 'lightstream' | 'duel' | 'survivor' | 'wordfall'
+  | 'lightstream' | 'duel' | 'survivor' | 'tideline' | 'pearl' | 'wordfall'
   | 'stack' | 'cipher' | 'keyforge' | 'wordflight'
   | 'letterfall' | 'keysafari' | 'rocket' | 'paint' | 'firstletter' | 'bridge';
 
@@ -116,6 +116,20 @@ export const ARENA_GAMES: Record<ArenaGameId, ArenaGame> = {
     desc: 'Eight typists, four rapid heats, the slowest move to the cheer bench each round. Outlast everyone for the crown.',
     valueLabel: 'heats', unit: plural('heat'), ranked: true, tier: 'competitive',
     hero: { formation: 'stream', tone: ['warn', 'gold', 0.4] },
+  },
+  tideline: {
+    id: 'tideline', name: 'Tide Line', icon: 'waves', to: '/app/games/tideline',
+    trains: 'Choosing your next word well',
+    desc: 'A shore of word tiles and one rival. Every word you type plants a light, and the tide takes whatever nobody claimed.',
+    valueLabel: 'lights', unit: plural('light'), ranked: true, tier: 'competitive',
+    hero: { formation: 'terrace', tone: ['accent2', 'good', 0.45] },
+  },
+  pearl: {
+    id: 'pearl', name: 'Pearl Dive', icon: 'shell', to: '/app/games/pearl',
+    trains: 'Going clean for longer',
+    desc: 'One descent, and every dive is longer than the last. Land one and you go deeper. A single wrong key ends the run where it stands.',
+    valueLabel: 'pearls', unit: plural('pearl'), ranked: true, tier: 'competitive',
+    hero: { formation: 'calm', tone: ['accent2', 'accent', 0.7] },
   },
   keysafari: {
     id: 'keysafari', name: 'Key Safari', icon: 'telescope', to: '/app/games/keysafari',

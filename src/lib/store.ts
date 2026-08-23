@@ -448,7 +448,7 @@ export const useStore = create<RootState>()(
     })),
     {
       name: STORE_KEY,
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ activeId: s.activeId, profiles: s.profiles }),
       migrate: (persisted) => {
@@ -472,6 +472,15 @@ export const useStore = create<RootState>()(
           d.journey ??= {};
           d.touched ??= {};
           for (const sess of d.sessions ?? []) sess.id ||= uid();
+          // v5: Pearl Dive stopped being six chosen depths and became one
+          // descent, so its stored best counts a different thing. `level` was a
+          // pearl total and is now dives landed, which means an untouched row
+          // shows "deepest run: 4 dives" for a run that reached one. The score
+          // moved scale with it. Dropping it is the honest option: a personal
+          // best that describes a game that no longer exists is worse than no
+          // personal best. Matches the server side, which cleared its rows in
+          // supabase/migrations/20260820092000_pearl_dive_descent.sql.
+          if (d.gameBests) delete d.gameBests['pearl'];
         }
         return s;
       },

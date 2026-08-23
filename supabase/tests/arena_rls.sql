@@ -314,7 +314,11 @@ select pg_temp.be('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
 
 create temp table h1 as select * from arena_home('b-p', 'adult', 'all');
 
-select pg_temp.assert((select count(*) from h1) = 8,
+-- Counted from `arena_games` rather than written out, because the literal was
+-- 8 and every game added since had to come and edit this line. What the hub
+-- promises is one row per active game, not eight rows.
+select pg_temp.assert(
+  (select count(*) from h1) = (select count(*) from arena_games where active),
   'the hub returns one row per active game');
 select pg_temp.assert(
   (select your_rank from h1 where game = 'stack')
@@ -407,6 +411,64 @@ select pg_temp.assert(
 select pg_temp.assert(
   (select value from arena_scores where game = 'stack' and period = 'all' and profile_id = 'a-p') > 12,
   'a weaker run refreshes who you are without taking the row''s best');
+
+-- ---------------------------------------------------------------------------
+-- 16. The two 2026-08-20 games rank, and rank on the axis they claim to
+-- ---------------------------------------------------------------------------
+-- Step 1 of the §10 checklist is "post a score in a test and confirm it ranks",
+-- and for these two the interesting part is not that a number comes back but
+-- WHICH run wins. Tide Line is meant to be winnable by reading the board rather
+-- than by hand speed, and Pearl Dive is meant to be winnable by a slow accurate
+-- typist. A formula that quietly ranked wpm would pass a bare "it returned a
+-- rank" check and fail the reason the game exists.
+reset role;
+select pg_temp.age_rows();
+select pg_temp.be('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Ada: fast hands, poor shore. 60 wpm, 11 lights.
+create temp table t1 as
+  select * from arena_submit('tideline', 'a-p', 'adult', 60, 96, 11, 'Ada', 'bk:1', '2026-08-16', '2026-W34');
+select pg_temp.assert((select rank from t1 where period = 'all') = 1,
+  'Tide Line ranks a posted run');
+
+reset role;
+select pg_temp.age_rows();
+select pg_temp.be('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
+
+-- Bo: slower hands, better board. 38 wpm, 18 lights.
+create temp table t2 as
+  select * from arena_submit('tideline', 'b-p', 'adult', 38, 96, 18, 'Bo', 'bk:2', '2026-08-16', '2026-W34');
+select pg_temp.assert((select rank from t2 where period = 'all') = 1,
+  'on Tide Line the better shore beats the faster hands');
+
+reset role;
+select pg_temp.age_rows();
+select pg_temp.be('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+
+-- Ada again, on Pearl Dive: quick but she lost two dives. 70 wpm, 12 pearls.
+create temp table p1 as
+  select * from arena_submit('pearl', 'a-p', 'adult', 70, 91, 12, 'Ada', 'bk:1', '2026-08-16', '2026-W34');
+select pg_temp.assert((select rank from p1 where period = 'all') = 1,
+  'Pearl Dive ranks a posted run');
+
+reset role;
+select pg_temp.age_rows();
+select pg_temp.be('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
+
+-- Bo: half her speed, landed every dive. 30 wpm, 26 pearls.
+create temp table p2 as
+  select * from arena_submit('pearl', 'b-p', 'adult', 30, 100, 26, 'Bo', 'bk:2', '2026-08-16', '2026-W34');
+select pg_temp.assert((select rank from p2 where period = 'all') = 1,
+  'on Pearl Dive a 30 wpm diver who lands every dive beats a 70 wpm one who does not');
+select pg_temp.assert(
+  (select score from p2 where period = 'all') = arena_score('pearl', 30, 100, 26),
+  'the Pearl Dive score is the one the formula produces');
+
+-- And the thing that makes that claim true rather than lucky: the branch has no
+-- speed term at all, so the same dives at any pace are worth the same.
+select pg_temp.assert(
+  arena_score('pearl', 10, 100, 26) = arena_score('pearl', 200, 100, 26),
+  'Pearl Dive scores the dives, not the hands');
 
 reset role;
 select 'arena_rls.sql: all assertions held' as result;

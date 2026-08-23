@@ -35,6 +35,8 @@ import WordBridgeGame from './pages/WordBridgeGame';
 import KeyforgeGame from './pages/KeyforgeGame';
 import WordflightGame from './pages/WordflightGame';
 import DuelGame from './pages/DuelGame';
+import TideLineGame from './pages/TideLineGame';
+import PearlDiveGame from './pages/PearlDiveGame';
 import CipherGame from './pages/CipherGame';
 import StackGame from './pages/StackGame';
 import SurvivorGame from './pages/SurvivorGame';
@@ -171,6 +173,8 @@ container.__ktRoot.render(
           <Route path="games/keyforge" element={<KeyforgeGame />} />
           <Route path="games/wordflight" element={<WordflightGame />} />
           <Route path="games/duel" element={<DuelGame />} />
+          <Route path="games/tideline" element={<TideLineGame />} />
+          <Route path="games/pearl" element={<PearlDiveGame />} />
           <Route path="games/cipher" element={<CipherGame />} />
           <Route path="games/stack" element={<StackGame />} />
           <Route path="games/survivor" element={<SurvivorGame />} />

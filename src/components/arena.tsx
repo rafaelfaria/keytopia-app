@@ -538,6 +538,15 @@ export function ArenaIntro({ game, title, children, onPlay, cta, stats, side, ba
     <ArenaStage
       game={game}
       backTo={backTo}
+      /* The front door is the one phase of a game that has no idea how tall it
+         is. A run and a finish screen are authored to fit; an intro carries
+         whatever the game needs to explain itself, and a rival picker or a
+         depth table pushes the play button past the fold. Clipped at 100dvh
+         with `overflow: hidden`, that button was not merely below the edge, it
+         was unreachable: there was no scroll range to get to it. Every game's
+         intro grows now, and short ones still fill the window because `tall`
+         keeps `min-height: 100dvh`. */
+      tall
       main={(
         <div className="arena-intro-play">
           <span className="arena-stage-kicker"><Ic n={spec.icon} size={15} /> {spec.name}</span>
@@ -920,6 +929,20 @@ export function ArenaResult({
               <span className="muted">of {s.total} today</span>
               {s.prevRank !== null && <Movement from={s.prevRank} to={s.rank} />}
             </span>
+            {/* The run's board score, named, because it is not the number in
+                the headline and the two are not the same currency.
+                A game's own points are its own: Survivor totals a champion
+                bonus, flags and pace; Cipher runs a score you watch climb. The
+                board scores every game on one formula per game so that two
+                learners can be compared, and it takes the SERVER's figure,
+                which is the only one that is definitionally the number in the
+                row below. Printing both as bare "points" put 1362 in the
+                headline and 1850 in the row beside it, for one run, and left
+                the learner to guess which was theirs. */}
+            <span className="arena-result-boardscore">
+              <b>{s.score}</b>
+              <small>board score</small>
+            </span>
           </>
         ) : (
           <span className="arena-result-standing-txt small muted">
@@ -948,7 +971,7 @@ export function ArenaResult({
         )}
         {s && s.prevRank !== null && s.rank > s.prevRank && (
           <p className="arena-line">
-            {ordinal(s.rank)}, down {s.rank - s.prevRank}. Your best today is still {s.best} points.
+            {ordinal(s.rank)}, down {s.rank - s.prevRank}. Your best today is still {s.best} on the board.
           </p>
         )}
         {pct !== null && pct <= 50 && (
@@ -962,11 +985,11 @@ export function ArenaResult({
             is as true against practice rivals. */}
         {s?.nextRank && s.nextGap ? (
           <p className="arena-line arena-line-target">
-            <Ic n="target" size={14} /> <strong>{s.nextGap}</strong> more {s.nextGap === 1 ? 'point' : 'points'} to reach #{s.nextRank}.
+            <Ic n="target" size={14} /> <strong>{s.nextGap}</strong> more on the board to reach #{s.nextRank}.
           </p>
         ) : !s && board.target ? (
           <p className="arena-line arena-line-target">
-            <Ic n="target" size={14} /> <strong>{board.target.gap}</strong> more {board.target.gap === 1 ? 'point' : 'points'} to pass {board.target.name} at #{board.target.rank}.
+            <Ic n="target" size={14} /> <strong>{board.target.gap}</strong> more on the board to pass {board.target.name} at #{board.target.rank}.
           </p>
         ) : null}
         {board.simulated && (
@@ -1016,7 +1039,11 @@ export function ArenaResult({
           <p className="sr-only" role="status">
             {spec && !spec.ranked ? `${score} ${scoreUnit}.${newBest ? ' A new personal best.' : ''}`
               : !ranked ? `Practice run, ${score} ${scoreUnit}, not posted to a board.`
-              : settled && s ? `${ordinal(s.rank)} of ${s.total} today, ${score} ${scoreUnit}.` : ''}
+              /* The rank is the board's and so is the figure quoted beside it.
+                 This used to read "1st of 1 today, 1362 points" with the rank
+                 from the server and the number from the game, which is the one
+                 sentence on the screen that had to hold them together. */
+              : settled && s ? `${score} ${scoreUnit}. ${ordinal(s.rank)} of ${s.total} today, with a board score of ${s.score}.` : ''}
           </p>
 
           <div className="row gap wrap arena-result-cta">

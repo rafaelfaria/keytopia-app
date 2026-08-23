@@ -330,8 +330,21 @@
   justify-content: flex-start; gap: 13px;
 }
 .arena-stage-main h2 { font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.1rem); line-height: 1.12; }
-.arena-intro-body { color: var(--text-dim); max-width: 46ch; }
+/* A column with a gap rather than paragraphs with margins.
+   `.arena-intro-body p { margin: 0 }` exists because a stray paragraph margin
+   fought the stage's own rhythm, but it is more specific than
+   `.pace-group-label`, so every group heading a game put in here lost the
+   12px above it and sat welded to the sentence before it. Owning the rhythm at
+   the container means a game can drop a label, a grid or a table into its
+   intro and have it spaced without knowing any of this. */
+.arena-intro-body {
+  color: var(--text-dim); max-width: 46ch;
+  display: flex; flex-direction: column; gap: 12px;
+}
 .arena-intro-body p { margin: 0; }
+/* The group label belongs to the group under it, so it sits closer to that
+   than to whatever it follows. */
+.arena-intro-body .pace-group-label { margin: 2px 0 -5px; }
 
 /* A personal best as figures under words, not as a sentence. */
 .arena-figures { display: flex; gap: 10px; flex-wrap: wrap; margin: 2px 0 0; }
@@ -494,6 +507,19 @@
   padding: 10px 12px; border-radius: 13px;
   background: color-mix(in oklab, var(--accent) 9%, var(--surface2));
   border: 1px solid color-mix(in oklab, var(--accent) 26%, transparent);
+}
+
+/* The run's board score, beside the rank it earned. Small, because the headline
+   is the game's own number and this one is the answer to "what is that figure
+   in my row"; large enough to be read as a figure rather than as a caption. */
+.arena-result-boardscore {
+  margin-left: auto; text-align: right; line-height: 1.1;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 1px;
+}
+.arena-result-boardscore b { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.arena-result-boardscore small {
+  font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.07em;
+  font-weight: 700; color: var(--muted);
 }
 .arena-result-standing-txt { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px; }
 .arena-result-standing-txt strong { font-size: 1.35rem; line-height: 1; }
@@ -877,7 +903,41 @@ html[data-rm='1'] .wf-caret { animation: none; }
 .arena-stage-main > .duel-arena {
   flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px;
 }
-.arena-intro-body .duel-diffs { margin-top: 12px; }
+
+
+/* Tide Line: the shore is the whole game and the letters you have typed have to
+   be read against it, so this one is a solo stage with nothing beside it. */
+/* The solo stage caps its column at 62ch, which is right for a game whose main
+   column is a sentence and a word (Cipher Run) and far too narrow for one whose
+   main column is the whole playfield. The shore gets its own ceiling. */
+/* `width`, not only `max-width`. The solo rule centres the column with
+   `margin: 0 auto`, and auto margins on a grid item make it shrink to fit its
+   contents: a column of prose fills the 62ch on its own, but a grid of sixteen
+   short words hugs them and the whole shore came out 282px wide. */
+.arena-stage-solo .arena-stage-main:has(> .tl-arena) { max-width: 700px; width: 100%; }
+
+.arena-stage-main > .tl-arena {
+  /* width, not align-self: the stage centres its children, which leaves this a
+     shrink-to-fit box, and the grid's own `min(100%, 560px)` then resolves
+     against a width the grid itself decided. The board comes out a quarter of
+     the size it should be, and every tile with it. */
+  flex: 1; width: 100%; min-height: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
+
+
+/* Pearl Dive: the phrase and the breath meter on the left, the water column on
+   the right. The column is decoration over the phrase's own progress rather
+   than a playfield the game measures against, so it may stretch: nothing about
+   how deep it is drawn changes how hard the dive is. */
+.arena-stage-main > .pv-band {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  align-items: center; gap: 12px; text-align: center;
+}
+.arena-stage-side > .pv-scene {
+  flex: 1; min-height: 0; width: 100%;
+  display: flex; flex-direction: column; gap: 12px;
+}
 
 
 /* Survivor Sprint: the word on the left, the eight lanes and the bench on the

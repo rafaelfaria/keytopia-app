@@ -256,7 +256,7 @@ export default function PaintRevealGame() {
         <p className="small muted" style={{ maxWidth: 430 }}>
           {overInfo.unlocked
             ? `${overInfo.cleared} letters found, one after another, and ${overInfo.who} was under all of them.`
-            : `You uncovered ${overInfo.cleared} patches. Somebody is still under there.`}
+            : `You uncovered ${overInfo.cleared} ${overInfo.cleared === 1 ? 'patch' : 'patches'}. Somebody is still under there.`}
         </p>
       </ArenaResult>
     );

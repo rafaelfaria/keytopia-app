@@ -384,6 +384,18 @@ export function useTypingSession(
     onEscape?: () => void;
     soundOn?: boolean;
     disabled?: boolean;
+    /**
+     * A single input event delivered several characters at once — a paste that
+     * slipped past the guard, an autofill, or a phone keyboard committing a
+     * whole suggested word.
+     *
+     * Opt-in, and left unhandled by default, because the lessons and games do
+     * not need it: nothing there is a score anybody would want to fake, and a
+     * mobile keyboard committing a word is legitimate typing. The free tools
+     * pass a handler and invalidate the run, so an accidental paste cannot
+     * hand somebody a result that is not theirs.
+     */
+    onBulkInput?: (count: number) => void;
   },
 ): UseSession {
   const [nonce, setNonce] = useState(0);
@@ -442,6 +454,9 @@ export function useTypingSession(
     const v = el.value;
     el.value = '';
     if (t - lastHandled.current < 40) return; // already handled by keydown
+    // Two characters can arrive together from an accent composition or a fast
+    // phone keyboard. Three or more in one event is not somebody typing.
+    if (v.length > 2) optsRef.current.onBulkInput?.(v.length);
     for (const ch of v) press(ch === '\n' ? '\n' : ch, t);
   }, [press]);
 
@@ -546,7 +561,12 @@ export function TypingText({ engine, caret, big, focused, onClick }: {
   );
 }
 
-export function GhostInput({ bind, disabled }: { bind: UseSession['bindInput']; disabled?: boolean }) {
+export function GhostInput({ bind, disabled, onPasteBlocked }: {
+  bind: UseSession['bindInput'];
+  disabled?: boolean;
+  /** Fired after a paste has been refused, so a caller can say so on screen. */
+  onPasteBlocked?: () => void;
+}) {
   return (
     <input
       ref={bind.ref}
@@ -555,6 +575,13 @@ export function GhostInput({ bind, disabled }: { bind: UseSession['bindInput']; 
       onInput={bind.onInput}
       onFocus={bind.onFocus}
       onBlur={bind.onBlur}
+      // Pasting into a typing session is never legitimate: the whole point is
+      // the keystrokes. Refused everywhere rather than only in the scored
+      // tools, because a paste into a lesson corrupts the per-key statistics
+      // the adaptive engine is built on just as thoroughly as it corrupts a
+      // score. `onDrop` matters for the same reason and is easy to forget.
+      onPaste={(e) => { e.preventDefault(); onPasteBlocked?.(); }}
+      onDrop={(e) => { e.preventDefault(); onPasteBlocked?.(); }}
       autoCapitalize="off"
       autoCorrect="off"
       autoComplete="off"

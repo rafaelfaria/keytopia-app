@@ -10,9 +10,10 @@
 
 import {
   SITE_NAME, SITE_OG_LOCALE, SITE_THEME_COLOR, absUrl, ogImage,
-  pageTitle, type PublicPage,
+  pageTitle, postForPath, type PublicPage,
 } from './site';
-import { jsonLdForPath, serializeJsonLd } from './jsonLd';
+import { jsonLdForPath, serializeJsonLd, type HeadExtras } from './jsonLd';
+import { dateForDay } from '../blog/posts';
 
 export interface HeadTag {
   tag: 'meta' | 'link';
@@ -29,10 +30,11 @@ export interface HeadDoc {
 const meta = (attrs: Record<string, string>): HeadTag => ({ tag: 'meta', attrs });
 const link = (attrs: Record<string, string>): HeadTag => ({ tag: 'link', attrs });
 
-export function buildHead(page: PublicPage): HeadDoc {
+export function buildHead(page: PublicPage, extras: HeadExtras = {}): HeadDoc {
   const title = pageTitle(page);
   const url = absUrl(page.path);
   const image = absUrl(ogImage(page));
+  const post = postForPath(page.path);
 
   const tags: HeadTag[] = [
     meta({ name: 'description', content: page.description }),
@@ -49,7 +51,7 @@ export function buildHead(page: PublicPage): HeadDoc {
     meta({ name: 'googlebot', content: 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' }),
 
     // Open Graph (Facebook, LinkedIn, WhatsApp, Slack, Discord, iMessage…)
-    meta({ property: 'og:type', content: page.path === '/learn-to-type' ? 'article' : 'website' }),
+    meta({ property: 'og:type', content: post || page.path === '/learn-to-type' ? 'article' : 'website' }),
     meta({ property: 'og:site_name', content: SITE_NAME }),
     meta({ property: 'og:locale', content: SITE_OG_LOCALE }),
     meta({ property: 'og:title', content: title }),
@@ -75,7 +77,23 @@ export function buildHead(page: PublicPage): HeadDoc {
     meta({ name: 'theme-color', content: SITE_THEME_COLOR }),
   ];
 
-  return { title, tags, jsonLd: serializeJsonLd(jsonLdForPath(page)) };
+  // Article-specific Open Graph. Facebook, LinkedIn and several readers surface
+  // the publication date from these rather than from the JSON-LD.
+  if (post) {
+    const published = `${dateForDay(post.day)}T09:00:00Z`;
+    tags.push(
+      meta({ property: 'article:published_time', content: published }),
+      meta({ property: 'article:modified_time', content: published }),
+      meta({ property: 'article:section', content: post.category }),
+      meta({ property: 'article:publisher', content: absUrl('/') }),
+      ...[post.primaryKeyword, ...post.secondaryKeywords.slice(0, 5)].map((tag) =>
+        meta({ property: 'article:tag', content: tag })),
+      meta({ name: 'twitter:label1', content: 'Reading time' }),
+      meta({ name: 'twitter:data1', content: extras.timeRequired ? `${extras.timeRequired.replace(/^PT|M$/g, '')} min` : '—' }),
+    );
+  }
+
+  return { title, tags, jsonLd: serializeJsonLd(jsonLdForPath(page, extras)) };
 }
 
 /** Head for a route that must not be indexed (the app itself). */

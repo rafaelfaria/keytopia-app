@@ -28,6 +28,8 @@ const LINKS: { to: string; label: string }[] = [
   { to: '/learn-to-type', label: 'Learn to type' },
   { to: '/curriculum', label: 'Curriculum' },
   { to: '/typing-games', label: 'Games' },
+  { to: '/tools', label: 'Free tools' },
+  { to: '/blog', label: 'Blog' },
   { to: '/faq', label: 'FAQ' },
 ];
 

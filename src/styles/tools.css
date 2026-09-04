@@ -1,0 +1,579 @@
+/* ── Free tools (/tools) ───────────────────────────────────────────────────
+   Built on top of public.css rather than beside it. The typing surface, the
+   result cards, the stat grid and the per-key bars are all the classes the
+   typing test already uses (.tt-*), so the suite inherits every fix that page
+   has ever had. What is here is only the parts the suite genuinely adds: the
+   hub grid, the in-suite navigation, the forms, the benchmark tiers and the
+   history table.
+
+   Every colour is a token. These pages are rendered under whichever of the
+   twelve themes the visitor has chosen, and a hard-coded hex would be legible
+   in one of them.                                                          */
+
+/* ── In-suite navigation ─────────────────────────────────────────────────── */
+
+.tool-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 var(--flow-4);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tool-nav-link {
+  font-size: 0.86rem;
+  line-height: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tool-nav-link:hover { color: var(--text); border-color: var(--accent); }
+.tool-nav-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.tool-nav-link.is-on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+/* The controls bar above a typing area: the duration picker on one side, the
+   restart on the other. The restart is available while the test is running, not
+   only afterwards, so a fumbled first word does not cost you the whole clock. */
+.tool-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.tool-controls .tt-controls { margin: 0; }
+.tool-controls .tt-restart { margin-left: 0; }
+
+/* ── The hub ─────────────────────────────────────────────────────────────── */
+
+.tool-cat-blurb {
+  margin: 0 0 var(--flow-2);
+  color: var(--muted);
+  max-width: var(--measure);
+  line-height: 1.65;
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 0.9rem;
+}
+
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tool-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.tool-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.tool-card strong { font-size: 1rem; letter-spacing: -0.01em; }
+.tool-card span { font-size: 0.88rem; line-height: 1.55; color: var(--muted); }
+
+.tool-card em {
+  margin-top: 0.25rem;
+  font-style: normal;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent) 78%, var(--muted));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tool-card:hover { transform: none; }
+}
+
+/* ── Notices and framing copy ────────────────────────────────────────────── */
+
+.tool-brief,
+.tool-touch-note,
+.tool-notice,
+.tool-problem,
+.tool-saved,
+.tool-advice,
+.tool-disclosure {
+  max-width: var(--measure);
+  line-height: 1.65;
+  font-size: 0.94rem;
+}
+
+.tool-brief { color: var(--muted); margin: 0 0 1.1rem; }
+
+.tool-touch-note,
+.tool-notice,
+.tool-problem,
+.tool-saved,
+.tool-advice,
+.tool-disclosure {
+  margin: 1rem 0;
+  padding: 0.85rem 1.05rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+}
+
+.tool-touch-note { border-left-color: var(--accent2); color: var(--text-dim); }
+.tool-notice { border-left-color: var(--warn); color: var(--text); }
+.tool-problem { border-left-color: var(--bad); color: var(--text); }
+.tool-saved { border-left-color: var(--good); color: var(--text-dim); }
+.tool-saved a { color: var(--accent); }
+
+.tool-advice {
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.tool-disclosure {
+  border-left-color: var(--accent2);
+  background: color-mix(in srgb, var(--accent2) 7%, transparent);
+  color: var(--text-dim);
+  max-width: var(--measure);
+}
+
+.tool-note {
+  margin: 0.7rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+.tool-note a, .tool-brief a, .tool-disclosure a { color: var(--accent); }
+
+.tool-best,
+.tool-trend {
+  margin: 1.25rem 0 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-dim);
+  max-width: var(--measure);
+}
+
+.tool-reading-out {
+  margin: 1.25rem 0 0;
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--text-dim);
+  max-width: var(--measure);
+}
+
+.tool-reading { list-style: none; padding: 0; }
+.tool-reading li::before { content: none; }
+.tool-reading a { color: var(--accent); }
+
+.tool-surface { margin-top: 1rem; }
+
+/* ── Forms (calculator, benchmark, manual entry) ─────────────────────────── */
+
+.tool-form { margin: 0 0 1.5rem; }
+
+.tool-field { border: 0; padding: 0; margin: 0 0 1rem; }
+.tool-field legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.tool-form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 0.9rem;
+  align-items: end;
+}
+
+.tool-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: var(--text-dim);
+}
+
+.tool-label em { font-style: normal; font-weight: 400; color: var(--muted); }
+
+.tool-input {
+  /* 16px minimum: anything smaller makes iOS Safari zoom the whole page on
+     focus, which on a form this size looks like the layout breaking. */
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.6rem 0.75rem;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.tool-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+
+.tool-manual {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  width: 100%;
+}
+
+.tool-manual h3 { margin: 0 0 0.35rem; font-size: 1rem; }
+
+/* ── The calculator's answer ─────────────────────────────────────────────── */
+
+.tool-answer { margin-top: 0.5rem; }
+
+.tool-answer-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  align-items: center;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.tool-answer-main b {
+  display: block;
+  font-size: clamp(2.8rem, 9vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.tool-answer-main span,
+.tool-answer-side span {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+
+.tool-answer-side { display: flex; gap: 2rem; flex-wrap: wrap; }
+.tool-answer-side b {
+  font-size: 1.75rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.tool-working { margin-top: 1.5rem; }
+.tool-working h3 { font-size: 0.95rem; margin: 0 0 0.75rem; }
+
+.tool-formula {
+  font-family: var(--font-type);
+  font-size: 0.9rem;
+  line-height: 1.9;
+  margin: 0 0 0.6rem;
+  padding: 0.75rem 0.95rem;
+  border-radius: 10px;
+  background: var(--surface2);
+  color: var(--text-dim);
+  overflow-x: auto;
+}
+
+.tool-formula strong { color: var(--accent); }
+
+/* ── Benchmarks by age ───────────────────────────────────────────────────── */
+
+.tool-benchmarks { display: flex; flex-direction: column; gap: 1.75rem; margin-top: 1.5rem; }
+
+.tool-tier {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.35rem 1.5rem;
+  /* The tier is signalled by a wide left edge, not by colour alone: the whole
+     point of this page is that the three kinds of claim stay distinguishable,
+     including for a reader who cannot tell the hues apart. Each tier also
+     carries its name as a heading. */
+  border-left-width: 5px;
+}
+
+.tool-tier.is-measured { border-left-color: var(--good); }
+.tool-tier.is-target { border-left-color: var(--accent2); }
+.tool-tier.is-guidance { border-left-color: var(--muted); }
+
+.tool-tier h3 { margin: 0 0 0.3rem; font-size: 1.05rem; }
+.tool-tier-blurb { margin: 0 0 1.1rem; font-size: 0.88rem; line-height: 1.6; color: var(--muted); }
+
+.tool-tier-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.1rem; }
+.tool-tier-list > li { padding-top: 1.1rem; border-top: 1px solid var(--border); }
+.tool-tier-list > li:first-child { padding-top: 0; border-top: 0; }
+
+.tool-tier-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.tool-tier-head strong { font-size: 0.98rem; letter-spacing: -0.01em; }
+
+.tool-tier-figure {
+  font-family: var(--font-type);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.tool-tier-verdict {
+  margin: 0.5rem 0 0;
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: var(--measure);
+}
+
+.tool-tier-note,
+.tool-tier-caveat,
+.tool-tier-source {
+  margin: 0.45rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+.tool-tier-caveat {
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--warn);
+  color: var(--text-dim);
+}
+
+.tool-tier-source { font-size: 0.78rem; opacity: 0.85; }
+
+.tool-sources { padding-left: 1.2rem; margin: 0; }
+.tool-sources li { margin-bottom: 0.7rem; font-size: 0.86rem; line-height: 1.6; color: var(--muted); }
+.tool-sources a { color: var(--accent); word-break: break-word; }
+
+/* ── The daily exercise ──────────────────────────────────────────────────── */
+
+.tool-daily-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.tool-daily-head h2 { margin: 0.2rem 0; font-size: 1.4rem; letter-spacing: -0.02em; }
+
+.tool-daily-date {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tool-daily-focus { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--muted); max-width: 44ch; }
+
+.tool-streak { display: flex; gap: 1.5rem; margin: 0; }
+.tool-streak dt {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+.tool-streak dd {
+  margin: 0.3rem 0 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Weak-key analysis ───────────────────────────────────────────────────── */
+
+.tool-confusions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+
+.tool-confusions li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.tool-confusions kbd {
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  min-width: 1.9rem;
+  text-align: center;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--key-border);
+  border-radius: 6px;
+  background: var(--key-bg);
+  color: var(--key-text);
+}
+
+.tool-confusions .tt-arrow { font-size: 0.78rem; }
+.tool-confusions .tt-bar-v { margin-left: auto; }
+
+.tool-drill {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.tool-drill h3 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+.tool-drill > p { margin: 0 0 1.1rem; font-size: 0.92rem; line-height: 1.65; color: var(--text-dim); max-width: var(--measure); }
+.tool-drill-result p { margin: 0 0 1rem; font-size: 0.95rem; line-height: 1.65; }
+
+/* ── Progress tracker ────────────────────────────────────────────────────── */
+
+.tool-empty {
+  padding: 2.5rem 1.75rem;
+  border: 1px dashed var(--border);
+  border-radius: 18px;
+  text-align: center;
+}
+
+.tool-empty h2 { margin: 0 0 0.6rem; font-size: 1.3rem; }
+.tool-empty p { margin: 0 auto 1.5rem; max-width: 46ch; line-height: 1.7; color: var(--muted); }
+.tool-empty .tt-again { justify-content: center; }
+
+.tool-summary { margin-bottom: 1.25rem; }
+
+.tool-chart {
+  margin: 1.75rem 0 0;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.tool-chart figcaption {
+  margin-bottom: 0.9rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* A table is the right element for a result history, and a table is also the
+   one thing that cannot be made to reflow on a narrow screen. It scrolls
+   inside its own box instead, so the page body never scrolls sideways. */
+.tool-table-wrap {
+  margin-top: 1.75rem;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.tool-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 34rem; }
+
+.tool-table caption {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.tool-table th,
+.tool-table td { padding: 0.7rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+.tool-table tbody tr:last-child td { border-bottom: 0; }
+.tool-table th { font-size: 0.76rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.tool-table td { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.tool-table td strong { color: var(--text); }
+
+.tool-row-del {
+  font: inherit;
+  font-size: 0.82rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.tool-row-del:hover { color: var(--bad); border-color: var(--bad); }
+.tool-row-del:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ── Where to go next ────────────────────────────────────────────────────── */
+
+.tool-next { margin: var(--flow-5) 0; }
+.tool-next h2 { font-size: 1.2rem; margin: 0 0 var(--flow-2); }
+
+.tool-next-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 0.9rem;
+}
+
+.tool-next-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.tool-next-card:hover { border-color: var(--accent); }
+.tool-next-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.tool-next-card strong { font-size: 0.98rem; }
+.tool-next-card span { font-size: 0.86rem; color: var(--muted); line-height: 1.5; }
+
+/* The accuracy test's headline is a percentage, so its unit sits inside the
+   number rather than beside it. */
+.tt-score-n .tt-pct { font-size: 0.45em; font-style: normal; margin-left: 0.04em; color: var(--muted); }
+
+.tt-meter.is-good i { background: var(--good); }
+
+/* `.sr-only` is defined once, in arena.css, and used here on the delete
+   column's header: it has no visible label because every cell in it is already
+   a labelled button, but the column still needs a name read aloud. */
+
+@media (max-width: 40rem) {
+  .tool-nav { gap: 0.35rem; }
+  .tool-nav-link { font-size: 0.8rem; padding: 0.42rem 0.6rem; }
+  .tool-daily-head { flex-direction: column; }
+  .tool-answer-grid { gap: 1.25rem; }
+  .tool-answer-side { gap: 1.5rem; }
+}

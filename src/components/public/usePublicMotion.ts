@@ -30,6 +30,20 @@ const TARGETS = [
   '.pub-faq-item',
   '.pub-term',
   '.tt-test',
+  // The free tools' own blocks. Deliberately only the decorative ones: the
+  // typing surface and the result panel are never animated from opacity 0,
+  // because a tween that misses its frames would hide the thing the page is
+  // for. Same rule as the h1 and lede above.
+  '.tool-card',
+  '.tool-next-card',
+  '.tool-tier',
+  // The blog index's cards and the article's closing call to action. Same rule
+  // again, and it matters most here: `.blog-body` is deliberately absent, since
+  // an article's prose is the entire point of the page and must never depend on
+  // a tween finishing in order to be readable.
+  '.blog-card',
+  '.blog-pillar',
+  '.blog-try',
 ];
 
 export function usePublicMotion(key: string): void {

@@ -9,13 +9,25 @@
  */
 
 import {
-  PRIVATE_PATHS, PUBLIC_PAGES, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absUrl, ogImage,
+  LIVE_POSTS, PRIVATE_PATHS, PUBLIC_PAGES, SITE_DESCRIPTION, SITE_NAME, SITE_URL,
+  absUrl, ogImage,
 } from './site';
+import { BLOG_CATEGORIES, dateForDay, postPath } from '../blog/posts';
+// The article bodies are heavy, and importing them here is safe precisely
+// because this module is build-time only: scripts/gen-seo.mjs reaches it
+// through the SSR bundle, and nothing in the browser bundle imports it.
+import { articleBySlug } from '../blog/registry';
+import { blocksToText } from '../blog/markdown';
 import {
   ACCESSIBILITY, AUDIENCES, CORE_FEATURES, CURRICULUM, FAQS, GAMES, GLOSSARY,
   KIDS_POINTS, LEARN_GUIDE, LEARN_GUIDE_INTRO, METHOD_STEPS, PRIVACY_SECTIONS,
   PRODUCT_PRICE, PRODUCT_SUMMARY, SCHOOLS_POINTS, TERMS_SECTIONS, TRAINING_MODES,
 } from './content';
+import {
+  TOOLS_HUB_FAQS, TOOLS_HUB_INTRO, TOOLS_HUB_SECTIONS, TOOL_CONTENT,
+} from './toolsContent';
+import { TOOLS } from '../tools/registry';
+import { BENCHMARKS, POPULATION, SOURCES, TIER_META, NO_AGE_TABLE_NOTE } from '../tools/benchmarks';
 
 // ── robots.txt ─────────────────────────────────────────────────────────────
 
@@ -62,7 +74,14 @@ const CRAWLERS = [
 ] as const;
 
 export function buildRobotsTxt(): string {
-  const allow = PUBLIC_PAGES.map((p) => p.path);
+  // One `Allow: /blog/` covers every article. Listing all fifty per crawler,
+  // across thirty-one crawler blocks, would produce a robots.txt of several
+  // thousand lines — and a prefix rule says the same thing, including for the
+  // articles that have not been published yet.
+  const allow = [
+    ...PUBLIC_PAGES.filter((p) => p.group !== 'Blog').map((p) => p.path),
+    '/blog/',
+  ];
   const lines: string[] = [
     `# robots.txt for ${SITE_NAME}: ${SITE_URL}`,
     '# Generated at build time from src/lib/seo/site.ts. Do not edit by hand.',
@@ -183,6 +202,23 @@ export function buildLlmsTxt(): string {
     out.push('');
   }
 
+  if (LIVE_POSTS.length) {
+    out.push('## Blog');
+    out.push('');
+    out.push(`Long-form articles on learning to type, published one per day. ${LIVE_POSTS.length} live so far, newest first within each topic.`);
+    out.push('');
+    for (const category of BLOG_CATEGORIES) {
+      const posts = LIVE_POSTS.filter((p) => p.category === category);
+      if (!posts.length) continue;
+      out.push(`### ${category}`);
+      out.push('');
+      for (const p of posts) {
+        out.push(`- [${p.title}](${absUrl(postPath(p))}) — ${dateForDay(p.day)}. ${p.description}`);
+      }
+      out.push('');
+    }
+  }
+
   out.push('## Features');
   out.push('');
   for (const f of CORE_FEATURES) out.push(`- **${f.name}**: ${f.description}`);
@@ -196,6 +232,12 @@ export function buildLlmsTxt(): string {
   out.push('## Games');
   out.push('');
   for (const g of GAMES) out.push(`- **${g.name}** (trains ${g.skill.toLowerCase()}): ${g.description}`);
+  out.push('');
+  out.push('## Free tools');
+  out.push('');
+  out.push('Eight tools that run in the browser with no account, no attempt limit and no result held back. They share one typing engine and one definition of words per minute, so a figure from one means the same thing in all of them.');
+  out.push('');
+  for (const t of TOOLS) out.push(`- **${t.name}** (${absUrl(t.path)}): ${t.blurb}`);
   out.push('');
 
   out.push('## Who it is for');
@@ -269,6 +311,52 @@ export function buildLlmsFullTxt(): string {
   for (const s of SCHOOLS_POINTS) out.push(`- **${s.name}**: ${s.description}`);
   out.push('');
 
+  header('/tools');
+  out.push(TOOLS_HUB_INTRO, '');
+  for (const t of TOOLS) out.push(`- **${t.name}** (${absUrl(t.path)}): ${t.blurb}`);
+  out.push('');
+  for (const s of TOOLS_HUB_SECTIONS) {
+    out.push(`### ${s.heading}`, '');
+    for (const p of s.paragraphs) out.push(p, '');
+  }
+  for (const f of TOOLS_HUB_FAQS) out.push(`**${f.question}** ${f.answer}`, '');
+
+  for (const tool of TOOLS) {
+    header(tool.path);
+    const c = TOOL_CONTENT[tool.path];
+    if (!c) continue;
+    out.push(c.intro, '');
+    for (const s of c.sections) {
+      out.push(`### ${s.heading}`, '');
+      for (const p of s.paragraphs) out.push(p, '');
+    }
+    out.push('#### Questions', '');
+    for (const f of c.faqs) out.push(`**${f.question}** ${f.answer}`, '');
+  }
+
+  // The benchmark data in full, with its provenance. An agent asked "what is
+  // the average typing speed" should be able to cite the study and its sample
+  // limitations from one fetch, rather than repeating the unsourced by-age
+  // tables that circulate everywhere else.
+  out.push('### Typing speed benchmarks, with sources', '');
+  out.push(NO_AGE_TABLE_NOTE, '');
+  out.push(`The largest measurement of modern typing: mean ${POPULATION.wpm} WPM (SD ${POPULATION.sd}) across ${POPULATION.n.toLocaleString()} participants and ${POPULATION.keystrokes.toLocaleString()} keystrokes, with a mean uncorrected error rate of ${POPULATION.uncorrectedErrorPct}%. Trained typists averaged ${POPULATION.trainedWpm} WPM against ${POPULATION.untrainedWpm} untrained. ${POPULATION.sampleNote}`, '');
+  for (const tier of ['measured', 'target', 'guidance'] as const) {
+    const rows = BENCHMARKS.filter((b) => b.tier === tier);
+    if (!rows.length) continue;
+    out.push(`#### ${TIER_META[tier].label}`, '', TIER_META[tier].blurb, '');
+    for (const b of rows) {
+      const figure = b.wpm === 0
+        ? 'no speed target'
+        : b.wpmHigh ? `${b.wpmLow}-${b.wpmHigh} WPM` : `${b.wpm} WPM`;
+      out.push(`- ${b.group}: ${figure}. ${b.note}${b.caveat ? ` Caveat: ${b.caveat}` : ''}`);
+    }
+    out.push('');
+  }
+  out.push('#### Benchmark sources', '');
+  for (const src of SOURCES) out.push(`- ${src.citation}${src.url ? ` ${src.url}` : ''}`);
+  out.push('');
+
   header('/faq');
   for (const f of FAQS) out.push(`### ${f.question}`, '', f.answer, '');
 
@@ -289,6 +377,22 @@ export function buildLlmsFullTxt(): string {
     for (const p of s.paragraphs) out.push(p, '');
     for (const b of s.bullets ?? []) out.push(`- ${b}`);
     if (s.bullets?.length) out.push('');
+  }
+
+  // The blog, in full. This file exists so an agent can cite the actual text
+  // rather than a summary of it, and the articles are the part of the site most
+  // likely to answer a question someone has asked an assistant.
+  if (LIVE_POSTS.length) {
+    out.push('---', '', '# Blog articles', '');
+    for (const post of LIVE_POSTS) {
+      const article = articleBySlug(post.slug);
+      if (!article) continue;
+      out.push(`## ${post.title}`, '');
+      out.push(`URL: ${absUrl(postPath(post))}`, '');
+      out.push(`Published: ${article.date} · ${post.category} · ${article.minutes} min read`, '');
+      out.push(post.description, '');
+      out.push(blocksToText(article.blocks), '');
+    }
   }
 
   return out.join('\n');

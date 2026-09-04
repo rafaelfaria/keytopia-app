@@ -15,7 +15,7 @@
 
 import * as THREE from 'three';
 
-export type Formation = 'wave' | 'terrace' | 'scatter' | 'stream' | 'calm';
+export type Formation = 'wave' | 'terrace' | 'scatter' | 'stream' | 'calm' | 'reading';
 
 export interface HeroOpts {
   formation: Formation;
@@ -182,6 +182,24 @@ export function createHeroScene(canvas: HTMLCanvasElement, opts: HeroOpts, stati
           rz: Math.cos(t * 0.42 + c.phase) * 0.28,
           x: c.x,
         };
+      case 'reading': {
+        // A line of keys lifts, holds, and settles as the next one behind it
+        // begins — the field is read the way a page is, one row at a time.
+        // The blog uses this: it is the only formation whose motion has a
+        // direction that means something rather than simply being movement.
+        const span = ROWS + 2.4;
+        const head = (t * 0.85) % span;
+        const d = Math.abs(c.row - head);
+        const lift = d < 1.35 ? 0.5 - 0.5 * Math.cos((1 - d / 1.35) * Math.PI) : 0;
+        return {
+          y: lift * 0.78 + Math.sin(t * 0.5 + c.phase) * 0.045,
+          // The lifted row tips very slightly toward the reader, which is what
+          // stops the band looking like a flat plate sliding up and down.
+          rx: -lift * 0.12,
+          rz: 0,
+          x: c.x,
+        };
+      }
       case 'stream': {
         // The field drifts sideways and wraps, so the page reads as motion
         // along a track rather than a static grid.

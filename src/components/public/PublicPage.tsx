@@ -20,13 +20,25 @@ import { usePublicMotion } from './usePublicMotion';
 import { SITE_NAME, type PublicPage as PageDef } from '../../lib/seo/site';
 import { Seo } from '../../lib/seo/Seo';
 
-/** Breadcrumb trail, mirroring the BreadcrumbList JSON-LD on the same page. */
+/**
+ * Breadcrumb trail, mirroring the BreadcrumbList JSON-LD on the same page.
+ *
+ * "Mirroring" is a requirement, not a coincidence: structured data that
+ * describes a trail the page does not display is exactly what the spec asks
+ * you not to emit. So a page nested under a hub gains the hub as an
+ * intermediate step here at the same time as it gains one in
+ * `jsonLdForPath`.
+ */
 function Breadcrumbs({ page }: { page: PageDef }) {
   if (page.path === '/') return null;
+  const parent = page.path.startsWith('/tools/')
+    ? { path: '/tools', label: 'Free tools' }
+    : null;
   return (
     <nav className="pub-crumbs" aria-label="Breadcrumb">
       <ol>
         <li><Link to="/">Home</Link></li>
+        {parent && <li><Link to={parent.path}>{parent.label}</Link></li>}
         <li aria-current="page">{page.label}</li>
       </ol>
     </nav>

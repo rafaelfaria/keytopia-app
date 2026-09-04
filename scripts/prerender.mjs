@@ -60,7 +60,18 @@ async function main() {
     throw new Error(`index.html is missing the ${START} / ${END} markers — prerendering cannot inject per-route head tags.`);
   }
 
-  const { render, routes } = await import(pathToFileURL(SSR_ENTRY).href);
+  const { render, routes, validateBlog } = await import(pathToFileURL(SSR_ENTRY).href);
+
+  // The blog's fifty articles cross-link each other by hand. A typo in a slug
+  // produces a link that quietly redirects to the index instead of 404ing,
+  // which is exactly the kind of fault that survives review and costs rankings,
+  // so it fails the build here rather than shipping.
+  const problems = validateBlog();
+  if (problems.length) {
+    console.error('\nBlog validation failed:\n');
+    for (const p of problems) console.error(`  ${p.slug.padEnd(44)} ${p.problem}`);
+    throw new Error(`${problems.length} blog problem(s).`);
+  }
 
   const written = [];
   for (const path of routes()) {

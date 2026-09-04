@@ -2032,6 +2032,41 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .signin-offline p:first-child { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 6px; }
 .signin-offline .small { line-height: 1.55; }
 .signin-foot { margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--border); line-height: 1.55; }
+
+/* Google leads on both handles of the door: one tap beats a round trip through
+   an inbox, so it sits above the email form rather than under an "or". */
+.oauth-lead { margin-top: 22px; }
+
+/* The six-digit code from the sign-in email. Wide tracking and a monospace
+   face so a code read off a phone can be checked digit by digit. */
+.signin-code { display: flex; flex-direction: column; gap: 10px; margin: 4px 0 16px; }
+.code-input {
+  text-align: center;
+  font-family: var(--font-type);
+  font-size: 1.6rem;
+  letter-spacing: 0.42em;
+  /* The tracking is drawn after the last glyph too, which shifts a centred
+     code visibly left. Half a step back puts it under the caret again. */
+  text-indent: 0.42em;
+  padding: 14px 12px;
+}
+
+.signin-sent-alt { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.86rem; color: var(--muted); }
+
+/* A button that reads as a link. Used where the action is a change of mind
+   rather than a step forward, so it must not compete with the real button. */
+.linkish {
+  background: none; border: 0; padding: 0; font: inherit; color: var(--accent);
+  cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
+}
+.linkish:disabled { color: var(--muted); text-decoration: none; cursor: default; }
+.linkish:hover:not(:disabled) { color: var(--text); }
+
+/* Refusing to create an account is only kind if creating one is right here. */
+.signin-noaccount { margin-top: 14px; padding: 14px; border: 2px dashed var(--border); border-radius: 14px; }
+.signin-noaccount p { margin-bottom: 10px; line-height: 1.5; }
+
+.signin-swap { margin-top: 18px; }
 .boot-splash { justify-content: center; gap: 14px; }
 
 .cp-block { margin-top: 26px; text-align: left; }

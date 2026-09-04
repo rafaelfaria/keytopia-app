@@ -1,0 +1,24 @@
+-- The welcome email could never actually send.
+--
+-- 20260814000000_welcome_emails.sql created public.welcome_emails, enabled RLS
+-- with no policies, and reasoned that the edge function's service role
+-- "bypasses RLS by design" — which is true, and beside the point. Bypassing
+-- row-level security is not the same as being allowed to address the table at
+-- all. With no GRANT, every claim insert came back
+--
+--   42501  permission denied for table welcome_emails
+--
+-- and the function answered 500 without sending anything. This is the exact
+-- trap docs/supabase-setup.md calls "two gates, not one" — the same one that
+-- broke `profiles` on the very first local run. It hid here because the table
+-- is only ever touched by a webhook, so nothing in the app ever complained.
+--
+-- The hosted project DOES already carry it, from the era when Supabase granted
+-- every new table to every role, so production was never broken by this. A
+-- freshly created project would be, and the local stack was. Explicit is the
+-- only version that is true everywhere.
+--
+-- SELECT and INSERT for the claim, DELETE because the function releases the
+-- claim when Resend rejects the send so a retry can get through. No UPDATE: a
+-- send log has nothing to amend.
+grant select, insert, delete on public.welcome_emails to service_role;

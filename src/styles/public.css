@@ -129,7 +129,19 @@ html:has(.pub-root) { background: #0b1020; color-scheme: dark; }
 
 .site-head-nav a:focus-visible { outline: 2px solid #14d8c4; outline-offset: 4px; border-radius: 4px; }
 
-.site-head-cta { flex: none; margin-left: clamp(8px, 2vw, 20px); }
+.site-head-cta { flex: none; margin-left: clamp(8px, 2vw, 20px); display: flex; align-items: center; gap: clamp(10px, 1.6vw, 18px); }
+
+/* The returning-user door. Plain text beside the button on purpose: two pills
+   side by side make the visitor choose before they have read either. */
+.site-head-signin {
+  color: #aab3cc;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.site-head-signin:hover { color: #eef1fb; }
+.site-head-signin:focus-visible { outline: 2px solid #14d8c4; outline-offset: 4px; border-radius: 4px; }
 
 /* The header button is a pill everywhere. base.css gives .btn a 12px radius,
    which read as a different component next to the old rounded one. */

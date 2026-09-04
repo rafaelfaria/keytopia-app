@@ -1,12 +1,19 @@
 // Supabase Edge Function (Deno): send the KeyTopia welcome email once per user.
 //
 // Invoked by a database webhook on auth.users (see docs/supabase-setup.md).
-// Fires on the first moment an account really exists for KeyTopia's flows:
-//   - OAuth (Google): INSERT arrives with email_confirmed_at already set.
-//   - Magic link: the row is INSERTed unconfirmed when the link is requested,
-//     then an UPDATE sets email_confirmed_at when it is clicked.
-// Both event types are accepted; the gate is "confirmed email we have not
-// welcomed before", enforced by public.welcome_emails (PK user_id).
+// Fires at the first moment the account has actually been *used*:
+//   - OAuth (Google): the INSERT arrives confirmed and signed in.
+//   - Email link: the row is INSERTed when the link is REQUESTED and only
+//     signed into when the link is CLICKED.
+//
+// The gate is `last_sign_in_at`, not `email_confirmed_at`. Confirmation was
+// the wrong column: with "Confirm email" switched off — which is the setting a
+// passwordless product wants, since the link is itself the confirmation —
+// GoTrue stamps email_confirmed_at when it creates the row, so the welcome
+// went out the second someone typed an address, before they had opened
+// anything. last_sign_in_at moves at exactly the right instant under every
+// setting, on every provider. public.welcome_emails (PK user_id) still makes
+// it once per user whichever trigger gets there first.
 //
 // Secrets (supabase secrets set, or supabase/functions/.env locally):
 //   RESEND_API_KEY          required to actually send
@@ -25,6 +32,7 @@ interface AuthUserRecord {
   id: string;
   email: string | null;
   email_confirmed_at?: string | null;
+  last_sign_in_at?: string | null;
   raw_user_meta_data?: Record<string, unknown> | null;
 }
 
@@ -208,9 +216,14 @@ Deno.serve(async (req: Request) => {
   if (!record.email) {
     return json({ ignored: true, reason: 'No email on record' });
   }
+  if (!record.last_sign_in_at) {
+    // The account exists because a link was requested, and nobody has opened
+    // it. The UPDATE that stamps last_sign_in_at re-invokes us.
+    return json({ ignored: true, reason: 'Account never signed in yet' });
+  }
   if (!record.email_confirmed_at) {
-    // Magic-link INSERT before the link is clicked. The confirming UPDATE
-    // will re-invoke us.
+    // Belt and braces: a signed-in account with an unconfirmed address should
+    // not be possible, and is not somebody to welcome if it ever is.
     return json({ ignored: true, reason: 'Email not confirmed yet' });
   }
 
@@ -239,6 +252,11 @@ Deno.serve(async (req: Request) => {
 
   const resendApiKey = Deno.env.get('RESEND_API_KEY') || '';
   if (!resendApiKey) {
+    // Release the claim, exactly as the send-failure path below does. Holding
+    // it would record the user as welcomed while no email exists, and this is
+    // the one failure that is invisible: a misconfigured key answers 200 and
+    // burns the only chance that user had.
+    await supabase.from('welcome_emails').delete().eq('user_id', record.id);
     console.error('RESEND_API_KEY not set; welcome email not sent', { userId: record.id });
     return json({ ignored: true, reason: 'RESEND_API_KEY not configured' });
   }

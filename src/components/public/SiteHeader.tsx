@@ -52,8 +52,16 @@ export function SiteHeader({ cta }: { cta?: ReactNode }) {
           ))}
         </nav>
 
+        {/* Two doors, not one. "Start free" was the only way in from every
+            public page, which left a parent who already had an account
+            hunting for the one that was theirs. */}
         <div className="site-head-cta">
-          {cta ?? <Link className="btn btn-primary" to="/onboarding">Start free</Link>}
+          {cta ?? (
+            <>
+              <Link className="site-head-signin" to="/signin?mode=signin">Sign in</Link>
+              <Link className="btn btn-primary" to="/signin?new=1">Start free</Link>
+            </>
+          )}
         </div>
       </div>
     </header>

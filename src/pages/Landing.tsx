@@ -452,7 +452,12 @@ export default function Landing() {
           ? <Link className="btn btn-primary" to="/app">Continue training</Link>
           : hasAnyProfile
             ? <Link className="btn btn-primary" to="/who">Choose profile</Link>
-            : <Link className="btn btn-primary" to="/onboarding">Start free</Link>}
+            : (
+              <>
+                <Link className="site-head-signin" to="/signin?mode=signin">Sign in</Link>
+                <Link className="btn btn-primary" to="/signin?new=1">Start free</Link>
+              </>
+            )}
       />
 
       <div className="land-zone" ref={zoneRef}>

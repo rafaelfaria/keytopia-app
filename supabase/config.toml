@@ -234,7 +234,20 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
+#
+# ON since 2026-09-04, and it has to stay on. With it off, GoTrue autoconfirms:
+# asking for a sign-in link on a new address ran `user_signedup`, `login` and
+# `user_recovery_requested` inside 15ms, so the row was created confirmed AND
+# stamped with last_sign_in_at before anyone had opened anything. Two things
+# broke on that. The welcome email went out the second someone typed an
+# address, because there was no later moment to hang it on. And a stranger
+# could bring a live, confirmed account into being for an address that is not
+# theirs — they could not get into it, but it existed.
+#
+# On, the row is INSERTed unconfirmed and inert; clicking the link (or typing
+# the code) is what confirms it, signs in, and fires the welcome. Production
+# must match: Authentication → Sign In / Up → Email → Confirm email.
+enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.

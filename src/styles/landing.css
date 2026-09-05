@@ -53,9 +53,27 @@
 /* The 3D terrain behind this text is bright and in motion. A gradient ground
    under the headline is what makes it readable; a full-section overlay would
    read as fog and kill the render. */
+/* The scrim fades in at BOTH ends.
+   It used to open at 0.9 alpha on its first stop, which meant its top edge was
+   a step from nothing to nearly opaque: a hard line drawn straight across the
+   3D keyboard, the full width of the page. It was invisible once .world-sticky
+   stuck to the top of the viewport, because the edge went off-screen. Scrolling
+   the section INTO that position dragged the line down over the render, which
+   is the seam you see and the one moment the scrim is meant to be doing its
+   quietest work.
+   The lead-in is 18% of the height. .world-head starts 12vh down a 62vh scrim,
+   so the copy still sits entirely inside the fully-dark band and loses none of
+   the contrast the scrim exists to give it. */
 .world-scrim {
   position: absolute; inset: 0 0 auto; height: 62vh; pointer-events: none;
-  background: linear-gradient(180deg, rgba(7, 11, 26, 0.9) 0%, rgba(7, 11, 26, 0.72) 38%, rgba(7, 11, 26, 0) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(7, 11, 26, 0) 0%,
+    rgba(7, 11, 26, 0.62) 9%,
+    rgba(7, 11, 26, 0.9) 18%,
+    rgba(7, 11, 26, 0.72) 45%,
+    rgba(7, 11, 26, 0) 100%
+  );
 }
 
 .world-head { text-align: center; padding-top: 12vh; max-width: 660px; position: relative; }

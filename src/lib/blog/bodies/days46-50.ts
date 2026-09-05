@@ -7,9 +7,9 @@ Switch type matters far less to your typing speed than three things almost nobod
 
 **Membrane keyboards** register a press when the key pushes a conductive layer down onto a circuit beneath. Most laptop keyboards, most keyboards supplied with computers, and nearly all budget boards work this way. Cheap to make, quiet, usually low-travel.
 
-Within this category, **scissor-switch** keyboards — the mechanism in most laptops and slim desktop boards — use a scissor-shaped stabiliser under each key. They are still membrane underneath, but the stabiliser makes the key press more evenly whichever part of it you hit, which is why good laptop keyboards feel far better than cheap desktop membranes.
+Within this category, **scissor-switch** keyboards, the mechanism in most laptops and slim desktop boards, use a scissor-shaped stabiliser under each key. They are still membrane underneath, but the stabiliser makes the key press more evenly whichever part of it you hit, which is why good laptop keyboards feel far better than cheap desktop membranes.
 
-**Mechanical keyboards** give each key its own physical switch with its own spring and contact mechanism. More travel, more consistent force, a defined actuation point, and — depending on the switch — audible or tactile feedback. More expensive, usually louder, and repairable key by key.
+**Mechanical keyboards** give each key its own physical switch with its own spring and contact mechanism. More travel, more consistent force, a defined actuation point, and, depending on the switch, audible or tactile feedback. More expensive, usually louder, and repairable key by key.
 
 ## What genuinely affects typing performance
 
@@ -19,7 +19,7 @@ In order, and note where switch type appears.
 
 By a large margin the biggest factor.
 
-If the keyboard rearranges anything you use — the position of the right shift, the presence and size of a numeric keypad, where the brackets and quotation marks sit, whether there is a dedicated Home and End — you will hunt for those keys until you have relearned them. Hunting is the thing touch typing exists to eliminate.
+If the keyboard rearranges anything you use, the position of the right shift, the presence and size of a numeric keypad, where the brackets and quotation marks sit, whether there is a dedicated Home and End, you will hunt for those keys until you have relearned them. Hunting is the thing touch typing exists to eliminate.
 
 This is why moving between a full-size and a compact board, or between UK and US layouts, is genuinely costly and switching from membrane to mechanical usually is not.
 
@@ -27,7 +27,7 @@ This is why moving between a full-size and a compact board, or between UK and US
 
 ### 2. Consistency of key travel
 
-Every key should feel the same and require the same force. Uneven boards — where the space bar is stiff, or the outer keys feel different from the middle — cause errors, because your fingers calibrate their force to an average that does not apply everywhere.
+Every key should feel the same and require the same force. Uneven boards, where the space bar is stiff, or the outer keys feel different from the middle, cause errors, because your fingers calibrate their force to an average that does not apply everywhere.
 
 This is where cheap membrane keyboards genuinely lose. It is not the membrane mechanism itself; it is the manufacturing tolerance.
 
@@ -49,7 +49,7 @@ Both effects are real and small. They are also personal: some people type faster
 
 Last, and genuinely last.
 
-Tactile and clicky switches give feedback at the actuation point, which some typists find helps them stop pressing further — "bottoming out" — and therefore reduces effort. Linear switches offer no such cue.
+Tactile and clicky switches give feedback at the actuation point, which some typists find helps them stop pressing further, "bottoming out", and therefore reduces effort. Linear switches offer no such cue.
 
 Whether this produces measurably faster typing is not well established. Published comparisons are scarce, and the differences reported by enthusiasts are typically within the range of ordinary day-to-day variation, which for most people is several words per minute between one session and the next.
 
@@ -75,14 +75,14 @@ The first row is the one people buy for and the one with the least support.
 Reasonable reasons to buy one:
 
 - **You type for hours a day and find your current keyboard tiring.** Lighter, more consistent switches genuinely reduce effort.
-- **Your current keyboard is cheap and inconsistent.** This is a real problem and mechanical is one solution to it — a good scissor-switch board is another.
+- **Your current keyboard is cheap and inconsistent.** This is a real problem and mechanical is one solution to it. A good scissor-switch board is another.
 - **You want a keyboard that lasts and can be repaired.**
 - **You enjoy it.** A perfectly good reason, and the most honest one.
 
 Reasons that do not hold up:
 
 - **You expect to type faster.** The evidence does not support it.
-- **You have plateaued and think the keyboard is the cause.** It is almost certainly not — plateaus at 60 are usually specific slow transitions, punctuation, or uneven rhythm. See [is 60 WPM good](/blog/is-60-wpm-good).
+- **You have plateaued and think the keyboard is the cause.** It is almost certainly not. Plateaus at 60 are usually specific slow transitions, punctuation, or uneven rhythm. See [is 60 WPM good](/blog/is-60-wpm-good).
 
 ## What about laptop keyboards?
 
@@ -90,13 +90,13 @@ Perfectly fine for touch typing. Short travel, and the home row and the F and J 
 
 The genuine problem with laptops is not the keyboard, it is the geometry: if the screen is at the right height the keyboard is too high, and vice versa. There is no posture that solves both.
 
-If you use a laptop for more than an hour a day, a stand plus a separate keyboard is the single best equipment change available — and it matters considerably more than which keyboard you choose.
+If you use a laptop for more than an hour a day, a stand plus a separate keyboard is the single best equipment change available, and it matters considerably more than which keyboard you choose.
 
 ## Switching keyboards: what it costs
 
 Expect a few days of feeling slightly off, and a couple of weeks before a new board feels normal. Two things extend that:
 
-- **A different physical layout.** Losing a numeric keypad, or moving the brackets, means relearning those keys — genuinely weeks, not days.
+- **A different physical layout.** Losing a numeric keypad, or moving the brackets, means relearning those keys, genuinely weeks, not days.
 - **A large change in travel or force.** Going from a laptop keyboard to a deep mechanical, or the reverse, changes how hard you press and your fingers have to recalibrate.
 
 If you regularly move between two keyboards, the cost is paid repeatedly. Two similar keyboards are better than one excellent one and one very different one.
@@ -109,7 +109,7 @@ There is no reliable evidence that they do. They may make typing more comfortabl
 
 ### Which switches are best for typing?
 
-Personal preference, genuinely. Tactile switches give feedback at the actuation point, which some typists find reduces effort; linear switches are smoother; clicky ones are loud. If you can, try before buying — and note that quiet matters if you share a space.
+Personal preference, genuinely. Tactile switches give feedback at the actuation point, which some typists find reduces effort; linear switches are smoother; clicky ones are loud. If you can, try before buying, and note that quiet matters if you share a space.
 
 ### Are membrane keyboards bad for typing?
 
@@ -117,7 +117,7 @@ Cheap ones can be, because of inconsistent key feel rather than the mechanism. G
 
 ### Will an ergonomic or split keyboard help?
 
-For comfort, possibly — it lets the forearms sit at a more natural angle instead of rotating inwards. Expect a week or two of being slower while you adapt. It is not a speed upgrade.
+For comfort, possibly. It lets the forearms sit at a more natural angle instead of rotating inwards. Expect a week or two of being slower while you adapt. It is not a speed upgrade.
 
 ### Should I buy a keyboard to improve my typing?
 
@@ -127,13 +127,13 @@ If your current one is genuinely uncomfortable or inconsistent, yes. Otherwise, 
 
 If you are wondering whether your keyboard is holding you back, the check is straightforward: take the same test on two different keyboards, several times each, across a few days.
 
-Most people find the difference is smaller than the variation between their own good and bad days — which is the answer, and it is worth having before spending anything.
+Most people find the difference is smaller than the variation between their own good and bad days, which is the answer, and it is worth having before spending anything.
 
 KeyTopia's [typing test](/typing-test) reports consistency alongside speed, which is the more useful measure here: an uneven keyboard shows up as uneven timing before it shows up as a lower average.
 `,
 
   'typing-and-homework': `
-Faster typing does not make homework shorter in the way students hope. For a 2,000-word essay, going from 40 to 60 words per minute saves around seventeen minutes of pure typing — real, but small against the reading, planning and revising. The genuine benefit is different: when typing costs no attention, more of it is available for the writing itself, and revising becomes cheap enough that students actually do it.
+Faster typing does not make homework shorter in the way students hope. For a 2,000-word essay, going from 40 to 60 words per minute saves around seventeen minutes of pure typing, real, but small against the reading, planning and revising. The genuine benefit is different: when typing costs no attention, more of it is available for the writing itself, and revising becomes cheap enough that students actually do it.
 
 ## What the minutes actually look like
 
@@ -145,7 +145,7 @@ The arithmetic is worth doing, because it sets expectations honestly.
 | 1,500-word essay | 50 min | 30 min | 20 min |
 | 3,000-word coursework | 100 min | 60 min | 40 min |
 
-Those are typing minutes only, assuming continuous typing, which never happens. For composed writing, a reasonable adjustment is to halve them — you spend a large share of the time deciding what to say.
+Those are typing minutes only, assuming continuous typing, which never happens. For composed writing, a reasonable adjustment is to halve them. You spend a large share of the time deciding what to say.
 
 So the honest headline: **faster typing saves a useful but modest amount of time on written homework**, and the saving grows with the length of the piece.
 
@@ -155,7 +155,7 @@ So the honest headline: **faster typing saves a useful but modest amount of time
 
 Working memory is limited, and writing already uses a lot of it: holding an argument, choosing words, remembering what you have already said.
 
-If typing also needs attention — if you are searching for letters — it competes for the same resource. A student who has to find each key is repeatedly leaving the sentence they were composing, and the cost is the lost thread rather than the second it took.
+If typing also needs attention, if you are searching for letters, it competes for the same resource. A student who has to find each key is repeatedly leaving the sentence they were composing, and the cost is the lost thread rather than the second it took.
 
 This is why students who type slowly often produce written work that is noticeably less sophisticated than what they can say out loud. It is not that they think less well; the mechanics are taking a cut.
 
@@ -163,7 +163,7 @@ This is why students who type slowly often produce written work that is noticeab
 
 The less obvious one, and possibly the larger.
 
-Most of the quality in a long piece of writing comes from revision — cutting a paragraph, restructuring an argument, rewriting an opening. If typing is expensive for you, revision is expensive, so you do less of it. You write it once, fix the spelling, and hand it in.
+Most of the quality in a long piece of writing comes from revision, cutting a paragraph, restructuring an argument, rewriting an opening. If typing is expensive for you, revision is expensive, so you do less of it. You write it once, fix the spelling, and hand it in.
 
 Students who type fluently revise more, simply because it costs them less. That shows up in the work.
 
@@ -173,7 +173,7 @@ Being specific is more useful than general claims.
 
 **Long pieces under a deadline.** The saving scales with length, and coursework is where it is most noticeable.
 
-**Live note-taking**, which is a different task and much more demanding — you cannot pause a lecture. Below about 40 words per minute this becomes unworkable. [Typing speed for students](/blog/typing-speed-for-students) has the task-by-task targets.
+**Live note-taking**, which is a different task and much more demanding. You cannot pause a lecture. Below about 40 words per minute this becomes unworkable. [Typing speed for students](/blog/typing-speed-for-students) has the task-by-task targets.
 
 **Timed written work in class.** Where the clock is fixed, speed converts directly into content.
 
@@ -189,17 +189,17 @@ Being specific is more useful than general claims.
 
 ## Accuracy costs more than speed
 
-A student typing 60 words per minute at 88% accuracy is slower in practice than one typing 45 at 97%, because every error costs four to six keystrokes plus a broken rhythm — and in homework it also costs the re-read to find it.
+A student typing 60 words per minute at 88% accuracy is slower in practice than one typing 45 at 97%, because every error costs four to six keystrokes plus a broken rhythm, and in homework it also costs the re-read to find it.
 
 Errors also survive into the submitted work. A piece full of typos reads as careless regardless of the argument, and spellcheckers do not catch the wrong correctly-spelled word.
 
-If your raw speed is much higher than your net speed, accuracy is your constraint, and it is a faster fix than speed — typically visible within two weeks. See [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
+If your raw speed is much higher than your net speed, accuracy is your constraint, and it is a faster fix than speed, typically visible within two weeks. See [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
 
 ## The two habits that cap most students
 
 Almost every student who taught themselves has at least one:
 
-**Looking at the keyboard.** This is the ceiling, and everything else is secondary. Visually guided typing tops out around 35 to 40 words per minute and does not improve much with practice, because a keystroke guided by vision does not build the automatic movement. Cover your hands — [how to stop looking at the keyboard](/blog/stop-looking-at-the-keyboard) has the staged method.
+**Looking at the keyboard.** This is the ceiling, and everything else is secondary. Visually guided typing tops out around 35 to 40 words per minute and does not improve much with practice, because a keystroke guided by vision does not build the automatic movement. Cover your hands. [How to stop looking at the keyboard](/blog/stop-looking-at-the-keyboard) has the staged method.
 
 **Improvised finger assignments.** C typed with the index finger, B and Y taken by whichever hand is free, same-hand shift. Together these usually account for ten to fifteen words per minute. [Correct finger placement](/blog/correct-finger-placement-for-touch-typing) has the map.
 
@@ -213,7 +213,7 @@ Worth saying, because several are nearly free.
 
 **Type with full punctuation in practice.** Academic writing is dense in commas, semicolons, brackets, quotation marks and apostrophes, and standard typing practice contains none of them. This is why a good test score can coexist with slow essay writing.
 
-**Write the middle first.** Not a typing tip, and it removes the single biggest stall in student writing — staring at an empty opening paragraph.
+**Write the middle first.** Not a typing tip, and it removes the single biggest stall in student writing, staring at an empty opening paragraph.
 
 ## When to learn, and when not to
 
@@ -227,7 +227,7 @@ If you are close to finals, use what you have and start in the holidays.
 
 ### Will typing faster improve my grades?
 
-Not directly, and it would be dishonest to claim it. It removes a constraint — freeing attention and making revision cheaper — which may show up in the work. That is worth something without being a grade improvement.
+Not directly, and it would be dishonest to claim it. It removes a constraint, freeing attention and making revision cheaper, which may show up in the work. That is worth something without being a grade improvement.
 
 ### How fast should a student type?
 
@@ -239,17 +239,17 @@ Yes, but time it carefully. Six weeks in a quieter term, not the month before fi
 
 ### Should I type or handwrite my essays?
 
-Whichever you are allowed and better at. If you type at 45 and handwrite at 20, typing is a large practical advantage for long pieces. For note-taking specifically the research is genuinely mixed — see [typing versus handwriting](/blog/typing-vs-handwriting).
+Whichever you are allowed and better at. If you type at 45 and handwrite at 20, typing is a large practical advantage for long pieces. For note-taking specifically the research is genuinely mixed. See [typing versus handwriting](/blog/typing-vs-handwriting).
 
 ### My child types slowly and hates homework. Are they connected?
 
-Quite possibly. If producing the words is effortful, the whole task feels heavier, and children rarely identify the mechanics as the cause. Watching them type for a minute — do they look down, how many fingers move — usually answers it. [Typing for kids](/blog/typing-for-kids-guide-for-parents) has the wider picture.
+Quite possibly. If producing the words is effortful, the whole task feels heavier, and children rarely identify the mechanics as the cause. Watching them type for a minute, do they look down, how many fingers move, usually answers it. [Typing for kids](/blog/typing-for-kids-guide-for-parents) has the wider picture.
 
 ## Find out where your time goes
 
 Next time you write something long, notice whether you are waiting for your hands or for your next sentence.
 
-If it is your hands, six weeks of fifteen minutes a day is worth it and will pay back for the rest of your education. If it is your sentences, typing practice will not help — and knowing that saves you six weeks.
+If it is your hands, six weeks of fifteen minutes a day is worth it and will pay back for the rest of your education. If it is your sentences, typing practice will not help, and knowing that saves you six weeks.
 
 KeyTopia's [typing test](/typing-test) will tell you your net speed and accuracy on prose with full punctuation, which is the material homework is actually made of.
 `,
@@ -261,7 +261,7 @@ Under a typing app's headline score there are usually five separate measurements
 
 ### Speed
 
-Usually reported as words per minute, where a "word" is **five characters including spaces** — a convention that lets scores from different passages be compared at all.
+Usually reported as words per minute, where a "word" is **five characters including spaces**, a convention that lets scores from different passages be compared at all.
 
 Two variants matter:
 
@@ -276,7 +276,7 @@ Normally the proportion of keystrokes correct on the first attempt:
 
 > **Accuracy = correct keystrokes ÷ total keystrokes**
 
-Two subtleties. **Corrections usually still count as errors** — fixing a mistake produces correct text but does not restore the figure, because the measure is about where your fingers went. And **whether backspaces count as keystrokes varies**, which means a heavy corrector may be penalised twice.
+Two subtleties. **Corrections usually still count as errors**. Fixing a mistake produces correct text but does not restore the figure, because the measure is about where your fingers went. And **whether backspaces count as keystrokes varies**, which means a heavy corrector may be penalised twice.
 
 A useful target is 96 to 98% at your working pace. Below 95%, correction overhead is eating your net speed; sustained above 99%, you are probably being over-cautious.
 
@@ -292,17 +292,17 @@ Good apps report this as a deviation from your own average rather than in absolu
 
 How long each **pair** of letters takes. The most useful measurement and the least often shown.
 
-At any reasonable speed the individual reach is not what is slow — the join is. Sequences using the same finger twice have to travel, arrive, press and travel again with no overlap; sequences alternating hands can overlap and are much faster.
+At any reasonable speed the individual reach is not what is slow. The join is. Sequences using the same finger twice have to travel, arrive, press and travel again with no overlap; sequences alternating hands can overlap and are much faster.
 
 Most people find a handful of transitions account for a disproportionate share of their lost time. That is a small, tractable practice problem, and it is invisible in any average.
 
 ### Consistency
 
-Derived from the variation in your inter-key intervals — how even your typing is.
+Derived from the variation in your inter-key intervals, how even your typing is.
 
 Two typists can both average 55 words per minute while one types steadily and the other alternates bursts with stalls. The steady typist is more reliable under pressure; the bursty one has more headroom, because their limit is a few specific transitions rather than their overall pace.
 
-Consistency usually improves before average speed does, which makes it the earliest signal that practice is working — useful during the weeks when the headline number refuses to move.
+Consistency usually improves before average speed does, which makes it the earliest signal that practice is working, useful during the weeks when the headline number refuses to move.
 
 ## What is usually not measured, and why it matters
 
@@ -310,7 +310,7 @@ Consistency usually improves before average speed does, which makes it the earli
 
 This is the single biggest limitation of typing software, and it has a direct consequence: **an app cannot diagnose your finger assignments.** It can tell you that C is slow; it cannot tell you that you are typing it with the wrong finger.
 
-That diagnosis requires you to type at half speed and watch your own hands. The data will point you at the right letter, which is most of the work — but the last step is yours. [Correct finger placement](/blog/correct-finger-placement-for-touch-typing) has the map to check against.
+That diagnosis requires you to type at half speed and watch your own hands. The data will point you at the right letter, which is most of the work, but the last step is yours. [Correct finger placement](/blog/correct-finger-placement-for-touch-typing) has the map to check against.
 
 **Whether you looked at the keyboard.** Also unmeasurable, and also the most important thing about your typing.
 
@@ -322,7 +322,7 @@ Three approaches, with different failure modes.
 
 **Rolling average.** More honest. A median or mean over recent sessions smooths out day-to-day variation, which for most people is several words per minute.
 
-**Per-key mastery state.** The most useful for practice, and the least common. Rather than one number, each key carries its own state — new, learning, improving, reliable, mastered — updated on every keystroke from recent speed and error rate. This is what makes it possible to generate a practice set from your actual weaknesses rather than from a fixed curriculum.
+**Per-key mastery state.** The most useful for practice, and the least common. Rather than one number, each key carries its own state, new, learning, improving, reliable, mastered, updated on every keystroke from recent speed and error rate. This is what makes it possible to generate a practice set from your actual weaknesses rather than from a fixed curriculum.
 
 KeyTopia works this way, which is why its [analytics](/typing-analytics) show a per-key map rather than a single trend line: the average tells you whether to keep going, and the map tells you what to do.
 
@@ -331,7 +331,7 @@ KeyTopia works this way, which is why its [analytics](/typing-analytics) show a 
 If an app claims to be adaptive, this is roughly what should be happening:
 
 1. **Score each key and transition** on speed relative to your own baseline, and on error rate.
-2. **Weight by frequency** — a slow, common transition matters far more than a slow, rare one. Being slow on "th" is expensive; being slow on "zq" is not.
+2. **Weight by frequency**, a slow, common transition matters far more than a slow, rare one. Being slow on "th" is expensive; being slow on "zq" is not.
 3. **Select a small target set**, typically five to ten items.
 4. **Generate real material** containing them, rather than nonsense strings.
 5. **Re-measure and re-select** as targets improve.
@@ -346,7 +346,7 @@ Step two is the one that separates genuine adaptive practice from something that
 
 **Accuracy percentages without a breakdown.** A 97% average can hide 88% on four particular transitions, and an average that healthy will not prompt you to look.
 
-**Scores compared across apps.** Test design moves results by more than a fortnight of practice would — see [why your typing speed varies between tests](/blog/why-typing-speed-varies-between-tests).
+**Scores compared across apps.** Test design moves results by more than a fortnight of practice would. See [why your typing speed varies between tests](/blog/why-typing-speed-varies-between-tests).
 
 **Anything reported to two decimal places.** Your day-to-day variation is several words per minute. Precision beyond whole numbers is decoration.
 
@@ -372,7 +372,7 @@ The gap between your raw and net speed, because it tells you whether to train sp
 
 ### Why does my accuracy drop when my speed rises?
 
-Because you are typing above the pace you can control. This is fine as a brief diagnostic and harmful as a habit — errors practised are errors learned. See [why accuracy should come before speed](/blog/accuracy-before-speed).
+Because you are typing above the pace you can control. This is fine as a brief diagnostic and harmful as a habit. Errors practised are errors learned. See [why accuracy should come before speed](/blog/accuracy-before-speed).
 
 ### Can an app tell if I am using the wrong fingers?
 
@@ -380,7 +380,7 @@ No. Keyboards report which key was pressed, not which finger pressed it. The app
 
 ### Is consistency actually useful, or is it filler?
 
-Genuinely useful, and underrated. It distinguishes a typist who is evenly at their limit from one who is fast with a few stalls — and those two need completely different practice.
+Genuinely useful, and underrated. It distinguishes a typist who is evenly at their limit from one who is fast with a few stalls, and those two need completely different practice.
 
 ### How much data before weak-key analysis is trustworthy?
 
@@ -390,7 +390,7 @@ A few thousand keystrokes, which is a handful of sessions. Anything identifying 
 
 Take one test and, instead of reading the score, look at the breakdown: the gap between raw and net, your accuracy at working pace, and which transitions came back slowest.
 
-Most people are surprised by how concentrated their slowness is. That concentration is good news — it means the practice problem is small and specific rather than general.
+Most people are surprised by how concentrated their slowness is. That concentration is good news. It means the practice problem is small and specific rather than general.
 
 KeyTopia's [typing test](/typing-test) reports all five measurements in one sitting, and its [analytics](/typing-analytics) keep the per-key map across sessions so the picture is built from thousands of keystrokes rather than one minute.
 `,
@@ -430,17 +430,17 @@ Twelve weeks, ten to fifteen minutes a day. This is enough for most children to 
 | 1–2 | Home row; returning to position after every key | Slow and willing. Tedious by design. |
 | 3–4 | E, I, then R, T, U, N | Slower than their old two-finger method. Resistance peaks. |
 | 5–6 | O, C, M, W; watch which finger presses C | They stop looking at the keyboard |
-| 7–8 | Q, P, Y, Z, X, V, B, G, H — the awkward ones | Whole alphabet, slowly |
+| 7–8 | Q, P, Y, Z, X, V, B, G, H (the awkward ones) | Whole alphabet, slowly |
 | 9–10 | Capitals with opposite-hand shift; full stops and commas | Real sentences |
 | 11–12 | Apostrophes, question marks, numbers; longer passages | Sustained typing for 3+ minutes |
 
-Weeks 3 and 4 are where this succeeds or fails. Their typing is genuinely worse than it was, and nothing visible is improving. Say so in advance — "it gets slower for a couple of weeks, then faster than before" — so it arrives as predicted rather than as failure.
+Weeks 3 and 4 are where this succeeds or fails. Their typing is genuinely worse than it was, and nothing visible is improving. Say so in advance, "it gets slower for a couple of weeks, then faster than before", so it arrives as predicted rather than as failure.
 
 ## The rules that do the work
 
 **Hands covered from day one.** A tea towel. This single decision determines whether they end up touch typing or hunting, and it only works if it is simply how typing has always been done rather than a restriction introduced once they are comfortable looking down.
 
-**Accuracy praised, speed never mentioned.** Whatever you ask about is what they optimise for, and a child chasing speed types faster than they can control — which rehearses errors. Ask "which one was tricky?" instead.
+**Accuracy praised, speed never mentioned.** Whatever you ask about is what they optimise for, and a child chasing speed types faster than they can control, which rehearses errors. Ask "which one was tricky?" instead.
 
 **Correct one thing at a time.** Usually C typed with the index finger, or same-hand shift. Fixing four faults at once produces a fortnight of confusion.
 
@@ -450,7 +450,7 @@ There is a four-part session structure in [typing practice for kids](/blog/typin
 
 ## Assessment and record-keeping
 
-Home educators often need to demonstrate progress, and typing is unusually easy to evidence — provided you record the right things.
+Home educators often need to demonstrate progress, and typing is unusually easy to evidence, provided you record the right things.
 
 **Record monthly, not weekly.** More frequent testing turns practice into performance.
 
@@ -458,8 +458,8 @@ Home educators often need to demonstrate progress, and typing is unusually easy 
 
 1. **Net speed** on a short, unfamiliar, age-appropriate passage
 2. **Accuracy** at their normal pace
-3. **Whether they looked at the keyboard** — a yes/no observation, and the most predictive of the four
-4. **Which fingers are doing which keys** — a brief note on what you observed
+3. **Whether they looked at the keyboard**, a yes/no observation, and the most predictive of the four
+4. **Which fingers are doing which keys**, a brief note on what you observed
 
 The third and fourth are the ones an inspector or reviewer will find more convincing than a speed figure, because they describe technique rather than a number that mostly tracks reading speed at this age.
 
@@ -469,7 +469,7 @@ The third and fourth are the ones an inspector or reviewer will find more convin
 
 **It is not a computing subject.** It is a motor skill, and it belongs in the timetable next to handwriting rather than next to coding. Treating it as part of an IT block usually means it becomes weekly, which is the arrangement that does not work.
 
-**It supports written work directly.** Once a child types without looking, extended writing on a keyboard becomes much less effortful — which matters for any project work you are producing digitally.
+**It supports written work directly.** Once a child types without looking, extended writing on a keyboard becomes much less effortful, which matters for any project work you are producing digitally.
 
 **It finishes.** Unlike most subjects, typing is a finite project. Twelve weeks of daily practice, then maintenance through ordinary use. You can genuinely take it off the timetable.
 
@@ -479,7 +479,7 @@ The third and fourth are the ones an inspector or reviewer will find more convin
 
 **"They keep going back to two fingers for their project work."** Expected, and worth leaving alone for the first month. Correcting technique during real work turns the work into a typing lesson and makes them resent both. Keep the correction inside the daily session; it migrates across on its own around week four. [Helping kids stop typing with two fingers](/blog/kids-typing-with-two-fingers) has the plan.
 
-**"They say it is boring."** Home-row drills are boring. Shorten the session rather than pushing through, and change the *content* rather than the technique — the same finger practice works on their friends' names, dinosaurs, or the silliest sentence they can invent.
+**"They say it is boring."** Home-row drills are boring. Shorten the session rather than pushing through, and change the *content* rather than the technique, the same finger practice works on their friends' names, dinosaurs, or the silliest sentence they can invent.
 
 **"They want to use a typing game instead."** Games are good for volume and motivation and poor for correctness, because almost none can tell which finger pressed a key. Use one as the last minute of a session rather than as the session. [Best typing games for kids](/blog/best-typing-games-for-kids) covers what to look for.
 
@@ -493,15 +493,15 @@ Ten to fifteen minutes, five days a week, for about a term. More than twenty min
 
 ### What age should we start?
 
-When their hand can span the home row without shifting — usually seven to nine. Run the reach test rather than going by age.
+When their hand can span the home row without shifting, usually seven to nine. Run the reach test rather than going by age.
 
 ### Do we need special software?
 
-No, though it helps with the two things that are laborious by hand: introducing letters in a sensible order, and identifying which specific keys a child is weak on. What software cannot do is enforce covered hands or check which finger pressed a key — that part is yours.
+No, though it helps with the two things that are laborious by hand: introducing letters in a sensible order, and identifying which specific keys a child is weak on. What software cannot do is enforce covered hands or check which finger pressed a key, that part is yours.
 
 ### How do I evidence it for our records?
 
-Monthly net speed and accuracy on a short unfamiliar passage, plus a note on technique — whether they looked, and which fingers did which keys. The technique notes are the more meaningful record.
+Monthly net speed and accuracy on a short unfamiliar passage, plus a note on technique, whether they looked, and which fingers did which keys. The technique notes are the more meaningful record.
 
 ### Should I learn alongside them?
 
@@ -521,7 +521,7 @@ KeyTopia's [children's world](/typing-for-kids) handles the letter sequencing an
 `,
 
   'typing-vs-handwriting': `
-The best-known finding on this question — that students who handwrite lecture notes understand more than those who type them — is real, widely cited, and considerably shakier than its popularity suggests. A later replication attempt did not reproduce its central results. Both halves of that matter, and the practical answer turns out to depend far more on *how* you take notes than on which implement you use.
+The best-known finding on this question, that students who handwrite lecture notes understand more than those who type them, is real, widely cited, and considerably shakier than its popularity suggests. A later replication attempt did not reproduce its central results. Both halves of that matter, and the practical answer turns out to depend far more on *how* you take notes than on which implement you use.
 
 ## The study everyone quotes
 
@@ -529,10 +529,10 @@ In 2014, Pam Mueller and Daniel Oppenheimer published "The Pen Is Mightier Than 
 
 Two findings drove the paper's fame:
 
-1. **Laptop note-takers transcribed more verbatim** — they wrote down more of the lecturer's actual words.
+1. **Laptop note-takers transcribed more verbatim**. They wrote down more of the lecturer's actual words.
 2. **They performed worse on conceptual questions** than the longhand group, despite recording more content.
 
-The proposed explanation is elegant and intuitive: handwriting is slower, so you cannot transcribe. You are forced to summarise, and summarising means processing — deciding what matters, putting it in your own words — which is what produces understanding. Typing lets you keep up, so you transcribe without thinking.
+The proposed explanation is elegant and intuitive: handwriting is slower, so you cannot transcribe. You are forced to summarise, and summarising means processing, deciding what matters, putting it in your own words, which is what produces understanding. Typing lets you keep up, so you transcribe without thinking.
 
 The paper was enormously influential. It appeared in newspapers, in teacher training, and in university guidance, and it is the source of most "handwriting is better for learning" claims you will encounter.
 
@@ -552,21 +552,21 @@ Two related findings sit on firmer ground.
 
 ### How you take notes matters more than what you take them with
 
-The mechanism Mueller and Oppenheimer proposed — that processing beats transcription — is well supported in the wider learning literature, independently of the medium.
+The mechanism Mueller and Oppenheimer proposed, that processing beats transcription, is well supported in the wider learning literature, independently of the medium.
 
 Notes taken in your own words, organised and condensed, produce better understanding than verbatim capture. That is a robust finding, and it applies whether you are holding a pen or a keyboard.
 
-Which means the practical advice survives even though the specific study is in doubt: **summarise rather than transcribe**. If you type fast enough to transcribe verbatim, the temptation is greater — and that is a discipline problem, not a keyboard problem.
+Which means the practical advice survives even though the specific study is in doubt: **summarise rather than transcribe**. If you type fast enough to transcribe verbatim, the temptation is greater, and that is a discipline problem, not a keyboard problem.
 
 ### Handwriting appears to matter for young children learning letters
 
 A separate question, and a better-evidenced one.
 
-There is reasonable evidence that forming letters by hand supports letter recognition in young children in ways that typing or tracing does not — the motor act of producing the shape appears to contribute to learning to identify it. Work by Marieke Longcamp and colleagues is among the frequently cited research here.
+There is reasonable evidence that forming letters by hand supports letter recognition in young children in ways that typing or tracing does not. The motor act of producing the shape appears to contribute to learning to identify it. Work by Marieke Longcamp and colleagues is among the frequently cited research here.
 
 Related work using EEG, including a 2020 study by Eva Ose Askvik, Ruud van der Weel and Audrey van der Meer, has found more widespread patterns of brain activity when children and young adults write by hand or draw than when they type.
 
-Two caveats worth holding. Differences in brain activity are not the same as differences in learning — more widespread activation is not automatically better outcomes. And this research concerns early letter formation, not whether a nineteen-year-old should type their lecture notes. It is regularly stretched to cover the latter, and it does not.
+Two caveats worth holding. Differences in brain activity are not the same as differences in learning, more widespread activation is not automatically better outcomes. And this research concerns early letter formation, not whether a nineteen-year-old should type their lecture notes. It is regularly stretched to cover the latter, and it does not.
 
 ## What this means in practice
 
@@ -581,7 +581,7 @@ Learning to type as well, from around seven to nine, is not in competition with 
 The medium is less important than the method. Whichever you use:
 
 - **Summarise. Do not transcribe.** This is the part that is well supported.
-- **Reorganise afterwards.** The processing that produces understanding can happen after the lecture as well as during it — and a typed set of notes is far easier to reorganise.
+- **Reorganise afterwards.** The processing that produces understanding can happen after the lecture as well as during it, and a typed set of notes is far easier to reorganise.
 - **If you type fast, resist the temptation to capture everything.** Speed makes verbatim transcription possible, which is precisely the failure mode.
 
 There is also a straightforward practical dimension the research rarely addresses: typed notes are searchable, editable, shareable and legible six months later. For many students that outweighs a comprehension difference that may not exist.
@@ -614,7 +614,7 @@ The specific claim about lecture comprehension is in doubt. The claim about youn
 
 ### Should children learn handwriting before typing?
 
-Handwriting first, for the letter-formation reasons above. Typing from around seven to nine, once hand size allows. They are complementary rather than competing — see [what age should kids learn to type](/blog/what-age-should-kids-learn-to-type).
+Handwriting first, for the letter-formation reasons above. Typing from around seven to nine, once hand size allows. They are complementary rather than competing. See [what age should kids learn to type](/blog/what-age-should-kids-learn-to-type).
 
 ### Will typing notes hurt my grades?
 
@@ -626,13 +626,13 @@ An honest advantage of paper, and one this debate usually skips. Sketching a dia
 
 ### Does this mean schools should not teach typing?
 
-No. The strongest argument for school typing is not about comprehension at all — it is that written work is increasingly produced and assessed on keyboards, and a slow typist is penalised on a task meant to assess something else. [Should schools still teach touch typing](/blog/should-schools-teach-typing) sets that out.
+No. The strongest argument for school typing is not about comprehension at all. It is that written work is increasingly produced and assessed on keyboards, and a slow typist is penalised on a task meant to assess something else. [Should schools still teach touch typing](/blog/should-schools-teach-typing) sets that out.
 
 ## What to actually do
 
 Use both, for what each is good at. Handwrite when you are working something out, sketching relationships, or learning letter shapes. Type when the output needs to be searchable, revisable or long.
 
-And whichever you use, summarise rather than transcribe — that is the part of this research that has held up, and it is the part that changes results.
+And whichever you use, summarise rather than transcribe, that is the part of this research that has held up, and it is the part that changes results.
 
 If you are going to type, being slow at it is the worst of both worlds: you get neither the processing benefit of being forced to summarise nor the practical benefits of fluent typing. [Typing for students](/blog/typing-for-students) covers the speeds that actually matter, and KeyTopia's [typing test](/typing-test) will tell you where you currently stand on prose with full punctuation.
 `,

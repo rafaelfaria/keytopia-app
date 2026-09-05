@@ -13,9 +13,10 @@
  */
 
 import type { PublicPage } from './site';
+import { TOOLS_REVISED } from './revisions.generated';
 
 /** Bumped when the tool pages meaningfully change, not on every deploy. */
-const TOOLS_MODIFIED = '2026-09-04';
+
 
 type ToolPageInput =
   Omit<PublicPage, 'priority' | 'changeFrequency' | 'lastModified' | 'group'>
@@ -25,7 +26,7 @@ const page = (p: ToolPageInput): PublicPage => ({
   changeFrequency: 'monthly',
   priority: 0.8,
   ...p,
-  lastModified: TOOLS_MODIFIED,
+  lastModified: TOOLS_REVISED,
   group: 'Tools',
 });
 

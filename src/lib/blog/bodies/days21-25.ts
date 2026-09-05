@@ -7,7 +7,7 @@ Good typing posture means feet flat, hips slightly above knees, elbows at roughl
 
 Three things, none of them raw speed.
 
-**Endurance.** A typing test is one minute; real work is an hour. Poor posture shows up as a decline over time — accuracy falling off at the four-minute mark, or a session that becomes uncomfortable before it becomes unproductive.
+**Endurance.** A typing test is one minute; real work is an hour. Poor posture shows up as a decline over time, accuracy falling off at the four-minute mark, or a session that becomes uncomfortable before it becomes unproductive.
 
 **Reach quality.** If your wrists are anchored on the desk, reaching for a key in the top row becomes a stretch of the finger against a fixed hand rather than a small extension with a slight hand movement. That is slower and less accurate, and it is the most common posture fault that directly costs typing performance.
 
@@ -31,7 +31,7 @@ Work upwards. Each step depends on the one below it.
 
 **Elbows at roughly 90 to 100 degrees**, hanging close to your sides rather than reaching forward.
 
-**Forearms roughly level with the keyboard**, or angled very slightly downwards. If the desk is too high you will raise your shoulders to compensate — the most common source of neck and shoulder ache in people who type — and if it is too low you will bend your wrists upward.
+**Forearms roughly level with the keyboard**, or angled very slightly downwards. If the desk is too high you will raise your shoulders to compensate, the most common source of neck and shoulder ache in people who type, and if it is too low you will bend your wrists upward.
 
 Most desks are too high for most people. If you cannot lower the desk, raise the chair and add a footrest.
 
@@ -39,7 +39,7 @@ Most desks are too high for most people. If you cannot lower the desk, raise the
 
 ### Wrists and hands
 
-**Wrists straight**, in line with the forearm — not bent up, down, or sideways towards the little finger.
+**Wrists straight**, in line with the forearm, not bent up, down, or sideways towards the little finger.
 
 **Wrists floating while typing.** This is the one people get wrong most. Rest between bursts if you like, but a wrist anchored on the desk or a wrist rest during typing locks the hand and forces the fingers to stretch.
 
@@ -59,7 +59,7 @@ The typing-specific reason for this, beyond the neck: if the screen is low, you 
 
 Often missed and genuinely worth checking: **the B key should be roughly in line with your nose.**
 
-People who work at an angle — because the monitor is off to one side, or the keyboard has been pushed across to make room — develop an asymmetric reach. One hand is working further from its neutral position than the other, and the result is a persistent pattern of errors on one side that looks like a technique problem and is actually a geometry problem.
+People who work at an angle, because the monitor is off to one side, or the keyboard has been pushed across to make room, develop an asymmetric reach. One hand is working further from its neutral position than the other, and the result is a persistent pattern of errors on one side that looks like a technique problem and is actually a geometry problem.
 
 ## Laptops specifically
 
@@ -75,11 +75,11 @@ If you use a laptop for more than about an hour a day:
 
 Worth checking against, because these are usually attributed to other causes:
 
-- **Aching shoulders or neck** after an hour — desk too high, or screen too low.
-- **Wrist discomfort or tingling** — wrists bent, or resting while typing.
-- **Accuracy falling off after a few minutes** but fine at the start — fatigue from a position you cannot sustain.
-- **Errors concentrated on one hand** — you are sitting at an angle.
-- **Sore fingertips, or noisy typing** — pressing far harder than necessary, which is usually a tension symptom.
+- **Aching shoulders or neck** after an hour: desk too high, or screen too low.
+- **Wrist discomfort or tingling**: wrists bent, or resting while typing.
+- **Accuracy falling off after a few minutes** but fine at the start, fatigue from a position you cannot sustain.
+- **Errors concentrated on one hand**. You are sitting at an angle.
+- **Sore fingertips, or noisy typing**: pressing far harder than necessary, which is usually a tension symptom.
 
 That last one matters more than it sounds. Excess key force slows the return stroke, and the return is half of every keystroke. Press just hard enough to register.
 
@@ -112,7 +112,7 @@ It can, mainly by letting your forearms sit at a more natural angle instead of r
 
 ### Should I use a wrist rest?
 
-For resting between bursts, yes, if you find it comfortable. Not as a pivot while typing — that anchors the hand, which is the thing you are trying to avoid.
+For resting between bursts, yes, if you find it comfortable. Not as a pivot while typing, that anchors the hand, which is the thing you are trying to avoid.
 
 ### Is a standing desk better for typing?
 
@@ -120,7 +120,7 @@ It is better than sitting badly and not obviously better than sitting well. The 
 
 ### Does posture affect typing speed directly?
 
-Barely, over one minute. Over an hour, considerably — through fatigue, tension and the quality of your reaches. Nobody has ever gained twenty words per minute by adjusting a chair, and plenty of people have lost the ability to type comfortably by not adjusting one.
+Barely, over one minute. Over an hour, considerably, through fatigue, tension and the quality of your reaches. Nobody has ever gained twenty words per minute by adjusting a chair, and plenty of people have lost the ability to type comfortably by not adjusting one.
 
 ### My wrists hurt when I type. What should I do?
 
@@ -130,7 +130,7 @@ See someone qualified. Then check the two most common contributors: wrists bent 
 
 Sit back in your chair. Put your feet flat. Raise the chair until your hips are slightly above your knees. Drop your shoulders. Fold the keyboard's back feet down so it lies flat. Lift your wrists off the desk. Check that the B key is roughly in front of your nose.
 
-Then type for five minutes and notice whether anything aches. If it does, something above is still wrong — and it is worth finding, because it is the difference between practice you can sustain and practice you quietly abandon.
+Then type for five minutes and notice whether anything aches. If it does, something above is still wrong, and it is worth finding, because it is the difference between practice you can sustain and practice you quietly abandon.
 `,
 
   'how-to-teach-a-child-to-type': `
@@ -168,7 +168,7 @@ The crucial detail: **it has to be how typing has always worked**, not a restric
 
 ### 4. Praise accuracy and effort; never mention speed
 
-Whatever you ask about is what they will optimise. "How fast were you?" produces a child racing and making mistakes — and errors practised are errors learned, so you have made the sessions actively counterproductive.
+Whatever you ask about is what they will optimise. "How fast were you?" produces a child racing and making mistakes, and errors practised are errors learned, so you have made the sessions actively counterproductive.
 
 Better questions: "Which one was tricky?", "Did you have to look?", "Which finger keeps forgetting?"
 
@@ -184,7 +184,7 @@ A workable structure, roughly:
 
 1. **Two minutes: warm up on what they already know.** Home row words, or whatever they did yesterday. Starting with something they can do well sets the tone.
 2. **Four minutes: the new thing.** Two or three new letters, or a specific finger that keeps going wrong.
-3. **Three minutes: real words.** Actual words, not letter drills — this is where it starts feeling like typing rather than exercises.
+3. **Three minutes: real words.** Actual words, not letter drills. This is where it starts feeling like typing rather than exercises.
 4. **One minute: something they enjoy.** A game, a favourite word, typing a silly sentence.
 
 Ending on the enjoyable part matters. It is the last thing they remember about the session, and it is what tomorrow has to compete with.
@@ -208,11 +208,11 @@ They are. Agree with them, and reframe rather than deny: "Yes. You are learning 
 
 Expected. Under pressure, the older, stronger habit wins.
 
-Do not correct them during real work — that turns their homework into a typing lesson and makes them resent both. Keep the correction inside practice sessions and let real typing be real typing for the first month. It migrates across on its own once the new habit is stronger.
+Do not correct them during real work, that turns their homework into a typing lesson and makes them resent both. Keep the correction inside practice sessions and let real typing be real typing for the first month. It migrates across on its own once the new habit is stronger.
 
 ### They want to stop entirely
 
-Distinguish between the week-two dip and genuine unreadiness. Run the readiness test: can they hold the home row and reach the top row without shifting their whole hand? If not, they are physically not ready and you should stop for a few months — see [what age should kids learn to type](/blog/what-age-should-kids-learn-to-type).
+Distinguish between the week-two dip and genuine unreadiness. Run the readiness test: can they hold the home row and reach the top row without shifting their whole hand? If not, they are physically not ready and you should stop for a few months. See [what age should kids learn to type](/blog/what-age-should-kids-learn-to-type).
 
 If they are ready and it is the dip, shorten to five minutes and keep going. Five minutes daily is far better than nothing daily.
 
@@ -226,13 +226,13 @@ If they are ready and it is the dip, shorten to five minutes and keep going. Fiv
 
 **Do not compare them to a sibling or a classmate.** Reliably produces a child who wants to stop.
 
-**Do not correct more than one thing at a time.** Pick the fault that appears most often — usually C with the wrong finger, or same-hand shift — and let the others go until that one is fixed.
+**Do not correct more than one thing at a time.** Pick the fault that appears most often, usually C with the wrong finger, or same-hand shift, and let the others go until that one is fixed.
 
 ## Games, and what they are for
 
 Typing games are genuinely useful and easy to get wrong. The test is simple: **what does the game reward?**
 
-A game that rewards typing the right letters in order, with correct technique, teaches typing. A game that rewards speed above all rewards typing faster than the child can control, which rehearses errors. A game where the typing is a gate between the fun parts — type a word, then play a minigame — teaches a child to get through the typing.
+A game that rewards typing the right letters in order, with correct technique, teaches typing. A game that rewards speed above all rewards typing faster than the child can control, which rehearses errors. A game where the typing is a gate between the fun parts, type a word, then play a minigame, teaches a child to get through the typing.
 
 Also watch for games that move too fast to type without looking, which quietly undo the main thing you are building.
 
@@ -258,7 +258,7 @@ For a seven to nine year old at ten minutes most days: three to four weeks to st
 
 ### Should I learn alongside them?
 
-If you do not touch type yourself, yes — and it helps more than you would expect. It makes the awkward phase a shared thing rather than something being done to them, and it means the person correcting them has recently been bad at it too.
+If you do not touch type yourself, yes, and it helps more than you would expect. It makes the awkward phase a shared thing rather than something being done to them, and it means the person correcting them has recently been bad at it too.
 
 ### My child already types quite fast with two fingers. Is it worth changing?
 
@@ -266,29 +266,29 @@ Yes, and the sooner the better. Two-finger typing tops out around 35 to 40 words
 
 ### What if I do not know how to type properly myself?
 
-You do not need to demonstrate it, only to enforce the two rules that matter: hands covered, and the correct finger for each key. A guide or an app can supply the map — [correct finger placement](/blog/correct-finger-placement-for-touch-typing) is one.
+You do not need to demonstrate it, only to enforce the two rules that matter: hands covered, and the correct finger for each key. A guide or an app can supply the map, [correct finger placement](/blog/correct-finger-placement-for-touch-typing) is one.
 
 ### Should I use an app or teach it myself?
 
-An app removes the two hardest parts for a parent: choosing what order to introduce letters in, and noticing which specific keys a child is weak on. You supply the thing an app cannot — the ten minutes happening at all.
+An app removes the two hardest parts for a parent: choosing what order to introduce letters in, and noticing which specific keys a child is weak on. You supply the thing an app cannot, the ten minutes happening at all.
 
 ## Tomorrow's session
 
 Find a tea towel. Sit them down, hands on the home row, ridges on F and J under the index fingers. Ten minutes of home-row words only. Ask what was tricky. Stop.
 
-That is the entire first session, and it is deliberately unambitious, because the first session is not where this succeeds or fails — the fourteenth is.
+That is the entire first session, and it is deliberately unambitious, because the first session is not where this succeeds or fails. The fourteenth is.
 
 KeyTopia's [children's world](/typing-for-kids) handles the sequencing and the weak-key tracking, and it reports accuracy rather than leading with a speed score, precisely because whatever is measured is what a child will chase.
 `,
 
   'accuracy-before-speed': `
-Practising typing above the speed you can control does not merely fail to help — it actively trains the mistakes. Your nervous system strengthens whatever movement is repeated, and it has no access to your intentions. This is the mechanical reason behind the oldest piece of typing advice there is, and it explains why "just type fast and accuracy will follow" fails so reliably.
+Practising typing above the speed you can control does not merely fail to help. It actively trains the mistakes. Your nervous system strengthens whatever movement is repeated, and it has no access to your intentions. This is the mechanical reason behind the oldest piece of typing advice there is, and it explains why "just type fast and accuracy will follow" fails so reliably.
 
 ## What repetition actually does
 
 Learning a movement means building a representation of it that can run without deliberate control. That representation is built from repetitions, and the process is indifferent to whether you approved of the repetition.
 
-When you type at a pace where you make regular errors, you are not producing one correct pattern with occasional noise. You are running two patterns — the intended movement and the mistaken one — and both accumulate repetitions. The mistaken one does not decay because you noticed it and disliked it.
+When you type at a pace where you make regular errors, you are not producing one correct pattern with occasional noise. You are running two patterns, the intended movement and the mistaken one, and both accumulate repetitions. The mistaken one does not decay because you noticed it and disliked it.
 
 This is why an error that has been made a thousand times is so persistent. It is not a gap in your knowledge; it is a well-practised alternative competing with the one you want.
 
@@ -296,7 +296,7 @@ This is why an error that has been made a thousand times is so persistent. It is
 
 The standard account of motor learning, set out by Paul Fitts and Michael Posner in the 1960s, describes three phases: a **cognitive** stage where you work out what to do, an **associative** stage where you refine how, and an **autonomous** stage where the skill runs itself.
 
-The cognitive stage is short and disproportionately important, because what you lay down there is what the later stages refine. A movement learned wrong in week one is not corrected by weeks two through eight — it is made more automatic by them.
+The cognitive stage is short and disproportionately important, because what you lay down there is what the later stages refine. A movement learned wrong in week one is not corrected by weeks two through eight. It is made more automatic by them.
 
 This is the argument for being slow and deliberate at the very beginning, and it is why teaching order matters. A learner who spends their first fortnight typing quickly with improvised finger assignments has not learned less than one who went slowly; they have learned something else, and it will have to be replaced.
 
@@ -307,7 +307,7 @@ Even setting the motor learning aside, errors are expensive in a way people cons
 A single mistyped letter costs:
 
 1. The wrong keystroke.
-2. A pause while you notice — usually a character or two later.
+2. A pause while you notice, usually a character or two later.
 3. One or more backspaces.
 4. Retyping the correct character, and often the ones deleted with it.
 5. Re-finding your place in the source text.
@@ -324,7 +324,7 @@ The advice is "accuracy before speed", not "accuracy above all". There is a band
 
 **Above about 99% sustained at a comfortable pace**, you are usually being over-cautious. Vigilance has its own cost: hesitating before difficult letters, checking the screen, slowing at every capital. The remaining errors are cheap and the caution is not.
 
-The productive band is roughly **96 to 98% at your working pace** — and "working pace" matters, because everyone is accurate at half speed and that figure tells you nothing.
+The productive band is roughly **96 to 98% at your working pace**, and "working pace" matters, because everyone is accurate at half speed and that figure tells you nothing.
 
 There is a fuller treatment of the trade-off, including how to work out which side you are on, in [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
 
@@ -356,7 +356,7 @@ Two things are well supported and worth separating from the folklore.
 
 **Distributed practice beats massed practice.** The same total time produces better retention spread across more sessions. Fifteen minutes daily beats an hour and three quarters weekly. This is one of the more robust findings in motor learning.
 
-**Skill improvement follows a decelerating curve.** Gains are steep early and progressively smaller, a pattern regular enough that it is often described as a power law — characterised for a manual skill by George Snoddy in the 1920s and generalised by Allan Newell and Paul Rosenbloom. This is why undirected practice stops paying at some point.
+**Skill improvement follows a decelerating curve.** Gains are steep early and progressively smaller, a pattern regular enough that it is often described as a power law, characterised for a manual skill by George Snoddy in the 1920s and generalised by Allan Newell and Paul Rosenbloom. This is why undirected practice stops paying at some point.
 
 What is *not* established with the same confidence is a precise optimal accuracy threshold for typing specifically. The 96 to 98% band above is a practical heuristic drawn from the correction-cost arithmetic and from what typing instruction has converged on, not a laboratory finding. It is a reasonable target rather than a discovered constant, and it is worth saying so.
 
@@ -369,7 +369,7 @@ If you are starting from scratch, or restarting properly:
 1. **Weeks 1–2: correctness only.** Slow, deliberate, hands covered, no measurement. What you build here is what everything later refines.
 2. **Weeks 3–4: accuracy at a working pace.** Around 80% of top speed, aiming for the 96–98% band, on real text with punctuation.
 3. **Weeks 5–6: introduce speed sessions.** Short bursts, as a diagnostic. One a week is enough.
-4. **After that: targeted work only.** Your remaining slowness is specific, not general — measure per-key timing and drill what is slow.
+4. **After that: targeted work only.** Your remaining slowness is specific, not general. Measure per-key timing and drill what is slow.
 
 Do not measure your speed in the first fortnight. It will be bad, the number will be discouraging, and it tells you nothing you can act on yet.
 
@@ -377,7 +377,7 @@ Do not measure your speed in the first fortnight. It will be bad, the number wil
 
 The same logic, with one addition: **whatever an adult asks about is what a child will optimise for.**
 
-Ask "how fast did you go?" and you get a child racing and rehearsing errors. Ask "what was tricky?" and you get a child who notices their own weak spots — which is the skill that eventually lets them practise without you.
+Ask "how fast did you go?" and you get a child racing and rehearsing errors. Ask "what was tricky?" and you get a child who notices their own weak spots, which is the skill that eventually lets them practise without you.
 
 This is not a soft point about encouragement. It is the direct application of the mechanism in this article: the child's practice will consist of whatever behaviour the measurement rewards.
 
@@ -393,7 +393,7 @@ Typically about two weeks, and it shows up as a higher *net* speed rather than a
 
 ### Should I ever practise fast?
 
-Yes, in small doses, as a diagnostic — thirty seconds above comfortable pace tells you what breaks first. What fails is making that the whole diet.
+Yes, in small doses, as a diagnostic. Thirty seconds above comfortable pace tells you what breaks first. What fails is making that the whole diet.
 
 ### Does this apply to someone who already types fast but sloppily?
 
@@ -407,7 +407,7 @@ Especially. A fast typist with 90% accuracy has thoroughly practised a set of er
 
 Take one test at your ordinary pace and look at the gap between your raw and net speed. If it is more than about five words per minute, your practice belongs on accuracy, and the return will be larger and faster than speed work would give you.
 
-Then find the specific keys, rather than resolving to be careful in general. KeyTopia's [typing test](/typing-test) reports per-key error rates alongside the headline figure, and its [adaptive practice](/adaptive-practice) builds drills from exactly those keys — which is what turns this article's principle into a fifteen-minute session.
+Then find the specific keys, rather than resolving to be careful in general. KeyTopia's [typing test](/typing-test) reports per-key error rates alongside the headline figure, and its [adaptive practice](/adaptive-practice) builds drills from exactly those keys, which is what turns this article's principle into a fifteen-minute session.
 `,
 
   'typing-practice-for-adults': `
@@ -429,17 +429,17 @@ Not "practice", specifically **your** slow keys and transitions.
 
 Past the first month, your typing is not uniformly slow. It is fast almost everywhere and slow in perhaps a dozen specific places, which depend on your hands, your keyboard, and which letters you happened to learn while tired. General practice spreads effort evenly across problems you mostly do not have.
 
-You cannot identify these by feel — research on skilled typing has repeatedly found that typists detect their own errors without being able to report what went wrong. It has to be measured: per-key timing, and per-transition timing, which is usually where most of the loss sits.
+You cannot identify these by feel. Research on skilled typing has repeatedly found that typists detect their own errors without being able to report what went wrong. It has to be measured: per-key timing, and per-transition timing, which is usually where most of the loss sits.
 
 This is what adaptive practice is for, and it is the difference between "type more" and a list of six things. [How adaptive typing lessons work](/blog/adaptive-typing-lessons) covers the mechanism.
 
 ### Seven minutes: real prose, with punctuation
 
-Word lists build individual reaches. They do not build the transitions between letters, and they contain almost no punctuation or capitals — which is why so many people's test scores look fine while their real writing feels slow.
+Word lists build individual reaches. They do not build the transitions between letters, and they contain almost no punctuation or capitals, which is why so many people's test scores look fine while their real writing feels slow.
 
 Type actual sentences. Commas, full stops, apostrophes, quotation marks, capitals. This is the material your working day is made of, and it is where the gap between a test score and real performance lives.
 
-Type at roughly 80% of your top pace, aiming for 96 to 98% accuracy. Not 40% — that trains a pace you will never use.
+Type at roughly 80% of your top pace, aiming for 96 to 98% accuracy. Not 40%, that trains a pace you will never use.
 
 ### Three minutes: the one thing you are fixing
 
@@ -458,7 +458,7 @@ Fixing one habit at a time works and fixing four at once does not, because each 
 | 5 | Re-measure; whatever is left | 5 min continuous | Numbers in prose |
 | 6 | Whatever is left | Real work: type an actual email | One 30-second speed burst, as a diagnostic |
 
-Re-measure in weeks 1, 3 and 5 — not daily. Daily measurement shows noise, and mostly makes people anxious about a number that moves for reasons unrelated to their typing.
+Re-measure in weeks 1, 3 and 5, not daily. Daily measurement shows noise, and mostly makes people anxious about a number that moves for reasons unrelated to their typing.
 
 ## What to do about work
 
@@ -470,7 +470,7 @@ If you type for a living, you have a conflict: practice makes you temporarily sl
 
 **From week five**, use it for everything and accept a slightly slower week.
 
-This staging is what stops the project ending the first time something is urgent — which is when almost every adult typing project ends. There is more on this in [learning touch typing as an adult](/blog/learn-touch-typing-as-an-adult).
+This staging is what stops the project ending the first time something is urgent, which is when almost every adult typing project ends. There is more on this in [learning touch typing as an adult](/blog/learn-touch-typing-as-an-adult).
 
 ## On a bad day
 
@@ -483,7 +483,7 @@ Two rules that keep the habit alive:
 ## Signs you are practising the wrong thing
 
 - **Your test score has not moved in a month, but your accuracy is above 97%.** You are probably being over-cautious. Push the pace.
-- **Your raw speed is well above your net speed.** Errors are your limit, not speed. Move the whole session to accuracy — see [improving typing accuracy](/blog/improve-typing-accuracy).
+- **Your raw speed is well above your net speed.** Errors are your limit, not speed. Move the whole session to accuracy. See [improving typing accuracy](/blog/improve-typing-accuracy).
 - **You score well on tests and feel slow in real work.** You are practising word lists and working in punctuated prose. Change the material.
 - **You are fine for a minute and fall apart at four.** Endurance, tension or posture, not technique. [Typing posture](/blog/typing-posture) is the place to start.
 - **You still glance at the keyboard.** Then that is the only thing worth working on until it is fixed. Everything else is downstream of it.
@@ -492,7 +492,7 @@ Two rules that keep the habit alive:
 
 Typing is one of the few skills where a finite project genuinely finishes.
 
-Once typing has become automatic — you can type a paragraph while thinking about its content, not its letters — the marginal return on further practice drops sharply. For most work, past roughly 70 to 80 words per minute, typing is no longer what is slowing you down.
+Once typing has become automatic, you can type a paragraph while thinking about its content, not its letters, the marginal return on further practice drops sharply. For most work, past roughly 70 to 80 words per minute, typing is no longer what is slowing you down.
 
 Getting from 80 to 100 is a real achievement and mostly a hobby. That is a perfectly good reason to do it, but it should be an informed choice rather than an assumption that faster is always better. [How much time faster typing saves at work](/blog/time-saved-by-typing-faster) does the arithmetic.
 
@@ -500,11 +500,11 @@ Getting from 80 to 100 is a real achievement and mostly a hobby. That is a perfe
 
 ### Is fifteen minutes really enough?
 
-For steady improvement, yes — provided it is daily and directed. Thirty minutes of undirected typing twice a week produces less than fifteen minutes of targeted practice five times a week.
+For steady improvement, yes, provided it is daily and directed. Thirty minutes of undirected typing twice a week produces less than fifteen minutes of targeted practice five times a week.
 
 ### What should I type during practice?
 
-Real prose with normal punctuation, for most of the session. Add targeted drills for your specific weak keys. Avoid long stretches of random letters unless you are deliberately training raw key location — see [words, sentences or random letters](/blog/best-way-to-practise-typing).
+Real prose with normal punctuation, for most of the session. Add targeted drills for your specific weak keys. Avoid long stretches of random letters unless you are deliberately training raw key location. See [words, sentences or random letters](/blog/best-way-to-practise-typing).
 
 ### How long until I see results?
 
@@ -516,7 +516,7 @@ Daily is better, but a plan that assumes seven days a week and collapses is wors
 
 ### Is it too late to improve at forty, or sixty?
 
-No. The obstacles later in life are time, an existing habit, and tolerance for feeling clumsy — circumstances, not capacity. [Can you learn touch typing later in life](/blog/learn-touch-typing-later-in-life) goes into what genuinely changes.
+No. The obstacles later in life are time, an existing habit, and tolerance for feeling clumsy, circumstances, not capacity. [Can you learn touch typing later in life](/blog/learn-touch-typing-later-in-life) goes into what genuinely changes.
 
 ## Session one, today
 
@@ -524,7 +524,7 @@ Take one test at your ordinary pace. Write down three things: net speed, accurac
 
 Those two keys are your first five minutes tomorrow. That is the whole plan for week one, and it is considerably more useful than a resolution to practise more.
 
-KeyTopia's [typing test](/typing-test) gives you all three in a minute, and its [practice modes](/typing-practice-modes) include prose with full punctuation and drills generated from your own slowest keys — which is the five-minute block that is otherwise hard to assemble by hand.
+KeyTopia's [typing test](/typing-test) gives you all three in a minute, and its [practice modes](/typing-practice-modes) include prose with full punctuation and drills generated from your own slowest keys, which is the five-minute block that is otherwise hard to assemble by hand.
 `,
 
   'is-40-wpm-good': `
@@ -532,7 +532,7 @@ Forty words per minute is a genuinely useful speed. It is comfortable for everyd
 
 ## What 40 words per minute actually is
 
-Forty words per minute means roughly 200 characters a minute, including spaces — a "word" in typing measurement is five characters, not an actual word. That is about three and a half characters a second.
+Forty words per minute means roughly 200 characters a minute, including spaces. A "word" in typing measurement is five characters, not an actual word. That is about three and a half characters a second.
 
 In practical terms: a 500-word email takes you around twelve to thirteen minutes of pure typing, and a 2,000-word essay takes about fifty minutes of typing on top of however long the thinking takes.
 
@@ -554,7 +554,7 @@ That last point deserves emphasis, because it is the most common reason 40 turns
 
 **Transcription and data entry.** Roles that specify a speed usually want more, and often considerably more.
 
-**Heavy correspondence.** If you write forty emails a day, the difference between 40 and 65 words per minute is real time — though probably less than you think, and [the arithmetic is worth doing properly](/blog/time-saved-by-typing-faster).
+**Heavy correspondence.** If you write forty emails a day, the difference between 40 and 65 words per minute is real time, though probably less than you think, and [the arithmetic is worth doing properly](/blog/time-saved-by-typing-faster).
 
 ## Three things worth checking before you decide 40 is a problem
 
@@ -562,13 +562,13 @@ The headline figure is the least informative number a typing test gives you. Che
 
 ### 1. Is your accuracy above 95%?
 
-If your raw speed is 55 and your net speed is 40, you are not a 40 words per minute typist with a speed problem — you are a 55 typist with an error problem, and that is a much faster fix.
+If your raw speed is 55 and your net speed is 40, you are not a 40 words per minute typist with a speed problem. You are a 55 typist with an error problem, and that is a much faster fix.
 
 Each error costs four to six keystrokes plus a broken rhythm. Closing an accuracy gap typically shows up as higher net speed within about two weeks. See [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
 
 ### 2. Are you looking at the keyboard?
 
-If so, 40 is not your ceiling as a typist — it is the ceiling of a method. Two-finger and visually guided typing top out around 35 to 40 for almost everyone, because the eyes have to guide each landing.
+If so, 40 is not your ceiling as a typist. It is the ceiling of a method. Two-finger and visually guided typing top out around 35 to 40 for almost everyone, because the eyes have to guide each landing.
 
 More importantly, that method does not improve much with practice, because a visually guided keystroke does not train the automatic movement. Someone at 40 who touch types has room to grow; someone at 40 who looks down does not, without changing method.
 
@@ -599,7 +599,7 @@ If you have decided it is worth it, the route depends on which of the three chec
 
 **If your accuracy is below 95%:** train accuracy at 80% of your top pace. Expect the improvement to show up as net speed in about two weeks.
 
-**If you touch type at 97% accuracy and are simply at 40:** it is finger assignments and specific slow transitions. The common culprits are C typed with the index finger, B and Y taken by whichever hand is free, and same-hand shift — together usually worth ten to fifteen words per minute. See [correct finger placement](/blog/correct-finger-placement-for-touch-typing).
+**If you touch type at 97% accuracy and are simply at 40:** it is finger assignments and specific slow transitions. The common culprits are C typed with the index finger, B and Y taken by whichever hand is free, and same-hand shift, together usually worth ten to fifteen words per minute. See [correct finger placement](/blog/correct-finger-placement-for-touch-typing).
 
 For most people at 40, six weeks of fifteen minutes a day is enough to reach the mid-fifties. The general method is in [how to type faster](/blog/how-to-type-faster).
 
@@ -616,7 +616,7 @@ Two practical notes if you are being tested:
 
 ### Is 40 wpm above average?
 
-It is roughly where casual online typing test results cluster, so it is around typical *for people who take typing tests* — a group that is not representative of everyone. There is no reliable representative average. [Average typing speed](/blog/average-typing-speed) explains why the quoted figures should be treated carefully.
+It is roughly where casual online typing test results cluster, so it is around typical *for people who take typing tests*, a group that is not representative of everyone. There is no reliable representative average. [Average typing speed](/blog/average-typing-speed) explains why the quoted figures should be treated carefully.
 
 ### Is 40 wpm good for a student?
 
@@ -624,7 +624,7 @@ Workable for homework and essays; limiting for live lecture notes and timed writ
 
 ### Is 40 wpm good for a 12 year old?
 
-It is well above the typical school target for that age, which is usually somewhere in the 25 to 40 range by early secondary. The more useful question is whether they are touch typing — 40 while looking down is a ceiling, and 30 with correct technique is not. [Typing speed for kids by age](/blog/typing-speed-for-kids-by-age) has the detail.
+It is well above the typical school target for that age, which is usually somewhere in the 25 to 40 range by early secondary. The more useful question is whether they are touch typing. 40 while looking down is a ceiling, and 30 with correct technique is not. [Typing speed for kids by age](/blog/typing-speed-for-kids-by-age) has the detail.
 
 ### How long would it take me to double it?
 
@@ -632,13 +632,13 @@ Getting from 40 to 80 is realistic but not quick: several months of consistent p
 
 ### Is 40 wpm enough for programming?
 
-Yes. Prose speed is rarely the constraint in programming — symbol fluency and not looking down matter far more. [Touch typing for programmers](/blog/touch-typing-for-programmers) covers why.
+Yes. Prose speed is rarely the constraint in programming. Symbol fluency and not looking down matter far more. [Touch typing for programmers](/blog/touch-typing-for-programmers) covers why.
 
 ## Find out what your 40 is made of
 
 Take a two-minute test on unfamiliar text, at your ordinary pace, and note three things: net speed, raw speed, and whether your eyes went to your hands.
 
-If raw is well above net, fix accuracy. If your eyes went down, fix that first. If neither, your 40 is a genuine, honest 40 — and whether to improve it is a question about your work rather than about your typing.
+If raw is well above net, fix accuracy. If your eyes went down, fix that first. If neither, your 40 is a genuine, honest 40, and whether to improve it is a question about your work rather than about your typing.
 
 KeyTopia's [typing test](/typing-test) reports both speeds plus per-key timing, which is what turns the number into a decision.
 `,

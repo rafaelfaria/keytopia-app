@@ -466,7 +466,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Parents and primary teachers',
     category: 'Kids & parents',
-    readingMinutes: 7,
+    readingMinutes: 6,
     related: ['typing-for-kids-guide-for-parents', 'what-age-should-kids-learn-to-type', 'what-is-a-good-typing-speed'],
   },
   {
@@ -941,7 +941,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Teachers, school leaders and governors',
     category: 'Students & schools',
-    readingMinutes: 7,
+    readingMinutes: 6,
     related: ['typing-vs-handwriting', 'why-touch-typing-matters-for-kids', 'typing-for-homeschoolers'],
   },
   {
@@ -979,7 +979,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Comparison',
     audience: 'Typists choosing a keyboard',
     category: 'Keyboards & ergonomics',
-    readingMinutes: 7,
+    readingMinutes: 6,
     related: ['typing-posture', 'why-is-the-keyboard-qwerty', 'how-to-type-faster'],
   },
   {

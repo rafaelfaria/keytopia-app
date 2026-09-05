@@ -39,16 +39,16 @@ Our guide to [the home row](/blog/home-row-keys) goes into what each finger is a
 Add two to four new letters at a time, and stay with them until they are comfortable before adding more. A workable order, and the one most curricula use in some form:
 
 1. Home row: A S D F J K L
-2. E and I — the two most common vowels not on the home row
-3. R, T, U, N — the strong index-finger reaches
-4. O, C, M, W — the remaining common letters
+2. E and I, the two most common vowels not on the home row
+3. R, T, U, N, the strong index-finger reaches
+4. O, C, M, W, the remaining common letters
 5. The upper row's outer keys: Q, P, and Y
 6. The bottom row's awkward ones: Z, X, V, B
 7. G and H, which need a full sideways index-finger stretch
 
 Notice that this is not alphabetical and not left-to-right. It follows how common a letter is and how hard the reach is, so you spend your early practice on the letters you will actually type.
 
-Each finger owns a diagonal column of keys. Which finger presses which is not arbitrary, and getting it wrong is the source of most plateaus later — the [correct finger placement](/blog/correct-finger-placement-for-touch-typing) guide has the full map, including the four assignments people most often get wrong.
+Each finger owns a diagonal column of keys. Which finger presses which is not arbitrary, and getting it wrong is the source of most plateaus later, the [correct finger placement](/blog/correct-finger-placement-for-touch-typing) guide has the full map, including the four assignments people most often get wrong.
 
 ## Stage 3: Stop looking, which is the hard part
 
@@ -92,7 +92,7 @@ These are usually left too late, and then they become the thing that breaks your
 
 A typing test is one minute. Real work is an hour. These are not the same skill.
 
-Once you can type accurately for a minute, extend the session: three minutes, then five, then ten of continuous typing. Watch for what changes as you tire. Most people find one specific thing degrades first — the little fingers drift off home, or the shift hand starts lagging, or accuracy falls off a cliff at the four-minute mark. Whatever yours is, that is your next thing to train.
+Once you can type accurately for a minute, extend the session: three minutes, then five, then ten of continuous typing. Watch for what changes as you tire. Most people find one specific thing degrades first. The little fingers drift off home, or the shift hand starts lagging, or accuracy falls off a cliff at the four-minute mark. Whatever yours is, that is your next thing to train.
 
 ## Stage 8: Find and fix your own weak keys
 
@@ -115,7 +115,7 @@ Rough guidance for an adult practising fifteen minutes a day. Children and peopl
 | Faster than you ever were before | 2–3 months | Gradual |
 | Comfortable at speed with punctuation and numbers | 3–6 months | Barely noticeable |
 
-The [full timeline article](/blog/how-long-to-learn-touch-typing) breaks down what changes the answer most — and the biggest factor is not talent, it is whether you type at work during the learning period.
+The [full timeline article](/blog/how-long-to-learn-touch-typing) breaks down what changes the answer most, and the biggest factor is not talent, it is whether you type at work during the learning period.
 
 ## When progress stalls
 
@@ -125,7 +125,7 @@ Three plateaus are common, and each has a different cause.
 
 **Stuck around 50–60.** Usually finger assignment. One or two letters are being typed by the wrong finger, which forces a hand shift and stalls the sequence. Type slowly and watch which finger reaches for C, B, Y and the shift keys.
 
-**Stuck around 70–80.** Now it is transitions, rhythm and the awkward letter pairs, not individual keys. This needs targeted work rather than more general practice — see [how to reach 100 WPM](/blog/how-to-reach-100-wpm).
+**Stuck around 70–80.** Now it is transitions, rhythm and the awkward letter pairs, not individual keys. This needs targeted work rather than more general practice. See [how to reach 100 WPM](/blog/how-to-reach-100-wpm).
 
 ## Common questions
 
@@ -147,7 +147,7 @@ No. Adults learn motor skills perfectly well; what changes is available practice
 
 ### Should I switch to Dvorak or Colemak while I am learning?
 
-Almost certainly not. You would be learning an unfamiliar layout and an unfamiliar technique at once, and you would then be slow on every computer that is not yours. The evidence for large speed gains from alternative layouts is much weaker than their reputation suggests — see [QWERTY explained](/blog/why-is-the-keyboard-qwerty).
+Almost certainly not. You would be learning an unfamiliar layout and an unfamiliar technique at once, and you would then be slow on every computer that is not yours. The evidence for large speed gains from alternative layouts is much weaker than their reputation suggests. See [QWERTY explained](/blog/why-is-the-keyboard-qwerty).
 
 ## Where to start today
 
@@ -158,7 +158,7 @@ Do this, in this order:
 3. Type home-row letters for ten minutes, returning to position after every key.
 4. Tomorrow, add E and I.
 
-If you would rather have the sequence chosen for you, KeyTopia's [curriculum](/curriculum) runs this order as a set of short lessons, and a [60-second placement test](/typing-test) will start you at the right point rather than at lesson one — which matters if you already type reasonably well and only need the technique corrected.
+If you would rather have the sequence chosen for you, KeyTopia's [curriculum](/curriculum) runs this order as a set of short lessons, and a [60-second placement test](/typing-test) will start you at the right point rather than at lesson one, which matters if you already type reasonably well and only need the technique corrected.
 `,
 
   'how-to-type-faster': `
@@ -170,7 +170,7 @@ Before changing anything, find out which of the four is holding you back. Take a
 
 - **Your accuracy is below about 95%.** Errors are your limit. Every mistake costs roughly five keystrokes and a broken rhythm. Fixing this is the fastest available gain, and it is covered in [improving typing accuracy](/blog/improve-typing-accuracy).
 - **Your accuracy is fine but your speed drops sharply on unfamiliar words.** Key-finding is your limit. You are still locating some keys rather than reaching for them.
-- **Your speed is steady but capped, and you type in visible bursts with pauses between.** Transitions are your limit — specific letter pairs stall you.
+- **Your speed is steady but capped, and you type in visible bursts with pauses between.** Transitions are your limit. Specific letter pairs stall you.
 - **You start fast and fade after a minute or two.** Endurance is your limit, and it is usually posture or tension.
 
 Each of these has a different fix. Practising the wrong one is why people plateau despite putting in hours.
@@ -188,7 +188,7 @@ Beyond the time cost, looking down prevents the underlying skill from forming: a
 Self-taught typists are usually fine on the home row and improvise everywhere else. The common offenders:
 
 - **C typed with the index finger** instead of the middle. This shifts the whole left hand and costs the return.
-- **B and Y typed by the wrong hand.** Both sit near the middle and get grabbed by whichever hand is closer, which means the assignment changes depending on the previous letter — so it never becomes automatic.
+- **B and Y typed by the wrong hand.** Both sit near the middle and get grabbed by whichever hand is closer, which means the assignment changes depending on the previous letter, so it never becomes automatic.
 - **The same hand used for shift and letter.** Left shift with a left-hand letter is a stretch, not a movement.
 - **Little fingers avoided** for A, Q, Z, P and the punctuation on the right. The ring finger covers for them, and everything on that side of the hand becomes a compromise.
 
@@ -200,7 +200,7 @@ Once you can reach every key, your remaining slowness is not in the keys. It is 
 
 Type the word "minimum" and then "you". Most people find one of them noticeably harder, and it is rarely the longer one. Sequences that use the same finger twice in a row, or that require an awkward roll across the hand, take measurably longer than sequences that alternate hands.
 
-To train these you have to know which ones are slow *for you*, which means measuring the interval between individual keystrokes rather than an overall average. KeyTopia records this per transition, and generates practice sets from your slowest ones — which is far more efficient than typing more paragraphs and hoping.
+To train these you have to know which ones are slow *for you*, which means measuring the interval between individual keystrokes rather than an overall average. KeyTopia records this per transition, and generates practice sets from your slowest ones, which is far more efficient than typing more paragraphs and hoping.
 
 ### 4. Type in words, not letters
 
@@ -224,7 +224,7 @@ You will make mistakes. What matters is what they cost.
 
 ### 6. Relax your hands
 
-Tension is the most underrated speed cap. Gripping the keyboard, holding your shoulders up, or pressing keys far harder than needed all slow the return stroke — and the return is half of every keystroke.
+Tension is the most underrated speed cap. Gripping the keyboard, holding your shoulders up, or pressing keys far harder than needed all slow the return stroke, and the return is half of every keystroke.
 
 Two checks: press keys just hard enough to register, and notice whether your non-typing fingers are held rigid. They should be resting, not braced.
 
@@ -248,7 +248,7 @@ The pattern matters more than the specific days. One measuring session, three ta
 
 ## What speeds to expect
 
-Progress is fast early and slow later, which is normal and predictable rather than a sign of a plateau. The gains from your first ten hours are much larger than from your tenth ten hours — a pattern that shows up across skills and which we look at in [why repetition makes you faster](/blog/why-repetition-makes-you-faster).
+Progress is fast early and slow later, which is normal and predictable rather than a sign of a plateau. The gains from your first ten hours are much larger than from your tenth ten hours, a pattern that shows up across skills and which we look at in [why repetition makes you faster](/blog/why-repetition-makes-you-faster).
 
 If you want to know where you currently sit relative to others, [what is a good typing speed](/blog/what-is-a-good-typing-speed) covers the benchmarks honestly, including why most quoted averages are less meaningful than they look.
 
@@ -260,7 +260,7 @@ If your limit is accuracy or finger assignment, within about two weeks. If you a
 
 ### Does a better keyboard make me faster?
 
-Less than the marketing suggests, but not nothing. What matters is consistency of key travel and a stable layout you do not have to hunt on — not switch type in itself. [We compare mechanical and membrane keyboards here](/blog/mechanical-vs-membrane-keyboards).
+Less than the marketing suggests, but not nothing. What matters is consistency of key travel and a stable layout you do not have to hunt on, not switch type in itself. [We compare mechanical and membrane keyboards here](/blog/mechanical-vs-membrane-keyboards).
 
 ### Should I practise with difficult words or easy ones?
 
@@ -268,17 +268,17 @@ Both, for different reasons. Easy, common words build the whole-word patterns th
 
 ### Is there a speed I should stop chasing?
 
-For most work, yes. Past roughly 80 words per minute, typing is rarely the thing slowing you down — thinking is. [How much time faster typing actually saves](/blog/time-saved-by-typing-faster) does the arithmetic, and the honest answer is that the returns flatten a long way before 100.
+For most work, yes. Past roughly 80 words per minute, typing is rarely the thing slowing you down. Thinking is. [How much time faster typing actually saves](/blog/time-saved-by-typing-faster) does the arithmetic, and the honest answer is that the returns flatten a long way before 100.
 
 ## Your next session
 
-Take one timed test now and write down three things: your net speed, your accuracy, and the two keys that came back slowest. That is your training plan for the week — not "practise more", but those two keys, at a pace you can control.
+Take one timed test now and write down three things: your net speed, your accuracy, and the two keys that came back slowest. That is your training plan for the week, not "practise more", but those two keys, at a pace you can control.
 
 KeyTopia's [typing test](/typing-test) reports per-key timing alongside the headline number, which is the part you actually need to plan against.
 `,
 
   'what-is-a-good-typing-speed': `
-A good typing speed depends entirely on what you are typing and why. For general computer use, around 40 words per minute is comfortable. For a job where writing is most of the work, 60 to 70 removes typing as a bottleneck. Above roughly 80, the limit is usually how fast you can think rather than how fast you can type. What almost never matters is how you compare to an "average" — those figures come from self-selected online tests, not from representative samples, and this article explains what they can and cannot tell you.
+A good typing speed depends entirely on what you are typing and why. For general computer use, around 40 words per minute is comfortable. For a job where writing is most of the work, 60 to 70 removes typing as a bottleneck. Above roughly 80, the limit is usually how fast you can think rather than how fast you can type. What almost never matters is how you compare to an "average". Those figures come from self-selected online tests, not from representative samples, and this article explains what they can and cannot tell you.
 
 ## What "words per minute" is measuring
 
@@ -304,9 +304,9 @@ This is the framing that actually helps, because it maps to a decision rather th
 | 40–60 wpm | Most office work, university coursework, general writing | Transcription, heavy correspondence, fast live notes |
 | 60–80 wpm | Writing-heavy jobs, live note-taking, most professional work | Very little, for most people |
 | 80–100 wpm | Transcription, journalism on deadline, competitive typing | Almost nothing; thinking is now the limit |
-| Above 100 wpm | Specialist and competitive typing | — |
+| Above 100 wpm | Specialist and competitive typing | Nothing |
 
-Note what happens at the bottom right of that table. Past about 70 to 80 words per minute, the list of things your typing speed prevents you from doing is nearly empty for most jobs. That is not an argument against getting faster — it is genuinely pleasant, and it makes long writing sessions less tiring — but it does mean the benefit changes from "removes a bottleneck" to "is nicer".
+Note what happens at the bottom right of that table. Past about 70 to 80 words per minute, the list of things your typing speed prevents you from doing is nearly empty for most jobs. That is not an argument against getting faster, it is genuinely pleasant, and it makes long writing sessions less tiring, but it does mean the benefit changes from "removes a bottleneck" to "is nicer".
 
 ## Speed by age
 
@@ -315,7 +315,7 @@ This is where most articles cite a confident table, and where honesty is worth m
 There is no comprehensive, representative study of typing speed by age that is regularly updated. What exist are two quite different things:
 
 1. **Curriculum targets**, used by schools. These are conventions set by educators about what is a reasonable expectation, not measurements of what children actually do.
-2. **Aggregated results from online typing tests**, which measure people who chose to visit a typing test website — a group that skews towards younger, more technically confident users, and towards people who suspect they type quickly.
+2. **Aggregated results from online typing tests**, which measure people who chose to visit a typing test website, a group that skews towards younger, more technically confident users, and towards people who suspect they type quickly.
 
 Treat both accordingly. Curriculum targets are useful as a direction of travel for a child and are typically expressed as a modest per-school-year progression, reaching somewhere in the region of 15 to 25 words per minute by the end of primary schooling. Online test averages tend to sit near 40 words per minute for adults, but that figure describes visitors to typing test sites, not the general population.
 
@@ -371,13 +371,13 @@ A target is useful for a few weeks and unhelpful as a permanent goal. Aiming at 
 
 ## Find out where you actually are
 
-Take one test on text you have never seen, at your normal working accuracy rather than at a push, and note three things: your net speed, your accuracy, and your slowest keys. That combination tells you which of the levels above you are at and what to do next — which a single number never can.
+Take one test on text you have never seen, at your normal working accuracy rather than at a push, and note three things: your net speed, your accuracy, and your slowest keys. That combination tells you which of the levels above you are at and what to do next, which a single number never can.
 
 KeyTopia's [typing test](/typing-test) reports all three, and will let you compare a 15-second burst against a two-minute run, which is often more revealing than either alone.
 `,
 
   'typing-for-kids-guide-for-parents': `
-Most children can start learning to type properly somewhere between seven and nine, once their hands are big enough to span the home row without shifting position. Before that, keyboard familiarity is a better goal than technique. The practice that works is short — ten minutes, most days — and the biggest single decision you will make is whether to correct two-finger typing early, while it is still a habit rather than a skill. This guide covers what to expect at each age, what to ignore, and how to keep it going past week two.
+Most children can start learning to type properly somewhere between seven and nine, once their hands are big enough to span the home row without shifting position. Before that, keyboard familiarity is a better goal than technique. The practice that works is short, ten minutes, most days, and the biggest single decision you will make is whether to correct two-finger typing early, while it is still a habit rather than a skill. This guide covers what to expect at each age, what to ignore, and how to keep it going past week two.
 
 ## The one thing that matters most
 
@@ -393,7 +393,7 @@ The window where this is cheap to fix is roughly ages seven to eleven. After tha
 
 There is no correct birthday, but there is a readiness test, and it takes thirty seconds.
 
-**Sit your child at the keyboard and ask them to put their left-hand fingers on A, S, D, F and their right on J, K, L and the semicolon.** If they can do that with a relaxed, curved hand and reach the top row without lifting their palm or twisting, they are physically ready. If they have to shift their whole hand to reach, they are not — and no amount of instruction will fix a hand that is still too small.
+**Sit your child at the keyboard and ask them to put their left-hand fingers on A, S, D, F and their right on J, K, L and the semicolon.** If they can do that with a relaxed, curved hand and reach the top row without lifting their palm or twisting, they are physically ready. If they have to shift their whole hand to reach, they are not, and no amount of instruction will fix a hand that is still too small.
 
 Broadly:
 
@@ -411,7 +411,7 @@ Short, daily, and boring in a specific way.
 
 **Ten minutes.** Not twenty, not "until you finish the lesson". Motor learning consolidates between sessions rather than during them, so five sessions of ten minutes beats two of twenty-five. Ten minutes is also short enough that it survives a busy week, which is the actual test.
 
-**Same time each day.** Attached to something that already happens — after school, before dinner. Practice that has to be decided on each day gets negotiated each day.
+**Same time each day.** Attached to something that already happens, after school, before dinner. Practice that has to be decided on each day gets negotiated each day.
 
 **Hands covered from the start.** This is the one non-negotiable. A tea towel over the hands works perfectly well. Children accept this far more easily than adults do, provided it is how it has always been rather than a new restriction imposed once they are comfortable looking.
 
@@ -421,7 +421,7 @@ There is a worked ten-minute structure in [typing practice for kids](/blog/typin
 
 ## The two-finger problem
 
-Almost every child arrives at a keyboard and immediately uses two index fingers. This is not laziness. It is the strategy that works fastest on day one, and children — like everyone — optimise for day one.
+Almost every child arrives at a keyboard and immediately uses two index fingers. This is not laziness. It is the strategy that works fastest on day one, and children, like everyone, optimise for day one.
 
 Replacing it works better than banning it:
 
@@ -440,7 +440,7 @@ Ask one question: **what does the game reward?**
 
 - A game that rewards typing the right letters, in order, with correct technique, teaches typing.
 - A game that rewards speed above all else teaches racing, which in practice means rehearsing errors.
-- A game where the typing is a gate between the fun bits — type a word, then play a minigame — teaches your child to get through the typing.
+- A game where the typing is a gate between the fun bits, type a word, then play a minigame, teaches your child to get through the typing.
 
 Also look for whether the game lets a child mash keys and still progress, whether it demands looking at the keyboard because the on-screen action moves too fast, and whether it uses whole real words or nonsense strings.
 
@@ -452,7 +452,7 @@ KeyTopia's own children's world is built around this: each game is tied to one n
 
 Very little, is the short answer, at least before about eleven.
 
-School typing targets exist and are useful as a rough direction — they generally describe a modest, steady climb across the primary years rather than a leap. But they are curriculum conventions rather than measurements of children's actual typing, and a child who is below one is not behind in any meaningful sense.
+School typing targets exist and are useful as a rough direction. They generally describe a modest, steady climb across the primary years rather than a leap. But they are curriculum conventions rather than measurements of children's actual typing, and a child who is below one is not behind in any meaningful sense.
 
 What is worth watching instead:
 
@@ -481,11 +481,11 @@ Typing is unusually well suited to home education because it needs frequency rat
 
 ### My child's school does not teach typing. Does that matter?
 
-Increasingly, yes — not because typing is on the curriculum, but because written work is increasingly produced and sometimes assessed on a keyboard. A child who types slowly is disadvantaged on a task that was meant to assess their writing. [Should schools still teach touch typing](/blog/should-schools-teach-typing) covers the argument.
+Increasingly, yes, not because typing is on the curriculum, but because written work is increasingly produced and sometimes assessed on a keyboard. A child who types slowly is disadvantaged on a task that was meant to assess their writing. [Should schools still teach touch typing](/blog/should-schools-teach-typing) covers the argument.
 
 ### Is it worth it if they will just use voice input and phones?
 
-Phone typing is a genuinely different skill and does not transfer to a keyboard. Voice input is excellent for some tasks and poor for editing, code, spreadsheets, and anywhere quiet is required — which is most of school and most work. Keyboards have outlasted several confident predictions of their demise.
+Phone typing is a genuinely different skill and does not transfer to a keyboard. Voice input is excellent for some tasks and poor for editing, code, spreadsheets, and anywhere quiet is required, which is most of school and most work. Keyboards have outlasted several confident predictions of their demise.
 
 ### How long until they can touch type?
 
@@ -503,7 +503,7 @@ Introduce them once the letters are comfortable, and teach the opposite-hand shi
 
 Run the readiness test at the top of this article. If they can hold the home row comfortably, start ten minutes a day tomorrow, with their hands covered, on home-row letters only. Do not add new letters until the return to position is automatic.
 
-If you would rather not design the sequence yourself, KeyTopia's children's world runs it as short quests with a placement step at the start, so a child who already types a little is not sent back to lesson one — which is usually the fastest way to lose them.
+If you would rather not design the sequence yourself, KeyTopia's children's world runs it as short quests with a placement step at the start, so a child who already types a little is not sent back to lesson one, which is usually the fastest way to lose them.
 `,
 
   'what-does-wpm-mean': `
@@ -519,7 +519,7 @@ The practical formula:
 
 > **Gross WPM = (total characters typed ÷ 5) ÷ minutes elapsed**
 
-For a 30-second test, you divide by 0.5 minutes — that is, you double it. This is worth knowing, because it is why short tests produce flattering numbers: a strong ten seconds gets multiplied by six.
+For a 30-second test, you divide by 0.5 minutes, that is, you double it. This is worth knowing, because it is why short tests produce flattering numbers: a strong ten seconds gets multiplied by six.
 
 ## Gross, net and raw: three numbers, one skill
 
@@ -527,7 +527,7 @@ Tests report speed in at least two ways, and confusing them is the most common s
 
 **Gross WPM** (sometimes called raw) counts every keystroke you made, correct or not. It measures how fast your fingers moved.
 
-**Net WPM** accounts for errors. It measures how fast you actually produced usable text — which is what you care about.
+**Net WPM** accounts for errors. It measures how fast you actually produced usable text, which is what you care about.
 
 There are two common ways of getting from one to the other:
 
@@ -536,7 +536,7 @@ There are two common ways of getting from one to the other:
 
 These give different numbers for the same typing, which is one reason two sites disagree about you. Neither is wrong; they are answering slightly different questions.
 
-The gap between your gross and net speed is the most diagnostic number a typing test gives you. A gap of a few words per minute is normal. A gap of fifteen means your practice belongs in [accuracy](/blog/improve-typing-accuracy), not speed — you are already moving your hands fast enough.
+The gap between your gross and net speed is the most diagnostic number a typing test gives you. A gap of a few words per minute is normal. A gap of fifteen means your practice belongs in [accuracy](/blog/improve-typing-accuracy), not speed. You are already moving your hands fast enough.
 
 ## Accuracy, and what it is a percentage of
 
@@ -548,7 +548,7 @@ Two subtleties matter.
 
 First, **corrections usually still count as errors**. Noticing and fixing a mistake produces correct final text but does not restore your accuracy figure, because the point of the measure is how often your fingers went to the right place.
 
-Second, **backspaces may or may not count as keystrokes**, depending on the test. Where they do, a heavy corrector is penalised twice — once for the error and once for the repair. This is defensible, since that is genuinely what the mistake cost, but it makes cross-test comparison unreliable.
+Second, **backspaces may or may not count as keystrokes**, depending on the test. Where they do, a heavy corrector is penalised twice, once for the error and once for the repair. This is defensible, since that is genuinely what the mistake cost, but it makes cross-test comparison unreliable.
 
 ## CPM, and when it is more useful
 
@@ -584,7 +584,7 @@ Beyond gross-versus-net, the main design differences are:
 
 - **Word difficulty.** A test drawing from the 200 most common English words will produce a higher score than one drawing from 10,000.
 - **Whether errors can be left.** Some tests block you until you correct a mistake, which converts errors into time rather than into a lower accuracy figure.
-- **When the timer starts.** On page load or on your first keystroke — worth several words per minute on a short test.
+- **When the timer starts.** On page load or on your first keystroke, worth several words per minute on a short test.
 - **Test length.** Shorter tests produce higher and more variable scores, because a good burst is extrapolated.
 - **Familiarity.** Repeating a passage measures recall as much as typing.
 
@@ -612,6 +612,6 @@ It depends on what you type. Around 40 is comfortable for general use, 60 to 70 
 
 Take a test on text you have not seen before, run it for at least a minute, and record three numbers rather than one: net speed, accuracy, and the gap between gross and net. That third number tells you what to practise, which the headline never does.
 
-KeyTopia's [typing test](/typing-test) reports all of them, along with which keys and letter transitions cost you the most time — which is where the next improvement is.
+KeyTopia's [typing test](/typing-test) reports all of them, along with which keys and letter transitions cost you the most time, which is where the next improvement is.
 `,
 };

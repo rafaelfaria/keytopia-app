@@ -14,7 +14,7 @@ When someone says they learned to touch type in a fortnight and someone else say
 | Typing without looking down | 2–3 weeks | The eyes stay on the text |
 | Back to your previous speed | 4–8 weeks | The new method has caught up with the old |
 | Fluent, including punctuation and capitals | 3–6 months | Typing stops requiring attention |
-| Fast — above where you started | 6–12 months | Still improving, but slowly now |
+| Fast, above where you started | 6–12 months | Still improving, but slowly now |
 
 The third row is the one people mean by "learned to touch type". The fifth row is the one that actually changes your life, because that is when typing stops costing you attention.
 
@@ -24,7 +24,7 @@ The third row is the one people mean by "learned to touch type". The fifth row i
 
 This is the biggest single factor, and it is counterintuitive: **existing typists take longer than complete beginners** to reach the same point.
 
-A complete beginner has nothing to unlearn. Someone who has typed with two or four fingers for ten years is replacing a habit that currently works, and under any pressure the old habit reasserts itself. Add two to three weeks to every row of the table above, and expect the "back to previous speed" milestone to be the hard one — because their previous speed may already be respectable.
+A complete beginner has nothing to unlearn. Someone who has typed with two or four fingers for ten years is replacing a habit that currently works, and under any pressure the old habit reasserts itself. Add two to three weeks to every row of the table above, and expect the "back to previous speed" milestone to be the hard one, because their previous speed may already be respectable.
 
 This is a good trade, not a bad one: the old method has a ceiling around 35 to 40 words per minute and the new one does not. But it is worth knowing in advance. [Learning touch typing as an adult](/blog/learn-touch-typing-as-an-adult) is built around this problem specifically.
 
@@ -44,7 +44,7 @@ This single decision probably accounts for more variance in outcomes than talent
 
 ### Whether you type at work during the transition
 
-If you spend your working day typing, you will spend it reverting to your old method, and every reversion is practice for the habit you are trying to replace. This does not prevent learning, but it slows it — typically by a couple of weeks.
+If you spend your working day typing, you will spend it reverting to your old method, and every reversion is practice for the habit you are trying to replace. This does not prevent learning, but it slows it, typically by a couple of weeks.
 
 The fix is to stage it: practice sessions are strictly touch typing, work is whatever gets the work done for the first fortnight, and you migrate your real typing across from week three.
 
@@ -54,7 +54,7 @@ The fix is to stage it: practice sessions are strictly touch typing, work is wha
 
 **Week 1.** Frustrating. You know where the keys are and your fingers will not go there. Your speed is roughly half what it was. This is where most attempts end, and it is precisely where the learning is happening.
 
-**Week 2.** Still slow, but you notice you have stopped checking your hands for the common letters. The uncommon ones — Q, Z, X, and the punctuation — still send your eyes down.
+**Week 2.** Still slow, but you notice you have stopped checking your hands for the common letters. The uncommon ones, Q, Z, X, and the punctuation, still send your eyes down.
 
 **Week 3.** You stop looking without having decided to. Speed is still below your old level and it stops mattering as much, because typing has become less effortful even while it is slower.
 
@@ -66,7 +66,7 @@ The fix is to stage it: practice sessions are strictly touch typing, work is wha
 
 Children generally take longer in calendar time and complain far less about the awkward stage.
 
-A seven to nine year old practising ten minutes most days typically stops looking at the keyboard within three to four weeks, and is typing comfortably at a useful speed within three to four months. They are slower in raw hours than a motivated adult, mostly because sessions are shorter and reading speed limits how much text they can work through — but they do not have an entrenched adult habit fighting back, and they do not find the incompetent phase humiliating.
+A seven to nine year old practising ten minutes most days typically stops looking at the keyboard within three to four weeks, and is typing comfortably at a useful speed within three to four months. They are slower in raw hours than a motivated adult, mostly because sessions are shorter and reading speed limits how much text they can work through, but they do not have an entrenched adult habit fighting back, and they do not find the incompetent phase humiliating.
 
 The one thing that changes their timeline dramatically is hand size. A child whose hand cannot span the home row without shifting position will not make progress no matter how long they practise. [What age should kids learn to type](/blog/what-age-should-kids-learn-to-type) has the readiness test.
 
@@ -74,7 +74,7 @@ The one thing that changes their timeline dramatically is hand size. A child who
 
 It is reasonable to ask why a skill with only about thirty movements takes weeks.
 
-The answer is that you are not learning thirty movements, you are learning to run them as automatic sequences. An individual reach can be learned in minutes. Making it happen reliably, in any order, without attention, at speed, while your mind is on the sentence — that requires a large number of repetitions, and repetitions take calendar time because the consolidation between them is part of the process.
+The answer is that you are not learning thirty movements, you are learning to run them as automatic sequences. An individual reach can be learned in minutes. Making it happen reliably, in any order, without attention, at speed, while your mind is on the sentence, that requires a large number of repetitions, and repetitions take calendar time because the consolidation between them is part of the process.
 
 The rate of improvement is also predictably uneven: fast at first and progressively slower, in a pattern that shows up across skills. [Why repetition makes you faster](/blog/why-repetition-makes-you-faster) covers the shape of this and what to do once general practice stops paying.
 
@@ -87,7 +87,7 @@ Four things genuinely compress the timeline:
 3. **Start at the right level.** If you already type at 50 words per minute with poor technique, working through beginner home-row lessons for three weeks wastes most of them. A placement assessment puts you where the actual gap is.
 4. **Practise your own weak keys rather than everything.** Once past the first fortnight, your slowness is concentrated in a small number of specific keys and transitions, and general practice spreads effort evenly across problems you do not have.
 
-That last point is what adaptive practice is for. KeyTopia measures per-key and per-transition timing on every keystroke and generates the next exercise from whatever came back slowest, which is a different activity from typing more paragraphs — see [adaptive typing lessons](/blog/adaptive-typing-lessons).
+That last point is what adaptive practice is for. KeyTopia measures per-key and per-transition timing on every keystroke and generates the next exercise from whatever came back slowest, which is a different activity from typing more paragraphs. See [adaptive typing lessons](/blog/adaptive-typing-lessons).
 
 ## Common questions
 
@@ -101,7 +101,7 @@ Roughly ten to fifteen hours of practice to stop looking, and something like for
 
 ### Will I be slower at work while I learn?
 
-Yes, for two to three weeks, if you use the new method for real work. The way through is to keep practice and work separate at first and migrate gradually — see [learning as an adult](/blog/learn-touch-typing-as-an-adult).
+Yes, for two to three weeks, if you use the new method for real work. The way through is to keep practice and work separate at first and migrate gradually. See [learning as an adult](/blog/learn-touch-typing-as-an-adult).
 
 ### What if I stop practising halfway?
 
@@ -123,7 +123,7 @@ The home row is the middle row of letter keys where your fingers rest between ke
 
 ## The eight keys, and the two bumps
 
-Put your left index finger on F and your right index finger on J. You should feel a small raised bar or dot on each — deliberately manufactured, on essentially every keyboard made, for exactly this purpose.
+Put your left index finger on F and your right index finger on J. You should feel a small raised bar or dot on each, deliberately manufactured, on essentially every keyboard made, for exactly this purpose.
 
 From there the rest falls into place:
 
@@ -149,7 +149,7 @@ Three reasons, and they are worth knowing because they explain a lot of what fol
 
 Knowing where the home row is takes thirty seconds. Building the return habit takes a few days, and it is the thing that makes touch typing possible.
 
-The pattern is: **rest, reach, press, return**. After every key that is not a home key, the finger comes straight back. Not eventually, not at the end of the word — immediately.
+The pattern is: **rest, reach, press, return**. After every key that is not a home key, the finger comes straight back. Not eventually, not at the end of the word, immediately.
 
 Beginners often skip this because it feels like wasted movement. It is the opposite. Without the return, each reach starts from wherever the previous one ended, so the same letter requires a different movement each time and never becomes automatic. With it, every reach starts from an identical position, and repetition begins to count.
 
@@ -159,13 +159,13 @@ Beginners often skip this because it feels like wasted movement. It is the oppos
 
 More than you would expect. The home row alone gives you: **a s d f j k l**, plus the space bar.
 
-Real words from just those letters include *lads, flask, salad, falls, all, ask, dad, lass, add, class, alfalfa, jalfrezi*. It is not a rich vocabulary, but it is enough for several days of practice, which is exactly what the first stage needs — repetitions of the reach-and-return with no new information to hold.
+Real words from just those letters include *lads, flask, salad, falls, all, ask, dad, lass, add, class, alfalfa, jalfrezi*. It is not a rich vocabulary, but it is enough for several days of practice, which is exactly what the first stage needs, repetitions of the reach-and-return with no new information to hold.
 
 Spend your first sessions here before adding anything. It feels too easy. That is the point: you are building a habit, not learning facts.
 
 ## Finding your way back when you lose it
 
-You will lose position — after reaching for a number, after using the mouse, after being interrupted. Two rules:
+You will lose position, after reaching for a number, after using the mouse, after being interrupted. Two rules:
 
 1. **Never look down to recover.** Looking is what you are trying to eliminate, and recovery is the moment the habit is most tempting.
 2. **Find the ridges with both index fingers, then let the others fall.** Do not try to place all eight fingers deliberately; place the two index fingers on F and J and the rest land correctly on their own.
@@ -177,12 +177,12 @@ Practise this deliberately: take your hands off the keyboard entirely, then put 
 The home row is a principle, not a specific set of letters.
 
 - **QWERTZ** (German, Central European) and **AZERTY** (French, Belgian) shift some letters but keep the same physical middle-row anchor and the same F/J-equivalent ridges.
-- **Dvorak** puts a different set of letters on the home row — the vowels under the left hand and the most common consonants under the right — which is the layout's central design idea.
+- **Dvorak** puts a different set of letters on the home row, the vowels under the left hand and the most common consonants under the right, which is the layout's central design idea.
 - **Colemak** keeps most of QWERTY's punctuation and bottom row while moving common letters onto the home row.
 
 If you type on one of these, learn its own home row rather than translating from QWERTY. KeyTopia's [curriculum](/curriculum) rebuilds its lesson order around the layout you actually use, so the letters you meet first are the ones your fingers reach for first.
 
-Whether an alternative layout is worth switching to is a separate question, and the evidence is weaker than the enthusiasm — see [QWERTY explained](/blog/why-is-the-keyboard-qwerty).
+Whether an alternative layout is worth switching to is a separate question, and the evidence is weaker than the enthusiasm. See [QWERTY explained](/blog/why-is-the-keyboard-qwerty).
 
 ## Common mistakes at this stage
 
@@ -206,7 +206,7 @@ Exactly this: locating the home row by touch. They are a deliberate standard fea
 
 ### Why is the right little finger on the semicolon rather than a letter?
 
-Because the home row has ten positions and English has more letters than fit. The semicolon sits where it does for historical layout reasons, and the right little finger also carries P, the slash, the quote key, right shift and Enter — so it is far from underused.
+Because the home row has ten positions and English has more letters than fit. The semicolon sits where it does for historical layout reasons, and the right little finger also carries P, the slash, the quote key, right shift and Enter, so it is far from underused.
 
 ### Should my thumbs both rest on the space bar?
 
@@ -214,11 +214,11 @@ Both rest there; most people press with one, usually the dominant hand's. Either
 
 ### Do I need to feel the bumps every time?
 
-No — with practice your hands return to position without a deliberate check. The bumps are for recovering after your hands have left the keyboard, which is often enough that they stay useful for life.
+No. With practice your hands return to position without a deliberate check. The bumps are for recovering after your hands have left the keyboard, which is often enough that they stay useful for life.
 
 ### My hands are too small to reach comfortably. What should I do?
 
-If reaching the top row requires moving the whole hand, the keyboard is too large for you at the moment. For a child, that is a signal to wait a few months rather than to persist — technique learned with a shifting hand has to be relearned later.
+If reaching the top row requires moving the whole hand, the keyboard is too large for you at the moment. For a child, that is a signal to wait a few months rather than to persist. Technique learned with a shifting hand has to be relearned later.
 
 ## Ten minutes, right now
 
@@ -232,7 +232,7 @@ That is the whole first stage, and doing it properly for a few days makes everyt
 `,
 
   'typing-speed-vs-accuracy': `
-Train accuracy first, then speed — but not accuracy at any cost. The useful target is roughly 96 to 98% accuracy at a pace you can hold. Below that, errors cost you more time than the extra speed gains you. Above it, slowing down further to chase perfection costs more than the remaining mistakes do. This article explains where that band comes from, how to work out which side of it you are on, and how to sequence the two.
+Train accuracy first, then speed, but not accuracy at any cost. The useful target is roughly 96 to 98% accuracy at a pace you can hold. Below that, errors cost you more time than the extra speed gains you. Above it, slowing down further to chase perfection costs more than the remaining mistakes do. This article explains where that band comes from, how to work out which side of it you are on, and how to sequence the two.
 
 ## Why an error costs far more than one keystroke
 
@@ -240,15 +240,15 @@ The arithmetic is the whole argument, and most people have never done it.
 
 When you mistype a letter, here is what actually happens:
 
-1. You type the wrong character — one keystroke.
-2. You notice, usually a character or two later — a pause.
+1. You type the wrong character. One keystroke.
+2. You notice, usually a character or two later, a pause.
 3. You press backspace, possibly several times.
 4. You retype the correct character, and often the ones you deleted with it.
 5. You lose your place in the text you were copying or composing, and re-find it.
 
 A single wrong letter routinely costs four to six keystrokes plus a break in rhythm. The rhythm break is the expensive part and the one that does not show up in a keystroke count: you were running an automatic sequence, and you have just interrupted it to make a conscious decision.
 
-This is why net speed — what you actually produced — can be dramatically lower than raw speed. If the gap between your gross and net figures is more than about five words per minute, errors are your binding constraint and no amount of speed practice will help.
+This is why net speed, what you actually produced, can be dramatically lower than raw speed. If the gap between your gross and net figures is more than about five words per minute, errors are your binding constraint and no amount of speed practice will help.
 
 ## Where the useful accuracy band comes from
 
@@ -258,7 +258,7 @@ Two opposing effects define it.
 
 **Above about 98%**, you are typing carefully enough that the caution itself is costing you. Perfectionism has its own price: hesitating before difficult letters, checking the screen, slowing at every capital. The remaining errors are cheap; the vigilance is not.
 
-So the useful band is roughly **96 to 98%** at your working pace. Note "working pace" — accuracy measured while typing deliberately slowly tells you nothing, because everyone is accurate at half speed.
+So the useful band is roughly **96 to 98%** at your working pace. Note "working pace". Accuracy measured while typing deliberately slowly tells you nothing, because everyone is accurate at half speed.
 
 | Your accuracy | What it means | What to do |
 |---|---|---|
@@ -273,7 +273,7 @@ That last row surprises people. Sustained accuracy above 99% at a comfortable pa
 
 There is a stronger argument than the arithmetic, and it comes from how motor skills are learned.
 
-Your nervous system strengthens whatever movement is repeated. It has no access to your intentions. If you practise at a pace where you make errors regularly, you are running two patterns — the correct movement and the mistaken one — and both accumulate repetitions.
+Your nervous system strengthens whatever movement is repeated. It has no access to your intentions. If you practise at a pace where you make errors regularly, you are running two patterns, the correct movement and the mistaken one, and both accumulate repetitions.
 
 The mistaken one does not fade because you disapprove of it. This is why "practise fast and the accuracy will come" fails so reliably: the accuracy does not come, because you have spent the practice rehearsing the thing you want to eliminate. [Why typing accuracy should come before speed](/blog/accuracy-before-speed) sets out the mechanism, and [the science of touch typing](/blog/science-of-touch-typing-muscle-memory) covers the underlying research.
 
@@ -289,13 +289,13 @@ Take one test at your normal working pace, and look at three numbers.
 
 **If accuracy is above 99% and your speed feels laboured:** you are being too careful. Push the pace until accuracy falls into the band.
 
-**If accuracy is fine but errors cluster on particular keys:** neither. Train those specific keys. This is the most common case for anyone past their first few months, and it is why an overall accuracy figure eventually stops being useful — a 97% average can hide 88% on four particular transitions.
+**If accuracy is fine but errors cluster on particular keys:** neither. Train those specific keys. This is the most common case for anyone past their first few months, and it is why an overall accuracy figure eventually stops being useful. A 97% average can hide 88% on four particular transitions.
 
 That last diagnosis needs per-key data rather than a single percentage, which is what KeyTopia's per-key breakdown is for: it will usually show that a large share of your errors sits on a handful of letters and letter pairs, and those are a much smaller practice problem than "accuracy".
 
 ## Training accuracy without losing speed
 
-The naive approach — type very slowly for weeks — works but is unnecessarily costly. Better:
+The naive approach, type very slowly for weeks, works but is unnecessarily costly. Better:
 
 - **Type at 80% of your top pace, not 40%.** You want the movement to be the one you will actually use, just under control.
 - **Do not correct in practice.** Or rather: notice the error, do not backspace, keep going. This separates "did my finger go to the right place" from "how good am I at repairing mistakes", and the first is what you are training.
@@ -319,13 +319,13 @@ Speed and accuracy are the two numbers everyone quotes, and there is a third tha
 
 Two typists can both average 55 words per minute at 97% accuracy while one types evenly and the other alternates bursts with pauses at particular letters. The even typist is more reliable under pressure and has more headroom, because their limit is their overall pace rather than a handful of stalls.
 
-Consistency usually improves before average speed does, which makes it the earliest signal that practice is working — useful during the weeks when the headline number is refusing to move.
+Consistency usually improves before average speed does, which makes it the earliest signal that practice is working, useful during the weeks when the headline number is refusing to move.
 
 ## Common questions
 
 ### Should I correct my mistakes while practising?
 
-In a test, yes, because that is what real typing involves. In a drill, no — noticing without correcting keeps the session focused on the movement rather than on repair, and the data is cleaner.
+In a test, yes, because that is what real typing involves. In a drill, no. Noticing without correcting keeps the session focused on the movement rather than on repair, and the data is cleaner.
 
 ### Is 95% accuracy good?
 
@@ -341,13 +341,13 @@ Only if you never have to read what you produced. Fixing afterwards means re-rea
 
 ### What accuracy do typing jobs require?
 
-Where employers specify, requirements are usually stated as a net speed at a stated accuracy — commonly around 95% or better. Transcription and data entry roles typically demand higher, because errors there propagate into records rather than being caught by a reader.
+Where employers specify, requirements are usually stated as a net speed at a stated accuracy, commonly around 95% or better. Transcription and data entry roles typically demand higher, because errors there propagate into records rather than being caught by a reader.
 
 ## Find out which one is holding you back
 
 Take one test at your ordinary pace, and write down three numbers: net speed, raw speed, and accuracy.
 
-The gap between the first two is the price you are paying for errors. If it is small, train speed. If it is large, you have found the cheapest improvement available to you — and it will show up as a higher net speed within about two weeks.
+The gap between the first two is the price you are paying for errors. If it is small, train speed. If it is large, you have found the cheapest improvement available to you, and it will show up as a higher net speed within about two weeks.
 
 KeyTopia's [typing test](/typing-test) reports both figures alongside per-key error rates, which is what turns "improve accuracy" into a specific list of keys.
 `,
@@ -364,7 +364,7 @@ It takes thirty seconds and it is more reliable than any age guideline.
 Watch what their hand does.
 
 - **If the hand stays put and only the finger moves**, they are physically ready.
-- **If the whole hand lifts or slides to make the reach**, they are not — and no amount of instruction will fix a hand that is still too small.
+- **If the whole hand lifts or slides to make the reach**, they are not, and no amount of instruction will fix a hand that is still too small.
 
 That second outcome is not a failure and it is not permanent. It usually resolves within six to twelve months. Persisting anyway teaches a hand-shifting habit that then has to be unlearned, which is a worse outcome than waiting.
 
@@ -390,13 +390,13 @@ This is where proper touch typing usually belongs. Most children can span the ho
 
 Everything applies now: home row, correct fingers, hands covered, accuracy praised over speed. Ten minutes a day, most days.
 
-Crucially, children in this band typically have not yet built a strong two-finger habit — or if they have, it is a few months old rather than a few years. Replacing it is much cheaper now than it will be at twelve.
+Crucially, children in this band typically have not yet built a strong two-finger habit, or if they have, it is a few months old rather than a few years. Replacing it is much cheaper now than it will be at twelve.
 
 ### Ages 9–12: still excellent, slightly different
 
 Starting here is genuinely fine and in some ways faster: children read more quickly, concentrate for longer, and understand *why* they are doing it, which helps enormously with persistence.
 
-The complication is that a two-finger habit is now well established. Budget an extra two to three weeks for replacing it, and expect reversion under pressure — particularly when they are typing something for school rather than practising. [Helping kids stop typing with two fingers](/blog/kids-typing-with-two-fingers) covers the specific plan.
+The complication is that a two-finger habit is now well established. Budget an extra two to three weeks for replacing it, and expect reversion under pressure, particularly when they are typing something for school rather than practising. [Helping kids stop typing with two fingers](/blog/kids-typing-with-two-fingers) covers the specific plan.
 
 ### 13 and up
 
@@ -410,7 +410,7 @@ Three reasons, in order of importance.
 
 **Hand size.** The dominant factor. A hand that cannot span the home row will shift to reach, and shifting destroys the positional reference that touch typing depends on. The child is not learning a slower version of the skill; they are learning a different one.
 
-**Fine motor control.** Independent finger movement — moving the ring finger without the middle one following — develops through early childhood. Before it is established, the finger assignments are physically difficult in a way that has nothing to do with understanding.
+**Fine motor control.** Independent finger movement, moving the ring finger without the middle one following, develops through early childhood. Before it is established, the finger assignments are physically difficult in a way that has nothing to do with understanding.
 
 **Reading fluency.** Typing practice means reading text and reproducing it. A child who is still decoding words is spending their attention on the reading, not the typing, and the session teaches very little about either.
 
@@ -420,7 +420,7 @@ None of these argue against keyboard *exposure* early. They argue against formal
 
 The counter-argument, and it is a real one.
 
-By eleven or twelve, most children have been typing informally for years and have a settled two-finger method that works well enough for them. Replacing it is harder, takes longer, and meets more resistance — because they now have a functioning alternative and their own opinion about it.
+By eleven or twelve, most children have been typing informally for years and have a settled two-finger method that works well enough for them. Replacing it is harder, takes longer, and meets more resistance, because they now have a functioning alternative and their own opinion about it.
 
 There is also the practical timing question: written work becomes longer and more consequential through secondary school, and increasingly it is produced on a keyboard. A student whose typing is slow is spending attention on mechanics during exactly the tasks where they can least afford to. We look at that in [how faster typing helps students with homework](/blog/typing-and-homework).
 
@@ -461,11 +461,11 @@ Only if the technique is correct. Early practice with a shifting hand or two fin
 
 ### How much practice at this age?
 
-Ten minutes a day, most days, is more effective than longer sessions less often — motor skills consolidate between sessions. Ten minutes is also short enough to survive a school term, which is the real test. There is a structure in [typing practice for kids](/blog/typing-practice-for-kids-routine).
+Ten minutes a day, most days, is more effective than longer sessions less often. Motor skills consolidate between sessions. Ten minutes is also short enough to survive a school term, which is the real test. There is a structure in [typing practice for kids](/blog/typing-practice-for-kids-routine).
 
 ### What if their school teaches typing differently?
 
-Consistency matters more than which correct method is used. If the school teaches standard home-row touch typing, reinforce it. If the school does not teach typing at all, which is common, you are on your own — see [typing for kids: the complete guide for parents](/blog/typing-for-kids-guide-for-parents).
+Consistency matters more than which correct method is used. If the school teaches standard home-row touch typing, reinforce it. If the school does not teach typing at all, which is common, you are on your own. See [typing for kids: the complete guide for parents](/blog/typing-for-kids-guide-for-parents).
 
 ## Run the test this evening
 
@@ -473,11 +473,11 @@ Sit them down, ask for the home row, and watch whether the hand stays put on a r
 
 If it does, start ten minutes a day tomorrow, hands covered, home row only. If it does not, play some letter games and try again in three months.
 
-KeyTopia's [children's world](/typing-for-kids) is built around short quests with age-appropriate words, and it starts from where a child actually is rather than from lesson one — which matters, because a child who already types a little will lose interest fast if they are sent back to the beginning.
+KeyTopia's [children's world](/typing-for-kids) is built around short quests with age-appropriate words, and it starts from where a child actually is rather than from lesson one, which matters, because a child who already types a little will lose interest fast if they are sent back to the beginning.
 `,
 
   'how-to-test-typing-speed': `
-To get a typing speed figure you can actually plan against: use text you have never seen before, run the test for at least a minute, type at your normal working accuracy rather than pushing, and take the median of three attempts across different days rather than your best. Most published scores are the result of a fifteen-second burst on familiar words, which is a real measurement of something — just not of how you type.
+To get a typing speed figure you can actually plan against: use text you have never seen before, run the test for at least a minute, type at your normal working accuracy rather than pushing, and take the median of three attempts across different days rather than your best. Most published scores are the result of a fifteen-second burst on familiar words, which is a real measurement of something, just not of how you type.
 
 ## Why your test result probably flatters you
 
@@ -491,7 +491,7 @@ Five design choices inflate typing scores, and most tests make at least two of t
 
 **Retaking.** People take five tests and remember the best one. Your best score is a story about one good minute.
 
-**Correction rules.** Some tests block you until an error is fixed, which converts errors into lost time rather than a lower accuracy figure — and different rules produce different headline numbers from identical typing.
+**Correction rules.** Some tests block you until an error is fixed, which converts errors into lost time rather than a lower accuracy figure, and different rules produce different headline numbers from identical typing.
 
 None of these is dishonest. They are reasonable design choices for a quick, motivating test. They just make the number unsuitable for planning.
 
@@ -501,7 +501,7 @@ Follow this and your result will be boring, stable, and actually predictive.
 
 1. **Use unfamiliar text.** Ideally ordinary prose with normal punctuation and capitals, not a word list.
 2. **Run for at least sixty seconds.** Two minutes is better if you want a figure that reflects working conditions.
-3. **Type at your working accuracy**, the pace you would use for a real email — not a careful pace and not a push.
+3. **Type at your working accuracy**, the pace you would use for a real email, not a careful pace and not a push.
 4. **Do not warm up more than a few seconds**, unless you also warm up before real work.
 5. **Take three tests on three different days**, and use the **middle** result.
 6. **Record accuracy and raw speed alongside net speed.** One number in isolation is not diagnostic.
@@ -529,7 +529,7 @@ A good test gives you more than a headline. Each number answers a different ques
 | Accuracy | The proportion of keystrokes right first time |
 | Consistency | How even the gaps between keystrokes are |
 
-The **gap between raw and net** is the most useful single diagnostic a typing test produces. A gap of a few words per minute is normal. A gap of fifteen means errors are your binding constraint, and that is a faster fix than speed — see [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
+The **gap between raw and net** is the most useful single diagnostic a typing test produces. A gap of a few words per minute is normal. A gap of fifteen means errors are your binding constraint, and that is a faster fix than speed. See [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
 
 **Consistency** is the number almost nobody looks at and the one that predicts improvement best. Two typists averaging 55 words per minute can be quite different: one steady, one alternating bursts with stalls at particular letters. The stalling typist has more headroom, because their limit is a handful of specific transitions rather than their overall pace.
 
@@ -541,7 +541,7 @@ If you are being tested for a role, the conditions will not be yours to choose, 
 
 - **Practise on unfamiliar text**, because you will not have seen theirs.
 - **Practise with full punctuation and capitals.** Employer tests usually use business prose, not word lists.
-- **Practise at their duration.** Many use three to five minutes, which is a different skill from a one-minute sprint — it is an endurance test as much as a speed test.
+- **Practise at their duration.** Many use three to five minutes, which is a different skill from a one-minute sprint. It is an endurance test as much as a speed test.
 - **Find out how they treat errors.** A net-speed-with-penalty rule rewards caution; a correct-characters rule rewards flow.
 - **Expect an unfamiliar keyboard**, and give yourself a minute on it beforehand if you can.
 
@@ -551,7 +551,7 @@ Where employers state a requirement it is commonly in the 40 to 60 words per min
 
 Different rules apply, because the number matters much less than what it is measuring.
 
-- **Keep it short** — thirty to sixty seconds. Longer becomes an attention test.
+- **Keep it short**: thirty to sixty seconds. Longer becomes an attention test.
 - **Use age-appropriate words.** A child typing unfamiliar vocabulary is being tested on reading.
 - **Test rarely.** Weekly at most; monthly is plenty. Frequent testing turns practice into performance, and children optimise for whatever you measure.
 - **Report accuracy first.** Whatever you ask about is what they will chase, and a child chasing speed will rehearse errors.
@@ -570,21 +570,21 @@ Your median across several attempts. Your best score is your best minute, which 
 
 ### Why is my speed so different on different websites?
 
-Because the tests are different in at least five ways — word difficulty, error handling, timing, duration and familiarity. This is normal and expected, and it is why you should compare yourself only to your own history on one consistent test. [Why your typing speed changes between tests](/blog/why-typing-speed-varies-between-tests) goes through each factor.
+Because the tests are different in at least five ways, word difficulty, error handling, timing, duration and familiarity. This is normal and expected, and it is why you should compare yourself only to your own history on one consistent test. [Why your typing speed changes between tests](/blog/why-typing-speed-varies-between-tests) goes through each factor.
 
 ### Does typing my own writing count as a test?
 
-It is a useful thing to know but it is not comparable to anything, because composing and transcribing are different tasks — when you write your own words you pause to think, and those pauses are not typing speed. Test on given text; write your own work normally.
+It is a useful thing to know but it is not comparable to anything, because composing and transcribing are different tasks, when you write your own words you pause to think, and those pauses are not typing speed. Test on given text; write your own work normally.
 
 ### Is a 15-second test useless?
 
-Not useless — it is a good measure of burst speed and a fine way to warm up or to compete with yourself. It is just the wrong instrument for deciding what to practise, because it cannot show you what happens as you tire.
+Not useless. It is a good measure of burst speed and a fine way to warm up or to compete with yourself. It is just the wrong instrument for deciding what to practise, because it cannot show you what happens as you tire.
 
 ## Get your baseline
 
 Take one test now, on text you have not seen, for a full minute, at your ordinary pace. Write down four things: net speed, raw speed, accuracy, and the two keys that came back slowest.
 
-Repeat it twice more this week and take the middle result. That is your real number — and the two slow keys are your actual practice plan, which no headline figure would have given you.
+Repeat it twice more this week and take the middle result. That is your real number, and the two slow keys are your actual practice plan, which no headline figure would have given you.
 
 KeyTopia's [typing test](/typing-test) runs at 15, 30, 60 or 120 seconds and reports all four numbers plus per-key and per-transition timing, so a single sitting gives you both the benchmark and what to do about it.
 `,

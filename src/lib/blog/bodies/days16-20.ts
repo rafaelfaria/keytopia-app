@@ -1,24 +1,24 @@
 /** Articles for days 16-20. */
 export const DAYS_16_20: Record<string, string> = {
   'improve-typing-accuracy': `
-Most typing errors are not spread evenly across the alphabet. They cluster on a small number of keys and, more often, on a small number of transitions between keys — usually fewer than ten. Improving accuracy means finding your specific cluster and drilling it, not typing more carefully in general. Done that way, accuracy improves without costing you speed, because you are removing stalls rather than applying caution everywhere.
+Most typing errors are not spread evenly across the alphabet. They cluster on a small number of keys and, more often, on a small number of transitions between keys, usually fewer than ten. Improving accuracy means finding your specific cluster and drilling it, not typing more carefully in general. Done that way, accuracy improves without costing you speed, because you are removing stalls rather than applying caution everywhere.
 
 ## Why "type more carefully" fails
 
 The standard advice is to slow down until you stop making mistakes. It works, and it is expensive.
 
-Slowing down globally applies a brake to every keystroke in order to fix the small proportion that go wrong. You end up typing the letters you were always accurate on more slowly too, and the moment you return to normal pace the errors come back — because you never addressed what caused them.
+Slowing down globally applies a brake to every keystroke in order to fix the small proportion that go wrong. You end up typing the letters you were always accurate on more slowly too, and the moment you return to normal pace the errors come back, because you never addressed what caused them.
 
 The exception is the first few weeks of learning, when you genuinely do need a uniformly slower pace to lay down correct movements. Past that, general caution is the wrong instrument.
 
 ## Find your actual errors first
 
-You cannot introspect this. Research on skilled typing has repeatedly found that typists detect their own errors — they slow down after one — without being able to say what went wrong. The knowledge is in the hands, not available to you as a report.
+You cannot introspect this. Research on skilled typing has repeatedly found that typists detect their own errors, they slow down after one, without being able to say what went wrong. The knowledge is in the hands, not available to you as a report.
 
 So measure it. What you want is not an accuracy percentage but a breakdown:
 
 - **Which keys** you mistype most often, as a rate rather than a count (Z will have few errors simply because it is rare).
-- **Which transitions** — letter pairs — stall or fail. This is usually where most of the loss sits.
+- **Which transitions**, letter pairs, stall or fail. This is usually where most of the loss sits.
 - **Which errors** are substitutions (wrong letter), transpositions (right letters, wrong order), or omissions (letter missing).
 
 That third distinction matters, because the three have different causes and different fixes.
@@ -43,7 +43,7 @@ Fix: drill the specific word at a deliberately even pace. Transposition errors r
 
 ### Omissions: a letter missing
 
-Usually a **weak finger** — the little fingers and the ring fingers — or a key that requires a long reach. The finger moved but did not press hard enough, or did not fully arrive.
+Usually a **weak finger**, the little fingers and the ring fingers, or a key that requires a long reach. The finger moved but did not press hard enough, or did not fully arrive.
 
 Cause: either the finger is genuinely under-used and weak, or the hand is tense and the finger is working against its own grip.
 
@@ -61,15 +61,15 @@ Fix: curve the fingers, press more lightly.
 
 The principle throughout: practise the specific failing sequence at a pace where it succeeds, rather than everything at a pace where nothing fails.
 
-**The transition drill.** Take your worst three letter pairs. Type each as a short repeated string — the pair, a space, the pair — for thirty seconds each, at a pace where they are correct. Then embed them in real words. This is the single highest-yield accuracy exercise there is.
+**The transition drill.** Take your worst three letter pairs. Type each as a short repeated string, the pair, a space, the pair, for thirty seconds each, at a pace where they are correct. Then embed them in real words. This is the single highest-yield accuracy exercise there is.
 
 **The no-backspace run.** Type a paragraph and do not correct anything. Notice errors, keep going. This separates "did my finger go to the right place" from "how good am I at repairing", and it stops the session becoming an exercise in backspacing.
 
 **The metronome run.** Type to a steady beat, slower than your top speed, one keystroke per beat. Evenness is the target, not speed. This works particularly well for transposition errors, because it removes the timing race that causes them.
 
-**The 80% run.** Type at roughly 80% of your top pace for three to five minutes, aiming for near-perfect accuracy. This is your default accuracy session — not 40%, which trains a pace you will never use.
+**The 80% run.** Type at roughly 80% of your top pace for three to five minutes, aiming for near-perfect accuracy. This is your default accuracy session, not 40%, which trains a pace you will never use.
 
-**The endurance check.** Type continuously for five minutes and watch where accuracy falls off. If it is fine for a minute and collapses at four, your problem is fatigue, tension or posture — not precision. That is a different fix entirely, and [typing posture](/blog/typing-posture) covers it.
+**The endurance check.** Type continuously for five minutes and watch where accuracy falls off. If it is fine for a minute and collapses at four, your problem is fatigue, tension or posture, not precision. That is a different fix entirely, and [typing posture](/blog/typing-posture) covers it.
 
 ## The technique faults behind persistent errors
 
@@ -87,7 +87,7 @@ Fix these in order of how often the offending letters appear in your typing. Fix
 
 Not as accurate as possible. The useful band is roughly **96 to 98% at your working pace**.
 
-Below about 95%, correction overhead is eating your net speed — each error costs four to six keystrokes plus a broken rhythm. Above about 99% sustained, you are usually being over-cautious and leaving speed on the table.
+Below about 95%, correction overhead is eating your net speed. Each error costs four to six keystrokes plus a broken rhythm. Above about 99% sustained, you are usually being over-cautious and leaving speed on the table.
 
 There is a fuller treatment of where that band comes from in [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
 
@@ -111,7 +111,7 @@ It will while you are slow. The gains do not survive returning to normal pace un
 
 ### Should I correct errors as I type or at the end?
 
-In real work, correct as you notice — but finish the current word or phrase first rather than stopping mid-sequence. Breaking an automatic sequence to backspace costs more than the extra second of delay.
+In real work, correct as you notice, but finish the current word or phrase first rather than stopping mid-sequence. Breaking an automatic sequence to backspace costs more than the extra second of delay.
 
 ### Why do I make more mistakes when I am being watched or timed?
 
@@ -119,7 +119,7 @@ Attending consciously to an automatic skill disrupts it. This is well documented
 
 ### My accuracy is fine on tests and terrible in real writing. Why?
 
-Because composing and transcribing are different tasks. When you write your own words, part of your attention is on what to say, and typing has to run on less. That is exactly the case for making typing more automatic — the more it runs itself, the less composition degrades it.
+Because composing and transcribing are different tasks. When you write your own words, part of your attention is on what to say, and typing has to run on less. That is exactly the case for making typing more automatic. The more it runs itself, the less composition degrades it.
 
 ### Do typing games help accuracy?
 
@@ -143,7 +143,7 @@ It is not a character failing. It is short-term optimisation working exactly as 
 
 Looking at the keys works. It is faster right now, it feels safer, and it produces correct text. Your brain has no way of knowing that the alternative will be better in a month; it can only compare the two options available in this second, and one of them is clearly winning.
 
-Worse, the habit is self-reinforcing in a specific way: every visually guided keystroke trains a visually guided skill. You are not slowly getting better at typing blind while you look — you are practising something else. That is why people can type for twenty years and never make the transition.
+Worse, the habit is self-reinforcing in a specific way: every visually guided keystroke trains a visually guided skill. You are not slowly getting better at typing blind while you look. You are practising something else. That is why people can type for twenty years and never make the transition.
 
 ## The ladder
 
@@ -153,7 +153,7 @@ Work through these in order. Do not skip to the top rung, and do not linger on t
 
 A tea towel draped over your hands and the front of the keyboard. A purpose-made cover if you prefer, or a cardboard shelf resting on the desk edge. Anything that makes your hands physically invisible without changing how the keys feel.
 
-This is not a training aid you graduate from — it is the whole method. Almost everyone who succeeds at this uses a cover for the first fortnight, and almost everyone who fails intended to stop looking without one.
+This is not a training aid you graduate from. It is the whole method. Almost everyone who succeeds at this uses a cover for the first fortnight, and almost everyone who fails intended to stop looking without one.
 
 **Do this from your first session**, not once you feel ready. Learning to type while looking and then trying to stop means learning the skill twice.
 
@@ -167,7 +167,7 @@ The fix is to keep your eyes on the text you are copying and let errors accumula
 
 ### Rung 3: Type whole words without checking (weeks 2–3)
 
-Now extend the unit. Instead of glancing after every word, type a whole phrase — four or five words — before allowing yourself to look at the screen at all.
+Now extend the unit. Instead of glancing after every word, type a whole phrase, four or five words, before allowing yourself to look at the screen at all.
 
 This is where reading ahead starts, and reading ahead is the thing that makes fluent typing feel effortless. Skilled typists have their eyes a word or two beyond their fingers.
 
@@ -179,7 +179,7 @@ The capital is the interesting part. Most people who have stopped looking for le
 
 ### Rung 5: Remove the cover (week 4 onwards)
 
-Take the towel away and notice what happens. Most people find they simply do not look any more — the habit has been replaced rather than suppressed.
+Take the towel away and notice what happens. Most people find they simply do not look any more. The habit has been replaced rather than suppressed.
 
 If you find your eyes drifting down within a day, put the cover back for another week. This is common and not a setback; it means the new habit is not yet stronger than the old one under normal conditions.
 
@@ -199,7 +199,7 @@ The first week is the whole difficulty. Knowing in advance that it is supposed t
 When people say they have stopped looking, they usually mean they have stopped looking for the common letters. The eyes still drop for:
 
 - **Numbers**, because the reach is long and they appear rarely.
-- **Punctuation beyond the full stop and comma** — apostrophes, question marks, brackets, quotation marks.
+- **Punctuation beyond the full stop and comma**: apostrophes, question marks, brackets, quotation marks.
 - **Z, Q and X**, for the same rarity reason.
 - **Shift for capitals**, especially with the same hand.
 - **Backspace and Enter**, which people reach for visually out of habit long after the letters are automatic.
@@ -212,7 +212,7 @@ The method is the same and the fortnight is harder, because you are replacing a 
 
 **Ring-fence your practice.** Cover your hands for a fifteen-minute daily session, and type your actual work however you normally would for the first two weeks. Trying to switch everything at once means hitting a deadline in week one and reverting permanently.
 
-**Migrate gradually from week three.** Start with low-stakes typing — personal messages, search boxes, notes — where a typo costs nothing. Move to real work in week five.
+**Migrate gradually from week three.** Start with low-stakes typing, personal messages, search boxes, notes, where a typo costs nothing. Move to real work in week five.
 
 This staging is the difference between a transition that survives and one that ends the first time something is urgent. There is a fuller plan in [learning touch typing as an adult](/blog/learn-touch-typing-as-an-adult).
 
@@ -226,11 +226,11 @@ A child who has been typing while looking for two years will resist the cover ex
 
 ## What not to bother with
 
-**Blank keycaps.** They work, but they solve the problem by making looking useless rather than impossible — and they make the keyboard unusable for anyone else, and for you when you need a key you have not learned. A towel is cheaper and better.
+**Blank keycaps.** They work, but they solve the problem by making looking useless rather than impossible, and they make the keyboard unusable for anyone else, and for you when you need a key you have not learned. A towel is cheaper and better.
 
 **Keyboard stickers or covers with letters on.** These are for learning a new layout, not for learning to stop looking.
 
-**Memorising a keyboard diagram.** Almost useless. The explicit knowledge of where keys are and the knowledge that drives your fingers are substantially separate — skilled typists are famously bad at drawing a keyboard from memory. [How your brain learns to type](/blog/how-your-brain-learns-to-type) covers this finding, which is more than a curiosity: it means studying the layout does not build the skill.
+**Memorising a keyboard diagram.** Almost useless. The explicit knowledge of where keys are and the knowledge that drives your fingers are substantially separate. Skilled typists are famously bad at drawing a keyboard from memory. [How your brain learns to type](/blog/how-your-brain-learns-to-type) covers this finding, which is more than a curiosity: it means studying the layout does not build the skill.
 
 **Typing very slowly forever.** Slow enough to be accurate, yes. Slower than that trains a pace you will never use.
 
@@ -238,7 +238,7 @@ A child who has been typing while looking for two years will resist the cover ex
 
 ### How long until I stop looking?
 
-Two to three weeks of daily practice with your hands covered. Without a cover, potentially never — that is the honest answer, and it is why the cover is the first rung rather than an optional aid.
+Two to three weeks of daily practice with your hands covered. Without a cover, potentially never, that is the honest answer, and it is why the cover is the first rung rather than an optional aid.
 
 ### Can I learn to touch type without covering my hands?
 
@@ -250,7 +250,7 @@ Yes, and it is the most common reason people give up. Your speed will roughly ha
 
 ### What if I peek occasionally?
 
-Occasional peeking at rare keys is normal in weeks two and three and fades. Peeking at common letters means the cover came off too early — put it back for another week.
+Occasional peeking at rare keys is normal in weeks two and three and fades. Peeking at common letters means the cover came off too early. Put it back for another week.
 
 ### Should I look at the screen or at the source text?
 
@@ -270,7 +270,7 @@ For students, the value of typing quickly is not that essays get finished sooner
 
 ## The real benefit: attention, not minutes
 
-Working memory is limited, and writing already uses a lot of it — holding an argument in mind, choosing words, tracking what you have already said.
+Working memory is limited, and writing already uses a lot of it, holding an argument in mind, choosing words, tracking what you have already said.
 
 If typing also requires attention, it competes for the same limited resource. A student hunting for keys is repeatedly interrupting the thought to handle the mechanics, and the interruption is not free: it costs the thread of the sentence, not just the second it took.
 
@@ -282,7 +282,7 @@ When typing becomes automatic, that competition disappears. This is why the bene
 
 The hardest keyboard task a student does. You are listening, deciding what matters, and typing, all at once, with no ability to pause the input.
 
-Below roughly 40 words per minute this is close to impossible — you fall behind, and then you are choosing between listening and catching up. Around 50 to 60 it becomes viable. Above that, you can be selective rather than desperate, which is when notes actually become useful.
+Below roughly 40 words per minute this is close to impossible. You fall behind, and then you are choosing between listening and catching up. Around 50 to 60 it becomes viable. Above that, you can be selective rather than desperate, which is when notes actually become useful.
 
 Note that there is a real debate about whether typing notes is *better* than writing them by hand, and it is not settled the way popular articles suggest. We look at the actual research in [typing versus handwriting](/blog/typing-vs-handwriting). The relevant point here is that if you are going to type notes, being slow at it is the worst of both worlds.
 
@@ -290,11 +290,11 @@ Note that there is a real debate about whether typing notes is *better* than wri
 
 Increasingly, extended written answers are produced on a keyboard, whether by default or through access arrangements.
 
-In a timed exam, slow typing is a direct penalty on a task designed to assess your thinking. You are being marked on an argument and constrained by your hands. This is the strongest single argument for teaching typing in schools, and it is a fairness argument rather than a vocational one — see [should schools still teach touch typing](/blog/should-schools-teach-typing).
+In a timed exam, slow typing is a direct penalty on a task designed to assess your thinking. You are being marked on an argument and constrained by your hands. This is the strongest single argument for teaching typing in schools, and it is a fairness argument rather than a vocational one. See [should schools still teach touch typing](/blog/should-schools-teach-typing).
 
 ### Long coursework
 
-For a 3,000-word essay the minutes saved are real but modest. The larger effect is fatigue: writing at length is tiring, and mechanical effort adds to that. Students who type fluently tend to revise more, because revising is cheap for them — and revision is where most of the quality in a long piece comes from.
+For a 3,000-word essay the minutes saved are real but modest. The larger effect is fatigue: writing at length is tiring, and mechanical effort adds to that. Students who type fluently tend to revise more, because revising is cheap for them, and revision is where most of the quality in a long piece comes from.
 
 ### Coding and technical work
 
@@ -319,13 +319,13 @@ Worth being honest about, because overselling this is how students end up practi
 | Live lecture notes | 50 wpm | 65 wpm |
 | Transcribing recordings | 60 wpm | 75 wpm |
 
-Two things to notice. The numbers are lower than typing-improvement articles usually imply — 60 words per minute covers essentially all student work comfortably. And the ceiling is real: there is no row where 100 words per minute is required.
+Two things to notice. The numbers are lower than typing-improvement articles usually imply. 60 words per minute covers essentially all student work comfortably. And the ceiling is real: there is no row where 100 words per minute is required.
 
 There is a fuller breakdown in [typing speed for students](/blog/typing-speed-for-students).
 
 ## Accuracy matters more than students expect
 
-A student typing at 65 words per minute with 88% accuracy is slower in practice than one typing 50 at 97%, because every error costs four to six keystrokes plus a broken rhythm — and in an exam, an uncorrected error costs a mark.
+A student typing at 65 words per minute with 88% accuracy is slower in practice than one typing 50 at 97%, because every error costs four to six keystrokes plus a broken rhythm, and in an exam, an uncorrected error costs a mark.
 
 Accuracy also compounds under pressure. Speed built on shaky accuracy is the first thing to collapse in a timed situation, which is precisely when you need it. Train accuracy first: the argument is in [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
 
@@ -347,13 +347,13 @@ Students have less spare time than almost anyone, so the plan has to be small.
 
 If you learned to type by using a computer rather than being taught, you almost certainly have both:
 
-**Looking at the keyboard.** This is the ceiling, and everything else is secondary until it is fixed. Cover your hands — see [how to stop looking at the keyboard](/blog/stop-looking-at-the-keyboard).
+**Looking at the keyboard.** This is the ceiling, and everything else is secondary until it is fixed. Cover your hands. See [how to stop looking at the keyboard](/blog/stop-looking-at-the-keyboard).
 
 **Improvised finger assignments**, particularly C with the index finger, B and Y taken by whichever hand is free, and same-hand shift. Each costs a few words per minute; together they usually account for ten to fifteen. [Correct finger placement](/blog/correct-finger-placement-for-touch-typing) has the map.
 
 ## If you are a student now, and slow
 
-The honest calculation: six weeks of fifteen minutes a day is about seven hours. If you have two or more years of study left, that is one of the better returns available on seven hours — not because of the minutes saved, but because writing becomes less effortful for the rest of your degree.
+The honest calculation: six weeks of fifteen minutes a day is about seven hours. If you have two or more years of study left, that is one of the better returns available on seven hours, not because of the minutes saved, but because writing becomes less effortful for the rest of your degree.
 
 If you are three months from finals, do not start now. Learning touch typing makes you temporarily slower, and you do not want the dip during revision. Use what you have, and start in the summer.
 
@@ -365,7 +365,7 @@ The research is genuinely mixed, and the widely cited finding that handwriting i
 
 ### Will typing faster improve my grades?
 
-Not directly, and anyone claiming otherwise is overselling. What it does is remove a constraint on tasks where attention is scarce — timed exams and live notes especially. That is worth something, and it is not the same as a grade improvement.
+Not directly, and anyone claiming otherwise is overselling. What it does is remove a constraint on tasks where attention is scarce, timed exams and live notes especially. That is worth something, and it is not the same as a grade improvement.
 
 ### How fast do I need to type for university?
 
@@ -383,7 +383,7 @@ Then handwriting speed and legibility are the relevant skills and typing practic
 
 Take one test on unfamiliar text, at your ordinary pace, and note your net speed, your accuracy, and whether you looked at your hands.
 
-If you looked, that is your project, and the fix is a tea towel and fifteen minutes a day. If you did not, and your accuracy is below 95%, that is your project instead — and it is the cheaper of the two.
+If you looked, that is your project, and the fix is a tea towel and fifteen minutes a day. If you did not, and your accuracy is below 95%, that is your project instead, and it is the cheaper of the two.
 
 KeyTopia's [typing test](/typing-test) reports both, and its [practice modes](/typing-practice-modes) include prose with full punctuation, which is the material student typing actually consists of.
 `,
@@ -397,7 +397,7 @@ This section is the important one, because almost every article on this topic pr
 
 There is **no comprehensive, current, representative measurement** of children's typing speed by age. What exist are two different things:
 
-**Curriculum targets.** Schools and education authorities publish expectations — often expressed as a per-school-year progression. These are professional judgements about what is a reasonable expectation for a child receiving typing instruction. They are not data about children in general, and they vary between countries and schemes.
+**Curriculum targets.** Schools and education authorities publish expectations, often expressed as a per-school-year progression. These are professional judgements about what is a reasonable expectation for a child receiving typing instruction. They are not data about children in general, and they vary between countries and schemes.
 
 **Typing test website averages.** These come from children who visited a typing test site, usually because an adult sent them there. That is not a random sample of children.
 
@@ -428,7 +428,7 @@ Three reasons.
 
 **Technique predicts the ceiling; speed does not.** A nine year old typing 18 words per minute with correct touch technique will keep improving for years. One typing 30 with two fingers has nearly reached their limit and will have to unlearn something to pass it. The second number looks better and describes a worse position.
 
-**Measuring speed changes behaviour.** Children optimise for whatever adults ask about. Ask "how fast?" and you get a child racing and making errors — and errors practised are errors learned. Ask "what was tricky?" and you get a child who notices their own weak spots.
+**Measuring speed changes behaviour.** Children optimise for whatever adults ask about. Ask "how fast?" and you get a child racing and making errors, and errors practised are errors learned. Ask "what was tricky?" and you get a child who notices their own weak spots.
 
 ## What to watch instead
 
@@ -447,7 +447,7 @@ Some practical framing for the conversation you are probably having with yoursel
 
 **If they are below the target with good technique:** this is fine, and it is the position you want. Speed follows technique with practice, reliably. Do not intervene.
 
-**If they are above the target with two-finger technique:** this is the case worth acting on, and it is the one that looks like success. They have hit their ceiling early. Replacing the habit now, at eight or nine, is much cheaper than at thirteen — see [helping kids stop typing with two fingers](/blog/kids-typing-with-two-fingers).
+**If they are above the target with two-finger technique:** this is the case worth acting on, and it is the one that looks like success. They have hit their ceiling early. Replacing the habit now, at eight or nine, is much cheaper than at thirteen. See [helping kids stop typing with two fingers](/blog/kids-typing-with-two-fingers).
 
 **If they are below the target and looking at the keyboard:** start the proper method. Ten minutes a day, hands covered. Expect three to four weeks before they stop looking.
 
@@ -470,7 +470,7 @@ More on testing conditions generally in [how to test your typing speed accuratel
 Not a smooth line. Expect:
 
 - **A fast start** while they learn where things are.
-- **A visible dip** when they stop looking at the keyboard — three to four weeks of being worse before being better. Warn them in advance and it lands as expected rather than as failure.
+- **A visible dip** when they stop looking at the keyboard, three to four weeks of being worse before being better. Warn them in advance and it lands as expected rather than as failure.
 - **A long, slow climb** afterwards, with occasional jumps when something becomes automatic.
 - **Plateaus**, especially when capitals and punctuation are introduced, because those are genuinely new skills bolted onto a working one.
 
@@ -488,7 +488,7 @@ Almost certainly not. These are curriculum targets for children receiving typing
 
 ### Should children take typing tests at all?
 
-Occasionally, as a thermometer rather than a grade — and much less often than adults are inclined to. Monthly is plenty. What is worth tracking is accuracy and whether they are looking at the keys.
+Occasionally, as a thermometer rather than a grade, and much less often than adults are inclined to. Monthly is plenty. What is worth tracking is accuracy and whether they are looking at the keys.
 
 ### How fast should a child type before secondary school?
 
@@ -496,7 +496,7 @@ Around 25 words per minute with correct touch technique puts a child in a comfor
 
 ### My child types faster with two fingers than with the proper method. Should I let them?
 
-For the next few weeks, they will — that is the transition dip and it is unavoidable. It resolves within about a month, and after it their speed keeps climbing rather than plateauing. This is exactly the trade worth making.
+For the next few weeks, they will, that is the transition dip and it is unavoidable. It resolves within about a month, and after it their speed keeps climbing rather than plateauing. This is exactly the trade worth making.
 
 ## What to do this week
 
@@ -508,19 +508,19 @@ KeyTopia's [children's world](/typing-for-kids) reports accuracy and technique r
 `,
 
   'typing-mistakes': `
-Most typing plateaus come from a small number of specific habits rather than from insufficient practice. Ten of them account for nearly all of it, and almost every one is invisible from the inside — you cannot feel yourself using the wrong finger for C, because it is exactly as automatic as using the right one would be. Here is each mistake, the symptom you would actually notice, and the drill that fixes it.
+Most typing plateaus come from a small number of specific habits rather than from insufficient practice. Ten of them account for nearly all of it, and almost every one is invisible from the inside. You cannot feel yourself using the wrong finger for C, because it is exactly as automatic as using the right one would be. Here is each mistake, the symptom you would actually notice, and the drill that fixes it.
 
 ## 1. Looking at the keyboard
 
 **The symptom:** your speed drops sharply on unfamiliar words, and you lose your place in the text you are copying.
 
-This is the ceiling above which nothing else matters. Every key you look for is a moment your eyes are off the text, and — more importantly — a visually guided keystroke does not train the automatic movement you are trying to build. You can do this for twenty years and not improve.
+This is the ceiling above which nothing else matters. Every key you look for is a moment your eyes are off the text, and, more importantly, a visually guided keystroke does not train the automatic movement you are trying to build. You can do this for twenty years and not improve.
 
 **The fix:** cover your hands. Not willpower, a tea towel. Full method in [how to stop looking at the keyboard](/blog/stop-looking-at-the-keyboard).
 
 ## 2. Not returning to the home row
 
-**The symptom:** substitution errors — you type R instead of T, or S instead of D — that get worse the longer you type.
+**The symptom:** substitution errors, you type R instead of T, or S instead of D, that get worse the longer you type.
 
 Every reach should end with the finger back on its home key. Without the return, each reach starts from wherever the last one ended, so your hand drifts and the errors accumulate. It also means the same letter requires a slightly different movement each time, so it never becomes fully automatic.
 
@@ -538,7 +538,7 @@ C belongs to the **left middle finger**. Using the index pulls the hand off posi
 
 **The symptom:** a plateau somewhere in the fifties or sixties that does not respond to more practice.
 
-This one is worse than a simple wrong assignment. B belongs to the left index and Y to the right, but because both sit near the middle they get grabbed opportunistically — which means the finger used *changes depending on the previous letter*. The movement is never repeated identically, so it never becomes automatic and stays slow permanently.
+This one is worse than a simple wrong assignment. B belongs to the left index and Y to the right, but because both sit near the middle they get grabbed opportunistically, which means the finger used *changes depending on the previous letter*. The movement is never repeated identically, so it never becomes automatic and stays slow permanently.
 
 **The fix:** drill B and Y deliberately in context, always with the correct hand, until it stops feeling like a decision.
 
@@ -554,11 +554,11 @@ Since nearly every sentence starts with a capital, this cost is paid constantly,
 
 ## 6. Little fingers not used
 
-**The symptom:** omission errors — A, Q, Z, P and the right-hand punctuation occasionally missing entirely — and a twisted hand position.
+**The symptom:** omission errors, A, Q, Z, P and the right-hand punctuation occasionally missing entirely, and a twisted hand position.
 
 The little fingers own the outer columns *and* both shift keys, tab and enter. Covering for them with the ring finger works at low speed and becomes the binding constraint later.
 
-**The fix:** use them anyway. They feel weak because they are weak, and two weeks of deliberate use is normally enough. Check first that you are not gripping the keyboard — a tense hand makes the little finger work against its own grip.
+**The fix:** use them anyway. They feel weak because they are weak, and two weeks of deliberate use is normally enough. Check first that you are not gripping the keyboard. A tense hand makes the little finger work against its own grip.
 
 ## 7. Wrists resting on the desk while typing
 
@@ -580,7 +580,7 @@ Your nervous system strengthens whatever movement is repeated, and it has no acc
 
 **The symptom:** your test scores look fine and your real writing feels much slower.
 
-Beginner drills are almost entirely lowercase letters. Real writing is full of commas, full stops, apostrophes, quotation marks, brackets, capitals and the occasional number — and if you have never drilled them, each one is a small stall in an otherwise fluent line.
+Beginner drills are almost entirely lowercase letters. Real writing is full of commas, full stops, apostrophes, quotation marks, brackets, capitals and the occasional number, and if you have never drilled them, each one is a small stall in an otherwise fluent line.
 
 **The fix:** practise on real prose with full punctuation rather than word lists. This alone often closes most of the gap between someone's test score and their working speed.
 
@@ -588,7 +588,7 @@ Beginner drills are almost entirely lowercase letters. Real writing is full of c
 
 **The symptom:** steady practice, flat results, particularly past about 60 words per minute.
 
-Once you are fluent, your slowness is not spread evenly — it is concentrated in perhaps a dozen specific keys and transitions, which depend on your hands, your keyboard and which letters you happened to learn while tired. General practice spreads effort evenly across problems you mostly do not have.
+Once you are fluent, your slowness is not spread evenly. It is concentrated in perhaps a dozen specific keys and transitions, which depend on your hands, your keyboard and which letters you happened to learn while tired. General practice spreads effort evenly across problems you mostly do not have.
 
 You also cannot identify these by feel. Research on skilled typing has found that typists detect their own errors without being able to say what went wrong; the knowledge is in the hands, not available as a report.
 
@@ -600,7 +600,7 @@ The fastest self-check is to **type a paragraph at half speed and watch your han
 
 Type this sentence, slowly, and watch: **"Because Barry quickly zipped up my jacket, the excited children became very playful."**
 
-It contains C, B, Y, Z, Q, X and several capitals — every assignment people commonly get wrong, in one line.
+It contains C, B, Y, Z, Q, X and several capitals, every assignment people commonly get wrong, in one line.
 
 Then take a test that reports per-key timing and see whether the data agrees with what you saw. It usually does, and it usually adds two or three you had not noticed.
 
@@ -610,7 +610,7 @@ Do not attack all ten at once; you will produce a fortnight of confusion and rev
 
 1. **Looking at the keyboard**, first and alone. Nothing else matters until this is fixed.
 2. **The return to home row**, because several other faults are downstream of it.
-3. **Finger assignments**, one at a time, most frequent letter first — usually C, then shift, then B and Y.
+3. **Finger assignments**, one at a time, most frequent letter first, usually C, then shift, then B and Y.
 4. **Punctuation and capitals**, once the letters are reliable.
 5. **Targeted weak-key work**, last, once there is nothing structural left to fix.
 
@@ -624,7 +624,7 @@ Type at half speed and watch your hands, then check the per-key data from a test
 
 ### Which single fix is worth the most?
 
-Not looking at the keyboard, by a wide margin — it is the difference between a method with a ceiling around 40 words per minute and one without a practical ceiling. After that, the finger assignments, which together are usually worth ten to fifteen words per minute.
+Not looking at the keyboard, by a wide margin. It is the difference between a method with a ceiling around 40 words per minute and one without a practical ceiling. After that, the finger assignments, which together are usually worth ten to fifteen words per minute.
 
 ### Will fixing these make me slower at first?
 
@@ -632,7 +632,7 @@ Yes, briefly. Replacing an automatic movement means the new one is slower than t
 
 ### I type fast already. Do these still apply?
 
-If you are above 70 words per minute you have probably already eliminated most of them, and the remaining ones are numbers 8, 9 and 10 — practising above your controlled pace, neglecting punctuation, and practising in general rather than on specifics. [How to reach 100 WPM](/blog/how-to-reach-100-wpm) covers that level.
+If you are above 70 words per minute you have probably already eliminated most of them, and the remaining ones are numbers 8, 9 and 10, practising above your controlled pace, neglecting punctuation, and practising in general rather than on specifics. [How to reach 100 WPM](/blog/how-to-reach-100-wpm) covers that level.
 
 ### Is it worth fixing habits if I only type occasionally?
 
@@ -642,6 +642,6 @@ Probably only the first two. Looking at the keyboard and failing to return to ho
 
 Type the test sentence above at half speed and watch what your fingers do. Then take a [typing test](/typing-test) that breaks the result down by key rather than giving you one number.
 
-Between the two, you will have a specific list — and a specific list of three faults is a far better practice plan than a resolution to type more.
+Between the two, you will have a specific list, and a specific list of three faults is a far better practice plan than a resolution to type more.
 `,
 };

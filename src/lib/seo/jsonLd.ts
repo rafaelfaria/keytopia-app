@@ -181,6 +181,7 @@ export function glossaryNode(terms: GlossaryTerm[] = GLOSSARY): JsonLd {
 export function guideArticleNode(page: PublicPage): JsonLd {
   return {
     '@type': 'Article',
+    '@id': `${absUrl(page.path)}#article`,
     headline: page.title,
     description: page.description,
     articleSection: LEARN_GUIDE.map((s) => s.heading),

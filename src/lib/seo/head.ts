@@ -9,7 +9,7 @@
  */
 
 import {
-  SITE_NAME, SITE_OG_LOCALE, SITE_THEME_COLOR, absUrl, ogImage,
+  SITE_NAME, SITE_OG_LOCALE, absUrl, ogImage,
   pageTitle, postForPath, type PublicPage,
 } from './site';
 import { jsonLdForPath, serializeJsonLd, type HeadExtras } from './jsonLd';
@@ -72,8 +72,9 @@ export function buildHead(page: PublicPage, extras: HeadExtras = {}): HeadDoc {
 
     // Pinterest rich pins read og:*, but this stops the "save" overlay lying.
     meta({ name: 'author', content: SITE_NAME }),
-    meta({ name: 'application-name', content: SITE_NAME }),
-    meta({ name: 'theme-color', content: SITE_THEME_COLOR }),
+    // application-name and theme-color are brand constants that never vary by
+    // page, so index.html carries them as data-static. Emitting them here too
+    // put two of each in every document.
   ];
 
   // Article-specific Open Graph. Facebook, LinkedIn and several readers surface

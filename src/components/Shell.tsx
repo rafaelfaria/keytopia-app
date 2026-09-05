@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Suspense } from 'react';
 import { NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useData, useStore, levelInfo, currentStreak } from '../lib/store';
 import { auth } from '../lib/auth';
@@ -147,7 +148,12 @@ export function AppShell() {
       </header>
 
       <main id="main" className="main">
-        <Outlet />
+        {/* The routed pages are lazy chunks now, so the shell needs a boundary
+            of its own. Placed around the Outlet rather than around AppShell so
+            the nav and frame stay painted while the next page arrives. */}
+        <Suspense fallback={<div style={{ minHeight: '60vh' }} />}>
+          <Outlet />
+        </Suspense>
       </main>
 
       {!isTyping && (

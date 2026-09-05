@@ -709,3 +709,97 @@ const GAMES_COUNT_WORD = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 
     );
   }
 }
+
+// ── /about ─────────────────────────────────────────────────────────────────
+
+/**
+ * The about page.
+ *
+ * Deliberately names no individual. An invented author, or a real one dressed
+ * up with credentials nobody can check, is worse than no byline at all: it is
+ * the exact pattern search engines and readers have learned to distrust. What
+ * this page can honestly offer instead is the things a reader actually wants
+ * to know before trusting a free tool with their practice: what it is, how it
+ * decides what to show you, who pays for it, and how to reach a person.
+ */
+export const ABOUT_SECTIONS: GuideSection[] = [
+  {
+    heading: 'What KeyTopia is',
+    paragraphs: [
+      'KeyTopia is a free typing tutor that runs in a browser. It measures how you type in about '
+      + 'sixty seconds, then builds practice from what that measurement found: the individual keys '
+      + 'you are slow on, and the specific letter pairs where your hands stall. There is a full '
+      + 'curriculum behind it, 41 lessons grouped into five worlds and nine regions, plus fourteen '
+      + 'training modes, nine original games, races against computer opponents, and per-key '
+      + 'analytics.',
+      'It is not a typing test with lessons attached. The test exists to aim the practice, and '
+      + 'every passage you type afterwards is generated from your own results rather than pulled '
+      + 'from a fixed list everyone sees.',
+    ],
+  },
+  {
+    heading: 'Why it works the way it does',
+    paragraphs: [
+      'Most typing practice fails in a predictable way. A learner practises what they are already '
+      + 'good at, because that is what generic passages are made of, and the handful of keys and '
+      + 'transitions actually costing them time never come up often enough to improve. Slowness in '
+      + 'skilled typing is concentrated: a small number of letter pairs usually accounts for a '
+      + 'disproportionate share of the loss, and you cannot feel which ones they are.',
+      'So KeyTopia measures per-key response time and per-transition timing, applies a minimum '
+      + 'number of sightings before it will call a key weak, and weights what it drills by how '
+      + 'often a pattern actually occurs in English. A slow, common transition matters more than a '
+      + 'slow, rare one, and the practice reflects that.',
+    ],
+  },
+  {
+    heading: 'How it is built',
+    paragraphs: [
+      'Typing never waits on the network. Every keystroke is written to storage in your own '
+      + 'browser first, and syncing to an account happens afterwards and out of the way, so a slow '
+      + 'connection or a dropped one changes nothing about how the app feels. If you never make an '
+      + 'account, everything still works and everything stays on your device.',
+      'The public pages you are reading are rendered to static HTML ahead of time, which is why '
+      + 'they load without waiting for the application to start. The app itself is a separate, '
+      + 'private thing: it holds per-device practice history with no shared content, so it is '
+      + 'excluded from search engines deliberately.',
+    ],
+  },
+  {
+    heading: 'How it is paid for',
+    paragraphs: [
+      'It is free, and free is the whole model. There is no subscription, no paid tier, no trial '
+      + 'that expires, and no advertising anywhere on the site or in the app. Nothing about your '
+      + 'typing is sold, and there is no analytics product built on top of what you practise.',
+      'That is a deliberate constraint rather than a launch offer. A typing tutor that makes money '
+      + 'from attention has a reason to keep you playing, and a typing tutor that makes money from '
+      + 'subscriptions has a reason to keep you subscribing. Neither reason improves anybody\u2019s '
+      + 'typing, and both change what the software is quietly optimised for.',
+    ],
+  },
+  {
+    heading: 'Who it is for',
+    paragraphs: [
+      'The curriculum starts before the home row, so a child who has never touch typed can begin at '
+      + 'the first island and a competent typist can skip straight to per-key analysis. Six starter '
+      + 'games exist for children who cannot yet read fluently, the kids track has no chat, no '
+      + 'messaging and no public leaderboard, and classrooms can run assigned lessons and private '
+      + 'race rooms without every pupil holding an account.',
+    ],
+    bullets: [
+      'Children learning from the beginning, with a guardian holding the account.',
+      'Adults rebuilding technique after years of hunting and pecking.',
+      'Students and professionals whose writing is limited by their typing rather than their thinking.',
+      'Schools that need classroom practice without collecting more data than a lesson requires.',
+      'Competitive typists who want per-key and per-transition timing rather than a headline number.',
+    ],
+  },
+  {
+    heading: 'Reaching a person',
+    paragraphs: [
+      `A real person reads ${BRAND.email.legal}, including questions that are not about privacy or `
+      + 'terms. Corrections to anything published here are welcome and acted on: several pages cite '
+      + 'published research, and where the evidence is thin or contested the pages say so rather '
+      + 'than rounding it into a confident claim.',
+    ],
+  },
+];

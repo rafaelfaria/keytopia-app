@@ -11,25 +11,25 @@ Two reasons, and both are about how the skill is actually built.
 
 **Ten minutes is not worth arguing about.** A child can object to "practise your typing" indefinitely, because it has no end point. Ten minutes has a shape, and the negotiation is over before it starts.
 
-If they want to keep going, let them — but do not extend the requirement. The requirement is what has to survive a bad week.
+If they want to keep going, let them, but do not extend the requirement. The requirement is what has to survive a bad week.
 
 ## The four parts
 
-### Part 1 — Warm up (2 minutes)
+### Part 1: Warm up (2 minutes)
 
 Whatever they already do well. Home-row words, or yesterday's letters.
 
 The point is not practice; it is the tone of the session. Starting with something they can do sets up ten minutes of competence rather than ten minutes of struggle. Children who begin every session with the hardest thing come to expect sessions to feel bad.
 
-### Part 2 — The new thing (4 minutes)
+### Part 2: The new thing (4 minutes)
 
 Two or three new letters, or one specific finger that keeps going wrong.
 
 Small. A whole row is too much; three letters is about right for a week. When they can type those three without hunting, add the next two.
 
-This is also where you fix technique faults, one at a time. If they are typing C with the index finger, this is the four minutes where that gets addressed — not during the rest of the session, and definitely not during their homework.
+This is also where you fix technique faults, one at a time. If they are typing C with the index finger, this is the four minutes where that gets addressed, not during the rest of the session, and definitely not during their homework.
 
-### Part 3 — Real words (3 minutes)
+### Part 3: Real words (3 minutes)
 
 Actual words and short sentences, not letter drills.
 
@@ -37,11 +37,11 @@ This part does two jobs. It builds the transitions between letters, which is whe
 
 Use words they can read at a glance. A child typing unfamiliar vocabulary is being tested on reading.
 
-### Part 4 — Something they like (1 minute)
+### Part 4: Something they like (1 minute)
 
 A game, a silly sentence, the names of everyone in the family, a favourite word typed as many times as they can.
 
-Ending on the enjoyable part is not a reward for getting through the rest — frame it that way and you have told them the rest is a price. It is simply the last thing they remember about typing today, and it is what tomorrow has to compete with.
+Ending on the enjoyable part is not a reward for getting through the rest. Frame it that way and you have told them the rest is a price. It is simply the last thing they remember about typing today, and it is what tomorrow has to compete with.
 
 ## The rules that make it work
 
@@ -49,7 +49,7 @@ Ending on the enjoyable part is not a reward for getting through the rest — fr
 
 **Same time every day**, attached to something that already happens. After school, before dinner, after their snack. A habit with a slot does not need a decision.
 
-**Never ask how fast.** Whatever you ask about is what they will optimise for, and a child chasing speed will type faster than they can control — which rehearses errors rather than removing them. Ask "which one was tricky?" or "did you have to look?" instead.
+**Never ask how fast.** Whatever you ask about is what they will optimise for, and a child chasing speed will type faster than they can control, which rehearses errors rather than removing them. Ask "which one was tricky?" or "did you have to look?" instead.
 
 **Stop on time**, even mid-word. Especially on a good day. Ending while they still want more is worth more than three extra minutes.
 
@@ -62,11 +62,11 @@ A workable four-week shape for a child starting from scratch:
 | Week | Part 2 focus | What to expect |
 |---|---|---|
 | 1 | Home row only, and returning to it after every key | Slow, willing, novelty carries it |
-| 2 | E and I, then R and U | Resistance peaks — this is the week that decides it |
-| 3 | O, N, T, C — and watch which finger does C | They start not looking, often without noticing |
+| 2 | E and I, then R and U | Resistance peaks. This is the week that decides it |
+| 3 | O, N, T, C, and watch which finger does C | They start not looking, often without noticing |
 | 4 | Capitals, with the opposite-hand shift | Noticeably easier than week two |
 
-Week two is the difficult one, every time. Their typing is temporarily worse than the two-finger method they arrived with, and nothing visible is improving yet. Say this in advance — "it gets slower before it gets faster, that's how it works" — and it lands as expected rather than as failure.
+Week two is the difficult one, every time. Their typing is temporarily worse than the two-finger method they arrived with, and nothing visible is improving yet. Say this in advance, "it gets slower before it gets faster, that's how it works", and it lands as expected rather than as failure.
 
 ## Adjusting as they improve
 
@@ -86,13 +86,13 @@ The four-part structure stays; the contents change.
 
 **Drop parts 1 and 2, keep parts 3 and 4.** Real words and something fun is a perfectly good five minutes, and it keeps the chain going.
 
-**Do not make it up later.** Twenty minutes tomorrow is worse than ten, not better, and it teaches them that missing a day has a penalty attached — which makes the whole thing feel heavier.
+**Do not make it up later.** Twenty minutes tomorrow is worse than ten, not better, and it teaches them that missing a day has a penalty attached, which makes the whole thing feel heavier.
 
 ## Common questions
 
 ### Is ten minutes really enough?
 
-For a child, yes — comfortably. Attention is the limiting factor at this age far more than time, and a focused ten minutes produces more than a distracted twenty-five.
+For a child, yes, comfortably. Attention is the limiting factor at this age far more than time, and a focused ten minutes produces more than a distracted twenty-five.
 
 ### What if they want to do more?
 
@@ -108,7 +108,7 @@ Daily is better, but a plan that assumes seven days and collapses is worse than 
 
 ### My child gets frustrated and wants to stop.
 
-Distinguish the week-two dip from genuine unreadiness. Check whether they can hold the home row and reach the top row without moving their whole hand — if not, they are physically not ready and you should pause for a few months. [What age should kids learn to type](/blog/what-age-should-kids-learn-to-type) has the test. If they are ready, shorten to five minutes and keep going.
+Distinguish the week-two dip from genuine unreadiness. Check whether they can hold the home row and reach the top row without moving their whole hand, if not, they are physically not ready and you should pause for a few months. [What age should kids learn to type](/blog/what-age-should-kids-learn-to-type) has the test. If they are ready, shorten to five minutes and keep going.
 
 ### What if they revert to two fingers for schoolwork?
 
@@ -118,19 +118,19 @@ Expected, and worth leaving alone for the first month. Correcting them during ho
 
 Pick the time. Find a tea towel. Do ten minutes: two of warm-up, four on the home row, three of real words, one of something silly.
 
-Then do it again the next day. The routine is not complicated, and its difficulty is entirely in the repetition — which is also true of the skill it teaches.
+Then do it again the next day. The routine is not complicated, and its difficulty is entirely in the repetition, which is also true of the skill it teaches.
 
 KeyTopia's [children's world](/typing-for-kids) runs this shape as short quests and tracks which keys a child is actually weak on, which is the part of Part 2 that is hard to work out by watching. There is more context for parents in [typing for kids](/blog/typing-for-kids-guide-for-parents).
 `,
 
   'adaptive-typing-lessons': `
-Adaptive typing practice means generating your next exercise from the errors and delays in your last one. Not "getting harder as you improve" — that is difficulty scaling, which most software does. Adaptive practice measures which specific keys and which specific letter transitions are slow *for you*, and builds material that concentrates on those. The distinction matters, because past the beginner stage your slowness is concentrated rather than spread out.
+Adaptive typing practice means generating your next exercise from the errors and delays in your last one. Not "getting harder as you improve", that is difficulty scaling, which most software does. Adaptive practice measures which specific keys and which specific letter transitions are slow *for you*, and builds material that concentrates on those. The distinction matters, because past the beginner stage your slowness is concentrated rather than spread out.
 
 ## Why general practice stops working
 
 In your first month, everything is slow, so typing anything improves everything.
 
-By month three, that is no longer true. Your typing is fast almost everywhere and slow in perhaps a dozen specific places — particular keys, and more often particular letter pairs. Those places depend on your hand shape, your keyboard, and which letters you happened to learn while tired. They are individual.
+By month three, that is no longer true. Your typing is fast almost everywhere and slow in perhaps a dozen specific places, particular keys, and more often particular letter pairs. Those places depend on your hand shape, your keyboard, and which letters you happened to learn while tired. They are individual.
 
 General practice spreads effort evenly across the whole alphabet, which means most of it is spent rehearsing things you are already good at. That is why people plateau despite consistent practice: the practice is real, and it is going to the wrong places.
 
@@ -138,7 +138,7 @@ General practice spreads effort evenly across the whole alphabet, which means mo
 
 The obvious objection is that you could simply notice which keys are slow and practise those.
 
-You cannot, and this is not a matter of paying more attention. Research on skilled typing has found repeatedly that typists **detect their own errors without being able to report what went wrong** — they slow down after a mistake even when the display is manipulated so they cannot see it, while being unable to say what the mistake was. The knowledge that drives your fingers is not available to you as a description.
+You cannot, and this is not a matter of paying more attention. Research on skilled typing has found repeatedly that typists **detect their own errors without being able to report what went wrong**. They slow down after a mistake even when the display is manipulated so they cannot see it, while being unable to say what the mistake was. The knowledge that drives your fingers is not available to you as a description.
 
 The same research programme found that skilled typists asked to fill in a blank keyboard diagram do it surprisingly badly, despite typing those letters accurately moments before. Explicit knowledge and the knowledge in the hands are substantially separate. [How your brain learns to type](/blog/how-your-brain-learns-to-type) covers this in more detail.
 
@@ -150,7 +150,7 @@ Four things, and the second one is where most of the value is.
 
 **Per-key timing.** How long it takes you to press each key, measured from the previous keystroke. Slow keys are usually either a wrong finger assignment or a long reach that has not become automatic.
 
-**Per-transition timing.** How long each *pair* of letters takes. This is the important one, because at any reasonable speed the individual reach is not what is slow — the join is. Sequences that use the same finger twice, or roll awkwardly across one hand, take measurably longer than sequences that alternate hands.
+**Per-transition timing.** How long each *pair* of letters takes. This is the important one, because at any reasonable speed the individual reach is not what is slow. The join is. Sequences that use the same finger twice, or roll awkwardly across one hand, take measurably longer than sequences that alternate hands.
 
 **Per-key error rate.** How often each key is mistyped, as a rate rather than a count. Raw counts are useless: Z will have few errors simply because it is rare.
 
@@ -162,7 +162,7 @@ The mechanism, roughly:
 
 1. **Score each key and transition** on a combination of how slow it is relative to your own average and how often you get it wrong.
 2. **Weight by frequency.** A slow, common transition matters far more than a slow, rare one. Being slow on "th" is expensive; being slow on "zq" is not.
-3. **Select a small target set** — typically five to ten items. More than that and the practice stops being targeted.
+3. **Select a small target set**, typically five to ten items. More than that and the practice stops being targeted.
 4. **Generate real material containing them.** Words and sentences that happen to be dense in the target transitions, rather than nonsense strings, because real words also train the whole-word patterns that make typing fluent.
 5. **Re-measure and re-select** as the targets improve, so the set moves rather than becoming a fixed drill.
 
@@ -174,7 +174,7 @@ Some things worth checking, because "adaptive" is a word that gets applied loose
 
 - **It should name what it is training.** If a session cannot tell you which keys it targeted and why, it is probably just difficulty scaling.
 - **The targets should change.** If you see the same weak keys after a fortnight of successful practice, the measurement is not feeding back.
-- **It should use real words**, not only generated strings. Both have a role — see [words, sentences or random letters](/blog/best-way-to-practise-typing) — but a system that only produces nonsense is training key location, not typing.
+- **It should use real words**, not only generated strings. Both have a role, see [words, sentences or random letters](/blog/best-way-to-practise-typing), but a system that only produces nonsense is training key location, not typing.
 - **It should weight by frequency.** A system that sends you to drill Q and Z because they are technically your slowest keys is optimising the wrong thing.
 - **It should measure transitions, not just keys.** Key-only measurement misses most of where the time goes at intermediate speeds and above.
 
@@ -194,7 +194,7 @@ Adaptive practice is not magic, and there are three ways it goes wrong.
 
 Targeted work is one component, not the whole thing. A workable fifteen-minute adult session:
 
-- **Five minutes on the targeted set** — your current weak keys and transitions.
+- **Five minutes on the targeted set**: your current weak keys and transitions.
 - **Seven minutes of real prose with full punctuation**, which trains fluency, endurance and the punctuation that drills never contain.
 - **Three minutes on one specific habit** you are fixing.
 
@@ -204,13 +204,13 @@ The proportions matter. All-targeted practice produces someone who is good at th
 
 If you would rather not use a tool, you can approximate it, though the transition data is genuinely hard to collect by hand.
 
-1. **Type a long passage and record it** — or simply type slowly and note where you hesitate. Hesitations are more visible than they feel at speed.
+1. **Type a long passage and record it**, or simply type slowly and note where you hesitate. Hesitations are more visible than they feel at speed.
 2. **Note every error and what preceded it.** The preceding letter is often more diagnostic than the letter you got wrong.
 3. **Look for patterns.** Same-finger sequences, awkward rolls, and anything involving the little fingers.
 4. **Build word lists** containing those pairs and drill them for five minutes.
 5. **Repeat weekly**, since the targets move.
 
-This works. It is laborious, and it will miss the timing differences that are too small to feel but large enough to matter in aggregate — which is precisely the case for automated measurement.
+This works. It is laborious, and it will miss the timing differences that are too small to feel but large enough to matter in aggregate, which is precisely the case for automated measurement.
 
 ## Common questions
 
@@ -220,7 +220,7 @@ They do different jobs. A fixed curriculum is the right thing for a beginner, be
 
 ### How much data does it need?
 
-Enough to distinguish a genuine weakness from a bad session — realistically a few thousand keystrokes, which is a handful of sessions. Anything claiming to identify your weak keys from fifteen seconds of typing is guessing.
+Enough to distinguish a genuine weakness from a bad session, realistically a few thousand keystrokes, which is a handful of sessions. Anything claiming to identify your weak keys from fifteen seconds of typing is guessing.
 
 ### Will it make me faster than general practice?
 
@@ -228,15 +228,15 @@ Past the beginner stage, usually yes, because the same practice time goes to the
 
 ### Does it work for children?
 
-Yes, with one adjustment: children's weak keys change quickly as their hands grow and their technique settles, so the measurement needs to be recent. It also matters that the material stays age-appropriate — generated strings dense in a child's weak transitions can easily become unreadable.
+Yes, with one adjustment: children's weak keys change quickly as their hands grow and their technique settles, so the measurement needs to be recent. It also matters that the material stays age-appropriate. Generated strings dense in a child's weak transitions can easily become unreadable.
 
 ### Can it fix technique faults?
 
-No, and this is its main limitation. It can tell you that C is slow; it cannot tell you that you are pressing it with the wrong finger. That diagnosis needs you to watch your own hands — see [correct finger placement](/blog/correct-finger-placement-for-touch-typing). The data will point you at the right letter, which is most of the work.
+No, and this is its main limitation. It can tell you that C is slow; it cannot tell you that you are pressing it with the wrong finger. That diagnosis needs you to watch your own hands. See [correct finger placement](/blog/correct-finger-placement-for-touch-typing). The data will point you at the right letter, which is most of the work.
 
 ## Find your own targets
 
-Take a test that reports per-key and per-transition timing rather than a single number, and look at the distribution rather than the average. Most people are surprised by how concentrated their slowness is — a handful of pairs accounting for a disproportionate share of the loss.
+Take a test that reports per-key and per-transition timing rather than a single number, and look at the distribution rather than the average. Most people are surprised by how concentrated their slowness is, a handful of pairs accounting for a disproportionate share of the loss.
 
 That short list is a two-week practice plan, and it is a much smaller problem than "get faster".
 
@@ -244,13 +244,13 @@ KeyTopia's [adaptive practice](/adaptive-practice) updates a per-key picture on 
 `,
 
   'learn-touch-typing-later-in-life': `
-Yes, you can learn touch typing at fifty, sixty or seventy. Adults acquire motor skills perfectly well, and there is no evidence of a closing window for something like typing. What genuinely changes with age is worth knowing about, because two of the changes are real and neither is about your capacity to learn — and both can be planned around.
+Yes, you can learn touch typing at fifty, sixty or seventy. Adults acquire motor skills perfectly well, and there is no evidence of a closing window for something like typing. What genuinely changes with age is worth knowing about, because two of the changes are real and neither is about your capacity to learn, and both can be planned around.
 
 ## The short answer
 
 The obstacles to learning touch typing later in life are, in order of how much they matter:
 
-1. **An existing habit that works.** By far the biggest, and it has nothing to do with age — a thirty year old who has typed with two fingers for fifteen years faces the same problem.
+1. **An existing habit that works.** By far the biggest, and it has nothing to do with age, a thirty year old who has typed with two fingers for fifteen years faces the same problem.
 2. **Less tolerance for feeling incompetent.** Adults abandon skills at the awkward stage far more readily than children do, and typing has a very visible awkward stage.
 3. **Less protected practice time.** Nobody interrupts a child's timetabled lesson. Everyone interrupts your fifteen minutes.
 4. **Genuine physical changes**, which are real, modest, and mostly manageable.
@@ -267,7 +267,7 @@ Being straight about this is more useful than reassurance.
 
 That compensation is available to you deliberately. **Reading ahead of your fingers is a trainable habit**, and it is worth more to an older learner than to a younger one.
 
-**Joint stiffness and reduced flexibility** can make the longer stretches harder — the little-finger reaches, and the top row. This is worth adjusting for rather than pushing through.
+**Joint stiffness and reduced flexibility** can make the longer stretches harder, the little-finger reaches, and the top row. This is worth adjusting for rather than pushing through.
 
 **Vision changes matter more than people expect.** If you are wearing reading glasses set for a book and looking at a screen at arm's length, you will move your head to see, and once your head moves your eyes find the keyboard. A pair set for screen distance solves a typing problem that looks like a technique problem.
 
@@ -277,7 +277,7 @@ That compensation is available to you deliberately. **Reading ahead of your fing
 
 **The benefit of practice spacing.** Fifteen minutes daily still beats an hour twice a week, for the same reasons.
 
-**How long it takes.** Timelines for older adults are broadly similar to those for other adults — two to three weeks to stop looking at the keyboard, four to eight to get back to your previous speed. The variation between individuals is much larger than the variation attributable to age.
+**How long it takes.** Timelines for older adults are broadly similar to those for other adults, two to three weeks to stop looking at the keyboard, four to eight to get back to your previous speed. The variation between individuals is much larger than the variation attributable to age.
 
 ## Adjusting the method
 
@@ -313,11 +313,11 @@ Two to three weeks of being slower than your current method. Knowing this is com
 
 Worth doing deliberately rather than assuming.
 
-**The case for:** typing stops using your attention, so writing becomes less tiring. That benefit is larger the longer your sessions are, and it is the reason to do it — not speed.
+**The case for:** typing stops using your attention, so writing becomes less tiring. That benefit is larger the longer your sessions are, and it is the reason to do it, not speed.
 
 **The case against:** if you type for twenty minutes a day, mostly short messages, the return is genuinely small. Six weeks of daily practice to make a twenty-minute task marginally easier is a reasonable thing to decline.
 
-**The middle case, which is most people:** if you write emails, documents or anything at length, and you currently look at the keyboard, it is probably worth six weeks. Not because you will type faster — though you will — but because you will stop spending attention on the mechanics.
+**The middle case, which is most people:** if you write emails, documents or anything at length, and you currently look at the keyboard, it is probably worth six weeks. Not because you will type faster, though you will, but because you will stop spending attention on the mechanics.
 
 ## A realistic plan
 
@@ -328,13 +328,13 @@ Worth doing deliberately rather than assuming.
 | 5–6 | Capitals with opposite-hand shift, then punctuation. Low-stakes real typing. | Approaching your old speed. |
 | 7–8 | Real work. Longer continuous sessions. | At or past your previous speed. |
 
-Keep practice and real work separate for the first fortnight. Trying to switch everything at once means hitting something urgent in week one and reverting permanently — which is how most adult attempts end. The staging is covered in [learning touch typing as an adult](/blog/learn-touch-typing-as-an-adult).
+Keep practice and real work separate for the first fortnight. Trying to switch everything at once means hitting something urgent in week one and reverting permanently, which is how most adult attempts end. The staging is covered in [learning touch typing as an adult](/blog/learn-touch-typing-as-an-adult).
 
 ## If your hands hurt
 
 Stop, and see someone qualified. This article is not medical advice, and typing through pain is not perseverance.
 
-Some general points that are worth checking anyway: wrists floating rather than resting while typing, keyboard flat, elbows at roughly a right angle, and pressing keys just hard enough to register. Excess key force is common in people who learned on typewriters or on stiff early keyboards, and it is both tiring and slow — the return stroke is half of every keystroke. [Typing posture](/blog/typing-posture) covers the setup.
+Some general points that are worth checking anyway: wrists floating rather than resting while typing, keyboard flat, elbows at roughly a right angle, and pressing keys just hard enough to register. Excess key force is common in people who learned on typewriters or on stiff early keyboards, and it is both tiring and slow. The return stroke is half of every keystroke. [Typing posture](/blog/typing-posture) covers the setup.
 
 ## Common questions
 
@@ -348,7 +348,7 @@ Possibly not at the top end, since fine motor speed does decline. But typing spe
 
 ### I have typed with two fingers for forty years. Can that be undone?
 
-Yes. Duration makes the old habit stronger but does not make the new one unlearnable. Fix one thing at a time, expect reversion under pressure, and give it four weeks per habit — the method is in [breaking bad typing habits](/blog/break-bad-typing-habits).
+Yes. Duration makes the old habit stronger but does not make the new one unlearnable. Fix one thing at a time, expect reversion under pressure, and give it four weeks per habit. The method is in [breaking bad typing habits](/blog/break-bad-typing-habits).
 
 ### Does arthritis rule it out?
 
@@ -362,13 +362,13 @@ Ten minutes, twice a day, rather than twenty once. Easier on the hands and bette
 
 Sit properly, screen at eye level, keyboard flat. Cover your hands. Type home-row words for ten minutes, returning each finger after every key.
 
-Do not measure anything and do not type anything that matters. That is deliberately unambitious, because the first session is not where this succeeds — the fourteenth is.
+Do not measure anything and do not type anything that matters. That is deliberately unambitious, because the first session is not where this succeeds. The fourteenth is.
 
 KeyTopia's [placement test](/typing-test) takes about a minute and starts you where you actually are rather than at lesson one, which matters if you already type reasonably well and only need the technique corrected.
 `,
 
   'kids-typing-with-two-fingers': `
-Children default to two fingers because it is the strategy that works fastest on day one, and children — like everyone — optimise for day one. The habit sticks because it keeps working, right up until it stops improving. Replacing it is straightforward but not quick: expect about three weeks of a child being worse at typing than they were, and plan the conversation around that rather than around the technique.
+Children default to two fingers because it is the strategy that works fastest on day one, and children, like everyone, optimise for day one. The habit sticks because it keeps working, right up until it stops improving. Replacing it is straightforward but not quick: expect about three weeks of a child being worse at typing than they were, and plan the conversation around that rather than around the technique.
 
 ## Why they do it
 
@@ -378,7 +378,7 @@ Not laziness, and not a failure of instruction. Put a keyboard in front of anyon
 - **It works immediately.** A child can type their name in the first minute.
 - **It is faster than correct technique for about three weeks.** This is the key fact. For the entire early period, the wrong method genuinely wins.
 
-Given that, the surprising thing is not that children do it — it is that anyone ever stops.
+Given that, the surprising thing is not that children do it. It is that anyone ever stops.
 
 ## What it actually costs
 
@@ -388,7 +388,7 @@ Worth being precise, because "it's slower" undersells it.
 
 **It stops improving.** This is the real cost. Because each keystroke is visually guided, more hours mostly make a child a faster searcher rather than building an automatic movement. Touch typists keep improving for years; two-finger typists usually plateau within months.
 
-**It uses attention.** The one that matters most for a child. A nine year old writing a story who has to search for each letter is repeatedly leaving the sentence they were composing. They are not worse at writing — writing simply costs them more. [Why touch typing matters for kids](/blog/why-touch-typing-matters-for-kids) goes into this.
+**It uses attention.** The one that matters most for a child. A nine year old writing a story who has to search for each letter is repeatedly leaving the sentence they were composing. They are not worse at writing. Writing simply costs them more. [Why touch typing matters for kids](/blog/why-touch-typing-matters-for-kids) goes into this.
 
 **It gets harder to fix.** At eight the habit is months old. At thirteen it is years old and comes with an opinion attached.
 
@@ -396,7 +396,7 @@ Worth being precise, because "it's slower" undersells it.
 
 Sooner is cheaper, with one hard precondition.
 
-**Check hand size first.** Ask them to put their fingers on the home row and reach up to press E with the finger on D. If their whole hand lifts or slides to make the reach, they are not physically ready, and correcting technique now will teach a hand-shifting habit instead. Wait a few months and re-test — see [what age should kids learn to type](/blog/what-age-should-kids-learn-to-type).
+**Check hand size first.** Ask them to put their fingers on the home row and reach up to press E with the finger on D. If their whole hand lifts or slides to make the reach, they are not physically ready, and correcting technique now will teach a hand-shifting habit instead. Wait a few months and re-test. See [what age should kids learn to type](/blog/what-age-should-kids-learn-to-type).
 
 If they can hold the position, ages **seven to nine** is the ideal window: hands big enough, habit young enough, and they have not yet formed strong opinions about how they type.
 
@@ -410,7 +410,7 @@ Five stages. Do not skip stage one.
 
 Two-finger typing is a sensible solution to the problem they had. Framing it as a bad habit they should have known better than to form makes the whole project adversarial, and children resist projects that arrive as criticism.
 
-What to say instead is roughly: *"There's a way of typing where you don't have to look, and it ends up much faster. It's slower for the first few weeks though — that's just how it goes."*
+What to say instead is roughly: *"There's a way of typing where you don't have to look, and it ends up much faster. It's slower for the first few weeks though. That's just how it goes."*
 
 Naming the dip in advance is the single most useful thing you can do. It converts week two from evidence of failure into the thing you said would happen.
 
@@ -418,7 +418,7 @@ Naming the dip in advance is the single most useful thing you can do. It convert
 
 **Cover their hands.** A tea towel is enough.
 
-This is the whole intervention, and it works because two-finger typing depends on vision. Remove vision and it stops being the easier option — you have changed which strategy wins, rather than asking a child to choose the losing one.
+This is the whole intervention, and it works because two-finger typing depends on vision. Remove vision and it stops being the easier option. You have changed which strategy wins, rather than asking a child to choose the losing one.
 
 Telling a child to use the right fingers while they can still see the keyboard is asking them to be slower on purpose, all day, by choice. They will not, and it is not reasonable to expect it.
 
@@ -432,7 +432,7 @@ Ten minutes a day, four parts: warm up, new letters, real words, something fun. 
 
 They will be slower than they were. They will notice. They may say so.
 
-Agree with them, and restate the trade: *"Yes — the old way stops at about here, and this one keeps going."* Do not argue that they are not slower, because they are, and they know it.
+Agree with them, and restate the trade: *"Yes. The old way stops at about here, and this one keeps going."* Do not argue that they are not slower, because they are, and they know it.
 
 Shorten sessions if resistance is high. Five minutes daily is far better than a battle followed by nothing.
 
@@ -440,7 +440,7 @@ Shorten sessions if resistance is high. Five minutes daily is far better than a 
 
 **Do not correct their technique during homework.** This is the mistake that ends most attempts.
 
-If you correct them while they are trying to finish a piece of school work, you have turned their homework into a typing lesson, and they will come to resent both. Under time pressure the old habit will win anyway — that is what old habits do.
+If you correct them while they are trying to finish a piece of school work, you have turned their homework into a typing lesson, and they will come to resent both. Under time pressure the old habit will win anyway, that is what old habits do.
 
 Keep the correction inside the ten-minute session. The new technique migrates into real typing on its own, usually around week four, once it is strong enough to win without being enforced.
 
@@ -460,7 +460,7 @@ Once they are using more fingers, check the assignments that children most often
 
 - **C typed with the index finger** rather than the middle. Very common, and it shifts the whole hand.
 - **B and Y** grabbed by whichever hand is nearer. Worse than a simple error, because the finger used changes depending on the previous letter, so the movement never becomes automatic.
-- **Same-hand shift.** Left shift with a left-hand letter. Since almost every sentence starts with a capital, this one is paid constantly — establish opposite-hand shift from the first capital they ever type.
+- **Same-hand shift.** Left shift with a left-hand letter. Since almost every sentence starts with a capital, this one is paid constantly. Establish opposite-hand shift from the first capital they ever type.
 - **Little fingers skipped**, with the ring finger covering A, Q, Z and P.
 
 Fix one at a time, most frequent letter first. The map is in [correct finger placement](/blog/correct-finger-placement-for-touch-typing).
@@ -473,7 +473,7 @@ Because it is a ceiling, not a stage. Two-finger typing stops improving; touch t
 
 ### They keep going back to two fingers. What am I doing wrong?
 
-Probably nothing. Under pressure the older, stronger habit wins — it has thousands more repetitions. Check two things: are their hands actually covered during practice, and are you correcting them during real work? The first is the fix; the second is the most common thing that stalls it.
+Probably nothing. Under pressure the older, stronger habit wins. It has thousands more repetitions. Check two things: are their hands actually covered during practice, and are you correcting them during real work? The first is the fix; the second is the most common thing that stalls it.
 
 ### How long does it take?
 
@@ -493,7 +493,7 @@ Still very much worth doing, and it is now closer to the adult process: ring-fen
 
 ## This week
 
-Run the hand-size check. If they pass, tell them what is coming — including that it gets slower first — and start ten minutes a day with their hands covered, on home-row words only.
+Run the hand-size check. If they pass, tell them what is coming, including that it gets slower first, and start ten minutes a day with their hands covered, on home-row words only.
 
 Then leave their homework alone for a month.
 
@@ -519,7 +519,7 @@ Random letters, common words and full sentences each train something different. 
 
 **Trains:** transitions between letters in realistic proportions, and whole-word patterns.
 
-**Good for:** most practice, most of the time. English letter pairs appear in real words in the frequencies you actually type them, so the pairs you meet most often get the most practice automatically — without anyone having to design that.
+**Good for:** most practice, most of the time. English letter pairs appear in real words in the frequencies you actually type them, so the pairs you meet most often get the most practice automatically, without anyone having to design that.
 
 Words also allow the thing that makes typing feel fast: a skilled typist reads a word and the whole sequence runs off as a unit, rather than being assembled letter by letter.
 
@@ -550,7 +550,7 @@ The proportions shift with level. A complete beginner does much more of the firs
 
 **Practising on common-word lists and then wondering why real writing feels slower.**
 
-The 200 most frequent English words are short, familiar, and mostly alternate hands. They are the easiest possible typing material, which is why typing tests use them — a test built on them produces a satisfying number.
+The 200 most frequent English words are short, familiar, and mostly alternate hands. They are the easiest possible typing material, which is why typing tests use them, a test built on them produces a satisfying number.
 
 Real writing is not that. It has commas, apostrophes, quotation marks, brackets, capitals at the start of every sentence, and words you have never typed before. If you have never practised those, each one is a small stall in an otherwise fluent line.
 
@@ -560,7 +560,7 @@ The fix is simple and most people never make it: **practise on real prose with f
 
 A general principle from motor learning: practice transfers best to conditions that resemble the practice.
 
-If you want to type essays, practise on prose. If you want to type code, practise on code — the symbol density and the transitions are completely different, and prose speed transfers poorly. If you need to type numbers, practise numbers in context rather than as a separate row drill, because in real work they arrive inside sentences.
+If you want to type essays, practise on prose. If you want to type code, practise on code. The symbol density and the transitions are completely different, and prose speed transfers poorly. If you need to type numbers, practise numbers in context rather than as a separate row drill, because in real work they arrive inside sentences.
 
 This is also why practising very slowly for months works less well than it should. A movement at 40% of your target pace is a different movement from one at 90%, and the transfer upward is weaker than people expect. Practise at roughly **80% of your top speed**: fast enough to be the real thing, controlled enough to be accurate.
 
@@ -568,7 +568,7 @@ This is also why practising very slowly for months works less well than it shoul
 
 Worth addressing, because it is a common practice strategy and it is half right.
 
-**Repetition of a specific passage produces fast, visible gains** — and most of them are memory rather than typing. By the fifth run you are partly recalling rather than reading, and your score rises for a reason that will not transfer to new text.
+**Repetition of a specific passage produces fast, visible gains**, and most of them are memory rather than typing. By the fifth run you are partly recalling rather than reading, and your score rises for a reason that will not transfer to new text.
 
 **Repetition of a specific difficult sequence is genuinely useful.** Drilling "minimum" or "bright" thirty times, at a pace where it is correct, builds that pattern properly.
 
@@ -584,7 +584,7 @@ This is trainable, and only some material trains it:
 - **Word lists make it unnecessary**, because each item is self-contained.
 - **Continuous prose makes it natural**, because the next words are right there and meaningful.
 
-So if reading ahead is what you want to develop — and it is a large part of what separates 60 from 85 — the material has to be continuous text.
+So if reading ahead is what you want to develop, and it is a large part of what separates 60 from 85, the material has to be continuous text.
 
 ## A practical session
 
@@ -592,9 +592,9 @@ Fifteen minutes, for an intermediate typist:
 
 1. **Five minutes: your weak transitions.** Take your slowest three letter pairs. Type each as a short repeated string at a pace where it is correct, then embed each in five real words. This is the only place generated material belongs.
 2. **Seven minutes: continuous prose**, with commas, capitals and apostrophes, at 80% pace, aiming for 96 to 98% accuracy.
-3. **Three minutes: one specific thing** — capitals with the opposite-hand shift, or numbers, or a habit you are fixing.
+3. **Three minutes: one specific thing**: capitals with the opposite-hand shift, or numbers, or a habit you are fixing.
 
-The five-minute block is the one that requires knowing your own weak transitions, which cannot be worked out by feel — it has to be measured. [Adaptive typing lessons](/blog/adaptive-typing-lessons) covers how that measurement works.
+The five-minute block is the one that requires knowing your own weak transitions, which cannot be worked out by feel. It has to be measured. [Adaptive typing lessons](/blog/adaptive-typing-lessons) covers how that measurement works.
 
 ## For children
 
@@ -630,10 +630,10 @@ About 80% of your top speed, aiming for 96 to 98% accuracy. Slower than that tra
 
 ## Change one thing this week
 
-Whatever you currently practise on, add punctuation. Type real sentences — commas, full stops, apostrophes, capitals — rather than word lists.
+Whatever you currently practise on, add punctuation. Type real sentences, commas, full stops, apostrophes, capitals, rather than word lists.
 
 For most people that single change closes more of the gap between test performance and real typing than any amount of additional practice on the same material would.
 
-KeyTopia's [practice modes](/typing-practice-modes) each name the skill they build, including prose with full punctuation and drills generated from your own slowest transitions — which is the material that is otherwise hardest to assemble by hand.
+KeyTopia's [practice modes](/typing-practice-modes) each name the skill they build, including prose with full punctuation and drills generated from your own slowest transitions, which is the material that is otherwise hardest to assemble by hand.
 `,
 };

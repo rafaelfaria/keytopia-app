@@ -1,7 +1,7 @@
 /** Articles for days 41-45. */
 export const DAYS_41_45: Record<string, string> = {
   'time-saved-by-typing-faster': `
-Work it out with your own numbers rather than taking a figure from an advert. The calculation is simple, and the honest answer is smaller than typing software suggests and larger than sceptics assume — for a reason that has nothing to do with minutes. Most of the value of typing faster is not the time saved; it is that typing stops competing for your attention.
+Work it out with your own numbers rather than taking a figure from an advert. The calculation is simple, and the honest answer is smaller than typing software suggests and larger than sceptics assume, for a reason that has nothing to do with minutes. Most of the value of typing faster is not the time saved; it is that typing stops competing for your attention.
 
 ## The calculation
 
@@ -9,13 +9,13 @@ Three numbers you can get in ten minutes.
 
 **1. How many words do you actually type in a day?**
 
-Not how many you produce — how many you type. Estimate from a normal day: emails sent, messages, documents, notes. Most office workers land somewhere between 1,000 and 3,000 words. Writers, support staff and people who live in chat are higher.
+Not how many you produce, how many you type. Estimate from a normal day: emails sent, messages, documents, notes. Most office workers land somewhere between 1,000 and 3,000 words. Writers, support staff and people who live in chat are higher.
 
 Be honest here. People routinely overestimate this by a factor of two or three, because typing feels like most of the day when it is not.
 
 **2. What is your current net typing speed?**
 
-Net, not raw, and measured on a full minute of unfamiliar prose with punctuation — not a fifteen-second burst on common words. That burst figure is typically well above what you sustain in real work.
+Net, not raw, and measured on a full minute of unfamiliar prose with punctuation, not a fifteen-second burst on common words. That burst figure is typically well above what you sustain in real work.
 
 **3. What would your speed be after training?**
 
@@ -33,7 +33,7 @@ Take someone typing 2,000 words a day, going from 40 to 60 words per minute.
 - At 60 wpm: 2,000 ÷ 60 = **33 minutes** of typing
 - **Saved: about 17 minutes a day**
 
-Over a working year that is roughly 70 hours. Against a training cost of about seven hours — fifteen minutes a day for six weeks — that is a good return, and it repeats every year.
+Over a working year that is roughly 70 hours. Against a training cost of about seven hours, fifteen minutes a day for six weeks, that is a good return, and it repeats every year.
 
 Now the same calculation for someone already typing well:
 
@@ -62,7 +62,7 @@ Three reasons the arithmetic overstates the benefit.
 
 **Your real-world speed is below your test speed.** Tests use prepared prose. Real work involves unfamiliar words, names, technical terms, formatting and interruptions.
 
-A reasonable correction is to halve the arithmetic result for composed writing, and take it more or less at face value for transcription, data entry and copying — tasks where you already know the words.
+A reasonable correction is to halve the arithmetic result for composed writing, and take it more or less at face value for transcription, data entry and copying, tasks where you already know the words.
 
 ## Why the real answer is also larger than that
 
@@ -72,7 +72,7 @@ And now the other direction, which is the part the sceptical answer misses.
 
 This does not appear anywhere in the words-per-minute calculation, and for many people it is the larger effect.
 
-**Fatigue.** Writing at length is tiring, and mechanical effort adds to that. People who type fluently tend to write more and revise more, because both are cheaper for them — and revision is where most of the quality in a long piece comes from.
+**Fatigue.** Writing at length is tiring, and mechanical effort adds to that. People who type fluently tend to write more and revise more, because both are cheaper for them, and revision is where most of the quality in a long piece comes from.
 
 **Things you stop avoiding.** Slow typists avoid writing. They send shorter replies, take fewer notes, write less documentation. Some of that is invisible cost, and it does not show up as minutes.
 
@@ -86,7 +86,7 @@ This does not appear anywhere in the words-per-minute calculation, and for many 
 
 **Probably not:**
 
-- You already type above 70 with good accuracy and want to reach 90 for productivity reasons. The arithmetic does not support it. Do it because you enjoy it — see [how to reach 100 WPM](/blog/how-to-reach-100-wpm) — but not as an efficiency project.
+- You already type above 70 with good accuracy and want to reach 90 for productivity reasons. The arithmetic does not support it. Do it because you enjoy it, see [how to reach 100 WPM](/blog/how-to-reach-100-wpm), but not as an efficiency project.
 - You type for under half an hour a day.
 
 **The interesting middle:** 40 to 60 with good technique. The minutes are modest and the attention benefit is real. This is where the honest answer is "it depends what you write".
@@ -107,11 +107,11 @@ Worth saying plainly, because they are usually cheaper.
 
 ### How much time does typing faster really save?
 
-For someone typing 2,000 words a day going from 40 to 60 words per minute, roughly 17 minutes of pure typing time — realistically less for composed writing, where thinking dominates. Above 70 words per minute the saving becomes small.
+For someone typing 2,000 words a day going from 40 to 60 words per minute, roughly 17 minutes of pure typing time, realistically less for composed writing, where thinking dominates. Above 70 words per minute the saving becomes small.
 
 ### Is typing practice worth the time investment?
 
-If you are below 40 or you look at the keyboard, comfortably yes — about seven hours of training against a benefit that repeats every year. Above 70, the time case is weak and the comfort case is the honest one.
+If you are below 40 or you look at the keyboard, comfortably yes, about seven hours of training against a benefit that repeats every year. Above 70, the time case is weak and the comfort case is the honest one.
 
 ### What is the most valuable typing improvement?
 
@@ -119,7 +119,7 @@ Not looking at the keyboard, by a wide margin. It removes the ceiling that visua
 
 ### Do these numbers apply to programming?
 
-Poorly. Programming is not prose-bound, and typing speed is rarely the constraint. Symbol fluency and editor navigation matter more — see [touch typing for programmers](/blog/touch-typing-for-programmers).
+Poorly. Programming is not prose-bound, and typing speed is rarely the constraint. Symbol fluency and editor navigation matter more. See [touch typing for programmers](/blog/touch-typing-for-programmers).
 
 ### Should I make my team learn to type faster?
 
@@ -129,13 +129,13 @@ Only if they are slow, and only voluntarily. The arithmetic supports it for peop
 
 Estimate your daily word count. Take a one-minute test on unfamiliar prose. Put both into the formula at the top.
 
-If the answer is large, the training is six weeks. If it is small, you have just saved yourself six weeks — which is also a useful result, and a more honest one than most articles on this subject will give you.
+If the answer is large, the training is six weeks. If it is small, you have just saved yourself six weeks, which is also a useful result, and a more honest one than most articles on this subject will give you.
 
 KeyTopia's [typing test](/typing-test) gives you the net speed figure the calculation needs, measured on real prose rather than on a short burst of common words.
 `,
 
   'make-typing-practice-fun': `
-There is fun that carries the practice and fun that replaces it, and the difference is whether the enjoyable part needs the typing. A game where typing accurately is how you win teaches typing. A game where typing is the toll you pay before the fun bit teaches a child to get through the typing as fast as possible — which, since speed without control rehearses errors, is actively worse than nothing.
+There is fun that carries the practice and fun that replaces it, and the difference is whether the enjoyable part needs the typing. A game where typing accurately is how you win teaches typing. A game where typing is the toll you pay before the fun bit teaches a child to get through the typing as fast as possible, which, since speed without control rehearses errors, is actively worse than nothing.
 
 ## The test
 
@@ -143,7 +143,7 @@ Before choosing anything, ask: **if you removed the typing, would the activity s
 
 If yes, the typing is a toll. The child will optimise for getting past it.
 
-If no — if the typing *is* the challenge — then enjoying it and practising it are the same act, and the motivation is doing real work.
+If no, if the typing *is* the challenge, then enjoying it and practising it are the same act, and the motivation is doing real work.
 
 This single question sorts most typing games, apps and activities more reliably than any review.
 
@@ -173,7 +173,7 @@ The technique requirement does not change. The content is free, and letting them
 
 ### Novelty, which is the weakest
 
-Themes, characters, new backgrounds. These work and they wear off fast. Useful for getting started, useless for week six — which is why an activity built entirely on novelty produces an enthusiastic fortnight and then nothing.
+Themes, characters, new backgrounds. These work and they wear off fast. Useful for getting started, useless for week six, which is why an activity built entirely on novelty produces an enthusiastic fortnight and then nothing.
 
 ## Things that work, and cost nothing
 
@@ -193,7 +193,7 @@ Themes, characters, new backgrounds. These work and they wear off fast. Useful f
 
 The most common way well-meant fun goes wrong.
 
-Speed is the easiest thing to make exciting — timers, races, scores. It is also the thing you least want a child optimising, because typing faster than you can control rehearses errors, and errors practised are errors learned. [Why accuracy should come before speed](/blog/accuracy-before-speed) covers the mechanism.
+Speed is the easiest thing to make exciting, timers, races, scores. It is also the thing you least want a child optimising, because typing faster than you can control rehearses errors, and errors practised are errors learned. [Why accuracy should come before speed](/blog/accuracy-before-speed) covers the mechanism.
 
 Worse, speed pressure sends them back to two fingers. Under time pressure the older, faster-today habit wins, so a racing game during the transition period actively undoes the thing you are building.
 
@@ -212,7 +212,7 @@ The same applies to typing as a punishment, more so.
 Typing games work when the mechanic rewards the right thing. Four checks:
 
 - **Does an error cost something?** If a child can hammer keys and still progress, the game teaches nothing.
-- **Can it be played without looking?** If the action moves faster than a beginner can type blind, the game structurally requires looking down — undoing the main thing you are building.
+- **Can it be played without looking?** If the action moves faster than a beginner can type blind, the game structurally requires looking down, undoing the main thing you are building.
 - **Are the words real and readable?** Nonsense strings train key location and little else; unfamiliar words test reading.
 - **Is the difficulty adjustable?** If they are erring constantly, the level is wrong and they are practising mistakes.
 
@@ -229,7 +229,7 @@ A workable split for a ten-minute session:
 | Real words | 3 min | Feels like typing |
 | Something they enjoy | 1 min | Free choice |
 
-The enjoyable minute is small and it is often what makes the other nine happen. That is a perfectly good role for it — and note it comes last, so it is the closing impression rather than a reward that frames the rest as a cost.
+The enjoyable minute is small and it is often what makes the other nine happen. That is a perfectly good role for it, and note it comes last, so it is the closing impression rather than a reward that frames the rest as a cost.
 
 Full structure in [typing practice for kids](/blog/typing-practice-for-kids-routine).
 
@@ -243,13 +243,13 @@ Three things help:
 
 **Shorten rather than push.** Five minutes daily beats a battle followed by nothing.
 
-**Point at something that has improved.** Even in week two, something has — they need to look at the keyboard less for the home row, or they made fewer errors than Monday. Naming a real improvement is worth more than encouragement.
+**Point at something that has improved.** Even in week two, something has. They need to look at the keyboard less for the home row, or they made fewer errors than Monday. Naming a real improvement is worth more than encouragement.
 
 ## Common questions
 
 ### My child finds typing practice boring.
 
-Home-row drills are boring. Shorten them, and change the content rather than the technique — the same finger practice works on their friends' names. If a session is ten minutes, boring is survivable; if it is twenty-five, it is not.
+Home-row drills are boring. Shorten them, and change the content rather than the technique. The same finger practice works on their friends' names. If a session is ten minutes, boring is survivable; if it is twenty-five, it is not.
 
 ### Are typing games enough on their own?
 
@@ -261,7 +261,7 @@ Keep it small and attached to something that already happens. Ten minutes after 
 
 ### Should I do it with them?
 
-If you do not touch type yourself, yes — it makes the awkward phase shared rather than something being done to them. If you do, being nearby is enough; watching every session disrupts skilled movement in children as much as adults.
+If you do not touch type yourself, yes. It makes the awkward phase shared rather than something being done to them. If you do, being nearby is enough; watching every session disrupts skilled movement in children as much as adults.
 
 ### They only want to play the game, not do the lesson.
 
@@ -273,11 +273,11 @@ Ask them for the silliest sentence they can think of. Cover their hands. Type it
 
 Then do ten minutes tomorrow, at the same time, with the enjoyable minute at the end. The framing in [how to teach a child to type](/blog/how-to-teach-a-child-to-type) is what keeps it going past the fortnight where it stops being novel.
 
-KeyTopia's [typing games](/typing-games) each name the specific skill they train and end a run on an error rather than rewarding raw speed — which is the mechanic that makes the enjoyable part and the useful part the same thing.
+KeyTopia's [typing games](/typing-games) each name the specific skill they train and end a run on an error rather than rewarding raw speed, which is the mechanic that makes the enjoyable part and the useful part the same thing.
 `,
 
   'why-typing-speed-varies-between-tests': `
-The same typing can score 45 on one site and 62 on another, and neither is lying. Five design decisions separate typing tests, and each can move a result by more than a fortnight of practice would. Understanding them means you stop trying to reconcile the numbers and start comparing yourself to your own history on one consistent test — which is the only comparison that means anything.
+The same typing can score 45 on one site and 62 on another, and neither is lying. Five design decisions separate typing tests, and each can move a result by more than a fortnight of practice would. Understanding them means you stop trying to reconcile the numbers and start comparing yourself to your own history on one consistent test, which is the only comparison that means anything.
 
 ## 1. How errors are handled
 
@@ -297,7 +297,7 @@ If your score is much higher on one site than another, this is usually why.
 
 A test drawing from the 200 most common English words will produce a substantially higher score than one drawing from 10,000.
 
-Common words are short, familiar, and — because English distributes frequent letters across both hands — mostly alternate hands, which is the fastest kind of typing. Rarer words are longer and contain more same-hand and same-finger sequences.
+Common words are short, familiar, and, because English distributes frequent letters across both hands, mostly alternate hands, which is the fastest kind of typing. Rarer words are longer and contain more same-hand and same-finger sequences.
 
 Add punctuation and capitals and the gap widens again, because most people have never drilled them. This is why a test on lowercase word lists can flatter you by fifteen words per minute relative to real prose.
 
@@ -327,7 +327,7 @@ Small decisions with a real effect on short tests.
 
 **Whether the last, partial word counts.** Some tests credit it; some do not.
 
-**Whether backspaces count as keystrokes.** Where they do, a heavy corrector is penalised twice — once for the error and once for the repair. Defensible, and it makes cross-test comparison unreliable.
+**Whether backspaces count as keystrokes.** Where they do, a heavy corrector is penalised twice, once for the error and once for the repair. Defensible, and it makes cross-test comparison unreliable.
 
 **Whether the text scrolls or paginates.** A test that repaints the screen mid-run costs you a moment of re-orientation each time.
 
@@ -335,7 +335,7 @@ Small decisions with a real effect on short tests.
 
 The one that quietly inflates scores over time.
 
-Some sites draw from a small pool of passages. A regular visitor is increasingly measuring recall rather than typing — by the fifth encounter you are partly remembering the words rather than reading them, and your eyes can run further ahead.
+Some sites draw from a small pool of passages. A regular visitor is increasingly measuring recall rather than typing. By the fifth encounter you are partly remembering the words rather than reading them, and your eyes can run further ahead.
 
 This is also why repeatedly practising the same passage produces satisfying, non-transferable gains. Repeat *sequences* if you want a drill; do not repeat passages and treat the rising number as progress. [The best way to practise typing](/blog/best-way-to-practise-typing) covers the distinction.
 
@@ -346,7 +346,7 @@ Having accounted for design, some variance is genuinely yours:
 - **Time of day and fatigue.** Typing speed varies through the day more than most people expect.
 - **The keyboard.** Key travel, spacing and force differ enough that switching costs most people several words per minute for the first minutes.
 - **Posture and setup.** A laptop on your knees is not the same test as a desk.
-- **Being observed or timed.** Attending consciously to an automatic skill disrupts it — well documented across skilled movements, and it is why a test taken for a job feels harder.
+- **Being observed or timed.** Attending consciously to an automatic skill disrupts it, well documented across skilled movements, and it is why a test taken for a job feels harder.
 - **Warm-up.** The first thirty seconds of any session are usually below your steady state.
 
 ## How to get a number you can actually use
@@ -365,7 +365,7 @@ It should make you sceptical of any published average.
 
 Aggregated figures from typing test sites describe *that site's* visitors, taking *that site's* test, under *that site's* rules. Change the error handling and the word difficulty and the same population produces a different average.
 
-This is one reason there is no reliable, representative figure for typing speed — and why quoted averages should be treated as rough context rather than a yardstick. [Average typing speed](/blog/average-typing-speed) goes through what can and cannot honestly be said.
+This is one reason there is no reliable, representative figure for typing speed, and why quoted averages should be treated as rough context rather than a yardstick. [Average typing speed](/blog/average-typing-speed) goes through what can and cannot honestly be said.
 
 ## Common questions
 
@@ -379,7 +379,7 @@ Because a burst is being extrapolated. You can exceed your sustainable pace brie
 
 ### My score dropped 15 wpm on a different site. Have I got worse?
 
-Almost certainly not. Check the word difficulty and the error handling first — those two account for most large discrepancies.
+Almost certainly not. Check the word difficulty and the error handling first. Those two account for most large discrepancies.
 
 ### Should I use the same test forever?
 
@@ -399,7 +399,7 @@ Take a one-minute test on unfamiliar prose, at your ordinary pace, three times t
 
 That figure will be lower than your best-ever score and considerably more useful, because it is the one that describes your typing rather than your best minute.
 
-KeyTopia's [typing test](/typing-test) runs at 15, 30, 60 or 120 seconds and reports net speed, raw speed, accuracy and consistency together — so you can see for yourself how much of your number is duration and how much is you.
+KeyTopia's [typing test](/typing-test) runs at 15, 30, 60 or 120 seconds and reports net speed, raw speed, accuracy and consistency together, so you can see for yourself how much of your number is duration and how much is you.
 `,
 
   'should-schools-teach-typing': `
@@ -409,7 +409,7 @@ The strongest argument for teaching typing in schools is no longer vocational. I
 
 ### Assessment fairness
 
-The central point. If a pupil composes an essay on a keyboard — in class, for coursework, or under access arrangements in an exam — then their typing speed is part of what determines the result.
+The central point. If a pupil composes an essay on a keyboard, in class, for coursework, or under access arrangements in an exam, then their typing speed is part of what determines the result.
 
 Two pupils with identical understanding produce different work if one types at 20 words per minute while looking at the keys and the other types at 45 without. The mark reflects the keyboard, not the history.
 
@@ -419,13 +419,13 @@ Unlike most arguments about digital skills, this one is measurable and immediate
 
 Working memory is limited. A pupil hunting for letters is repeatedly interrupting the sentence they were composing to handle the mechanics, and the interruption costs the thread rather than just the second.
 
-This is why the effect is largest for extended writing — exactly the work schools care most about.
+This is why the effect is largest for extended writing, exactly the work schools care most about.
 
 ### It is cheap, and it finishes
 
 Ten to fifteen minutes a day for a term produces touch typing in most children. Few curriculum additions have that ratio: a small, finite time cost and a skill that then lasts for life without maintenance.
 
-It also needs no specialist teacher. The instruction is well understood and largely deliverable through software, with the teacher's role being to enforce the two things software cannot — hands covered, and correct fingers.
+It also needs no specialist teacher. The instruction is well understood and largely deliverable through software, with the teacher's role being to enforce the two things software cannot, hands covered, and correct fingers.
 
 ### The window is narrow and cheap
 
@@ -451,7 +451,7 @@ Against that: voice is poor for editing, unusable in a classroom of thirty, awkw
 
 ### Children pick it up anyway
 
-They pick up *typing*. They do not pick up *touch typing* — they pick up two fingers and looking down, which has a ceiling around 35 to 40 words per minute and stops improving. That is the whole point of teaching it.
+They pick up *typing*. They do not pick up *touch typing*. They pick up two fingers and looking down, which has a ceiling around 35 to 40 words per minute and stops improving. That is the whole point of teaching it.
 
 ### Not every pupil has equal access at home
 
@@ -463,19 +463,19 @@ The evidence-informed version, stripped of ambition:
 
 **When:** a sustained block in Years 3 to 5, roughly ages seven to ten. Earlier is physically premature for many children; later means unlearning.
 
-**How much:** ten to fifteen minutes, daily, for a term or two. Not an hour a week — motor skills consolidate between sessions, so frequency matters far more than total time. A weekly lesson is close to the least effective possible arrangement.
+**How much:** ten to fifteen minutes, daily, for a term or two. Not an hour a week. Motor skills consolidate between sessions, so frequency matters far more than total time. A weekly lesson is close to the least effective possible arrangement.
 
 **What:** home row first, letters added by frequency and reach, hands covered from the first session, accuracy emphasised over speed, then capitals and punctuation.
 
-**Assessment:** technique and accuracy, not words per minute. Whatever is measured is what pupils optimise for, and a class chasing a speed number will type faster than they can control — which rehearses errors.
+**Assessment:** technique and accuracy, not words per minute. Whatever is measured is what pupils optimise for, and a class chasing a speed number will type faster than they can control, which rehearses errors.
 
-**Who delivers it:** a class teacher with software doing the sequencing. The teacher's job is the two things software cannot do — enforce covered hands, and watch which fingers are moving.
+**Who delivers it:** a class teacher with software doing the sequencing. The teacher's job is the two things software cannot do, enforce covered hands, and watch which fingers are moving.
 
 ## The readiness problem
 
 One practical detail that programmes routinely get wrong.
 
-A child whose hand cannot span the home row without shifting will not learn touch typing however long they practise — they will learn a hand-shifting habit that then has to be removed. Hand size varies considerably within a year group.
+A child whose hand cannot span the home row without shifting will not learn touch typing however long they practise. They will learn a hand-shifting habit that then has to be removed. Hand size varies considerably within a year group.
 
 A thirty-second check at the start of a programme is worth doing: ask a pupil to hold the home row and reach up to E with the finger on D, and watch whether the hand stays put. Those who cannot are better served waiting a term. [What age should kids learn to type](/blog/what-age-should-kids-learn-to-type) has the test.
 
@@ -485,7 +485,7 @@ Being straight about this, because both sides of the argument tend to overclaim.
 
 **Reasonably well supported:** distributed practice beats massed practice, so daily short sessions outperform weekly long ones. Touch typing produces higher ceilings than visually guided typing. Motor skills become automatic with correct repetition and remain accessible for years.
 
-**Not well supported:** specific claims that typing instruction improves writing quality, spelling or academic attainment generally. There are plausible mechanisms — freed attention, cheaper revision — but the direct evidence is thin, and schools should be sceptical of programmes promising attainment gains.
+**Not well supported:** specific claims that typing instruction improves writing quality, spelling or academic attainment generally. There are plausible mechanisms, freed attention, cheaper revision, but the direct evidence is thin, and schools should be sceptical of programmes promising attainment gains.
 
 The honest case for school typing is about **access and fairness on keyboard-based tasks**, not about raising attainment across the board. That is a good enough case on its own, and it has the advantage of being true.
 
@@ -494,7 +494,7 @@ The honest case for school typing is about **access and fairness on keyboard-bas
 Which is most places. The consequences are predictable:
 
 - Most pupils arrive at secondary school with two-finger technique and no realistic prospect of improving it without deliberate intervention.
-- The children who do touch type are disproportionately those whose parents arranged it — so the skill tracks family resources.
+- The children who do touch type are disproportionately those whose parents arranged it, so the skill tracks family resources.
 - Extended written work on a keyboard measures typing alongside whatever it was meant to measure.
 
 That last point is the one that should concern anyone designing assessment.
@@ -523,7 +523,7 @@ There is a plausible mechanism and the direct evidence is limited. The defensibl
 
 ### What about pupils with additional needs?
 
-Touch typing is often *more* accessible than handwriting for pupils with motor difficulties or dyslexia, and it is frequently part of exam access arrangements. Where that is the case, the arrangement is worth far more if the pupil can actually type — which is an argument for instruction rather than just permission.
+Touch typing is often *more* accessible than handwriting for pupils with motor difficulties or dyslexia, and it is frequently part of exam access arrangements. Where that is the case, the arrangement is worth far more if the pupil can actually type, which is an argument for instruction rather than just permission.
 
 ## For teachers and school leaders
 
@@ -535,7 +535,7 @@ KeyTopia's [schools page](/typing-for-schools) sets out how classroom use works 
 `,
 
   'typing-faster-at-work': `
-Most of what slows down a working day looks like typing and is not. Before training speed, work out which of your three text types is actually costing you — email, documents and chat need different skills — and how much of the delay is decision rather than keystrokes. For a lot of people the answer is that typing is fine and the friction is somewhere else entirely.
+Most of what slows down a working day looks like typing and is not. Before training speed, work out which of your three text types is actually costing you, email, documents and chat need different skills, and how much of the delay is decision rather than keystrokes. For a lot of people the answer is that typing is fine and the friction is somewhere else entirely.
 
 ## Three kinds of work typing
 
@@ -545,7 +545,7 @@ They feel like one activity and they are not, which is why general typing practi
 
 **Characteristics:** medium length, composed rather than copied, heavy on names, salutations and stock phrases, and constantly interrupted.
 
-**What actually slows you down:** deciding what to say, and rewriting the opening. The typing itself is rarely the constraint — most people spend longer choosing the tone of the first sentence than typing the entire message.
+**What actually slows you down:** deciding what to say, and rewriting the opening. The typing itself is rarely the constraint. Most people spend longer choosing the tone of the first sentence than typing the entire message.
 
 **What helps:** text expansion for the phrases you repeat, a decision about tone made once rather than per message, and writing shorter emails. Typing speed helps least here of the three.
 
@@ -553,7 +553,7 @@ They feel like one activity and they are not, which is why general typing practi
 
 **Characteristics:** sustained, structured, revised repeatedly.
 
-**What actually slows you down:** thinking, and the cost of revision. Fluent typists revise more, because rewriting a paragraph is cheap for them — and most of the quality in a long document comes from revision.
+**What actually slows you down:** thinking, and the cost of revision. Fluent typists revise more, because rewriting a paragraph is cheap for them, and most of the quality in a long document comes from revision.
 
 **What helps:** typing that does not require attention, so composing and typing stop competing. This is where touch typing genuinely pays, and it pays in fatigue rather than in minutes.
 
@@ -563,17 +563,17 @@ They feel like one activity and they are not, which is why general typing practi
 
 **What actually slows you down:** context switching, not keystrokes.
 
-**What helps:** typing without looking, specifically — because in chat you are usually also reading, thinking or in a meeting, and the attention cost of hunting for keys is paid at exactly the wrong moment.
+**What helps:** typing without looking, specifically, because in chat you are usually also reading, thinking or in a meeting, and the attention cost of hunting for keys is paid at exactly the wrong moment.
 
 ## Where the time actually goes
 
 Before training anything, spend a day noticing. Most people find their working "typing time" breaks down roughly like this:
 
-- **Deciding what to write** — the largest share for email and documents.
+- **Deciding what to write**: the largest share for email and documents.
 - **Finding things.** The previous message, the file, the figure, the right document.
 - **Formatting and tidying.** Lists, headings, tables, pasted text that arrives with the wrong styling.
 - **Correcting mistakes**, which costs four to six keystrokes each plus a broken rhythm.
-- **Actually typing new words** — usually a smaller proportion than it feels.
+- **Actually typing new words**, usually a smaller proportion than it feels.
 
 Only the last row responds to typing speed. The fourth responds to accuracy, which is a different and usually cheaper fix.
 
@@ -585,7 +585,7 @@ In order of return, and only the fourth is typing speed.
 
 Even at the same words per minute, this changes what typing costs you.
 
-At work you are almost always doing something else at the same time — following a conversation, holding a train of thought, watching a screen share. Every glance at your hands drops some of that, and reloading it costs more than the keystroke did.
+At work you are almost always doing something else at the same time, following a conversation, holding a train of thought, watching a screen share. Every glance at your hands drops some of that, and reloading it costs more than the keystroke did.
 
 If you look down, this is the highest-value change available and it takes about three weeks. [How to stop looking at the keyboard](/blog/stop-looking-at-the-keyboard) has the method.
 
@@ -606,17 +606,17 @@ The six that matter across nearly every application:
 - **Select by word**, and select to end of line
 - **Switch window and switch tab**
 - **Search within the document**
-- **Paste without formatting** — which removes a whole category of tidying
+- **Paste without formatting**, which removes a whole category of tidying
 
 ### 4. Then train typing speed
 
-Once the above are done, if you are below about 60 words per minute, six weeks of fifteen minutes a day is worth it. Above 70, the arithmetic does not support it — see [how much time faster typing saves](/blog/time-saved-by-typing-faster).
+Once the above are done, if you are below about 60 words per minute, six weeks of fifteen minutes a day is worth it. Above 70, the arithmetic does not support it. See [how much time faster typing saves](/blog/time-saved-by-typing-faster).
 
 ### 5. Practise on the text you actually write
 
 This is the one most people miss.
 
-Typing practice is usually lowercase word lists. Work typing is full of capitals, commas, apostrophes, brackets, names, email addresses and numbers. If you have never drilled those, each is a small stall in an otherwise fluent line — which is exactly why a good test score can coexist with a working day that feels slow.
+Typing practice is usually lowercase word lists. Work typing is full of capitals, commas, apostrophes, brackets, names, email addresses and numbers. If you have never drilled those, each is a small stall in an otherwise fluent line, which is exactly why a good test score can coexist with a working day that feels slow.
 
 Practise on real prose with full punctuation. This single change often closes most of the gap.
 
@@ -624,7 +624,7 @@ Practise on real prose with full punctuation. This single change often closes mo
 
 Four things worth drilling deliberately, because they appear constantly at work and never in practice material.
 
-**Capitals at the start of every sentence.** Use the opposite hand's shift — left-hand letter, right shift. Same-hand shift is a stretch with the hand locked, and since nearly every sentence starts with a capital the cost is paid all day.
+**Capitals at the start of every sentence.** Use the opposite hand's shift, left-hand letter, right shift. Same-hand shift is a stretch with the hand locked, and since nearly every sentence starts with a capital the cost is paid all day.
 
 **Names and email addresses.** Proper nouns, the at sign, full stops without spaces. Nothing in standard practice prepares you for these and you type them dozens of times a day.
 
@@ -636,7 +636,7 @@ Four things worth drilling deliberately, because they appear constantly at work 
 
 A typing test is one minute. A working day is hours.
 
-If your accuracy is fine for a minute and falls apart after four, you have an endurance problem rather than a technique one — and it is usually tension or posture rather than skill. The signs: shoulders creeping up, wrists resting on the desk while typing, pressing keys much harder than needed.
+If your accuracy is fine for a minute and falls apart after four, you have an endurance problem rather than a technique one, and it is usually tension or posture rather than skill. The signs: shoulders creeping up, wrists resting on the desk while typing, pressing keys much harder than needed.
 
 That last one is a genuine speed cost as well as a fatigue cost, because excess force slows the return stroke and the return is half of every keystroke. [Typing posture](/blog/typing-posture) covers the setup.
 
@@ -684,6 +684,6 @@ Probably slightly, for long documents and live notes, and probably not for email
 
 For one day, notice when you are actually waiting for your hands rather than for your next sentence.
 
-If it is rarely, your typing is fine and the friction is elsewhere — shortcuts, interruptions, or writing more than you need to. If it is often, take a [typing test](/typing-test) on prose with full punctuation and check the gap between your raw and net speed. That gap will tell you whether to train speed or accuracy, and the accuracy answer is usually both cheaper and faster.
+If it is rarely, your typing is fine and the friction is elsewhere, shortcuts, interruptions, or writing more than you need to. If it is often, take a [typing test](/typing-test) on prose with full punctuation and check the gap between your raw and net speed. That gap will tell you whether to train speed or accuracy, and the accuracy answer is usually both cheaper and faster.
 `,
 };

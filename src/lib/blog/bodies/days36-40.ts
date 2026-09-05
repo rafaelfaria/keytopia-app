@@ -1,7 +1,7 @@
 /** Articles for days 36-40. */
 export const DAYS_36_40: Record<string, string> = {
   'touch-typing-for-programmers': `
-Typing speed is not what makes you a better programmer, and the usual dismissal — "typing isn't the bottleneck, thinking is" — is half right. The half it misses is that for a developer the valuable skill is not words per minute at all. It is symbol fluency and never looking down, because code is dense in punctuation and because looking away from the screen breaks something more expensive than time.
+Typing speed is not what makes you a better programmer, and the usual dismissal, "typing isn't the bottleneck, thinking is", is half right. The half it misses is that for a developer the valuable skill is not words per minute at all. It is symbol fluency and never looking down, because code is dense in punctuation and because looking away from the screen breaks something more expensive than time.
 
 ## Why the standard answer is incomplete
 
@@ -11,9 +11,9 @@ The premise is right. The conclusion does not follow, because it treats typing a
 
 **Code is punctuation-dense.** Brackets, braces, semicolons, angle brackets, underscores, arrows, dollar signs, backticks, quotation marks. A line of code can be a third symbols. Those live on the outer columns and the top row, reached by the weakest fingers, and almost nobody drills them.
 
-**Editing is not composing.** A large part of programming is small, precise edits inside existing code — change this argument, rename that variable, move this block. These are short bursts of high-accuracy typing interleaved with navigation, not sustained prose.
+**Editing is not composing.** A large part of programming is small, precise edits inside existing code, change this argument, rename that variable, move this block. These are short bursts of high-accuracy typing interleaved with navigation, not sustained prose.
 
-**Looking down costs context, not seconds.** When you glance at your hands, you leave the screen — and the screen is holding the state you were reasoning about. The cost is the reload, not the second.
+**Looking down costs context, not seconds.** When you glance at your hands, you leave the screen, and the screen is holding the state you were reasoning about. The cost is the reload, not the second.
 
 So the useful question is not "does typing speed matter" but "which typing skills matter", and the answers are different from prose.
 
@@ -33,7 +33,7 @@ If you look down while typing, that is the thing to fix, and it is worth more th
 
 Being able to type the punctuation without hesitation.
 
-Most typing training is lowercase letters, so most typists — including fast ones — have a small stall on every bracket. In prose that happens rarely. In code it happens constantly, and it disrupts a line you were composing as one thought.
+Most typing training is lowercase letters, so most typists, including fast ones, have a small stall on every bracket. In prose that happens rarely. In code it happens constantly, and it disrupts a line you were composing as one thought.
 
 The specific offenders, on a UK or US QWERTY layout: braces and square brackets on the right little finger, the angle brackets that require shift, the underscore, the pipe, the backtick and the tilde. All little-finger territory, all shifted, all rarely practised.
 
@@ -41,7 +41,7 @@ This is drillable in about two weeks and almost nobody does it.
 
 ### 3. Accuracy
 
-Higher stakes than in prose, for an obvious reason: a typo in a sentence is a typo, and a typo in code is a bug — sometimes one that compiles.
+Higher stakes than in prose, for an obvious reason: a typo in a sentence is a typo, and a typo in code is a bug, sometimes one that compiles.
 
 Modern tooling catches a lot of it, which has quietly lowered everyone's accuracy. That is mostly fine and occasionally expensive: the errors your linter cannot see are the ones that matter, and those are the semantic ones a careless typist makes more of.
 
@@ -75,7 +75,7 @@ Usually not, and there is a programming-specific reason to be cautious.
 
 Layouts like Dvorak and Colemak are optimised for English prose letter frequencies. Code has different frequencies and, more importantly, a great deal of punctuation that these layouts either move or leave alone somewhat arbitrarily. The optimisation target is not your workload.
 
-Against that, you lose: every other machine you sit at, and — significantly — your editor's keybindings, which are placed for QWERTY and scatter under Dvorak. Vim users in particular find hjkl meaningless on a rearranged layout.
+Against that, you lose: every other machine you sit at, and, significantly, your editor's keybindings, which are placed for QWERTY and scatter under Dvorak. Vim users in particular find hjkl meaningless on a rearranged layout.
 
 The evidence for large speed gains from alternative layouts is weak even for prose, as [QWERTY explained](/blog/why-is-the-keyboard-qwerty) sets out. For code it is weaker still.
 
@@ -83,7 +83,7 @@ The evidence for large speed gains from alternative layouts is weak even for pro
 
 It may make typing more pleasant, which over eight hours a day is a real benefit and not one to dismiss.
 
-It will not make you meaningfully faster. What genuinely affects typing performance is layout stability, consistent key travel and a comfortable position — not switch type. [Mechanical versus membrane keyboards](/blog/mechanical-vs-membrane-keyboards) goes through what the evidence supports.
+It will not make you meaningfully faster. What genuinely affects typing performance is layout stability, consistent key travel and a comfortable position, not switch type. [Mechanical versus membrane keyboards](/blog/mechanical-vs-membrane-keyboards) goes through what the evidence supports.
 
 The one keyboard property that does matter for programming: **do not switch between keyboards with different layouts of the symbol keys.** Moving between a UK and a US layout, or between a full-size and a compact board that relocates the brackets, is a genuine and recurring cost.
 
@@ -91,13 +91,13 @@ The one keyboard property that does matter for programming: **do not switch betw
 
 If you already touch type prose at a reasonable speed:
 
-**Week 1 — symbols.** Ten minutes a day drilling the punctuation you actually use. Write out a line of the symbols from your own codebase and type it repeatedly at a controlled pace. Pay attention to which finger presses each one, and use the opposite-hand shift.
+**Week 1: symbols.** Ten minutes a day drilling the punctuation you actually use. Write out a line of the symbols from your own codebase and type it repeatedly at a controlled pace. Pay attention to which finger presses each one, and use the opposite-hand shift.
 
-**Week 2 — real code.** Type out code from a file you know, deliberately, watching for hesitations. The hesitations are your list. Do not fix them by typing more code; drill the specific sequences.
+**Week 2: real code.** Type out code from a file you know, deliberately, watching for hesitations. The hesitations are your list. Do not fix them by typing more code; drill the specific sequences.
 
-**Ongoing — navigation.** Pick one editor movement you do not currently use and force yourself to use it for a week. Repeat. This compounds far faster than typing practice.
+**Ongoing: navigation.** Pick one editor movement you do not currently use and force yourself to use it for a week. Repeat. This compounds far faster than typing practice.
 
-If you do not yet touch type, do that first — it is a six-week project and it is worth more than everything above. [How to learn touch typing](/blog/how-to-learn-touch-typing) is the sequence.
+If you do not yet touch type, do that first. It is a six-week project and it is worth more than everything above. [How to learn touch typing](/blog/how-to-learn-touch-typing) is the sequence.
 
 ## Common questions
 
@@ -111,7 +111,7 @@ Around 60 words per minute on prose is comfortably enough for everything, includ
 
 ### Should I practise typing code specifically?
 
-Yes, for symbols — that is the part general typing practice never covers. Practising whole programs is less useful than it sounds, because you end up practising your own idioms rather than the transitions you are slow on.
+Yes, for symbols, that is the part general typing practice never covers. Practising whole programs is less useful than it sounds, because you end up practising your own idioms rather than the transitions you are slow on.
 
 ### Does autocomplete make typing speed irrelevant?
 
@@ -119,13 +119,13 @@ It reduces the volume, not the value of fluency. You still type the trigger, sti
 
 ### Is it worth learning if I have ten years of two-finger habits?
 
-Yes, if you spend your day at a keyboard — but for the attention benefit rather than the speed. Expect three weeks of being slower. [Breaking bad typing habits](/blog/break-bad-typing-habits) covers replacing an entrenched habit one at a time.
+Yes, if you spend your day at a keyboard, but for the attention benefit rather than the speed. Expect three weeks of being slower. [Breaking bad typing habits](/blog/break-bad-typing-habits) covers replacing an entrenched habit one at a time.
 
 ## What to do
 
 Type a line of real code from your own project and notice where you hesitate. It will almost certainly be a symbol, and almost certainly one reached by a little finger.
 
-That is your practice list, and it is a two-week job — considerably smaller than "learn to type faster", and considerably more useful for what you actually do.
+That is your practice list, and it is a two-week job, considerably smaller than "learn to type faster", and considerably more useful for what you actually do.
 
 KeyTopia has a code-oriented practice mode built around exactly this material, and its [typing test](/typing-test) reports per-key timing, which will show you the symbol stalls you have stopped noticing.
 `,
@@ -138,13 +138,13 @@ For most student work, 40 words per minute is workable and 50 to 60 is comfortab
 | Task | Workable | Comfortable | Why |
 |---|---|---|---|
 | Homework, short assignments | 30 wpm | 40 wpm | You have time; typing is rarely the constraint |
-| Essays and coursework | 40 wpm | 55 wpm | Long, but self-paced — thinking dominates |
+| Essays and coursework | 40 wpm | 55 wpm | Long, but self-paced, thinking dominates |
 | Timed written exams | 45 wpm | 60 wpm | Fixed clock, so speed converts directly into content |
 | Live lecture or meeting notes | 50 wpm | 65 wpm | You cannot pause the input |
 | Transcribing a recording | 60 wpm | 75 wpm | Continuous, unfamiliar, no thinking time |
 | Programming coursework | 40 wpm | 55 wpm | Symbol fluency matters more than speed |
 
-Two things stand out. **The numbers are lower than typing articles usually imply** — 60 words per minute covers essentially everything a student does. And there is no row where 100 is required.
+Two things stand out. **The numbers are lower than typing articles usually imply**, 60 words per minute covers essentially everything a student does. And there is no row where 100 is required.
 
 ## Why lecture notes are the hard case
 
@@ -152,9 +152,9 @@ Live note-taking is the most demanding common keyboard task there is, and it is 
 
 You are doing three things at once: listening, deciding what is worth writing, and typing. The input does not stop and you cannot rewind it. If typing takes any of your attention, it comes out of the other two.
 
-Below about 40 words per minute this is close to unworkable — you fall behind and then have to choose between listening and catching up. Around 50 to 60 it becomes viable. Above that you can be selective rather than desperate, which is when notes become genuinely useful rather than a transcript you never reread.
+Below about 40 words per minute this is close to unworkable. You fall behind and then have to choose between listening and catching up. Around 50 to 60 it becomes viable. Above that you can be selective rather than desperate, which is when notes become genuinely useful rather than a transcript you never reread.
 
-Worth noting: there is a real debate about whether typing notes is better than handwriting them, and the popular version of that debate is more settled than the evidence. [Typing versus handwriting](/blog/typing-vs-handwriting) covers what the studies actually found. The point here is narrower — if you are going to type notes, being slow at it is the worst of both worlds.
+Worth noting: there is a real debate about whether typing notes is better than handwriting them, and the popular version of that debate is more settled than the evidence. [Typing versus handwriting](/blog/typing-vs-handwriting) covers what the studies actually found. The point here is narrower, if you are going to type notes, being slow at it is the worst of both worlds.
 
 ## Why essays need less speed than students expect
 
@@ -172,11 +172,11 @@ A student typing 65 words per minute at 88% accuracy is slower in practice than 
 
 In an exam it is worse than slow: an uncorrected error is a mark. And accuracy is the first thing to collapse under time pressure, which is exactly when you need it.
 
-If your raw speed is well above your net speed, accuracy is your constraint and it is the faster fix — typically visible within two weeks. See [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
+If your raw speed is well above your net speed, accuracy is your constraint and it is the faster fix, typically visible within two weeks. See [typing speed versus accuracy](/blog/typing-speed-vs-accuracy).
 
 ## Check three things before deciding you are too slow
 
-**Are you looking at the keyboard?** If so, your current number is not your ceiling as a typist — it is the ceiling of a method. Visually guided typing tops out around 35 to 40 for almost everyone and does not improve much with practice. This is the single most important thing to know about your own speed.
+**Are you looking at the keyboard?** If so, your current number is not your ceiling as a typist. It is the ceiling of a method. Visually guided typing tops out around 35 to 40 for almost everyone and does not improve much with practice. This is the single most important thing to know about your own speed.
 
 **Is your accuracy above 95%?** If not, you are a faster typist with an error problem, which is a different and cheaper fix.
 
@@ -188,13 +188,13 @@ Students have less spare time than almost anyone, so the plan has to be small an
 
 **Fifteen minutes a day for six weeks, then stop.** Typing is one of the few skills where a short project genuinely finishes. Once it is automatic it stays.
 
-**Practise in term time, not the holidays.** Motor skills consolidate between sessions, so daily practice during a busy term beats a concentrated week off — and the daily habit is easier to attach to an existing routine.
+**Practise in term time, not the holidays.** Motor skills consolidate between sessions, so daily practice during a busy term beats a concentrated week off, and the daily habit is easier to attach to an existing routine.
 
 **Practise with punctuation from day one.** Academic writing is full of commas, semicolons, brackets, quotation marks and apostrophes. Word-list practice contains none of them, which is why so many students' test scores look fine and their essays feel slow.
 
 **Learn four keyboard shortcuts** rather than chasing ten more words per minute: word-delete, jump-by-word, select-word, and your reference manager's insert-citation. These save more time in a long essay than the speed would.
 
-The session structure that works is in [typing practice for adults](/blog/typing-practice-for-adults) — the plan is the same regardless of age.
+The session structure that works is in [typing practice for adults](/blog/typing-practice-for-adults). The plan is the same regardless of age.
 
 ## When not to start
 
@@ -216,7 +216,7 @@ For homework and essays, yes. For live lecture notes and timed exams, it is tigh
 
 ### Will typing faster improve my grades?
 
-Not directly, and it would be dishonest to suggest otherwise. What it does is remove a constraint on tasks where attention is scarce — timed exams and live notes especially — and make revision cheaper. Those are worth something without being a grade improvement.
+Not directly, and it would be dishonest to suggest otherwise. What it does is remove a constraint on tasks where attention is scarce, timed exams and live notes especially, and make revision cheaper. Those are worth something without being a grade improvement.
 
 ### Should I type or handwrite in exams?
 
@@ -224,7 +224,7 @@ Whichever you are allowed and faster at. If your institution permits typed answe
 
 ### I type 80 wpm. Should I keep practising?
 
-Not for academic reasons. At 80 your typing is not what limits any student task. If you enjoy it, that is a perfectly good reason — see [how to reach 100 WPM](/blog/how-to-reach-100-wpm) — but it will not help your degree.
+Not for academic reasons. At 80 your typing is not what limits any student task. If you enjoy it, that is a perfectly good reason, see [how to reach 100 WPM](/blog/how-to-reach-100-wpm), but it will not help your degree.
 
 ### How fast should I type in secondary school?
 
@@ -232,7 +232,7 @@ Around 40 by the end of secondary school puts you in a comfortable position for 
 
 ## Find out where you are
 
-Take a two-minute test on unfamiliar prose with full punctuation — not a word list — at your ordinary pace. Note your net speed, your accuracy, and whether your eyes went to your hands.
+Take a two-minute test on unfamiliar prose with full punctuation, not a word list, at your ordinary pace. Note your net speed, your accuracy, and whether your eyes went to your hands.
 
 If you looked down, that is your project and it is worth six weeks. If you did not and your accuracy is above 96%, your speed is your speed, and whether to improve it is a question about your workload rather than about your typing.
 
@@ -240,7 +240,7 @@ KeyTopia's [typing test](/typing-test) reports all three, and the wider case for
 `,
 
   'how-to-reach-100-wpm': `
-Getting to 100 words per minute is a genuine training project, not a by-product of typing a lot. Past about 70, general practice stops working, because your typing is no longer uniformly slow — it is fast almost everywhere and stalls in a small number of specific places. Three limits bind at this level, each needs its own drill, and the whole thing takes something like three to six months of deliberate work.
+Getting to 100 words per minute is a genuine training project, not a by-product of typing a lot. Past about 70, general practice stops working, because your typing is no longer uniformly slow. It is fast almost everywhere and stalls in a small number of specific places. Three limits bind at this level, each needs its own drill, and the whole thing takes something like three to six months of deliberate work.
 
 ## First: is it worth it?
 
@@ -262,19 +262,19 @@ Everything below follows from these. Diagnose which one is binding before choosi
 
 At 70 words per minute your individual reaches are fine. What is slow is a small number of **letter pairs**.
 
-The expensive ones are sequences that use the same finger twice in a row — the finger has to travel, arrive, press, and travel again, with no opportunity to overlap. Compare "minimum" with "problem": one of them stacks work on individual fingers and the other distributes it.
+The expensive ones are sequences that use the same finger twice in a row. The finger has to travel, arrive, press, and travel again, with no opportunity to overlap. Compare "minimum" with "problem": one of them stacks work on individual fingers and the other distributes it.
 
 Also expensive: awkward rolls across one hand, and sequences that require a long reach immediately followed by a return.
 
 **The drill:** measure per-transition timing, take your slowest ten pairs, and type each as a short repeated string at a pace where it is correct. Then embed each in five real words. Five minutes a day.
 
-This is the single highest-yield activity at this level, and it is impossible without measurement — you cannot feel a 40-millisecond difference, but you type those pairs thousands of times a day.
+This is the single highest-yield activity at this level, and it is impossible without measurement. You cannot feel a 40-millisecond difference, but you type those pairs thousands of times a day.
 
 ### 2. Rhythm, not peak speed
 
 Two typists can both average 70 while one types evenly and the other alternates 110 with stalls. The bursty typist's average is dragged down by the stalls, not limited by their top speed.
 
-The relevant measure is **consistency** — the variation in your inter-key intervals. At this level, raising your average by removing stalls is far more achievable than raising your ceiling.
+The relevant measure is **consistency**, the variation in your inter-key intervals. At this level, raising your average by removing stalls is far more achievable than raising your ceiling.
 
 **The drill:** type to a steady beat, slower than your top speed, one keystroke per beat. Evenness is the target. This feels unproductive and works well, particularly for the transposition errors that come from one hand arriving early.
 
@@ -288,13 +288,13 @@ At 100 words per minute you cannot read a word, type it, then read the next. The
 
 This reflects how skilled typing is organised: one process works out *what* to type while a lower one executes the keystrokes, and the upper one needs to stay ahead. [How your brain learns to type](/blog/how-your-brain-learns-to-type) covers the research.
 
-**The drill:** read a whole phrase before typing any of it, then type it while reading the next. Deliberately uncomfortable at first. Continuous prose is the only material that trains this — word lists make it unnecessary and random letters make it impossible.
+**The drill:** read a whole phrase before typing any of it, then type it while reading the next. Deliberately uncomfortable at first. Continuous prose is the only material that trains this. Word lists make it unnecessary and random letters make it impossible.
 
 ## The other things that cap people at this level
 
 Less fundamental, but common:
 
-**Punctuation and capitals.** If your score on word lists is 85 and on real prose is 65, this is your answer. Same-hand shift is the usual culprit — nearly every sentence starts with a capital, so the cost is paid constantly.
+**Punctuation and capitals.** If your score on word lists is 85 and on real prose is 65, this is your answer. Same-hand shift is the usual culprit. Nearly every sentence starts with a capital, so the cost is paid constantly.
 
 **Numbers.** Long reaches, rarely drilled, and they appear in real text often enough to matter.
 
@@ -312,7 +312,7 @@ Less fundamental, but common:
 | 9–10 | Reading ahead | 15 min continuous prose, phrase-at-a-time, 5 min transitions |
 | 11–12 | Endurance and consolidation | 10 min continuous, 5 min bursts, 5 min re-measure |
 
-Twenty minutes a day rather than fifteen, because at this level the sessions have more components. Re-measure in weeks 1, 5 and 11 — not daily, which shows noise.
+Twenty minutes a day rather than fifteen, because at this level the sessions have more components. Re-measure in weeks 1, 5 and 11, not daily, which shows noise.
 
 ## What progress looks like
 
@@ -338,7 +338,7 @@ Expect a few words per minute a month, unevenly, with occasional jumps when some
 
 ### How long does it take to reach 100 wpm from 70?
 
-Three to six months of deliberate, targeted practice for most people — and some people find it takes considerably longer or does not arrive. It is a real project with an uncertain endpoint, unlike the 30-to-60 range which almost anyone reaches with consistent practice.
+Three to six months of deliberate, targeted practice for most people, and some people find it takes considerably longer or does not arrive. It is a real project with an uncertain endpoint, unlike the 30-to-60 range which almost anyone reaches with consistent practice.
 
 ### Can anyone reach 100 wpm?
 
@@ -358,7 +358,7 @@ No. Consistency of key travel and a comfortable position matter; switch type doe
 
 ### Should I use word lists or prose to train?
 
-Both, for different limits. Word lists for transition drills and speed bursts; continuous prose for rhythm, reading ahead, punctuation and endurance — and prose is where the reading-ahead skill can only be built. [Words, sentences or random letters](/blog/best-way-to-practise-typing) covers the split.
+Both, for different limits. Word lists for transition drills and speed bursts; continuous prose for rhythm, reading ahead, punctuation and endurance, and prose is where the reading-ahead skill can only be built. [Words, sentences or random letters](/blog/best-way-to-practise-typing) covers the split.
 
 ## Start with the diagnosis
 
@@ -366,17 +366,17 @@ Take three tests this week: one on common word lists, one on real prose with ful
 
 The differences between them tell you which of the three limits is binding. A big gap between word lists and prose is punctuation. A big drop over five minutes is endurance. Similar scores across all three, with uneven timing, is rhythm.
 
-KeyTopia's [typing test](/typing-test) reports consistency and per-transition timing alongside the headline figure — which at this level is the only part that tells you what to do next.
+KeyTopia's [typing test](/typing-test) reports consistency and per-transition timing alongside the headline figure, which at this level is the only part that tells you what to do next.
 `,
 
   'why-touch-typing-matters-for-kids': `
-The case for teaching children to touch type is not that they need to type quickly. It is that a child who does not have to think about typing has more attention left for what they are writing. That difference shows up most in exactly the situations that matter — writing at length, working under time pressure, and any task where the keyboard is between a child and the thing they are actually being assessed on.
+The case for teaching children to touch type is not that they need to type quickly. It is that a child who does not have to think about typing has more attention left for what they are writing. That difference shows up most in exactly the situations that matter, writing at length, working under time pressure, and any task where the keyboard is between a child and the thing they are actually being assessed on.
 
 ## The attention argument
 
 Working memory is limited, and writing already uses a lot of it: holding an idea, choosing words, remembering what you have already said, keeping to the point.
 
-If typing also requires attention, it competes for the same limited resource. A child hunting for letters is repeatedly interrupting the thought to handle the mechanics — and the interruption costs the thread of the sentence, not just the second it took to find the key.
+If typing also requires attention, it competes for the same limited resource. A child hunting for letters is repeatedly interrupting the thought to handle the mechanics, and the interruption costs the thread of the sentence, not just the second it took to find the key.
 
 When typing becomes automatic, that competition disappears. This is why the benefit is largest for demanding writing rather than short tasks, and why it is easy to underestimate if you only think about words per minute.
 
@@ -402,7 +402,7 @@ Being specific is more useful than general claims about the future of work.
 
 **Extended writing.** Stories, projects, reports. The tasks where a child has something to say and the mechanics are in the way.
 
-**Assessed work produced on a keyboard.** Increasingly common, and this is the strongest version of the argument — a child being marked on their thinking should not be limited by their hands. That is a fairness point rather than a vocational one, and it is covered in [should schools still teach touch typing](/blog/should-schools-teach-typing).
+**Assessed work produced on a keyboard.** Increasingly common, and this is the strongest version of the argument, a child being marked on their thinking should not be limited by their hands. That is a fairness point rather than a vocational one, and it is covered in [should schools still teach touch typing](/blog/should-schools-teach-typing).
 
 **Note-taking**, from secondary school onwards. The most demanding common keyboard task, and one that is close to impossible below about 40 words per minute.
 
@@ -439,7 +439,7 @@ The right-hand column matters as much as the left. Most of the pressure parents 
 
 Ages **seven to nine** is where this is cheapest, for two reasons that pull together: hands are usually big enough to span the home row, and a two-finger habit is months old rather than years old.
 
-The physical precondition is worth checking rather than assuming. Ask them to hold the home row and reach up to E with the finger on D. If their whole hand slides, they are not ready — and practising anyway teaches a hand-shifting habit that will have to be removed later. [What age should kids learn to type](/blog/what-age-should-kids-learn-to-type) has the test.
+The physical precondition is worth checking rather than assuming. Ask them to hold the home row and reach up to E with the finger on D. If their whole hand slides, they are not ready, and practising anyway teaches a hand-shifting habit that will have to be removed later. [What age should kids learn to type](/blog/what-age-should-kids-learn-to-type) has the test.
 
 Later is still very much worth doing. It just takes two to three weeks longer and meets more resistance, because by then they have a working method and an opinion about it.
 
@@ -447,7 +447,7 @@ Later is still very much worth doing. It just takes two to three weeks longer an
 
 Ten minutes a day for about three months, with a visibly worse fortnight in the middle.
 
-That fortnight is the whole difficulty. Their typing genuinely gets worse before it gets better, because they are replacing a method that works. Naming it in advance — "it goes slower first, that's how it works" — converts week two from evidence of failure into the thing you predicted.
+That fortnight is the whole difficulty. Their typing genuinely gets worse before it gets better, because they are replacing a method that works. Naming it in advance, "it goes slower first, that's how it works", converts week two from evidence of failure into the thing you predicted.
 
 Practical structure is in [typing practice for kids](/blog/typing-practice-for-kids-routine), and the framing that keeps it going is in [how to teach a child to type](/blog/how-to-teach-a-child-to-type).
 
@@ -455,7 +455,7 @@ Practical structure is in [typing practice for kids](/blog/typing-practice-for-k
 
 ### Will typing still matter when they grow up?
 
-Keyboards have outlasted several confident predictions of their obsolescence, and every widely used replacement so far — touchscreens, voice — has turned out to complement them rather than displace them for extended or precise text. Beyond that, nobody knows, and it is worth being honest that this is a bet rather than a certainty. It is a cheap bet: ten minutes a day for three months.
+Keyboards have outlasted several confident predictions of their obsolescence, and every widely used replacement so far, touchscreens, voice, has turned out to complement them rather than displace them for extended or precise text. Beyond that, nobody knows, and it is worth being honest that this is a bet rather than a certainty. It is a cheap bet: ten minutes a day for three months.
 
 ### Is it worth it if their school does not teach it?
 
@@ -467,7 +467,7 @@ Yes, and the sooner the better. Fast two-finger typing is the case that looks li
 
 ### Does it help with spelling?
 
-There is a plausible mechanism — typing a word repeatedly builds a motor pattern for its letter sequence — but the evidence that typing practice improves spelling generally is not strong, and it would be overclaiming to promise it. Treat it as a possible side benefit rather than a reason.
+There is a plausible mechanism, typing a word repeatedly builds a motor pattern for its letter sequence, but the evidence that typing practice improves spelling generally is not strong, and it would be overclaiming to promise it. Treat it as a possible side benefit rather than a reason.
 
 ### How much does it actually help academically?
 
@@ -479,7 +479,7 @@ Watch them type for one minute without commenting. Note two things: whether thei
 
 If the answer is "eyes down, two fingers", you have found the thing worth ten minutes a day. Cover their hands, start on the home row, and warn them about week two.
 
-KeyTopia's [children's world](/typing-for-kids) is built around this — accuracy reported ahead of speed, age-appropriate words, and short quests rather than drills — and the full parent's guide is in [typing for kids](/blog/typing-for-kids-guide-for-parents).
+KeyTopia's [children's world](/typing-for-kids) is built around this, accuracy reported ahead of speed, age-appropriate words, and short quests rather than drills, and the full parent's guide is in [typing for kids](/blog/typing-for-kids-guide-for-parents).
 `,
 
   'why-repetition-makes-you-faster': `
@@ -487,15 +487,15 @@ Repetition works, but not evenly and not indefinitely. Improvement on a practise
 
 ## What repetition actually changes
 
-Not your muscles. The phrase "muscle memory" is convenient and wrong — muscles do not store anything. What changes is in the nervous system, as a movement shifts from being assembled step by step to being represented as a single automatic sequence.
+Not your muscles. The phrase "muscle memory" is convenient and wrong. Muscles do not store anything. What changes is in the nervous system, as a movement shifts from being assembled step by step to being represented as a single automatic sequence.
 
 Three things happen as a movement is repeated:
 
-**It becomes faster.** The individual reach takes less time, and — more importantly — the *gaps* between movements shrink, because the next movement can be prepared while the current one is still finishing.
+**It becomes faster.** The individual reach takes less time, and, more importantly, the *gaps* between movements shrink, because the next movement can be prepared while the current one is still finishing.
 
 **It becomes more consistent.** Early repetitions vary a lot; later ones are nearly identical. This matters more than it sounds: consistency is what allows the next movement in a sequence to be prepared reliably.
 
-**It requires less attention.** The end state is a movement that runs while you think about something else — which for typing is the entire goal.
+**It requires less attention.** The end state is a movement that runs while you think about something else, which for typing is the entire goal.
 
 The standard framework for this is Paul Fitts and Michael Posner's three stages: a **cognitive** stage where you work out what to do, an **associative** stage where you refine it, and an **autonomous** stage where it runs itself. Repetition is what moves you between them.
 
@@ -513,17 +513,17 @@ Two practical consequences follow, and they matter more than the mathematics:
 
 **Do not quit when progress slows.** A flattening curve is what learning looks like, not what failure looks like. People who expect linear progress interpret month three as a plateau and stop.
 
-**Undirected repetition eventually stops paying.** This is the important one. Once you are on the flat part of the curve, typing more of the same produces very little — not because repetition has stopped working, but because you are repeating things you are already good at.
+**Undirected repetition eventually stops paying.** This is the important one. Once you are on the flat part of the curve, typing more of the same produces very little, not because repetition has stopped working, but because you are repeating things you are already good at.
 
 ## Why more practice stops working
 
 In your first month, everything is slow, so typing anything improves everything.
 
-By month three that is no longer true. Your typing is fast almost everywhere and slow in perhaps a dozen specific places — particular keys, and more often particular letter pairs. General practice distributes effort evenly across the alphabet, which means most of it goes to sequences that are already automatic.
+By month three that is no longer true. Your typing is fast almost everywhere and slow in perhaps a dozen specific places, particular keys, and more often particular letter pairs. General practice distributes effort evenly across the alphabet, which means most of it goes to sequences that are already automatic.
 
 This is the mechanism behind most typing plateaus. The practice is real and it is going to the wrong places.
 
-The fix is not more repetition but **more targeted** repetition: find the specific slow transitions and drill those. Which requires measurement, because you cannot identify them by feel — research on skilled typing has found that typists detect their own errors without being able to report what went wrong. [Adaptive typing lessons](/blog/adaptive-typing-lessons) covers how that measurement works.
+The fix is not more repetition but **more targeted** repetition: find the specific slow transitions and drill those. Which requires measurement, because you cannot identify them by feel. Research on skilled typing has found that typists detect their own errors without being able to report what went wrong. [Adaptive typing lessons](/blog/adaptive-typing-lessons) covers how that measurement works.
 
 ## Repetition of what, exactly
 
@@ -531,7 +531,7 @@ A distinction that changes how you practise.
 
 **Repeating a passage** produces fast, visible gains, and most of them are memory. By the fifth run you are partly recalling rather than reading, and the score rises for a reason that will not transfer to new text.
 
-**Repeating a sequence** — a difficult letter pair, an awkward word — builds the motor pattern properly, because the pattern is what is being repeated rather than the whole passage.
+**Repeating a sequence**, a difficult letter pair, an awkward word, builds the motor pattern properly, because the pattern is what is being repeated rather than the whole passage.
 
 So: repeat sequences, not passages. Drill "minimum" thirty times if that is a word that stalls you. Do not type the same paragraph twenty times and treat the improving number as progress.
 
@@ -539,7 +539,7 @@ So: repeat sequences, not passages. Drill "minimum" thirty times if that is a wo
 
 The uncomfortable half of the principle.
 
-The nervous system strengthens whatever movement is repeated, and it has no access to your intentions. Practise at a pace where you make regular errors and you are running two patterns — the correct one and the mistaken one — and both accumulate repetitions. The mistaken one does not fade because you disapproved of it.
+The nervous system strengthens whatever movement is repeated, and it has no access to your intentions. Practise at a pace where you make regular errors and you are running two patterns, the correct one and the mistaken one, and both accumulate repetitions. The mistaken one does not fade because you disapproved of it.
 
 This is why "type fast and accuracy will follow" fails so reliably, and why the useful practice pace is around 80% of your top speed rather than at it. The full argument is in [why typing accuracy should come before speed](/blog/accuracy-before-speed).
 
@@ -547,17 +547,17 @@ This is why "type fast and accuracy will follow" fails so reliably, and why the 
 
 Two findings from motor learning translate directly into a schedule.
 
-**Distributed practice beats massed practice.** The same total time produces better retention spread across more sessions. Fifteen minutes daily beats an hour and three quarters weekly — and the difference is not small.
+**Distributed practice beats massed practice.** The same total time produces better retention spread across more sessions. Fifteen minutes daily beats an hour and three quarters weekly, and the difference is not small.
 
 **Consolidation continues after practice stops.** Motor skills keep stabilising in the hours after a session, including during sleep. This is why something awkward yesterday is sometimes easy today with no intervening practice.
 
-Both point the same way: short, frequent sessions with rest between them. It also means there is no benefit to grinding on once a session has stopped going well — the consolidation happens later regardless.
+Both point the same way: short, frequent sessions with rest between them. It also means there is no benefit to grinding on once a session has stopped going well. The consolidation happens later regardless.
 
 ## Variability: why identical repetition is not ideal
 
 A refinement worth knowing.
 
-Repeating exactly the same thing produces fast improvement on that thing and comparatively poor transfer to anything else. Practice with some variation — the same target transitions appearing in different words, different contexts, different surrounding letters — tends to produce slower apparent progress during the session and better retention afterwards.
+Repeating exactly the same thing produces fast improvement on that thing and comparatively poor transfer to anything else. Practice with some variation, the same target transitions appearing in different words, different contexts, different surrounding letters, tends to produce slower apparent progress during the session and better retention afterwards.
 
 This is a reasonably well supported finding in motor learning, and it has a practical form for typing: drill your weak pair as a repeated string to build the movement, then **immediately embed it in five different real words**. The string builds it; the varied context makes it stick.
 
@@ -568,7 +568,7 @@ This is a reasonably well supported finding in motor learning, and it has a prac
 | Learning the keys | Slow, deliberate, identical. Correctness above all. |
 | Building fluency (30–60 wpm) | Real words and prose, at 80% pace, daily |
 | Plateaued (60–80 wpm) | Targeted: your slowest transitions, then varied contexts |
-| Advanced (80+ wpm) | Rhythm work, reading ahead, endurance — plus targeted pairs |
+| Advanced (80+ wpm) | Rhythm work, reading ahead, endurance, plus targeted pairs |
 
 Notice that the amount of repetition does not increase down the table. What changes is what is being repeated.
 
@@ -584,11 +584,11 @@ A little every day, clearly. Motor skills consolidate between sessions, so more 
 
 ### Why did I get worse after a break?
 
-Short breaks often *help* — people frequently return better than they left, which is consolidation. Longer breaks cost some speed, which returns quickly. If you got worse after a day off, it is more likely day-to-day variation than lost skill.
+Short breaks often *help*. People frequently return better than they left, which is consolidation. Longer breaks cost some speed, which returns quickly. If you got worse after a day off, it is more likely day-to-day variation than lost skill.
 
 ### I practise every day and I am not improving. Why?
 
-Most likely you are on the flat part of the curve and practising generally rather than specifically. Measure per-key and per-transition timing, and drill the slowest. If your accuracy is below 95%, that is the answer instead — see [how to improve typing accuracy](/blog/improve-typing-accuracy).
+Most likely you are on the flat part of the curve and practising generally rather than specifically. Measure per-key and per-transition timing, and drill the slowest. If your accuracy is below 95%, that is the answer instead. See [how to improve typing accuracy](/blog/improve-typing-accuracy).
 
 ### Does typing at work count as practice?
 
@@ -596,10 +596,10 @@ It maintains the skill and rarely improves it, because you type your own vocabul
 
 ## Use the curve
 
-If you are early in learning, repeat a lot and repeat correctly — the returns are enormous right now and what you lay down is what everything later refines.
+If you are early in learning, repeat a lot and repeat correctly. The returns are enormous right now and what you lay down is what everything later refines.
 
 If you have been practising for months with little to show, the problem is almost certainly not the amount. Measure which transitions are slow, drill those specifically, then put them into varied real words.
 
-KeyTopia's [typing test](/typing-test) reports per-key and per-transition timing, and its [adaptive practice](/adaptive-practice) does exactly the drill-then-vary pattern described above — which is the shape of repetition that keeps paying once the general kind has stopped.
+KeyTopia's [typing test](/typing-test) reports per-key and per-transition timing, and its [adaptive practice](/adaptive-practice) does exactly the drill-then-vary pattern described above, which is the shape of repetition that keeps paying once the general kind has stopped.
 `,
 };

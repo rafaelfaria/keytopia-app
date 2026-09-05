@@ -1,7 +1,7 @@
 /** Articles for days 26-30. */
 export const DAYS_26_30: Record<string, string> = {
   'best-typing-games-for-kids': `
-Typing games can build real typing skill, but only if the thing the game rewards is the thing you want the child to learn. A game that rewards raw speed teaches a child to type faster than they can control, which rehearses errors. A game where the typing is a gate between the fun parts teaches them to get through the typing. Before choosing one, work out what the mechanic actually reinforces — that is what your child will practise.
+Typing games can build real typing skill, but only if the thing the game rewards is the thing you want the child to learn. A game that rewards raw speed teaches a child to type faster than they can control, which rehearses errors. A game where the typing is a gate between the fun parts teaches them to get through the typing. Before choosing one, work out what the mechanic actually reinforces, that is what your child will practise.
 
 ## The one question that sorts good games from bad ones
 
@@ -12,7 +12,7 @@ Not what it says it teaches. What it actually rewards, moment to moment.
 - **Rewards correct letters in the right order, with the right fingers** → teaches typing.
 - **Rewards speed above all else** → teaches racing, which in practice means rehearsing mistakes.
 - **Rewards typing as a gate** ("type this word to unlock the level") → teaches getting through the typing.
-- **Rewards mashing** — where wrong keys cost nothing and progress happens anyway → teaches nothing.
+- **Rewards mashing**, where wrong keys cost nothing and progress happens anyway → teaches nothing.
 
 Children are excellent at identifying what a system rewards and optimising for it. If the fastest route through the game involves abandoning technique, they will find it, and they will practise that.
 
@@ -28,7 +28,7 @@ A game where you can hammer the keyboard and still advance is entertainment with
 
 This is the one most games fail, and it is subtle.
 
-If the on-screen action moves fast enough that a child must react instantly, they will look at their hands — because looking is faster right now. A game that structurally requires visual key-hunting is undoing the main thing you are building, no matter what its description says.
+If the on-screen action moves fast enough that a child must react instantly, they will look at their hands, because looking is faster right now. A game that structurally requires visual key-hunting is undoing the main thing you are building, no matter what its description says.
 
 Look for games that let a child pause, or that move at a pace matched to a beginner's speed rather than to an arcade one.
 
@@ -44,19 +44,19 @@ Good typing material starts on the home row and adds letters by frequency and re
 
 ## The kinds of game, and what each is good for
 
-Rather than a list of products, here is what each mechanic actually trains — which is more useful, because you can apply it to whatever your child already has.
+Rather than a list of products, here is what each mechanic actually trains, which is more useful, because you can apply it to whatever your child already has.
 
 **Falling words.** Words descend and must be typed before they land. Trains word-level recognition and speed under mild pressure. Risk: they often accelerate past a beginner's controlled pace, which is when technique goes. Best with adjustable difficulty.
 
 **Racing games.** Type a passage against an opponent or a clock. Trains sustained typing and endurance. Risk: pure speed rewards, which encourages errors. Best when accuracy affects the result.
 
-**One-key and letter-hunt games.** Press the single letter shown. Ideal for ages four to six — builds letter recognition and hand-eye coordination without demanding a hand span the child does not have.
+**One-key and letter-hunt games.** Press the single letter shown. Ideal for ages four to six, builds letter recognition and hand-eye coordination without demanding a hand span the child does not have.
 
 **Rhythm games.** Type in time to a beat. Genuinely useful for evenness, which is an underrated component of speed: consistency usually improves before average speed does.
 
 **Story and adventure games.** Typing advances a narrative. Best for motivation over weeks; weakest at building specific technique unless the typing is the challenge rather than a gate.
 
-**Defence games.** Type words to stop something arriving. Similar profile to falling words, with more urgency — which cuts both ways.
+**Defence games.** Type words to stop something arriving. Similar profile to falling words, with more urgency, which cuts both ways.
 
 ## What games cannot do
 
@@ -90,7 +90,7 @@ So the honest position is: games are excellent for volume and motivation, and po
 
 **Ages 8–11.** Most typing games are aimed here. Prioritise ones where accuracy affects the outcome, and where difficulty can be turned down.
 
-**Ages 11+.** Racing and competitive formats work well because the motivation is genuine, but watch for the speed-over-accuracy trap — this is exactly the age where a child will happily trade 90% accuracy for a better score.
+**Ages 11+.** Racing and competitive formats work well because the motivation is genuine, but watch for the speed-over-accuracy trap. This is exactly the age where a child will happily trade 90% accuracy for a better score.
 
 ## Games versus practice: what the split should be
 
@@ -114,11 +114,11 @@ They can get faster at hunting and pecking. They are unlikely to learn touch typ
 
 ### Are free typing games good enough?
 
-Many are. Price is unrelated to whether the mechanic rewards the right thing — apply the four checks above regardless of cost.
+Many are. Price is unrelated to whether the mechanic rewards the right thing. Apply the four checks above regardless of cost.
 
 ### My child only wants to play games, not do lessons.
 
-Use the games as the end of the session rather than the whole of it, and keep the lesson short — five minutes of proper practice followed by five of game is a reasonable trade and far better than a battle. What does not work is making the game a reward for the lesson, which frames the lesson as the price of the fun.
+Use the games as the end of the session rather than the whole of it, and keep the lesson short, five minutes of proper practice followed by five of game is a reasonable trade and far better than a battle. What does not work is making the game a reward for the lesson, which frames the lesson as the price of the fun.
 
 ### Do typing games work for adults?
 
@@ -132,13 +132,13 @@ Watch, and test occasionally. If their accuracy is stable or improving and they 
 
 Sit with your child for one round of whatever they currently play, and watch their hands rather than the screen. Note two things: whether their eyes go down, and how many fingers are moving.
 
-That tells you more than any review. If the answer is "eyes down, two fingers", the game is not the problem — but it is not the solution either, and the fix is ten minutes of proper practice with their hands covered before the game starts. There is a structure for that in [typing practice for kids](/blog/typing-practice-for-kids-routine).
+That tells you more than any review. If the answer is "eyes down, two fingers", the game is not the problem, but it is not the solution either, and the fix is ten minutes of proper practice with their hands covered before the game starts. There is a structure for that in [typing practice for kids](/blog/typing-practice-for-kids-routine).
 
-KeyTopia's [typing games](/typing-games) each name the specific skill they train — accuracy, rhythm, endurance, weak keys — precisely because a game that does not say what it is training usually is not training anything.
+KeyTopia's [typing games](/typing-games) each name the specific skill they train, accuracy, rhythm, endurance, weak keys, precisely because a game that does not say what it is training usually is not training anything.
 `,
 
   'how-your-brain-learns-to-type': `
-Skilled typists genuinely do not know where the keys are, in the sense that they could tell you. Asked to fill in a blank keyboard diagram, experienced typists place a surprisingly small proportion of the letters correctly — while typing all of them accurately moments earlier. That gap is not a curiosity. It is the clearest evidence of what actually happens when typing becomes automatic, and it has direct consequences for how you should practise.
+Skilled typists genuinely do not know where the keys are, in the sense that they could tell you. Asked to fill in a blank keyboard diagram, experienced typists place a surprisingly small proportion of the letters correctly, while typing all of them accurately moments earlier. That gap is not a curiosity. It is the clearest evidence of what actually happens when typing becomes automatic, and it has direct consequences for how you should practise.
 
 ## Two kinds of knowing
 
@@ -146,7 +146,7 @@ Psychologists distinguish **explicit** knowledge, which you can report, from **i
 
 Riding a bicycle is the standard example: you can do it, and you cannot write down how. Typing turns out to be a particularly clean case, because the explicit and implicit knowledge can be tested separately and directly.
 
-Studies by Kristy Snyder, Gordon Logan and Matthew Crump have done exactly that, asking skilled typists to write the letters onto an empty picture of a keyboard. Typists do this poorly — far worse than their typing would suggest — and the failure is not a memory lapse in the ordinary sense. The knowledge that drives the fingers was never stored in a form the person can read out.
+Studies by Kristy Snyder, Gordon Logan and Matthew Crump have done exactly that, asking skilled typists to write the letters onto an empty picture of a keyboard. Typists do this poorly, far worse than their typing would suggest, and the failure is not a memory lapse in the ordinary sense. The knowledge that drives the fingers was never stored in a form the person can read out.
 
 Three practical consequences follow immediately:
 
@@ -160,9 +160,9 @@ The most useful model of skilled typing comes from work by Logan, Crump and coll
 
 **The outer loop** decides *what* to type. It works with words and meaning, reads ahead through the text, and passes words down one at a time.
 
-**The inner loop** decides *how*. It takes a word and produces the keystrokes — and it does this without the outer loop knowing or caring which fingers are involved.
+**The inner loop** decides *how*. It takes a word and produces the keystrokes, and it does this without the outer loop knowing or caring which fingers are involved.
 
-The separation produces testable and slightly strange results. Skilled typists slow down after making an error even when the display is manipulated so they cannot see that anything went wrong: the inner loop detected the problem. Yet asked what they got wrong, they are often unable to say — the outer loop was never told.
+The separation produces testable and slightly strange results. Skilled typists slow down after making an error even when the display is manipulated so they cannot see that anything went wrong: the inner loop detected the problem. Yet asked what they got wrong, they are often unable to say. The outer loop was never told.
 
 This is not a tidy metaphor. It is why several practical things are true:
 
@@ -174,7 +174,7 @@ That last one is a well-documented effect across skilled movements, and it is wh
 
 ## How the skill gets built
 
-The standard account of motor skill acquisition — Paul Fitts and Michael Posner's three stages, from the 1960s — maps neatly onto learning to type.
+The standard account of motor skill acquisition, Paul Fitts and Michael Posner's three stages, from the 1960s, maps neatly onto learning to type.
 
 **Cognitive stage.** You are working out what to do. Every key is a deliberate act: "R is up and to the left, index finger." Slow, effortful, highly variable, and it uses all of your attention. This is the first week or two.
 
@@ -184,7 +184,7 @@ The standard account of motor skill acquisition — Paul Fitts and Michael Posne
 
 The practically important part is that these stages need different things. The cognitive stage needs clear instruction and slow, deliberate repetition. The associative stage needs consistent repetition of the *correct* movement. The autonomous stage gets almost nothing from general practice and improves only through targeted work on specific weaknesses.
 
-Most people who plateau are applying associative-stage practice — more typing, generally — to an autonomous-stage problem.
+Most people who plateau are applying associative-stage practice, more typing, generally, to an autonomous-stage problem.
 
 ## Why you must not look
 
@@ -194,13 +194,13 @@ A movement guided by vision and a movement guided by the finger's own sense of p
 
 This is why someone can type while looking for twenty years and not improve. They are not slowly becoming a touch typist; they are practising something else, well.
 
-It is also why the fix is a cover over the hands rather than a resolution. Looking is faster today, every time, so willpower is being asked to choose the slower option under time pressure — which it reliably will not. [How to stop looking at the keyboard](/blog/stop-looking-at-the-keyboard) covers the staged method.
+It is also why the fix is a cover over the hands rather than a resolution. Looking is faster today, every time, so willpower is being asked to choose the slower option under time pressure, which it reliably will not. [How to stop looking at the keyboard](/blog/stop-looking-at-the-keyboard) covers the staged method.
 
 ## Why errors practised are errors learned
 
 The nervous system strengthens whatever movement is repeated. It has no access to whether you meant it.
 
-Practise at a pace where you make regular errors, and you are running two patterns — the intended movement and the mistaken one — and both accumulate repetitions. The mistaken one does not fade because you disapproved of it.
+Practise at a pace where you make regular errors, and you are running two patterns, the intended movement and the mistaken one, and both accumulate repetitions. The mistaken one does not fade because you disapproved of it.
 
 This is the mechanistic basis for accuracy before speed, and it is why "type fast and accuracy will follow" fails so consistently. The argument in full is in [why typing accuracy should come before speed](/blog/accuracy-before-speed).
 
@@ -225,7 +225,7 @@ Putting the above together:
 - **Read ahead of your fingers**, deliberately, once you have the letters.
 - **Stop trying to feel your weak spots and measure them**, because the knowledge is not available to you directly.
 
-That last point is what adaptive practice is built on: measuring the interval between every pair of keystrokes, finding which transitions are consistently slow for you, and generating exercises from those. It is not a shortcut around the work — it is the only way to direct the work, given that introspection cannot. [How adaptive typing lessons target your weakest keys](/blog/adaptive-typing-lessons) covers the mechanism.
+That last point is what adaptive practice is built on: measuring the interval between every pair of keystrokes, finding which transitions are consistently slow for you, and generating exercises from those. It is not a shortcut around the work. It is the only way to direct the work, given that introspection cannot. [How adaptive typing lessons target your weakest keys](/blog/adaptive-typing-lessons) covers the mechanism.
 
 ## Common questions
 
@@ -243,27 +243,27 @@ Because attending to an automatic skill disrupts it, pushing control back to a s
 
 ### How long until typing becomes automatic?
 
-Stopping looking usually takes two to three weeks of daily practice. Genuine automaticity — typing while holding a conversation, with no sense of effort — typically takes several months. [How long it takes to learn touch typing](/blog/how-long-to-learn-touch-typing) sets out the milestones.
+Stopping looking usually takes two to three weeks of daily practice. Genuine automaticity, typing while holding a conversation, with no sense of effort, typically takes several months. [How long it takes to learn touch typing](/blog/how-long-to-learn-touch-typing) sets out the milestones.
 
 ### Does typing skill transfer between keyboards?
 
-Between keyboards, largely yes — key travel and spacing differ and produce a brief adjustment, but the sequence knowledge transfers. Between *layouts*, no: a different layout is a different skill, and the two interfere with each other.
+Between keyboards, largely yes. Key travel and spacing differ and produce a brief adjustment, but the sequence knowledge transfers. Between *layouts*, no: a different layout is a different skill, and the two interfere with each other.
 
 ## The practical version
 
 If you want to work with the mechanism rather than against it: cover your hands, type at an accuracy you can hold, practise briefly and often, read ahead of your fingers, and let measurement tell you what to work on rather than intuition.
 
-The last one is the hardest to do unaided, which is exactly why it is worth doing deliberately. A [typing test](/typing-test) that reports per-key and per-transition timing will usually show that a surprising share of your lost time sits on a handful of letters — a fact your hands know and you do not.
+The last one is the hardest to do unaided, which is exactly why it is worth doing deliberately. A [typing test](/typing-test) that reports per-key and per-transition timing will usually show that a surprising share of your lost time sits on a handful of letters, a fact your hands know and you do not.
 `,
 
   'why-is-the-keyboard-qwerty': `
-QWERTY was designed in the early 1870s by Christopher Latham Sholes and his collaborators for the first commercially successful typewriter, manufactured by E. Remington and Sons from 1874. The popular explanation — that it was arranged to slow typists down and stop the machine jamming — is a simplification that the historical evidence does not really support. The layout survives today for reasons that have more to do with the 1890s than with typing efficiency.
+QWERTY was designed in the early 1870s by Christopher Latham Sholes and his collaborators for the first commercially successful typewriter, manufactured by E. Remington and Sons from 1874. The popular explanation, that it was arranged to slow typists down and stop the machine jamming, is a simplification that the historical evidence does not really support. The layout survives today for reasons that have more to do with the 1890s than with typing efficiency.
 
 ## What actually happened
 
 Sholes, working in Milwaukee with Carlos Glidden and Samuel Soulé, patented a typewriter design in 1868. The keyboard on that early machine was not QWERTY: it was closer to alphabetical, in two rows.
 
-The layout changed repeatedly over the following years, arriving at something close to modern QWERTY by the time Remington began manufacturing the Sholes and Glidden Type-Writer in 1874. Remington made further adjustments — the R moving into the top row is often attributed to this period — and the arrangement was essentially fixed thereafter.
+The layout changed repeatedly over the following years, arriving at something close to modern QWERTY by the time Remington began manufacturing the Sholes and Glidden Type-Writer in 1874. Remington made further adjustments, the R moving into the top row is often attributed to this period, and the arrangement was essentially fixed thereafter.
 
 What is well established is that the layout **evolved through commercial iteration** rather than being designed in one go from a principle. What each individual change was for is much less certain, because the people making them did not leave a clear record of their reasoning.
 
@@ -273,9 +273,9 @@ The version everyone has heard: on early typewriters, typebars struck a common p
 
 Two problems with it.
 
-**"To slow typists down" is the wrong description of the goal.** Even in the version of this story that is broadly right, the aim would be to separate frequently adjacent typebars so they were less likely to collide — a mechanical spacing problem, not a campaign against speed. A manufacturer selling a writing machine had no reason to make it slower; they had a reason to make it not jam.
+**"To slow typists down" is the wrong description of the goal.** Even in the version of this story that is broadly right, the aim would be to separate frequently adjacent typebars so they were less likely to collide, a mechanical spacing problem, not a campaign against speed. A manufacturer selling a writing machine had no reason to make it slower; they had a reason to make it not jam.
 
-**The evidence for the jamming account itself is thin.** Research by Koichi Yasuoka and Motoko Yasuoka, published in 2011, examined the layout's development and argued that it was shaped substantially by the needs of **telegraph operators** transcribing Morse code — an early and important customer group — rather than by typebar mechanics alone. Some of the letter groupings that look arbitrary make more sense against the ambiguities of American Morse.
+**The evidence for the jamming account itself is thin.** Research by Koichi Yasuoka and Motoko Yasuoka, published in 2011, examined the layout's development and argued that it was shaped substantially by the needs of **telegraph operators** transcribing Morse code, an early and important customer group, rather than by typebar mechanics alone. Some of the letter groupings that look arbitrary make more sense against the ambiguities of American Morse.
 
 The honest summary: the layout emerged from a mix of mechanical constraints, commercial feedback and the requirements of early professional users, and no single-sentence explanation covers it. Anyone telling you confidently that QWERTY exists to slow you down is repeating a story that has outrun its evidence.
 
@@ -287,7 +287,7 @@ This is the more interesting question, and the answer is largely commercial.
 
 By the 1880s, typewriting was a trained profession and touch typing was being taught on QWERTY machines. In 1893 several major manufacturers merged into the Union Typewriter Company and standardised on the layout. At that point a self-reinforcing loop closed: typists were trained on QWERTY because that was what offices had, and offices bought QWERTY because that was what typists were trained on.
 
-Economists have used this as a case study in how a standard can persist through network effects and switching costs rather than through superiority — though, as the next section shows, the specific claim that QWERTY is markedly *inferior* is itself contested.
+Economists have used this as a case study in how a standard can persist through network effects and switching costs rather than through superiority, though, as the next section shows, the specific claim that QWERTY is markedly *inferior* is itself contested.
 
 ## Is QWERTY actually bad?
 
@@ -314,7 +314,7 @@ For most people, no. The honest case:
 - **Keyboard shortcuts move.** Cut, copy and paste are placed for QWERTY, and on Dvorak they scatter.
 - **The evidence for a large speed gain is weak.** If it were reliably worth ten or twenty words per minute, adoption would look very different after ninety years.
 
-The strongest practical advice: **if you cannot yet touch type on QWERTY, learn that first.** Switching layouts while also learning technique means learning two unfamiliar things at once and being slow on every machine that is not yours. The technique is where the gains are, not the layout — see [how to learn touch typing](/blog/how-to-learn-touch-typing).
+The strongest practical advice: **if you cannot yet touch type on QWERTY, learn that first.** Switching layouts while also learning technique means learning two unfamiliar things at once and being slow on every machine that is not yours. The technique is where the gains are, not the layout. See [how to learn touch typing](/blog/how-to-learn-touch-typing).
 
 ## The national variants
 
@@ -327,7 +327,7 @@ QWERTY is not universal even among Latin-script keyboards.
 | AZERTY | France, Belgium | A/Q and Z/W swapped; M moved; accented characters |
 | QZERTY | Historically Italy | Largely replaced by QWERTY |
 
-These exist because letter frequencies differ by language — Z is far more common in German than in English — and because each language needs its accented characters somewhere reachable.
+These exist because letter frequencies differ by language, Z is far more common in German than in English, and because each language needs its accented characters somewhere reachable.
 
 If you type on one of these, learn its own home row and finger map rather than translating from QWERTY. KeyTopia's [curriculum](/curriculum) rebuilds its lesson order around QWERTY, QWERTZ, AZERTY, Dvorak or Colemak, so the letters introduced first are the ones your fingers actually reach for first.
 
@@ -335,7 +335,7 @@ If you type on one of these, learn its own home row and finger map rather than t
 
 ### Was QWERTY really designed to slow typists down?
 
-Not in the way the story implies. Separating frequently adjacent typebars to reduce clashes is a mechanical goal, not an anti-speed one, and even that account is contested — the Yasuoka research points to telegraph transcription as a significant influence. The confident version of the story is folklore.
+Not in the way the story implies. Separating frequently adjacent typebars to reduce clashes is a mechanical goal, not an anti-speed one, and even that account is contested. The Yasuoka research points to telegraph transcription as a significant influence. The confident version of the story is folklore.
 
 ### Who invented QWERTY?
 
@@ -343,11 +343,11 @@ Christopher Latham Sholes, working with Carlos Glidden and Samuel Soulé, with t
 
 ### Is Dvorak faster than QWERTY?
 
-Possibly slightly, for some people, but the evidence for a large advantage is weak — the influential early studies were conducted by Dvorak himself, and independent work including the 1956 GSA study found no significant benefit. Reduced finger travel is real; that it translates into substantially faster typing is not established.
+Possibly slightly, for some people, but the evidence for a large advantage is weak. The influential early studies were conducted by Dvorak himself, and independent work including the 1956 GSA study found no significant benefit. Reduced finger travel is real; that it translates into substantially faster typing is not established.
 
 ### Is it worth learning Colemak?
 
-It is a more practical alternative than Dvorak because it changes less and preserves most shortcuts. It is still a months-long project for an uncertain gain. If you already touch type comfortably and are curious, it is a reasonable hobby. If you are trying to type faster, technique and targeted practice will pay back sooner — see [how to type faster](/blog/how-to-type-faster).
+It is a more practical alternative than Dvorak because it changes less and preserves most shortcuts. It is still a months-long project for an uncertain gain. If you already touch type comfortably and are curious, it is a reasonable hobby. If you are trying to type faster, technique and targeted practice will pay back sooner. See [how to type faster](/blog/how-to-type-faster).
 
 ### Why do phone keyboards use QWERTY?
 
@@ -363,7 +363,7 @@ The layout under your hands is a historical accident that has been stable for a 
 
 What is limiting it, for most people, is technique: whether you look at the keys, whether each finger has a fixed job, and whether you practise at a pace you can control. Those are worth weeks; a new layout is worth months for a maybe.
 
-If you want to know where your own limits actually sit, a [typing test](/typing-test) that reports per-key timing will show you — and the answer is almost never "the layout".
+If you want to know where your own limits actually sit, a [typing test](/typing-test) that reports per-key timing will show you, and the answer is almost never "the layout".
 `,
 
   'break-bad-typing-habits': `
@@ -373,7 +373,7 @@ You cannot delete a habit. You can only build a competing one and then win the s
 
 Three reasons, and each one points at a different part of the solution.
 
-**It has thousands more repetitions than the new one.** You have typed C with your index finger perhaps a hundred thousand times. The correct movement has a few dozen. Under any pressure, the stronger pattern wins — not because you gave in, but because that is how competing motor patterns resolve.
+**It has thousands more repetitions than the new one.** You have typed C with your index finger perhaps a hundred thousand times. The correct movement has a few dozen. Under any pressure, the stronger pattern wins, not because you gave in, but because that is how competing motor patterns resolve.
 
 **It is faster today.** Whatever the habit is, it currently works. The replacement is slower for the first week or two. So every time you are in a hurry, the old habit is genuinely the better immediate choice, and you will take it.
 
@@ -387,11 +387,11 @@ Two methods, and you want both because they catch different things.
 
 *"Because Barry quickly zipped up my jacket, the excited children became very playful."*
 
-That contains C, B, Y, Z, Q, X and several capitals — the assignments people most commonly improvise, in one line.
+That contains C, B, Y, Z, Q, X and several capitals, the assignments people most commonly improvise, in one line.
 
 **Then look at per-key data.** A test that reports timing per key and per transition will usually confirm what you saw and add two or three you did not notice. The keys you type with the wrong finger are almost always among the slowest.
 
-The reason you need the measurement is that introspection genuinely does not work here. Research on skilled typing has found that typists detect their own errors without being able to report what went wrong — the knowledge is in the hands, not available to you as a description.
+The reason you need the measurement is that introspection genuinely does not work here. Research on skilled typing has found that typists detect their own errors without being able to report what went wrong. The knowledge is in the hands, not available to you as a description.
 
 ## The habits worth attacking, in order
 
@@ -401,7 +401,7 @@ Do not fix these simultaneously. In order of value:
 2. **Not returning to the home row** after every reach. Several other faults are downstream of this one.
 3. **C with the index finger** instead of the middle.
 4. **Same-hand shift**, which makes every capital a stretch.
-5. **B and Y** taken by whichever hand is free — the worst kind of fault, because the movement changes depending on the previous letter and so never becomes automatic at all.
+5. **B and Y** taken by whichever hand is free, the worst kind of fault, because the movement changes depending on the previous letter and so never becomes automatic at all.
 6. **Little fingers unused**, with the ring finger covering for A, Q, Z, P and the punctuation.
 7. **Wrists resting on the desk** while typing, which anchors the hand.
 
@@ -419,7 +419,7 @@ Practise the new movement on its own, away from real typing, slowly enough that 
 
 If you are fixing C: a list of words containing C, typed at half speed, watching the finger. Five minutes a day. That is all.
 
-The point of isolation is that the old habit fires in response to context — the preceding letters, the speed, the pressure. Remove the context and the new movement gets clean repetitions.
+The point of isolation is that the old habit fires in response to context, the preceding letters, the speed, the pressure. Remove the context and the new movement gets clean repetitions.
 
 ### Week 2: put it back in context
 
@@ -429,7 +429,7 @@ Expect it to fail regularly this week. Do not restart the sentence when it does;
 
 ### Week 3: normal pace, low stakes
 
-Type at your ordinary speed, on typing that does not matter — personal messages, notes, search boxes. The habit will revert under any hurry. That is expected, and this week is where you find out which situations trigger it.
+Type at your ordinary speed, on typing that does not matter, personal messages, notes, search boxes. The habit will revert under any hurry. That is expected, and this week is where you find out which situations trigger it.
 
 Common triggers: typing something urgent, typing while talking, typing while tired, typing a word you type constantly.
 
@@ -449,7 +449,7 @@ By the end of week four the new movement is usually winning most of the time. It
 
 ## The one habit that is different
 
-Looking at the keyboard does not respond to this cycle, because it is not a movement being replaced — it is a strategy that is genuinely faster today.
+Looking at the keyboard does not respond to this cycle, because it is not a movement being replaced. It is a strategy that is genuinely faster today.
 
 The fix is not practice, it is removing the option: cover your hands with a tea towel, from the first session. Willpower reliably fails here because you are asking yourself to choose the slower option while under time pressure. [How to stop looking at the keyboard](/blog/stop-looking-at-the-keyboard) sets out the staged method.
 
@@ -457,7 +457,7 @@ Do this one first and alone. Everything else is downstream.
 
 ## How long the whole project takes
 
-If you have three or four habits — which is typical for someone who taught themselves — you are looking at three to four months, working through one at a time.
+If you have three or four habits, which is typical for someone who taught themselves, you are looking at three to four months, working through one at a time.
 
 That sounds slow. Against it: the habits are usually worth ten to fifteen words per minute between them, and more importantly they are what is capping your improvement. Someone with improvised assignments does not slowly get better; they plateau, which is why the practice they have already done has not helped.
 
@@ -465,26 +465,26 @@ That sounds slow. Against it: the habits are usually worth ten to fifteen words 
 |---|---|---|
 | 1–2 | Looking at the keyboard, hands covered | Speed halves, then recovers |
 | 3–6 | Habit one, isolated then in context | Frequent reversion |
-| 7–10 | Habit two | Faster than the first — the process is familiar |
+| 7–10 | Habit two | Faster than the first, the process is familiar |
 | 11–14 | Habit three | Mostly maintenance |
 
 ## Common questions
 
 ### Can I really not fix several at once?
 
-You can try, and it mostly produces confusion. The exception is habits that travel together — covering your hands often fixes the home-row return at the same time, because you can no longer navigate by sight and the anchor becomes necessary.
+You can try, and it mostly produces confusion. The exception is habits that travel together. Covering your hands often fixes the home-row return at the same time, because you can no longer navigate by sight and the anchor becomes necessary.
 
 ### How do I stop reverting under pressure?
 
-You mostly do not, at first — you outlast it. What helps is identifying the specific triggers in week three and deliberately practising in those conditions: type something urgent-feeling, type while distracted, type while tired.
+You mostly do not, at first. You outlast it. What helps is identifying the specific triggers in week three and deliberately practising in those conditions: type something urgent-feeling, type while distracted, type while tired.
 
 ### Is it worth fixing habits if I already type at 70?
 
-Depends which ones. At 70 you have probably eliminated the gross faults. The ones that remain at that level are usually practising above your controlled pace and neglecting punctuation — see [how to reach 100 WPM](/blog/how-to-reach-100-wpm).
+Depends which ones. At 70 you have probably eliminated the gross faults. The ones that remain at that level are usually practising above your controlled pace and neglecting punctuation. See [how to reach 100 WPM](/blog/how-to-reach-100-wpm).
 
 ### Will I be slower while I do this?
 
-Yes, for one to two weeks per habit. This is the main cost, and it is why fixing one at a time matters — the dip is small and survivable rather than large and demoralising.
+Yes, for one to two weeks per habit. This is the main cost, and it is why fixing one at a time matters. The dip is small and survivable rather than large and demoralising.
 
 ### I have typed this way for thirty years. Is it too late?
 
@@ -492,15 +492,15 @@ No. Duration makes the old habit stronger but does not make the new one unlearna
 
 ## Start with one
 
-Type the test sentence above at half speed and watch your hands. Pick the single most frequent letter you are getting wrong — usually C, or the shift key.
+Type the test sentence above at half speed and watch your hands. Pick the single most frequent letter you are getting wrong, usually C, or the shift key.
 
 That is your next four weeks. Not "type better": one letter, one finger, five minutes a day.
 
-KeyTopia's [typing test](/typing-test) reports per-key timing, which will usually agree with what you saw and add the two you missed — and its [adaptive practice](/adaptive-practice) will build the drill from that list rather than from a generic exercise set.
+KeyTopia's [typing test](/typing-test) reports per-key timing, which will usually agree with what you saw and add the two you missed, and its [adaptive practice](/adaptive-practice) will build the drill from that list rather than from a generic exercise set.
 `,
 
   'is-60-wpm-good': `
-Sixty words per minute is a good, genuinely useful speed. It is faster than most people who have never trained, it removes typing as a constraint for essentially all office work and study, and it usually indicates that you are touch typing rather than hunting. It is also, for many people, where progress stops — because the things that get you to 60 are not the things that get you past it.
+Sixty words per minute is a good, genuinely useful speed. It is faster than most people who have never trained, it removes typing as a constraint for essentially all office work and study, and it usually indicates that you are touch typing rather than hunting. It is also, for many people, where progress stops, because the things that get you to 60 are not the things that get you past it.
 
 ## What 60 tells you about your typing
 
@@ -514,7 +514,7 @@ That means you have already done the hard part. The remaining work is different 
 
 Effectively everything most people do:
 
-- **All office writing** — emails, documents, reports, chat.
+- **All office writing**: emails, documents, reports, chat.
 - **University coursework and essays**, comfortably.
 - **Live note-taking** in lectures and meetings, which is the most demanding common keyboard task and becomes viable around 50 to 60.
 - **Timed written exams**, without typing being the constraint.
@@ -534,7 +534,7 @@ Where 60 is not enough: professional transcription, some data entry roles, and c
 
 The practical point: the row you are in is the last one where the *benefit* changes much. Going from 40 to 60 changes what you can comfortably do. Going from 60 to 80 mostly changes how it feels.
 
-That is not an argument against improving — long writing sessions are genuinely less tiring at 80 — but it should inform how much time you put into it.
+That is not an argument against improving, long writing sessions are genuinely less tiring at 80, but it should inform how much time you put into it.
 
 ## The three limits that bind at 60
 
@@ -542,7 +542,7 @@ If you are stuck here, it is almost certainly one of these, and they need differ
 
 ### 1. Specific transitions, not keys
 
-At this level your individual key reaches are fine. What is slow is a small number of **letter pairs** — usually sequences using the same finger twice, or awkward rolls across one hand.
+At this level your individual key reaches are fine. What is slow is a small number of **letter pairs**, usually sequences using the same finger twice, or awkward rolls across one hand.
 
 You cannot find these by feel. They have to be measured, per transition, which means looking at the interval between consecutive keystrokes rather than an overall average. Typically a handful of pairs account for a disproportionate share of your lost time.
 
@@ -552,7 +552,7 @@ This is the single most common cause of a plateau at 60, and it is why general p
 
 Very common, and easy to miss because tests often under-represent them.
 
-If your test score is 60 on lowercase word lists and your real writing feels like 45, this is your answer. Real prose is full of commas, apostrophes, quotation marks, brackets and capitals — and if you learned on word drills, each one is a small stall in an otherwise fluent line.
+If your test score is 60 on lowercase word lists and your real writing feels like 45, this is your answer. Real prose is full of commas, apostrophes, quotation marks, brackets and capitals, and if you learned on word drills, each one is a small stall in an otherwise fluent line.
 
 The specific offender is usually **same-hand shift**: pressing left shift and then a left-hand letter is a stretch with the hand locked, not a movement. Since nearly every sentence starts with a capital, that cost is paid constantly.
 
@@ -560,7 +560,7 @@ The specific offender is usually **same-hand shift**: pressing left shift and th
 
 Two typists can both average 60 while one types evenly and the other alternates fast bursts with pauses. The bursty typist's average is dragged down by the stalls, not by their top speed.
 
-The measure for this is **consistency** — the variation in the interval between keystrokes. It is the number almost nobody looks at and the one that predicts improvement best, because a typist whose limit is a few specific stalls has more headroom than one who is evenly at their maximum.
+The measure for this is **consistency**, the variation in the interval between keystrokes. It is the number almost nobody looks at and the one that predicts improvement best, because a typist whose limit is a few specific stalls has more headroom than one who is evenly at their maximum.
 
 Consistency also tends to improve before average speed does, which makes it a useful signal during the weeks when the headline number refuses to move.
 
@@ -580,7 +580,7 @@ A realistic plan, and it looks different from the plan that got you to 60.
 
 **Use speed bursts as a diagnostic, not a diet.** Thirty seconds above comfortable pace shows you what breaks first. That is your next practice target. Doing it daily rehearses the breakage.
 
-Expect six to twelve weeks for a meaningful gain at this level. Progress from 60 upward is genuinely slower than progress from 30 to 60 — that is the normal shape of skill improvement rather than a sign of a problem, and [why repetition makes you faster](/blog/why-repetition-makes-you-faster) explains the curve.
+Expect six to twelve weeks for a meaningful gain at this level. Progress from 60 upward is genuinely slower than progress from 30 to 60, that is the normal shape of skill improvement rather than a sign of a problem, and [why repetition makes you faster](/blog/why-repetition-makes-you-faster) explains the curve.
 
 ## Should you bother?
 
@@ -600,7 +600,7 @@ It is comfortably above where casual typing test results cluster and it is fluen
 
 ### Is 60 wpm good for a job?
 
-Yes, for almost any role that states a requirement — general administrative postings commonly ask for 40 to 60. Transcription and data entry roles typically want more.
+Yes, for almost any role that states a requirement. General administrative postings commonly ask for 40 to 60. Transcription and data entry roles typically want more.
 
 ### Is 60 wpm good for a student?
 
@@ -616,14 +616,14 @@ Months of deliberate, targeted practice, and it is a genuine project rather than
 
 ### Does 60 mean I touch type properly?
 
-Almost certainly you are typing without looking most of the time. It does not guarantee your finger assignments are correct — plenty of people reach 60 with two or three improvised assignments, and those are usually exactly what is capping them. Worth checking against [correct finger placement](/blog/correct-finger-placement-for-touch-typing).
+Almost certainly you are typing without looking most of the time. It does not guarantee your finger assignments are correct. Plenty of people reach 60 with two or three improvised assignments, and those are usually exactly what is capping them. Worth checking against [correct finger placement](/blog/correct-finger-placement-for-touch-typing).
 
 ## Find your actual limit
 
-Take a two-minute test on unfamiliar prose with full punctuation — not a word list — and look at three things: your net speed, your consistency, and your slowest letter transitions.
+Take a two-minute test on unfamiliar prose with full punctuation, not a word list, and look at three things: your net speed, your consistency, and your slowest letter transitions.
 
 If your speed on punctuated prose is well below your speed on word lists, you have found your answer. If your consistency is poor, you have found a different one. Either way it is specific, which is what practice at this level needs.
 
-KeyTopia's [typing test](/typing-test) reports consistency and per-transition timing alongside the headline figure, and its [adaptive practice](/adaptive-practice) generates drills from your slowest pairs — which is the part that is impractical to assemble by hand.
+KeyTopia's [typing test](/typing-test) reports consistency and per-transition timing alongside the headline figure, and its [adaptive practice](/adaptive-practice) generates drills from your slowest pairs, which is the part that is impractical to assemble by hand.
 `,
 };

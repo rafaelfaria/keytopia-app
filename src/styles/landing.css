@@ -17,7 +17,7 @@
 .land-zone { position: relative; z-index: 1; }
 
 /* Hero */
-.hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; padding: 110px 18px 40px; }
+.hero { min-height: 100svh; display: flex; align-items: center; justify-content: center; position: relative; padding: 110px 18px 40px; }
 .hero-inner { max-width: 880px; text-align: center; }
 .hero-badge {
   display: inline-block; padding: 6px 16px; border-radius: 999px; font-size: 0.84rem; font-weight: 700;
@@ -40,8 +40,11 @@
 .hero-try-keys .keycap { background: #1b2445; border-color: #303b6b; color: #dffcf8; animation: popin 0.18s ease; }
 .hero-strip { display: flex; gap: 14px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 18px; color: #8b93b8; font-size: 0.86rem; font-weight: 650; }
 .hero-strip i { width: 4px; height: 4px; border-radius: 50%; background: #3a4677; }
-.hero-scroll-cue { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); text-align: center; color: #6a7391; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; animation: cuefloat 2.2s ease-in-out infinite; }
-@keyframes cuefloat { 50% { transform: translate(-50%, 8px); } }
+/* In the flow, not pinned to the bottom of the section: on a tall window an
+   absolute cue drifted so far below the copy that the page read as finished.
+   Sitting just under the strip, it stays in sight next to what it refers to. */
+.hero-scroll-cue { margin-top: 34px; text-align: center; color: #6a7391; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; animation: cuefloat 2.2s ease-in-out infinite; }
+@keyframes cuefloat { 50% { transform: translateY(8px); } }
 @media (max-width: 700px) { .hero-scroll-cue { display: none; } .hero { padding-top: 92px; } }
 
 /* World morph zone */

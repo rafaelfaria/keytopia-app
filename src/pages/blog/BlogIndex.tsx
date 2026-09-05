@@ -15,7 +15,7 @@ import { SiteHeader } from '../../components/public/SiteHeader';
 import { PublicHero } from '../../components/public/PublicHero';
 import { refreshPublicMotion, usePublicMotion } from '../../components/public/usePublicMotion';
 import { Seo } from '../../lib/seo/Seo';
-import { LIVE_POSTS, SITE_NAME } from '../../lib/seo/site';
+import { livePosts, SITE_NAME } from '../../lib/seo/site';
 import { BLOG_CATEGORIES, postPath, type BlogCategory } from '../../lib/blog/posts';
 import { INDEX_VARIANT, PostCard } from './shared';
 
@@ -30,7 +30,10 @@ export default function BlogIndex() {
   // position it was measured at and never reveals.
   useEffect(() => { void refreshPublicMotion(); }, [filter]);
 
-  const posts = LIVE_POSTS;
+  // Computed on render rather than read from the build-time constant, so the
+  // index and `isLive` agree about what is published on a build that is a day
+  // old. See the note on `isLive` in src/lib/blog/registry.ts.
+  const posts = useMemo(() => livePosts(), []);
   const [lead, ...rest] = posts;
 
   /** Only the categories that actually have a live article behind them. */

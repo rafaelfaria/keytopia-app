@@ -12,11 +12,12 @@
 
 import { BODIES } from './bodies';
 import {
-  BLOG_POSTS, postBySlug, postPath, type BlogPost,
+  BLOG_POSTS, postBySlug, postPath, todayIso, type BlogPost,
 } from './posts';
-// The live set is decided by the SEO layer, which is also what the sitemap and
-// the prerenderer read — so "reachable" and "in the sitemap" cannot disagree.
-import { LIVE_POSTS } from '../seo/site';
+// The override that makes every scheduled article reachable in dev and in
+// preview builds. The live decision itself is made against the clock in
+// `isLive` below, for the reason written there.
+import { BLOG_SHOW_ALL } from '../seo/site';
 import {
   extractFaqs, internalLinks, parseMarkdown, readingMinutes, wordCount,
   tableOfContents, type Block, type Faq, type Heading,
@@ -35,10 +36,26 @@ export interface Article {
 
 const CACHE = new Map<string, Article>();
 
-const LIVE_SLUGS = new Set(LIVE_POSTS.map((p) => p.slug));
-
-/** Whether an article has reached its publication date in this build. */
-export const isLive = (slug: string): boolean => LIVE_SLUGS.has(slug);
+/**
+ * Whether an article has reached its publication date, asked now.
+ *
+ * This used to read a `Set` built from `LIVE_POSTS`, which is evaluated once at
+ * module load. In the browser bundle that moment is the build, so the running
+ * app's idea of "published" froze on the day it was deployed. Meanwhile
+ * middleware.ts generates sitemap.xml and llms.txt per request, from the real
+ * date. The two disagreed the moment a build was a day old: the sitemap
+ * advertised the day's new article, a crawler followed the link, and the app
+ * said the article did not exist.
+ *
+ * Asking the clock instead means a missed build degrades to a client-rendered
+ * article rather than a 404. The prerendered HTML for that article still only
+ * arrives with the next deploy, which is what the daily cron in vercel.json is
+ * for. This is the safety net under it, not a replacement for it.
+ */
+export const isLive = (slug: string): boolean => {
+  const post = postBySlug(slug);
+  return !!post && (BLOG_SHOW_ALL || post.publishedAt <= todayIso());
+};
 
 /**
  * An article, if it is published.

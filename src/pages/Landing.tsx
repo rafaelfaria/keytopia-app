@@ -376,22 +376,26 @@ export default function Landing() {
         scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom 35%', scrub: true },
       });
 
-      // region labels choreography inside the world section
+      // Region labels choreography. Timed against the world section, not the
+      // whole zone: the labels are placed against a sticky panel, and until
+      // that panel pins they sit shifted down the page, so the lower two fall
+      // off the fold. Keyed here, every marker arrives while the panel is
+      // pinned and the four read as one map instead of one stray card.
       const labels = gsap.utils.toArray<HTMLElement>('.world-label');
       labels.forEach((el, i) => {
         gsap.fromTo(el, { opacity: 0, y: 34, scale: 0.94 }, {
           opacity: 1, y: 0, scale: 1, ease: 'power2.out',
           scrollTrigger: {
-            trigger: zoneRef.current,
-            start: `${18 + i * 16}% bottom`,
-            end: `${30 + i * 16}% bottom`,
+            trigger: '.world',
+            start: `${6 + i * 12}% top`,
+            end: `${14 + i * 12}% top`,
             scrub: true,
           },
         });
       });
       gsap.fromTo('.world-head', { opacity: 0, y: 50 }, {
         opacity: 1, y: 0, ease: 'power2.out',
-        scrollTrigger: { trigger: zoneRef.current, start: '12% bottom', end: '26% bottom', scrub: true },
+        scrollTrigger: { trigger: '.world', start: 'top 78%', end: 'top 20%', scrub: true },
       });
 
       // canvas fades away after the world zone

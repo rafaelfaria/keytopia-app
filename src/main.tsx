@@ -11,6 +11,8 @@ import './styles/app.css';
 import './styles/landing.css';
 import './styles/gameart.css';
 import './styles/public.css';
+import './styles/tools.css';
+import './styles/blog.css';
 import './styles/mock.css';
 import './styles/classroom.css';
 import './styles/arena.css';
@@ -56,7 +58,12 @@ import {
   SchoolsPage, TermsPage, TypingGamesPage,
 } from './pages/public/pages';
 import { TypingTestPage } from './pages/public/TypingTest';
+import {
+  AccuracyTestPage, DailyExercisePage, ProgressTrackerPage, SpeedByAgePage,
+  SpeedTestPage, TimedChallengePage, ToolsHubPage, WeakKeysPage, WpmCalculatorPage,
+} from './pages/tools';
 import { AuthCallback, RequireAccount } from './components/Account';
+
 import SignIn from './pages/SignIn';
 import CreateProfile from './pages/CreateProfile';
 import JoinClass from './pages/JoinClass';
@@ -64,6 +71,34 @@ import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { GtagLoader } from './components/analytics/GtagLoader';
 import { startSync } from './lib/syncEngine';
 import { startClassroomWatch } from './lib/classroom';
+
+/**
+ * The blog is the one part of the public site that is code-split.
+ *
+ * Fifty articles are roughly seventy thousand words of Markdown, and every
+ * other route in this file is imported eagerly into the single main chunk. A
+ * reader who came to type should not download the whole content campaign to get
+ * there, so these two routes — and the article bodies they pull in behind them —
+ * load only when somebody actually asks for /blog.
+ */
+const BlogIndex = React.lazy(() => import('./pages/blog/BlogIndex'));
+const BlogPost = React.lazy(() => import('./pages/blog/BlogPost'));
+
+/**
+ * The fallback is a bare page-coloured surface, not a spinner.
+ *
+ * These routes are prerendered, so a visitor from a search result is already
+ * reading the article while this chunk downloads. A spinner would be announcing
+ * work the reader cannot see and does not care about; painting the page's own
+ * background just avoids a white flash on the swap.
+ */
+function BlogChunk({ children }: { children: React.ReactNode }) {
+  return (
+    <React.Suspense fallback={<div className="pub-root" style={{ minHeight: '100vh' }} />}>
+      {children}
+    </React.Suspense>
+  );
+}
 
 /**
  * Reset the scroll position on navigation.
@@ -126,6 +161,28 @@ container.__ktRoot.render(
         <Route path="/typing-for-schools" element={<SchoolsPage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/typing-glossary" element={<GlossaryPage />} />
+
+        {/* The free tools. Eight working tools plus their hub, sharing the
+            typing engine, the WPM definition and the local result store. Each
+            one is a registry entry in src/lib/seo/toolsPages.ts and a row in
+            src/lib/tools/registry.ts, and the tests assert that this list, that
+            registry and the prerenderer's own map all agree. */}
+        <Route path="/tools" element={<ToolsHubPage />} />
+        <Route path="/tools/typing-speed-test" element={<SpeedTestPage />} />
+        <Route path="/tools/wpm-calculator" element={<WpmCalculatorPage />} />
+        <Route path="/tools/typing-accuracy-test" element={<AccuracyTestPage />} />
+        <Route path="/tools/timed-typing-challenge" element={<TimedChallengePage />} />
+        <Route path="/tools/weak-key-analysis" element={<WeakKeysPage />} />
+        <Route path="/tools/daily-typing-exercise" element={<DailyExercisePage />} />
+        <Route path="/tools/typing-speed-by-age" element={<SpeedByAgePage />} />
+        <Route path="/tools/typing-progress-tracker" element={<ProgressTrackerPage />} />
+
+        {/* The blog. Both routes are prerendered per article (see
+            src/lib/seo/site.ts, which derives one registry entry per published
+            post), so these components are what a reader gets *after* the static
+            document has already painted. */}
+        <Route path="/blog" element={<BlogChunk><BlogIndex /></BlogChunk>} />
+        <Route path="/blog/:slug" element={<BlogChunk><BlogPost /></BlogChunk>} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
 

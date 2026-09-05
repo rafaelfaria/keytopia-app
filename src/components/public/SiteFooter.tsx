@@ -26,10 +26,18 @@ type Group = PageDef['group'];
  *  which the brand mark already links to, so it is deliberately excluded. */
 const COLUMNS: { label: string; groups: Group[] }[] = [
   { label: 'Product', groups: ['Product'] },
-  { label: 'Learn', groups: ['Learn', 'Tools'] },
+  { label: 'Learn', groups: ['Learn'] },
+  // The tools have their own column now rather than sharing Learn's. Nine of
+  // them arrived at once, and a single column holding fourteen links is a wall
+  // rather than a menu.
+  { label: 'Free tools', groups: ['Tools'] },
   { label: 'Who it is for', groups: ['Audiences'] },
   { label: 'More', groups: ['Reference', 'Legal'] },
 ];
+
+// Note that `Blog` is deliberately unmapped: the index sits in Learn, and
+// listing all fifty-plus articles in the footer of every page would be a link
+// dump rather than an internal link graph.
 
 export function SiteFooter() {
   const columns = COLUMNS.map((c) => ({

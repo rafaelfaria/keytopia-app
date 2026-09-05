@@ -2058,6 +2058,7 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .linkish {
   background: none; border: 0; padding: 0; font: inherit; color: var(--accent);
   cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
+  transition: color 0.15s;
 }
 .linkish:disabled { color: var(--muted); text-decoration: none; cursor: default; }
 .linkish:hover:not(:disabled) { color: var(--text); }
@@ -2066,7 +2067,201 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .signin-noaccount { margin-top: 14px; padding: 14px; border: 2px dashed var(--border); border-radius: 14px; }
 .signin-noaccount p { margin-bottom: 10px; line-height: 1.5; }
 
+/* Standalone, so it has no form wrapper to stretch it to the panel width the
+   way the other primary actions get. */
+.auth-continue { width: 100%; }
+
 .signin-swap { margin-top: 18px; }
+/* The link needs air on its left. A single word space put the underline hard
+   against the question mark, so "KeyTopia?Create" read as one run of text. */
+.signin-swap .linkish { margin-left: 5px; }
+
+/* ── The sign-in page (src/pages/SignIn.tsx) ───────────────────────────────
+   Two columns: the choices on the left at a readable measure, the brand on the
+   right where it can move without being in the way. One column had become five
+   full-width controls separated by three hairlines, every one of them the same
+   width and weight, which is what "busy" meant here. */
+
+.auth-root {
+  min-height: 100svh;
+  background:
+    radial-gradient(900px 520px at 82% 10%, color-mix(in oklab, var(--accent2) 15%, transparent), transparent),
+    radial-gradient(700px 420px at 10% 90%, color-mix(in oklab, var(--accent) 9%, transparent), transparent),
+    var(--bg);
+  color: var(--text);
+}
+
+.auth-grid {
+  min-height: 100svh;
+  display: grid;
+  /* Mobile first: one column, the form first and the art as a band beneath it.
+     Form-first is the right way round on a phone — the panel is what the
+     visitor came for, and a brand band above it would push the first field
+     under the fold for no gain. The lockup at the top of the panel already
+     says whose page this is. `1fr auto` gives the slack to the form and lets
+     the band keep its own height. */
+  grid-template-rows: 1fr auto;
+}
+
+.auth-col { display: flex; justify-content: center; padding: clamp(20px, 5vw, 56px) var(--gutter, 20px); }
+
+/* 27rem is the measure, not the column: a form wider than this makes the eye
+   travel further between a label and its field than between two fields. */
+.auth-panel { width: 100%; max-width: 27rem; align-self: center; }
+
+.auth-brand {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em;
+  color: var(--text); text-decoration: none; margin-bottom: clamp(18px, 4vw, 30px);
+}
+.auth-brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
+
+.auth-panel h1 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); line-height: 1.15; margin-bottom: 20px; }
+/* Only the "check your email" screen still carries a line under the heading:
+   the address the link went to, which is the one fact that screen exists for. */
+.auth-sub { color: var(--muted); line-height: 1.55; margin-bottom: 22px; }
+
+.auth-panel .oauth-btn { margin-bottom: 2px; }
+.auth-panel .signin-form { margin-top: 0; }
+.auth-err { margin-top: 12px; color: var(--bad); }
+.auth-note { margin-top: 10px; line-height: 1.5; }
+
+/* ── The moving half ──────────────────────────────────────────────────────
+   Transform and opacity only. Nothing here animates a property that would
+   make the form beside it re-layout or repaint. */
+
+.auth-art {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  gap: 18px;
+  align-content: center;
+  /* The band above the form on small screens; a full column from 62rem up. */
+  min-height: clamp(150px, 26vh, 230px);
+  border-top: 1px solid var(--border);
+  background: linear-gradient(160deg, color-mix(in oklab, var(--accent2) 12%, var(--bg2)), var(--bg));
+}
+
+.auth-art-glow {
+  position: absolute; inset: -20%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--accent) 22%, transparent), transparent 70%);
+  opacity: 0.55;
+  animation: auth-glow 9s ease-in-out infinite alternate;
+}
+
+.auth-art-scene {
+  position: relative;
+  width: clamp(150px, 34vmin, 300px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.auth-orbit {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--accent) 34%, transparent);
+  /* Rings sit behind the mark and are drawn, not filled, so they cost nothing. */
+  inset: 0;
+  animation: auth-spin 26s linear infinite;
+}
+.auth-orbit-2 { inset: 12%; border-color: color-mix(in oklab, var(--accent2) 40%, transparent); animation-duration: 19s; animation-direction: reverse; }
+.auth-orbit-3 { inset: 24%; border-style: dashed; border-color: color-mix(in oklab, var(--accent) 22%, transparent); animation-duration: 34s; }
+
+/* The wrapper takes the hover, not the mark: the mark is already running the
+   breathing keyframes and a second transform on it would fight them. */
+.auth-art-home {
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+.auth-art-home:hover { transform: scale(1.04); filter: brightness(1.08); }
+
+.auth-art-mark {
+  position: relative;
+  display: grid; place-items: center;
+  animation: auth-breathe 6.5s ease-in-out infinite;
+}
+.auth-art-mark .logo-mark { width: clamp(64px, 15vmin, 124px); height: auto; }
+
+/* Three keycaps on the ring, each on its own phase so they never pulse in
+   unison. Same visual language as the welcome email's K E Y. */
+.auth-cap {
+  position: absolute;
+  display: grid; place-items: center;
+  width: clamp(28px, 6.5vmin, 44px); aspect-ratio: 1;
+  border-radius: 12px;
+  background: var(--key-bg);
+  border: 2px solid var(--key-border);
+  border-bottom-width: 5px;
+  color: var(--key-text);
+  font-weight: 700; font-size: clamp(0.75rem, 2vmin, 1.05rem);
+  animation: auth-float 7s ease-in-out infinite;
+}
+.auth-cap-k { top: 4%; left: 12%; animation-delay: -0.4s; }
+.auth-cap-e { bottom: 10%; left: 2%; animation-delay: -2.6s; }
+.auth-cap-y { top: 22%; right: 3%; animation-delay: -4.8s; }
+
+.auth-art-line {
+  position: relative;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+/* The left column arrives as one wave. Six nth-child delays instead of a GSAP
+   timeline, which keeps the auth route free of GSAP and needs no cleanup.
+   Cubic-bezier is the standard back-out, the same slight overshoot as
+   back.out(1.4). Reduced motion drops the animation entirely, and the resting
+   state underneath it is plain opacity 1 — verified, because a stagger whose
+   baseline is invisible is one bad frame away from an unusable sign-in page. */
+.auth-panel [data-stagger] > * { animation: auth-rise 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.auth-panel [data-stagger] > *:nth-child(1) { animation-delay: 0s; }
+.auth-panel [data-stagger] > *:nth-child(2) { animation-delay: 0.055s; }
+.auth-panel [data-stagger] > *:nth-child(3) { animation-delay: 0.11s; }
+.auth-panel [data-stagger] > *:nth-child(4) { animation-delay: 0.165s; }
+.auth-panel [data-stagger] > *:nth-child(5) { animation-delay: 0.22s; }
+.auth-panel [data-stagger] > *:nth-child(n + 6) { animation-delay: 0.275s; }
+
+@keyframes auth-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes auth-spin { to { transform: rotate(360deg); } }
+@keyframes auth-breathe { 0%, 100% { transform: translateY(-5px) scale(0.99); } 50% { transform: translateY(5px) scale(1.01); } }
+@keyframes auth-float { 0%, 100% { transform: translateY(-7px) rotate(-4deg); } 50% { transform: translateY(7px) rotate(4deg); } }
+@keyframes auth-glow { from { transform: scale(0.92); opacity: 0.4; } to { transform: scale(1.08); opacity: 0.65; } }
+
+/* Both spellings, the way the rest of this stylesheet does it: the media query
+   for the OS preference, the attribute for the in-app accessibility toggle. */
+@media (prefers-reduced-motion: reduce) {
+  .auth-orbit, .auth-art-mark, .auth-cap, .auth-art-glow,
+  .auth-panel [data-stagger] > * { animation: none; }
+}
+html[data-rm='1'] .auth-orbit,
+html[data-rm='1'] .auth-art-mark,
+html[data-rm='1'] .auth-cap,
+html[data-rm='1'] .auth-art-glow,
+html[data-rm='1'] .auth-panel [data-stagger] > * { animation: none; }
+
+/* Two columns once there is room for a 27rem measure plus a square of art. */
+@media (min-width: 62rem) {
+  .auth-grid { grid-template-rows: none; grid-template-columns: 1fr 1fr; }
+  .auth-art {
+    min-height: 100svh;
+    border-top: 0;
+    border-left: 1px solid var(--border);
+    gap: 26px;
+  }
+  .auth-art-line { font-size: 1.05rem; }
+}
+
+/* The tagline is the first thing to go when the art is only a band: at that
+   height it sits on top of the rings rather than under them. */
+@media (max-width: 61.99rem) {
+  .auth-art-line { display: none; }
+  .auth-art { gap: 0; }
+}
+
 .boot-splash { justify-content: center; gap: 14px; }
 
 .cp-block { margin-top: 26px; text-align: left; }

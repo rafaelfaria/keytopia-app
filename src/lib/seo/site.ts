@@ -15,6 +15,10 @@
  */
 
 import { BRAND, BRAND_TITLE } from '../brand';
+import {
+  BLOG_POSTS, postPath, publishedPosts, todayIso, type BlogPost,
+} from '../blog/posts';
+import { TOOL_PAGES } from './toolsPages';
 
 export { BRAND };
 
@@ -74,17 +78,19 @@ export interface PublicPage {
   /** Per-page social image; falls back to SITE_OG_IMAGE. */
   image?: string;
   /** llms.txt grouping. */
-  group: 'Core' | 'Product' | 'Learn' | 'Tools' | 'Audiences' | 'Reference' | 'Legal';
+  group: 'Core' | 'Product' | 'Learn' | 'Tools' | 'Audiences' | 'Reference' | 'Legal' | 'Blog';
 }
 
 const TODAY = '2026-08-12';
 
 /**
- * Every crawlable route. This single list drives the sitemap, robots allow
- * rules, llms.txt, the prerenderer, the OG-image generator and the public
- * footer nav — add a page here and all of them pick it up.
+ * The hand-written pages. The blog's fifty-one routes are appended below, and
+ * `PUBLIC_PAGES` is the two of them together — that single list drives the
+ * sitemap, robots allow rules, llms.txt, the prerenderer, the OG-image
+ * generator and the public footer nav, so a page added to either half is
+ * picked up by all of them.
  */
-export const PUBLIC_PAGES: PublicPage[] = [
+const STATIC_PAGES: PublicPage[] = [
   {
     path: '/',
     label: 'Home',
@@ -278,6 +284,121 @@ export const PUBLIC_PAGES: PublicPage[] = [
     group: 'Legal',
   },
 ];
+
+// ── The blog ───────────────────────────────────────────────────────────────
+
+/**
+ * Whether unpublished articles are visible.
+ *
+ * The campaign is a drip: an article joins the sitemap, the prerenderer and the
+ * index on the date it is scheduled for, and not before, because publishing
+ * fifty pages at once is the thing the schedule exists to avoid. Development
+ * shows the whole run so the campaign can be reviewed before it starts, and
+ * `VITE_BLOG_PUBLISH_ALL=1` does the same for a staging build.
+ */
+export const BLOG_SHOW_ALL =
+  env.VITE_BLOG_PUBLISH_ALL === '1' || String(env.DEV) === 'true';
+
+/**
+ * The articles published as of `today`, newest first.
+ *
+ * A function as well as a constant because the two callers want different
+ * things. The browser and the build scripts want the snapshot below, taken once
+ * at module load, which for them *is* the current moment. Middleware does not:
+ * a serverless instance is reused across requests, so its module scope was
+ * evaluated at cold start and could be days old by the time a crawler asks for
+ * the sitemap. It calls this instead.
+ */
+export function livePosts(today: string = todayIso()): BlogPost[] {
+  return publishedPosts(today, BLOG_SHOW_ALL);
+}
+
+/** The articles this build publishes, newest first. */
+export const LIVE_POSTS: BlogPost[] = livePosts();
+
+const BLOG_INDEX: PublicPage = {
+  path: '/blog',
+  label: 'Blog',
+  title: `The ${SITE_NAME} Typing Blog: guides, benchmarks and the science of typing`,
+  description:
+    'Practical writing about learning to type: touch-typing technique, honest WPM benchmarks, ' +
+    'typing for children and students, and what motor-learning research actually says about practice.',
+  llmsNote: 'The KeyTopia blog: touch-typing guides, WPM benchmarks, typing for kids, students and adults, and the science of typing practice.',
+  priority: 0.9,
+  changeFrequency: 'daily',
+  lastModified: LIVE_POSTS.length ? LIVE_POSTS[0].publishedAt : TODAY,
+  group: 'Learn',
+};
+
+/**
+ * One registry entry per live article.
+ *
+ * Derived rather than typed out, so an article can never be in the sitemap but
+ * missing from the router, or carry a canonical URL that disagrees with the
+ * link the index renders.
+ */
+const blogPageFor = (post: BlogPost): PublicPage => ({
+  path: postPath(post),
+  label: post.title,
+  title: post.seoTitle,
+  description: post.description,
+  llmsNote: `${post.searchIntent}. ${post.description}`,
+  // Articles rank on their own merit; they should not outrank the tools and
+  // pillar pages they exist to feed, so they sit a step below them.
+  priority: post.pillar ? 0.8 : 0.7,
+  changeFrequency: 'monthly',
+  lastModified: post.publishedAt,
+  group: 'Blog',
+});
+
+const BLOG_PAGES: PublicPage[] = LIVE_POSTS.map(blogPageFor);
+
+/**
+ * Every crawlable route: the hand-written pages, then the free-tools suite,
+ * then the blog.
+ *
+ * The tools sit between the two on purpose. They are hand-written pages like
+ * the first group, but there are nine of them sharing one shape, so they are
+ * defined together in ./toolsPages.ts and spliced in here rather than typed
+ * into the middle of STATIC_PAGES.
+ */
+export const PUBLIC_PAGES: PublicPage[] = [
+  ...STATIC_PAGES, ...TOOL_PAGES, BLOG_INDEX, ...BLOG_PAGES,
+];
+
+/**
+ * The same list, recomputed for a given date.
+ *
+ * Exists alongside the constant for the reason given on `livePosts`: middleware
+ * serves sitemap.xml from a reused instance whose module scope is older than
+ * the request.
+ */
+export function publicPages(today: string = todayIso()): PublicPage[] {
+  const posts = livePosts(today);
+  const index: PublicPage = {
+    ...BLOG_INDEX,
+    lastModified: posts.length ? posts[0].publishedAt : BLOG_INDEX.lastModified,
+  };
+  return [...STATIC_PAGES, ...TOOL_PAGES, index, ...posts.map(blogPageFor)];
+}
+
+/** The free-tools routes, for the parts of the site that treat them as a set. */
+export const TOOL_PATHS: string[] = TOOL_PAGES.map((p) => p.path);
+
+export const isToolPath = (path: string): boolean =>
+  path === '/tools' || path.startsWith('/tools/');
+
+/** The blog's own pages, for the parts of the SEO layer that treat them apart. */
+export const BLOG_PATHS: string[] = [BLOG_INDEX.path, ...BLOG_PAGES.map((p) => p.path)];
+
+export const isBlogPath = (path: string): boolean => path === '/blog' || path.startsWith('/blog/');
+
+/** The post behind a `/blog/<slug>` route, if that route is live. */
+export function postForPath(path: string): BlogPost | undefined {
+  if (!path.startsWith('/blog/')) return undefined;
+  const slug = path.slice('/blog/'.length).replace(/\/$/, '');
+  return LIVE_POSTS.find((p) => p.slug === slug) ?? BLOG_POSTS.find((p) => p.slug === slug);
+}
 
 export function pageByPath(path: string): PublicPage | undefined {
   const clean = path.length > 1 ? path.replace(/\/+$/, '') : path;

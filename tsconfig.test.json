@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // `vitest run` does not type-check, so this config is what keeps the tests
+    // honest. Node's types are added here and only here.
+    "types": ["vite/client", "node", "vitest/globals"],
+    "noEmit": true
+  },
+  "include": ["src", "vitest.config.ts"],
+  "exclude": []
+}

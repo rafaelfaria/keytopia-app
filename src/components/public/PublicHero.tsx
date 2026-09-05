@@ -20,7 +20,9 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import type { Formation, HeroHandle } from '../../pages/public/heroScene';
 
-interface Variant { formation: Formation; hue: string; hue2: string }
+export interface HeroVariant { formation: Formation; hue: string; hue2: string }
+
+type Variant = HeroVariant;
 
 /**
  * One formation per page, chosen to match what the page is about rather than
@@ -41,9 +43,19 @@ const VARIANTS: Record<string, Variant> = {
 
 const CALM: Variant = { formation: 'calm', hue: '#8b7cff', hue2: '#14d8c4' };
 
-export function PublicHero({ path, children }: { path: string; children: ReactNode }) {
+/**
+ * `variant` overrides the per-path table. The blog needs it: fifty articles
+ * cannot each have a hand-written entry above, and their formation and hue come
+ * from the article's category instead.
+ */
+export function PublicHero(
+  { path, variant: override, children }: { path: string; variant?: HeroVariant; children: ReactNode },
+) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Serialised so an inline object literal from a caller does not restart the
+  // scene on every render.
+  const overrideKey = override ? `${override.formation}|${override.hue}|${override.hue2}` : '';
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -51,7 +63,10 @@ export function PublicHero({ path, children }: { path: string; children: ReactNo
     if (!wrap || !canvas) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const variant = VARIANTS[path] ?? CALM;
+    const [formation, hue, hue2] = overrideKey.split('|');
+    const variant: Variant = overrideKey
+      ? { formation: formation as Formation, hue, hue2 }
+      : VARIANTS[path] ?? CALM;
 
     let handle: HeroHandle | null = null;
     let cancelled = false;
@@ -94,7 +109,7 @@ export function PublicHero({ path, children }: { path: string; children: ReactNo
       cancelAnimationFrame(raf);
       handle?.dispose();
     };
-  }, [path]);
+  }, [path, overrideKey]);
 
   return (
     <div className="pub-hero" ref={wrapRef}>

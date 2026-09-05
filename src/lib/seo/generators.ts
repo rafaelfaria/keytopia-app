@@ -1,21 +1,34 @@
 /**
- * Build-time generators for the crawler-facing files: robots.txt, sitemap.xml,
- * llms.txt and llms-full.txt.
+ * Generators for the crawler-facing files: robots.txt, sitemap.xml and llms.txt.
  *
  * Pure string builders with no I/O and no browser globals — scripts/gen-seo.mjs
  * calls them through the SSR bundle and writes the results into dist/. Because
  * they read the same registry and content modules the pages render from, these
  * files cannot drift from the site.
+ *
+ * Deliberately free of article bodies. `buildLlmsFullTxt` lives in
+ * ./generatorsFull.ts because it needs the prose, and that is seventy thousand
+ * words: middleware.ts imports *this* module to serve sitemap.xml and llms.txt
+ * on every request, and dragging the whole blog into a request path that only
+ * needs titles and dates would be a cold start paid for nothing.
  */
 
 import {
-  PRIVATE_PATHS, PUBLIC_PAGES, SITE_DESCRIPTION, SITE_NAME, SITE_URL, absUrl, ogImage,
+  LIVE_POSTS, PRIVATE_PATHS, PUBLIC_PAGES, SITE_DESCRIPTION, SITE_NAME, SITE_URL,
+  absUrl, ogImage, type PublicPage,
 } from './site';
+import { BLOG_CATEGORIES, postPath, type BlogPost } from '../blog/posts';
 import {
   ACCESSIBILITY, AUDIENCES, CORE_FEATURES, CURRICULUM, FAQS, GAMES, GLOSSARY,
   KIDS_POINTS, LEARN_GUIDE, LEARN_GUIDE_INTRO, METHOD_STEPS, PRIVACY_SECTIONS,
   PRODUCT_PRICE, PRODUCT_SUMMARY, SCHOOLS_POINTS, TERMS_SECTIONS, TRAINING_MODES,
 } from './content';
+import {
+  TOOLS_HUB_FAQS, TOOLS_HUB_INTRO, TOOLS_HUB_SECTIONS, TOOL_CONTENT,
+} from './toolsContent';
+import { TOOLS } from '../tools/registry';
+import { paramsFor } from '../tools/deepLink';
+import { BENCHMARKS, POPULATION, SOURCES, TIER_META, NO_AGE_TABLE_NOTE } from '../tools/benchmarks';
 
 // ── robots.txt ─────────────────────────────────────────────────────────────
 
@@ -62,7 +75,14 @@ const CRAWLERS = [
 ] as const;
 
 export function buildRobotsTxt(): string {
-  const allow = PUBLIC_PAGES.map((p) => p.path);
+  // One `Allow: /blog/` covers every article. Listing all fifty per crawler,
+  // across thirty-one crawler blocks, would produce a robots.txt of several
+  // thousand lines — and a prefix rule says the same thing, including for the
+  // articles that have not been published yet.
+  const allow = [
+    ...PUBLIC_PAGES.filter((p) => p.group !== 'Blog').map((p) => p.path),
+    '/blog/',
+  ];
   const lines: string[] = [
     `# robots.txt for ${SITE_NAME}: ${SITE_URL}`,
     '# Generated at build time from src/lib/seo/site.ts. Do not edit by hand.',
@@ -100,8 +120,12 @@ export function buildRobotsTxt(): string {
 const xmlEscape = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
-export function buildSitemapXml(): string {
-  const entries = PUBLIC_PAGES.map((p) => {
+/**
+ * `pages` is a parameter so middleware can pass a registry computed for the
+ * current request rather than for whenever its instance cold-started.
+ */
+export function buildSitemapXml(pages: PublicPage[] = PUBLIC_PAGES): string {
+  const entries = pages.map((p) => {
     const loc = absUrl(p.path);
     const image = absUrl(ogImage(p));
     return [
@@ -134,8 +158,8 @@ export function buildSitemapXml(): string {
 }
 
 /** A sitemap index — trivial today, but the file search consoles expect to poll. */
-export function buildSitemapIndexXml(): string {
-  const today = PUBLIC_PAGES.reduce((a, p) => (p.lastModified > a ? p.lastModified : a), '2026-01-01');
+export function buildSitemapIndexXml(pages: PublicPage[] = PUBLIC_PAGES): string {
+  const today = pages.reduce((a, p) => (p.lastModified > a ? p.lastModified : a), '2026-01-01');
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -156,7 +180,10 @@ const GROUP_ORDER = ['Core', 'Tools', 'Learn', 'Audiences', 'Reference', 'Legal'
  * The curated index, per the llmstxt.org convention: a short product summary
  * followed by annotated links, so an agent can decide what to fetch.
  */
-export function buildLlmsTxt(): string {
+export function buildLlmsTxt(
+  pages: PublicPage[] = PUBLIC_PAGES,
+  posts: BlogPost[] = LIVE_POSTS,
+): string {
   const out: string[] = [];
 
   out.push(`# ${SITE_NAME}`);
@@ -173,14 +200,31 @@ export function buildLlmsTxt(): string {
   out.push('## Pages');
   out.push('');
   for (const group of GROUP_ORDER) {
-    const pages = PUBLIC_PAGES.filter((p) => p.group === group);
-    if (!pages.length) continue;
+    const inGroup = pages.filter((p) => p.group === group);
+    if (!inGroup.length) continue;
     out.push(`### ${group}`);
     out.push('');
-    for (const p of pages) {
+    for (const p of inGroup) {
       out.push(`- [${p.label}: ${p.title.replace(/ \| .*$/, '')}](${absUrl(p.path)}): ${p.llmsNote}`);
     }
     out.push('');
+  }
+
+  if (posts.length) {
+    out.push('## Blog');
+    out.push('');
+    out.push(`Long-form articles on learning to type, published every other day. ${posts.length} live so far, newest first within each topic.`);
+    out.push('');
+    for (const category of BLOG_CATEGORIES) {
+      const inCategory = posts.filter((p) => p.category === category);
+      if (!inCategory.length) continue;
+      out.push(`### ${category}`);
+      out.push('');
+      for (const p of inCategory) {
+        out.push(`- [${p.title}](${absUrl(postPath(p))}) — ${p.publishedAt}. ${p.description}`);
+      }
+      out.push('');
+    }
   }
 
   out.push('## Features');
@@ -197,6 +241,31 @@ export function buildLlmsTxt(): string {
   out.push('');
   for (const g of GAMES) out.push(`- **${g.name}** (trains ${g.skill.toLowerCase()}): ${g.description}`);
   out.push('');
+  out.push('## Free tools');
+  out.push('');
+  out.push('Eight tools that run in the browser with no account, no attempt limit and no result held back. They share one typing engine and one definition of words per minute, so a figure from one means the same thing in all of them.');
+  out.push('');
+  for (const t of TOOLS) {
+    out.push(`- **${t.name}** (${absUrl(t.path)}): ${t.outcome}. ${t.blurb} Takes about ${t.time.toLowerCase()}.`);
+  }
+  out.push('');
+
+  // Agents are one of the main consumers of this file, and a configured link
+  // is far more useful to one than a bare page. Published here so an assistant
+  // answering "work out my WPM" can hand somebody a URL with the figures in it.
+  out.push('### Linking to a tool with values');
+  out.push('');
+  out.push('Every tool reads its setup from the query string, so a link can arrive already configured. Unrecognised values are ignored rather than erroring, and every parameterised URL canonicalises back to the plain tool URL.');
+  out.push('');
+  for (const t of TOOLS) {
+    const specs = paramsFor(t.path);
+    if (!specs.length) continue;
+    out.push(`- **${t.name}** \`${t.path}\``);
+    for (const spec of specs) {
+      out.push(`  - \`${spec.name}\` (${spec.accepts}): ${spec.describe} Example: ${absUrl(t.path)}${spec.example}`);
+    }
+  }
+  out.push('');
 
   out.push('## Who it is for');
   out.push('');
@@ -212,84 +281,6 @@ export function buildLlmsTxt(): string {
   out.push('');
   out.push(`- [Full content](${SITE_URL}/llms-full.txt): every public page's complete text in one file.`);
   out.push('');
-
-  return out.join('\n');
-}
-
-/**
- * The same index followed by the complete text of every public page, so an
- * agent can cite the actual content in one fetch instead of eleven.
- */
-export function buildLlmsFullTxt(): string {
-  const out: string[] = [buildLlmsTxt(), '', '---', '', '# Full content', ''];
-
-  const page = (path: string) => PUBLIC_PAGES.find((p) => p.path === path)!;
-  const header = (path: string) => {
-    const p = page(path);
-    out.push(`## ${p.title.replace(/ \| .*$/, '')}`);
-    out.push('');
-    out.push(`URL: ${absUrl(p.path)}`);
-    out.push('');
-    out.push(p.description);
-    out.push('');
-  };
-
-  header('/');
-  out.push(PRODUCT_SUMMARY, '');
-  out.push('### How it works', '');
-  for (const s of METHOD_STEPS) out.push(`**${s.name}.** ${s.text}`, '');
-
-  header('/typing-test');
-  out.push('A free in-browser typing test at 15, 30, 60 or 120 seconds. It reports WPM, raw WPM, accuracy, consistency, hesitation count, the keys with the highest error rate and the slowest letter transitions. No sign-up is required and the result is not transmitted anywhere.', '');
-  out.push('WPM is correctly typed characters divided by five, scaled to one minute. Raw WPM applies the same formula to every keystroke including errors, so the gap between them measures what mistakes cost. Accuracy is the share of keystrokes correct on the first attempt. Consistency is derived from the variation in inter-key intervals.', '');
-
-  header('/learn-to-type');
-  out.push(LEARN_GUIDE_INTRO, '');
-  for (const s of LEARN_GUIDE) {
-    out.push(`### ${s.heading}`, '');
-    for (const p of s.paragraphs) out.push(p, '');
-  }
-
-  header('/curriculum');
-  for (const w of CURRICULUM) {
-    out.push(`### ${w.name}`, '');
-    out.push(`${w.tagline}. Target: ${w.targetWpm} at ${w.targetAccuracy}.`, '');
-    for (const r of w.regions) out.push(`- **${r.region}** (${r.skill}): ${r.description}`);
-    out.push('');
-  }
-
-  header('/typing-games');
-  for (const g of GAMES) out.push(`### ${g.name}`, '', `Trains: ${g.skill}`, '', g.description, '');
-
-  header('/typing-for-kids');
-  for (const k of KIDS_POINTS) out.push(`- **${k.name}**: ${k.description}`);
-  out.push('');
-
-  header('/typing-for-schools');
-  for (const s of SCHOOLS_POINTS) out.push(`- **${s.name}**: ${s.description}`);
-  out.push('');
-
-  header('/faq');
-  for (const f of FAQS) out.push(`### ${f.question}`, '', f.answer, '');
-
-  header('/typing-glossary');
-  for (const t of GLOSSARY) out.push(`### ${t.term}`, '', t.definition, '');
-
-  header('/privacy');
-  for (const s of PRIVACY_SECTIONS) {
-    out.push(`### ${s.heading}`, '');
-    for (const p of s.paragraphs) out.push(p, '');
-    for (const b of s.bullets ?? []) out.push(`- ${b}`);
-    if (s.bullets?.length) out.push('');
-  }
-
-  header('/terms');
-  for (const s of TERMS_SECTIONS) {
-    out.push(`### ${s.heading}`, '');
-    for (const p of s.paragraphs) out.push(p, '');
-    for (const b of s.bullets ?? []) out.push(`- ${b}`);
-    if (s.bullets?.length) out.push('');
-  }
 
   return out.join('\n');
 }

@@ -9,14 +9,23 @@
 
 import { useEffect } from 'react';
 import { applyHead, buildHead, buildNoIndexHead } from './head';
+import type { HeadExtras } from './jsonLd';
 import { pageByPath, SITE_NAME } from './site';
 
-/** Drop into any public page: `<Seo path="/faq" />`. */
-export function Seo({ path }: { path: string }) {
+/**
+ * Drop into any public page: `<Seo path="/faq" />`.
+ *
+ * `extras` carries the facts a page can only know about itself — an article's
+ * FAQ list and word count, which come from parsing its Markdown. It is
+ * serialised into the dependency list rather than compared by reference,
+ * because callers build the object inline on every render.
+ */
+export function Seo({ path, extras }: { path: string; extras?: HeadExtras }) {
+  const fingerprint = extras ? JSON.stringify(extras) : '';
   useEffect(() => {
     const page = pageByPath(path);
-    if (page) applyHead(buildHead(page));
-  }, [path]);
+    if (page) applyHead(buildHead(page, fingerprint ? JSON.parse(fingerprint) : undefined));
+  }, [path, fingerprint]);
   return null;
 }
 

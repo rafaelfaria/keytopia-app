@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { account, useAccount, hasAccountHistory, type AuthMode } from '../lib/account';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { Btn } from '../components/ui';
@@ -89,15 +89,12 @@ function AuthArt() {
 }
 
 export default function SignIn() {
-  const nav = useNavigate();
   const [params] = useSearchParams();
   const { user, ready, busy, error, pending, noAccount, providers } = useAccount();
   const [mode, setMode] = useState<AuthMode>(() => initialMode(params));
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [offline, setOffline] = useState(!navigator.onLine);
-  /** Set the moment a student chooses the class-code door, read after sign-in. */
-  const [joining, setJoining] = useState(false);
   /** Seconds left before the server will accept another send. 0 = ready. */
   const [wait, setWait] = useState(0);
   const codeRef = useRef<HTMLInputElement>(null);
@@ -125,9 +122,7 @@ export default function SignIn() {
   useEffect(() => { if (pending) codeRef.current?.focus(); }, [pending]);
 
   // Already signed in — resume the last explorer, or go wherever they belong.
-  // A student who came in through "I have a class code" carries that errand
-  // through the handshake instead of being resumed into the app.
-  if (user) return <EnterJourney next={joining ? '/join' : undefined} />;
+  if (user) return <EnterJourney />;
 
   // A project with no Supabase configured would strand everyone at this screen,
   // so an unconfigured build falls through rather than bricking.
@@ -150,9 +145,7 @@ export default function SignIn() {
                 <span className="signin-sent-ic"><Ic n="mail" size={24} /></span>
                 <h1>Check your email</h1>
                 <p className="auth-sub">
-                  We sent a sign-in link and a six-digit code to{' '}
-                  <strong>{pending.email}</strong>. Open the link, or type the
-                  code here to stay in this tab.
+                  Link and six-digit code sent to <strong>{pending.email}</strong>.
                 </p>
 
                 <form
@@ -192,9 +185,6 @@ export default function SignIn() {
                     Use a different email
                   </button>
                 </div>
-                <p className="small muted auth-note">
-                  Nothing arrived? Check the spam folder. Links and codes last an hour.
-                </p>
               </div>
             ) : offline ? (
               <div data-stagger>
@@ -211,12 +201,6 @@ export default function SignIn() {
             ) : (
               <div data-stagger>
                 <h1>{mode === 'signin' ? 'Welcome back' : 'Start your journey'}</h1>
-                <p className="auth-sub">
-                  {mode === 'signin'
-                    ? 'Sign in and every explorer picks up exactly where they left off.'
-                    : "One account keeps every explorer's progress safe, on any device. It's free, and there's no password to remember."}
-                </p>
-
                 {/* Google first: for a returning parent this is one tap, where
                     the email route is a round trip through another app. */}
                 {providers?.google && (
@@ -268,35 +252,6 @@ export default function SignIn() {
             {error && !noAccount && <p className="small auth-err">{error}</p>}
             {!ready && !offline && <p className="small muted auth-note">Checking your session…</p>}
 
-            {/* The quiet floor of the page. The class-code door lives here
-                rather than as a third full-width button: it is for students at
-                school, a minority of the people who reach this screen, and
-                giving it the same weight as the two account doors is most of
-                what made the page feel busy. */}
-            <footer className="auth-foot">
-              {!pending && (
-                <p className="small muted">
-                  Joining a class?{' '}
-                  <button
-                    type="button" className="linkish" disabled={Boolean(busy)}
-                    onClick={() => {
-                      setJoining(true);
-                      void account.signInAnonymously().then((ok) => { if (!ok) setJoining(false); });
-                    }}
-                  >
-                    {busy === 'anon' ? 'Getting your seat ready…' : 'Use a class code'}
-                  </button>
-                  . No email needed.
-                </p>
-              )}
-              <p className="small muted">
-                Just looking? The <Link to="/typing-test">typing test</Link> and{' '}
-                <Link to="/typing-games">games</Link> need no account at all.
-              </p>
-              <button type="button" className="linkish auth-back" onClick={() => nav('/')}>
-                ← Back to {BRAND.name}
-              </button>
-            </footer>
           </div>
         </div>
 

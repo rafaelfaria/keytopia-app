@@ -2109,23 +2109,15 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 }
 .auth-brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
 
-.auth-panel h1 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); line-height: 1.15; margin-bottom: 8px; }
+.auth-panel h1 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); line-height: 1.15; margin-bottom: 20px; }
+/* Only the "check your email" screen still carries a line under the heading:
+   the address the link went to, which is the one fact that screen exists for. */
 .auth-sub { color: var(--muted); line-height: 1.55; margin-bottom: 22px; }
 
 .auth-panel .oauth-btn { margin-bottom: 2px; }
 .auth-panel .signin-form { margin-top: 0; }
 .auth-err { margin-top: 12px; color: var(--bad); }
 .auth-note { margin-top: 10px; line-height: 1.5; }
-
-.auth-foot {
-  margin-top: clamp(22px, 5vw, 32px);
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
-  line-height: 1.55;
-}
-.auth-back { margin-top: 4px; font-weight: 600; text-decoration: none; }
-.auth-back:hover { text-decoration: underline; }
 
 /* ── The moving half ──────────────────────────────────────────────────────
    Transform and opacity only. Nothing here animates a property that would

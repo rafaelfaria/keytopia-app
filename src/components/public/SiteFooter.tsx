@@ -49,18 +49,25 @@ export function SiteFooter() {
   return (
     <footer className="site-foot">
       <div className="site-foot-inner">
-        <div className="site-foot-brand">
-          {/* Mark plus wordmark, as in the header. The mark alone is a gradient
-              SVG sitting on --logo-bg, which is a near-match for the footer's
-              own ground, so on its own it reads as a smudge. */}
-          <Link to="/" className="site-foot-mark" aria-label={`${SITE_NAME} home`}>
-            <LogoMark size={30} idPrefix="sitefoot" flat />
-            <span>{SITE_NAME}</span>
-          </Link>
-          <p>
-            Every keyboard is a world. {SITE_NAME} is free, carries no advertising, and writes every
-            keystroke to your own browser first, so practice never waits on the network.
-          </p>
+        {/* Three bands, not one grid. The brand used to be the first cell of the
+            same row as the link columns, which left six cells in five tracks:
+            the last column wrapped to a second row and the footer read as a
+            spill rather than a block. Giving the masthead the full width also
+            gives the tools column enough room for its longest label. */}
+        <div className="site-foot-top">
+          <div className="site-foot-brand">
+            {/* Mark plus wordmark, as in the header. The mark alone is a gradient
+                SVG sitting on --logo-bg, which is a near-match for the footer's
+                own ground, so on its own it reads as a smudge. */}
+            <Link to="/" className="site-foot-mark" aria-label={`${SITE_NAME} home`}>
+              <LogoMark size={30} idPrefix="sitefoot" flat />
+              <span>{SITE_NAME}</span>
+            </Link>
+            <p>
+              Every keyboard is a world. {SITE_NAME} is free, carries no advertising, and writes
+              every keystroke to your own browser first, so practice never waits on the network.
+            </p>
+          </div>
           {/* The contact address used to appear only on the privacy and terms
               pages, so a reader who landed anywhere else had no visible way to
               reach a person. It belongs on every page, not behind the legal
@@ -72,12 +79,19 @@ export function SiteFooter() {
           </p>
         </div>
 
-        {columns.map((c) => (
-          <nav className="site-foot-col" key={c.label} aria-label={c.label}>
-            <strong>{c.label}</strong>
-            {c.pages.map((p) => <Link key={p.path} to={p.path}>{p.label}</Link>)}
-          </nav>
-        ))}
+        <div className="site-foot-nav">
+          {columns.map((c) => (
+            <nav className="site-foot-col" key={c.label} aria-label={c.label}>
+              <strong>{c.label}</strong>
+              {c.pages.map((p) => <Link key={p.path} to={p.path}>{p.label}</Link>)}
+            </nav>
+          ))}
+        </div>
+
+        <div className="site-foot-base">
+          <span>© {new Date().getFullYear()} {SITE_NAME}</span>
+          <span>Practice stays on your device.</span>
+        </div>
       </div>
     </footer>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import '@fontsource-variable/manrope';
 import '@fontsource/jetbrains-mono/400.css';
 import '@fontsource/jetbrains-mono/600.css';
@@ -27,21 +27,6 @@ import LessonPlayer from './pages/LessonPlayer';
 import PracticeHub from './pages/PracticeHub';
 import TrainSession from './pages/TrainSession';
 import Games from './pages/Games';
-import WordfallGame from './pages/WordfallGame';
-import LetterFallGame from './pages/LetterFallGame';
-import KeySafariGame from './pages/KeySafariGame';
-import RocketGame from './pages/RocketGame';
-import PaintRevealGame from './pages/PaintRevealGame';
-import FirstLetterGame from './pages/FirstLetterGame';
-import WordBridgeGame from './pages/WordBridgeGame';
-import KeyforgeGame from './pages/KeyforgeGame';
-import WordflightGame from './pages/WordflightGame';
-import DuelGame from './pages/DuelGame';
-import TideLineGame from './pages/TideLineGame';
-import PearlDiveGame from './pages/PearlDiveGame';
-import CipherGame from './pages/CipherGame';
-import StackGame from './pages/StackGame';
-import SurvivorGame from './pages/SurvivorGame';
 import RaceHub from './pages/RaceHub';
 import RaceLive from './pages/RaceLive';
 import GuestRoom from './pages/GuestRoom';
@@ -57,6 +42,7 @@ import {
   KidsPage, LearnToTypePage, PracticeModesPage, PrivacyPage, RacesPage,
   SchoolsPage, TermsPage, TypingGamesPage,
 } from './pages/public/pages';
+import { NotFoundPage } from './pages/public/NotFound';
 import { TypingTestPage } from './pages/public/TypingTest';
 import {
   AccuracyTestPage, DailyExercisePage, ProgressTrackerPage, SpeedByAgePage,
@@ -81,6 +67,34 @@ import { startClassroomWatch } from './lib/classroom';
  * there, so these two routes — and the article bodies they pull in behind them —
  * load only when somebody actually asks for /blog.
  */
+/**
+ * The fifteen games, loaded on demand.
+ *
+ * Together they were 359 kB gzipped — sixty per cent of the main bundle — and
+ * every visitor downloaded them: the landing page, somebody reading a blog
+ * article from a search result, somebody using a free tool. None of those
+ * people run a line of it. Three.js and the game scenes now arrive when a
+ * game route does.
+ *
+ * The games are behind the account boundary, so the reader who benefits most
+ * is the first-time visitor who never reaches one.
+ */
+const WordfallGame = React.lazy(() => import('./pages/WordfallGame'));
+const LetterFallGame = React.lazy(() => import('./pages/LetterFallGame'));
+const KeySafariGame = React.lazy(() => import('./pages/KeySafariGame'));
+const RocketGame = React.lazy(() => import('./pages/RocketGame'));
+const PaintRevealGame = React.lazy(() => import('./pages/PaintRevealGame'));
+const FirstLetterGame = React.lazy(() => import('./pages/FirstLetterGame'));
+const WordBridgeGame = React.lazy(() => import('./pages/WordBridgeGame'));
+const KeyforgeGame = React.lazy(() => import('./pages/KeyforgeGame'));
+const WordflightGame = React.lazy(() => import('./pages/WordflightGame'));
+const DuelGame = React.lazy(() => import('./pages/DuelGame'));
+const TideLineGame = React.lazy(() => import('./pages/TideLineGame'));
+const PearlDiveGame = React.lazy(() => import('./pages/PearlDiveGame'));
+const CipherGame = React.lazy(() => import('./pages/CipherGame'));
+const StackGame = React.lazy(() => import('./pages/StackGame'));
+const SurvivorGame = React.lazy(() => import('./pages/SurvivorGame'));
+
 const BlogIndex = React.lazy(() => import('./pages/blog/BlogIndex'));
 const BlogPost = React.lazy(() => import('./pages/blog/BlogPost'));
 
@@ -92,6 +106,19 @@ const BlogPost = React.lazy(() => import('./pages/blog/BlogPost'));
  * work the reader cannot see and does not care about; painting the page's own
  * background just avoids a white flash on the swap.
  */
+/**
+ * Games render inside AppShell, which has already painted the frame around
+ * them, so the fallback only has to hold the space the game is about to fill
+ * rather than redraw the page.
+ */
+function GameChunk({ children }: { children: React.ReactNode }) {
+  return (
+    <React.Suspense fallback={<div style={{ minHeight: '60vh' }} />}>
+      {children}
+    </React.Suspense>
+  );
+}
+
 function BlogChunk({ children }: { children: React.ReactNode }) {
   return (
     <React.Suspense fallback={<div className="pub-root" style={{ minHeight: '100vh' }} />}>
@@ -220,21 +247,21 @@ container.__ktRoot.render(
           <Route path="train/:mode" element={<TrainSession />} />
           <Route path="games" element={<Games />} />
           <Route path="arena" element={<Games />} />
-          <Route path="games/wordfall" element={<WordfallGame />} />
-          <Route path="games/letterfall" element={<LetterFallGame />} />
-          <Route path="games/keysafari" element={<KeySafariGame />} />
-          <Route path="games/rocket" element={<RocketGame />} />
-          <Route path="games/paint" element={<PaintRevealGame />} />
-          <Route path="games/firstletter" element={<FirstLetterGame />} />
-          <Route path="games/bridge" element={<WordBridgeGame />} />
-          <Route path="games/keyforge" element={<KeyforgeGame />} />
-          <Route path="games/wordflight" element={<WordflightGame />} />
-          <Route path="games/duel" element={<DuelGame />} />
-          <Route path="games/tideline" element={<TideLineGame />} />
-          <Route path="games/pearl" element={<PearlDiveGame />} />
-          <Route path="games/cipher" element={<CipherGame />} />
-          <Route path="games/stack" element={<StackGame />} />
-          <Route path="games/survivor" element={<SurvivorGame />} />
+          <Route path="games/wordfall" element={<GameChunk><WordfallGame /></GameChunk>} />
+          <Route path="games/letterfall" element={<GameChunk><LetterFallGame /></GameChunk>} />
+          <Route path="games/keysafari" element={<GameChunk><KeySafariGame /></GameChunk>} />
+          <Route path="games/rocket" element={<GameChunk><RocketGame /></GameChunk>} />
+          <Route path="games/paint" element={<GameChunk><PaintRevealGame /></GameChunk>} />
+          <Route path="games/firstletter" element={<GameChunk><FirstLetterGame /></GameChunk>} />
+          <Route path="games/bridge" element={<GameChunk><WordBridgeGame /></GameChunk>} />
+          <Route path="games/keyforge" element={<GameChunk><KeyforgeGame /></GameChunk>} />
+          <Route path="games/wordflight" element={<GameChunk><WordflightGame /></GameChunk>} />
+          <Route path="games/duel" element={<GameChunk><DuelGame /></GameChunk>} />
+          <Route path="games/tideline" element={<GameChunk><TideLineGame /></GameChunk>} />
+          <Route path="games/pearl" element={<GameChunk><PearlDiveGame /></GameChunk>} />
+          <Route path="games/cipher" element={<GameChunk><CipherGame /></GameChunk>} />
+          <Route path="games/stack" element={<GameChunk><StackGame /></GameChunk>} />
+          <Route path="games/survivor" element={<GameChunk><SurvivorGame /></GameChunk>} />
           <Route path="race" element={<RaceHub />} />
           <Route path="race/live" element={<RaceLive />} />
           {/* A room is an address, so it can be sent to a friend. Same hub, with
@@ -248,7 +275,15 @@ container.__ktRoot.render(
           <Route path="explorer" element={<ExplorerBuilder />} />
           <Route path="settings" element={<Settings />} />
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* The prerendered 404 document hydrates here, and any unknown path in
+            the running app lands here too.
+
+            This used to be `<Navigate to="/" replace />`, the client-side half
+            of the same fault as the server rewrite: a wrong URL silently became
+            the home page instead of saying it was wrong. A person lost the
+            evidence of their typo, and a crawler was told the page existed. */}
+        <Route path="/404" element={<NotFoundPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       {/* Two measurements, deliberately. GA4 runs in Consent Mode with storage

@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { KeyboardScene } from './landing3d';
+import type { KeyboardScene } from './landing3d';
 import { Logo, Chip } from '../components/ui';
 import { KeyboardVisual } from '../components/KeyboardVisual';
 import { RhythmFingerprint } from '../components/charts';
@@ -308,26 +308,51 @@ export default function Landing() {
     };
   }, []);
 
-  // 3D scene
+  // 3D scene.
+  //
+  // Imported dynamically, which is what keeps Three.js — 137 kB gzipped, the
+  // largest single library here — out of the bundle every visitor downloads.
+  // Only this page and the Arena boards draw with it, and the scene is
+  // decoration behind copy that has already painted, so it can arrive late.
+  //
+  // The scene may therefore not exist for a moment after mount. Every other
+  // reader of `sceneRef` already goes through `?.`, so a null ref is a frame
+  // without a scene rather than a crash, and `cancelled` covers the visitor who
+  // leaves before the chunk lands.
   useEffect(() => {
     if (!canvasRef.current) return;
-    const scene = new KeyboardScene(canvasRef.current, rm);
-    sceneRef.current = scene;
-    if (import.meta.env.DEV) (window as unknown as { __scene?: KeyboardScene }).__scene = scene;
-    if (rm) scene.setProgress(0.25);
+    let cancelled = false;
+    let scene: KeyboardScene | null = null;
+    let detachKeys = () => {};
+
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const t = e.target as HTMLElement;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       if (e.key.length === 1) {
-        scene.typeKey(e.key);
+        scene?.typeKey(e.key);
         setTyped((prev) => [...prev.slice(-11), e.key === ' ' ? '␣' : e.key]);
       }
     };
-    window.addEventListener('keydown', onKey);
+
+    // Keys are only listened for once there is a scene to send them to, so a
+    // visitor typing during the load does not silently lose the keystrokes that
+    // are meant to appear on the keycaps.
+    void (async () => {
+      const { KeyboardScene } = await import('./landing3d');
+      if (cancelled || !canvasRef.current) return;
+      scene = new KeyboardScene(canvasRef.current, rm);
+      sceneRef.current = scene;
+      if (import.meta.env.DEV) (window as unknown as { __scene?: KeyboardScene }).__scene = scene;
+      if (rm) scene.setProgress(0.25);
+      window.addEventListener('keydown', onKey);
+      detachKeys = () => window.removeEventListener('keydown', onKey);
+    })();
+
     return () => {
-      window.removeEventListener('keydown', onKey);
-      scene.dispose();
+      cancelled = true;
+      detachKeys();
+      scene?.dispose();
       sceneRef.current = null;
     };
   }, [rm]);
@@ -486,8 +511,8 @@ export default function Landing() {
               <span>Deep analytics</span><i />
               <span>All ages</span>
             </div>
+            <div className="hero-scroll-cue" aria-hidden>scroll<br />↓</div>
           </div>
-          <div className="hero-scroll-cue" aria-hidden>scroll<br />↓</div>
         </section>
 
         <section className="world" aria-label="The keyboard world">

@@ -71,15 +71,6 @@ export function articleBySlug(slug: string): Article | undefined {
   return article;
 }
 
-/** Reading time without paying for a full parse — the index needs fifty of these. */
-export function minutesFor(slug: string): number {
-  const cached = CACHE.get(slug);
-  if (cached) return cached.minutes;
-  const source = BODIES[slug];
-  if (!source) return 1;
-  return Math.max(1, Math.round(source.split(/\s+/).filter(Boolean).length / 225));
-}
-
 /**
  * The curated "keep reading" set.
  *
@@ -169,6 +160,12 @@ export function validateBlog(): BlogProblem[] {
     if (!source) {
       problems.push({ slug: post.slug, problem: 'no article body' });
       continue;
+    }
+
+    const stated = post.readingMinutes;
+    const actual = readingMinutes(parseMarkdown(source));
+    if (stated !== actual) {
+      problems.push({ slug: post.slug, problem: `readingMinutes says ${stated}, the prose reads as ${actual}` });
     }
 
     for (const href of internalLinks(source)) {

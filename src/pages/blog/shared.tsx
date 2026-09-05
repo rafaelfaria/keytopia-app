@@ -10,7 +10,6 @@ import type { HeroVariant } from '../../components/public/PublicHero';
 import {
   CATEGORY_HUES, postPath, type BlogCategory, type BlogPost,
 } from '../../lib/blog/posts';
-import { minutesFor } from '../../lib/blog/registry';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -81,7 +80,7 @@ export function PostCard({ post, featured = false }: { post: BlogPost; featured?
       <p className="blog-card-meta">
         <time dateTime={date}>{formatDate(date)}</time>
         <span aria-hidden>·</span>
-        <span>{minutesFor(post.slug)} min read</span>
+        <span>{post.readingMinutes} min read</span>
       </p>
     </article>
   );

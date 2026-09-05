@@ -69,6 +69,16 @@ export interface BlogPost {
    * articles that link back to them always have a live target.
    */
   pillar?: boolean;
+  /**
+   * Reading time in whole minutes.
+   *
+   * Stored rather than computed so the index can render fifty cards without
+   * importing a single word of prose — measuring it on the fly pulled the
+   * entire blog into the chunk that only needed titles and dates.
+   * `validateBlog` re-derives it from the Markdown and fails the build if the
+   * two disagree, so a stored figure cannot drift from the article.
+   */
+  readingMinutes: number;
   /** Curated "keep reading" slugs. In-body links are separate and contextual. */
   related: string[];
 }
@@ -107,6 +117,7 @@ export const BLOG_POSTS: BlogPost[] = [
     audience: 'Complete beginners of any age',
     category: 'Touch typing',
     pillar: true,
+    readingMinutes: 10,
     related: ['correct-finger-placement-for-touch-typing', 'how-long-to-learn-touch-typing', 'what-is-touch-typing'],
   },
   {
@@ -126,6 +137,7 @@ export const BLOG_POSTS: BlogPost[] = [
     audience: 'Anyone who can already type but wants more speed',
     category: 'Touch typing',
     pillar: true,
+    readingMinutes: 7,
     related: ['typing-speed-vs-accuracy', 'how-to-reach-100-wpm', 'typing-mistakes'],
   },
   {
@@ -145,6 +157,7 @@ export const BLOG_POSTS: BlogPost[] = [
     audience: 'General users comparing themselves to a benchmark',
     category: 'Speed & tests',
     pillar: true,
+    readingMinutes: 6,
     related: ['average-typing-speed', 'what-does-wpm-mean', 'is-60-wpm-good'],
   },
   {
@@ -164,6 +177,7 @@ export const BLOG_POSTS: BlogPost[] = [
     audience: 'Parents of children aged 5–13',
     category: 'Kids & parents',
     pillar: true,
+    readingMinutes: 8,
     related: ['what-age-should-kids-learn-to-type', 'how-to-teach-a-child-to-type', 'typing-practice-for-kids-routine'],
   },
   {
@@ -183,6 +197,7 @@ export const BLOG_POSTS: BlogPost[] = [
     audience: 'General users',
     category: 'Speed & tests',
     pillar: true,
+    readingMinutes: 6,
     related: ['average-typing-speed', 'how-to-test-typing-speed', 'why-typing-speed-varies-between-tests'],
   },
   {
@@ -201,6 +216,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'General users, and parents deciding whether it matters',
     category: 'Touch typing',
+    readingMinutes: 6,
     related: ['how-to-learn-touch-typing', 'correct-finger-placement-for-touch-typing', 'stop-looking-at-the-keyboard'],
   },
   {
@@ -219,6 +235,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Beginners and self-taught typists correcting technique',
     category: 'Touch typing',
+    readingMinutes: 7,
     related: ['home-row-keys', 'how-to-learn-touch-typing', 'break-bad-typing-habits'],
   },
   {
@@ -238,6 +255,7 @@ export const BLOG_POSTS: BlogPost[] = [
     audience: 'Adults who type daily but never learned properly',
     category: 'Adults & work',
     pillar: true,
+    readingMinutes: 7,
     related: ['break-bad-typing-habits', 'typing-practice-for-adults', 'learn-touch-typing-later-in-life'],
   },
   {
@@ -257,6 +275,7 @@ export const BLOG_POSTS: BlogPost[] = [
     audience: 'Curious learners, teachers and adults who want the mechanism',
     category: 'Science',
     pillar: true,
+    readingMinutes: 7,
     related: ['how-your-brain-learns-to-type', 'why-repetition-makes-you-faster', 'accuracy-before-speed'],
   },
   {
@@ -275,6 +294,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'General users comparing their score',
     category: 'Speed & tests',
+    readingMinutes: 7,
     related: ['what-is-a-good-typing-speed', 'what-does-wpm-mean', 'is-40-wpm-good'],
   },
   {
@@ -293,6 +313,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Beginners deciding whether to commit',
     category: 'Touch typing',
+    readingMinutes: 7,
     related: ['how-to-learn-touch-typing', 'stop-looking-at-the-keyboard', 'typing-practice-for-adults'],
   },
   {
@@ -311,6 +332,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Beginners and children learning position',
     category: 'Touch typing',
+    readingMinutes: 6,
     related: ['correct-finger-placement-for-touch-typing', 'how-to-learn-touch-typing', 'stop-looking-at-the-keyboard'],
   },
   {
@@ -329,6 +351,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Comparison',
     audience: 'Intermediate typists choosing what to train',
     category: 'Touch typing',
+    readingMinutes: 7,
     related: ['accuracy-before-speed', 'improve-typing-accuracy', 'how-to-type-faster'],
   },
   {
@@ -347,6 +370,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Parents of children aged 4–10',
     category: 'Kids & parents',
+    readingMinutes: 7,
     related: ['typing-for-kids-guide-for-parents', 'how-to-teach-a-child-to-type', 'typing-speed-for-kids-by-age'],
   },
   {
@@ -365,6 +389,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'General users and job applicants',
     category: 'Speed & tests',
+    readingMinutes: 6,
     related: ['why-typing-speed-varies-between-tests', 'what-does-wpm-mean', 'average-typing-speed'],
   },
   {
@@ -383,6 +408,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Typists whose accuracy is holding back their net speed',
     category: 'Touch typing',
+    readingMinutes: 7,
     related: ['accuracy-before-speed', 'typing-speed-vs-accuracy', 'adaptive-typing-lessons'],
   },
   {
@@ -401,6 +427,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Beginners and self-taught typists',
     category: 'Touch typing',
+    readingMinutes: 7,
     related: ['how-to-learn-touch-typing', 'home-row-keys', 'break-bad-typing-habits'],
   },
   {
@@ -420,6 +447,7 @@ export const BLOG_POSTS: BlogPost[] = [
     audience: 'Secondary and university students, and their parents',
     category: 'Students & schools',
     pillar: true,
+    readingMinutes: 7,
     related: ['typing-speed-for-students', 'typing-and-homework', 'typing-vs-handwriting'],
   },
   {
@@ -438,6 +466,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Parents and primary teachers',
     category: 'Kids & parents',
+    readingMinutes: 7,
     related: ['typing-for-kids-guide-for-parents', 'what-age-should-kids-learn-to-type', 'what-is-a-good-typing-speed'],
   },
   {
@@ -456,6 +485,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Intermediate typists stuck at a plateau',
     category: 'Touch typing',
+    readingMinutes: 7,
     related: ['break-bad-typing-habits', 'how-to-type-faster', 'improve-typing-accuracy'],
   },
   {
@@ -474,6 +504,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Adults typing for hours, and anyone with wrist discomfort',
     category: 'Keyboards & ergonomics',
+    readingMinutes: 7,
     related: ['mechanical-vs-membrane-keyboards', 'home-row-keys', 'typing-faster-at-work'],
   },
   {
@@ -492,6 +523,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Parents of children aged 6–12',
     category: 'Kids & parents',
+    readingMinutes: 7,
     related: ['typing-for-kids-guide-for-parents', 'make-typing-practice-fun', 'typing-practice-for-kids-routine'],
   },
   {
@@ -510,6 +542,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Educational',
     audience: 'Learners and teachers deciding how to sequence practice',
     category: 'Science',
+    readingMinutes: 7,
     related: ['science-of-touch-typing-muscle-memory', 'typing-speed-vs-accuracy', 'improve-typing-accuracy'],
   },
   {
@@ -528,6 +561,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Working adults improving typing around a job',
     category: 'Adults & work',
+    readingMinutes: 6,
     related: ['learn-touch-typing-as-an-adult', 'best-way-to-practise-typing', 'break-bad-typing-habits'],
   },
   {
@@ -546,6 +580,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'General users who just took a test',
     category: 'Speed & tests',
+    readingMinutes: 6,
     related: ['is-60-wpm-good', 'average-typing-speed', 'what-is-a-good-typing-speed'],
   },
   {
@@ -564,6 +599,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Parents and primary teachers',
     category: 'Kids & parents',
+    readingMinutes: 7,
     related: ['make-typing-practice-fun', 'typing-for-kids-guide-for-parents', 'typing-practice-for-kids-routine'],
   },
   {
@@ -582,6 +618,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Educational',
     audience: 'Curious learners and teachers',
     category: 'Science',
+    readingMinutes: 7,
     related: ['science-of-touch-typing-muscle-memory', 'stop-looking-at-the-keyboard', 'why-repetition-makes-you-faster'],
   },
   {
@@ -600,6 +637,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'General users and the curious',
     category: 'Keyboards & ergonomics',
+    readingMinutes: 7,
     related: ['mechanical-vs-membrane-keyboards', 'home-row-keys', 'correct-finger-placement-for-touch-typing'],
   },
   {
@@ -618,6 +656,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Adults with years of self-taught technique',
     category: 'Adults & work',
+    readingMinutes: 7,
     related: ['learn-touch-typing-as-an-adult', 'typing-mistakes', 'typing-practice-for-adults'],
   },
   {
@@ -636,6 +675,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Typists who have plateaued in the fifties or sixties',
     category: 'Speed & tests',
+    readingMinutes: 6,
     related: ['is-40-wpm-good', 'how-to-reach-100-wpm', 'what-is-a-good-typing-speed'],
   },
   {
@@ -654,6 +694,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Parents and home educators',
     category: 'Kids & parents',
+    readingMinutes: 6,
     related: ['how-to-teach-a-child-to-type', 'typing-for-kids-guide-for-parents', 'make-typing-practice-fun'],
   },
   {
@@ -672,6 +713,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Educational',
     audience: 'Learners and teachers evaluating typing tools',
     category: 'Science',
+    readingMinutes: 7,
     related: ['how-typing-apps-measure-progress', 'improve-typing-accuracy', 'best-way-to-practise-typing'],
   },
   {
@@ -690,6 +732,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Adults over 40 and older learners',
     category: 'Adults & work',
+    readingMinutes: 7,
     related: ['learn-touch-typing-as-an-adult', 'typing-practice-for-adults', 'science-of-touch-typing-muscle-memory'],
   },
   {
@@ -708,6 +751,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Parents and teachers of children aged 7–12',
     category: 'Kids & parents',
+    readingMinutes: 7,
     related: ['how-to-teach-a-child-to-type', 'typing-for-kids-guide-for-parents', 'correct-finger-placement-for-touch-typing'],
   },
   {
@@ -726,6 +770,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Comparison',
     audience: 'Self-directed learners at any level',
     category: 'Science',
+    readingMinutes: 7,
     related: ['adaptive-typing-lessons', 'why-repetition-makes-you-faster', 'typing-practice-for-adults'],
   },
   {
@@ -744,6 +789,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Software developers',
     category: 'Adults & work',
+    readingMinutes: 7,
     related: ['typing-faster-at-work', 'time-saved-by-typing-faster', 'how-to-reach-100-wpm'],
   },
   {
@@ -762,6 +808,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Secondary and university students',
     category: 'Students & schools',
+    readingMinutes: 6,
     related: ['typing-for-students', 'typing-and-homework', 'what-is-a-good-typing-speed'],
   },
   {
@@ -780,6 +827,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Advanced typists above roughly 70 WPM',
     category: 'Speed & tests',
+    readingMinutes: 7,
     related: ['is-60-wpm-good', 'how-to-type-faster', 'best-way-to-practise-typing'],
   },
   {
@@ -798,6 +846,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Parents and educators making the case',
     category: 'Kids & parents',
+    readingMinutes: 6,
     related: ['typing-for-kids-guide-for-parents', 'should-schools-teach-typing', 'typing-vs-handwriting'],
   },
   {
@@ -816,6 +865,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Educational',
     audience: 'Learners who want practice that compounds',
     category: 'Science',
+    readingMinutes: 6,
     related: ['science-of-touch-typing-muscle-memory', 'best-way-to-practise-typing', 'how-your-brain-learns-to-type'],
   },
   {
@@ -834,6 +884,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Working professionals and managers',
     category: 'Adults & work',
+    readingMinutes: 6,
     related: ['typing-faster-at-work', 'touch-typing-for-programmers', 'typing-practice-for-adults'],
   },
   {
@@ -852,6 +903,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Parents of children aged 6–12',
     category: 'Kids & parents',
+    readingMinutes: 7,
     related: ['best-typing-games-for-kids', 'how-to-teach-a-child-to-type', 'typing-practice-for-kids-routine'],
   },
   {
@@ -870,6 +922,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Anyone comparing scores across sites',
     category: 'Speed & tests',
+    readingMinutes: 6,
     related: ['how-to-test-typing-speed', 'what-does-wpm-mean', 'how-typing-apps-measure-progress'],
   },
   {
@@ -888,6 +941,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Teachers, school leaders and governors',
     category: 'Students & schools',
+    readingMinutes: 7,
     related: ['typing-vs-handwriting', 'why-touch-typing-matters-for-kids', 'typing-for-homeschoolers'],
   },
   {
@@ -906,6 +960,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Office professionals',
     category: 'Adults & work',
+    readingMinutes: 7,
     related: ['time-saved-by-typing-faster', 'typing-practice-for-adults', 'touch-typing-for-programmers'],
   },
   {
@@ -924,6 +979,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Comparison',
     audience: 'Typists choosing a keyboard',
     category: 'Keyboards & ergonomics',
+    readingMinutes: 7,
     related: ['typing-posture', 'why-is-the-keyboard-qwerty', 'how-to-type-faster'],
   },
   {
@@ -942,6 +998,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Informational',
     audience: 'Students aged 13+ and their parents',
     category: 'Students & schools',
+    readingMinutes: 6,
     related: ['typing-for-students', 'typing-speed-for-students', 'typing-vs-handwriting'],
   },
   {
@@ -960,6 +1017,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Educational',
     audience: 'Learners and teachers evaluating typing tools',
     category: 'Science',
+    readingMinutes: 7,
     related: ['adaptive-typing-lessons', 'why-typing-speed-varies-between-tests', 'what-does-wpm-mean'],
   },
   {
@@ -978,6 +1036,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'How-to',
     audience: 'Home educators',
     category: 'Students & schools',
+    readingMinutes: 6,
     related: ['should-schools-teach-typing', 'typing-practice-for-kids-routine', 'typing-for-kids-guide-for-parents'],
   },
   {
@@ -996,6 +1055,7 @@ export const BLOG_POSTS: BlogPost[] = [
     searchIntent: 'Comparison',
     audience: 'Students, teachers and parents',
     category: 'Students & schools',
+    readingMinutes: 6,
     related: ['typing-for-students', 'should-schools-teach-typing', 'why-touch-typing-matters-for-kids'],
   },
 ];

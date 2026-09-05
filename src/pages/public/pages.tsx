@@ -17,6 +17,7 @@ import {
   MockAnalytics, MockCoach, MockModes, MockPractice, MockRace,
 } from '../../components/public/Mock';
 import { GameArt, RaceArt } from '../../components/public/GameArt';
+import { BRAND } from '../../lib/brand';
 import { pageByPath, type PublicPage as PageDef } from '../../lib/seo/site';
 import {
   ACCESSIBILITY, AUDIENCES, CORE_FEATURES, CURRICULUM, FAQS, GAMES, GLOSSARY,
@@ -707,7 +708,9 @@ export function TermsPage() {
  */
 export function HomeOutline() {
   return (
-    <div className="pub-root pub-root-home">
+    <>
+      <BootSplash />
+      <div className="pub-root pub-root-home">
       <h1>Don't just type faster. Learn to type beautifully.</h1>
       <p>{PRODUCT_SUMMARY}</p>
 
@@ -763,6 +766,31 @@ export function HomeOutline() {
         <li><Link to="/privacy">Privacy</Link></li>
         <li><Link to="/terms">Terms</Link></li>
       </ul>
+      </div>
+    </>
+  );
+}
+
+/**
+ * What a person sees while the landing page's JavaScript arrives.
+ *
+ * The home route is prerendered from `HomeOutline`, which exists for crawlers
+ * that never run JavaScript. It is the product described as a plain document,
+ * and until the bundle lands a visitor was reading that document instead of the
+ * landing page — a page-long dump of text that vanished mid-sentence.
+ *
+ * So the outline still ships, in the same DOM, in the same order; this covers
+ * it. React replaces the whole of `#root` on mount, which takes the cover with
+ * it, so nothing has to time or remove it. The `<noscript>` rule is the one
+ * case where the cover must not win: with no JavaScript there is no landing
+ * page coming, and the outline underneath is the page.
+ */
+function BootSplash() {
+  return (
+    <div className="boot-cover" role="status" aria-label="Loading">
+      <noscript><style>{'.boot-cover{display:none}'}</style></noscript>
+      <div className="boot-cover-mark">{BRAND.name}</div>
+      <div className="boot-cover-bar"><i /></div>
     </div>
   );
 }

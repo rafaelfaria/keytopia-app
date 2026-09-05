@@ -1038,3 +1038,59 @@ html:has(.pub-root) { background: #0b1020; color-scheme: dark; }
 @media (prefers-reduced-motion: reduce) {
   .pub-root * { animation: none !important; transition: none !important; }
 }
+
+/* ===== Boot cover =====
+
+   Only the home route. `.pub-root-home` is the outline a non-JS crawler reads;
+   this sits over it, in the page's own colours, until React replaces `#root`
+   with the real landing page. It is a cover, not a spinner: nothing counts up,
+   because there is nothing to count. */
+.boot-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background: #0b1020;
+}
+
+.boot-cover-mark {
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(92deg, #14d8c4 10%, #8b7cff 55%, #ffb454 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* A track that fills and empties rather than a percentage: the bundle's arrival
+   is not measurable from here, and a bar that claims otherwise is a lie. */
+.boot-cover-bar {
+  width: min(180px, 40vw);
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  overflow: hidden;
+}
+
+.boot-cover-bar i {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #14d8c4, #8b7cff);
+  animation: bootslide 1.1s ease-in-out infinite;
+}
+
+@keyframes bootslide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-cover-bar i { animation: none; width: 100%; opacity: 0.55; }
+}

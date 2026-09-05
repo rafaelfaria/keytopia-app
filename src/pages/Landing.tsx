@@ -387,8 +387,8 @@ export default function Landing() {
           opacity: 1, y: 0, scale: 1, ease: 'power2.out',
           scrollTrigger: {
             trigger: '.world',
-            start: `${6 + i * 12}% top`,
-            end: `${14 + i * 12}% top`,
+            start: `${4 + i * 9}% top`,
+            end: `${11 + i * 9}% top`,
             scrub: true,
           },
         });

@@ -1094,3 +1094,146 @@ html:has(.pub-root) { background: #0b1020; color-scheme: dark; }
 @media (prefers-reduced-motion: reduce) {
   .boot-cover-bar i { animation: none; width: 100%; opacity: 0.55; }
 }
+
+/* ── 404 ───────────────────────────────────────────────────────────────────
+   The scene sits behind the copy rather than above it, so the words are the
+   first thing read at every width and the picture never pushes them off the
+   fold. Everything below is token-driven: the canvas paints the midnight
+   palette, but the page around it has to survive all twelve themes. */
+
+.nf-stage {
+  position: relative;
+  display: grid;
+  place-items: start center;
+  min-height: min(36rem, 78vh);
+  padding: 3.25rem 1.25rem 2rem;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.nf-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* Fades into the page at the rim so the scene has no visible cut edge, and
+     out of the way of the copy sitting over its middle. */
+  -webkit-mask-image: radial-gradient(115% 82% at 50% 66%, #000 40%, transparent 84%);
+  mask-image: radial-gradient(115% 82% at 50% 66%, #000 40%, transparent 84%);
+}
+
+.nf-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 34rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+/* The scene is busy and the copy sits over it, so the text gets its own ground
+   rather than relying on the picture happening to be dark behind every glyph.
+   This is what holds 4.5:1 while the caps drift underneath. */
+.nf-copy::before {
+  content: '';
+  position: absolute;
+  inset: -2.5rem -3rem;
+  z-index: -1;
+  background: radial-gradient(60% 60% at 50% 45%, var(--bg) 38%, transparent 78%);
+  pointer-events: none;
+}
+
+/* The visible "404" for anyone who does not get the scene: no JavaScript, a
+   failed WebGL context, or reduced motion. It is the accessible name for the
+   picture, so it is never hidden. */
+.nf-code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  color: var(--accent);
+  margin: 0;
+}
+
+.nf-h1 { margin: 0; text-wrap: balance; }
+
+.nf-lede {
+  margin: 0;
+  color: var(--text-dim);
+  max-width: 30rem;
+}
+
+.nf-home {
+  display: inline-flex;
+  align-items: center;
+  /* 44px minimum target. */
+  min-height: 2.75rem;
+  padding: 0 1.4rem;
+  margin-top: 0.4rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+.nf-home:hover { transform: translateY(-1px); filter: brightness(1.06); box-shadow: var(--shadow); }
+.nf-home:active { transform: translateY(0); }
+.nf-home:focus-visible { outline: 2px solid var(--accent2); outline-offset: 3px; }
+
+.nf-ways-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+}
+
+.nf-ways {
+  list-style: none;
+  margin: 0 0 3.5rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.6rem;
+}
+
+.nf-ways a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  height: 100%;
+  padding: 0.95rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+.nf-ways a:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-2px); }
+.nf-ways a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.nf-ways strong { font-size: 0.98rem; }
+.nf-ways span { font-size: 0.86rem; color: var(--muted); line-height: 1.5; }
+
+@media (max-width: 34rem) {
+  /* Taller, not shorter. The copy wraps to five or six lines at this width, so
+     trimming the stage left the scene a sliver and pushed the loose caps out of
+     frame entirely. The stage has to hold the copy AND the gap below it. */
+  .nf-stage { min-height: 40rem; padding: 2.25rem 1.25rem 1rem; }
+  .nf-copy { gap: 0.7rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The scene renders a single still frame of its own; this covers the page. */
+  .nf-home, .nf-ways a { transition: none; }
+  .nf-home:hover, .nf-ways a:hover { transform: none; }
+}

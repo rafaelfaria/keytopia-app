@@ -2067,7 +2067,14 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 .signin-noaccount { margin-top: 14px; padding: 14px; border: 2px dashed var(--border); border-radius: 14px; }
 .signin-noaccount p { margin-bottom: 10px; line-height: 1.5; }
 
+/* Standalone, so it has no form wrapper to stretch it to the panel width the
+   way the other primary actions get. */
+.auth-continue { width: 100%; }
+
 .signin-swap { margin-top: 18px; }
+/* The link needs air on its left. A single word space put the underline hard
+   against the question mark, so "KeyTopia?Create" read as one run of text. */
+.signin-swap .linkish { margin-left: 5px; }
 
 /* ── The sign-in page (src/pages/SignIn.tsx) ───────────────────────────────
    Two columns: the choices on the left at a readable measure, the brand on the
@@ -2161,6 +2168,16 @@ h1 .ic, h2 .ic, h3 .ic { margin-right: 4px; color: var(--accent); }
 }
 .auth-orbit-2 { inset: 12%; border-color: color-mix(in oklab, var(--accent2) 40%, transparent); animation-duration: 19s; animation-direction: reverse; }
 .auth-orbit-3 { inset: 24%; border-style: dashed; border-color: color-mix(in oklab, var(--accent) 22%, transparent); animation-duration: 34s; }
+
+/* The wrapper takes the hover, not the mark: the mark is already running the
+   breathing keyframes and a second transform on it would fight them. */
+.auth-art-home {
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+.auth-art-home:hover { transform: scale(1.04); filter: brightness(1.08); }
 
 .auth-art-mark {
   position: relative;

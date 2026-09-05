@@ -77,7 +77,15 @@ function AuthArt() {
         <span className="auth-orbit auth-orbit-1" />
         <span className="auth-orbit auth-orbit-2" />
         <span className="auth-orbit auth-orbit-3" />
-        <span className="auth-art-mark"><LogoMark size={124} idPrefix="authart" /></span>
+        {/* A second way home, for the hand rather than the keyboard. It is
+            deliberately outside the tab order: the brand lockup at the top of
+            the left column is the same link with the same destination and is
+            fully reachable, so announcing this one twice would only add noise
+            to the accessibility tree. tabIndex -1 inside the aria-hidden aside
+            is the honest spelling of "duplicate, mouse only". */}
+        <Link to="/" className="auth-art-home" tabIndex={-1}>
+          <span className="auth-art-mark"><LogoMark size={124} idPrefix="authart" /></span>
+        </Link>
         {/* The same three keycaps the welcome email opens with. */}
         <span className="auth-cap auth-cap-k">K</span>
         <span className="auth-cap auth-cap-e">E</span>
@@ -98,6 +106,30 @@ export default function SignIn() {
   /** Seconds left before the server will accept another send. 0 = ready. */
   const [wait, setWait] = useState(0);
   const codeRef = useRef<HTMLInputElement>(null);
+  /**
+   * Was there already a session when this screen opened?
+   *
+   * It decides between the two very different reasons `user` can be set here.
+   * Signing in *on this screen* should carry straight on into the app, so that
+   * path must not be interrupted. Arriving here with a session already in hand
+   * means somebody deliberately asked for the sign-in screen, and sending them
+   * away was a dead end: an account with no explorer yet bounces
+   * /signin -> EnterJourney -> /welcome, so the form could never be reached
+   * and "Who's learning?" was the end of the road.
+   *
+   * Recorded only once `ready` is true, because until the first session lookup
+   * settles `user` is null for everyone. It also has to fall back to false the
+   * moment a session ends: signing out from the panel below does not remount
+   * this screen, so a latched `true` sent the very next sign-in straight back
+   * to the panel it had just come from.
+   */
+  const wasSignedIn = useRef<boolean | null>(null);
+  if (ready) {
+    if (!user) wasSignedIn.current = false;
+    else if (wasSignedIn.current === null) wasSignedIn.current = true;
+  }
+  /** Set by "Continue", which hands the screen back to the usual resume path. */
+  const [resume, setResume] = useState(false);
 
   useEffect(() => {
     const on = () => setOffline(false);
@@ -121,8 +153,8 @@ export default function SignIn() {
   // The code box is the point of this screen once the email is out.
   useEffect(() => { if (pending) codeRef.current?.focus(); }, [pending]);
 
-  // Already signed in — resume the last explorer, or go wherever they belong.
-  if (user) return <EnterJourney />;
+  // Signed in on this screen a moment ago: carry on into the app.
+  if (user && (resume || !wasSignedIn.current)) return <EnterJourney />;
 
   // A project with no Supabase configured would strand everyone at this screen,
   // so an unconfigured build falls through rather than bricking.
@@ -140,7 +172,19 @@ export default function SignIn() {
               <span>{BRAND.name}</span>
             </Link>
 
-            {pending ? (
+            {user ? (
+              <div data-stagger>
+                <h1>You're already signed in</h1>
+                <p className="auth-sub">as <strong>{user.email ?? 'this device'}</strong></p>
+                <Btn big className="auth-continue" onClick={() => setResume(true)}>Continue</Btn>
+                <p className="small muted signin-swap">
+                  Not you?{' '}
+                  <button type="button" className="linkish" onClick={() => void account.signOut()}>
+                    Sign in with a different account
+                  </button>
+                </p>
+              </div>
+            ) : pending ? (
               <div data-stagger>
                 <span className="signin-sent-ic"><Ic n="mail" size={24} /></span>
                 <h1>Check your email</h1>

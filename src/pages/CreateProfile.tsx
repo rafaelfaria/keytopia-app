@@ -90,7 +90,10 @@ export default function CreateProfile() {
   };
 
   return (
-    <div className="ob-page">
+    // auth-root pins the brand's dark palette. Same reason as /signin: no
+    // explorer exists yet on this screen, so there is no learner whose theme
+    // it could be wearing, and it was inheriting the last one's.
+    <div className="ob-page auth-root">
       <Link to="/" aria-label="Back to landing page"><Logo /></Link>
       <div className="signin-wrap">
         <h1>{first ? 'Who’s learning?' : 'Add an explorer'}</h1>

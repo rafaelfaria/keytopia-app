@@ -24,13 +24,14 @@ import {
   HomeOutline, KidsPage, LearnToTypePage, PracticeModesPage, PrivacyPage,
   RacesPage, SchoolsPage, TermsPage, TypingGamesPage,
 } from './pages/public/pages';
+import { NotFoundPage } from './pages/public/NotFound';
 import { TypingTestPage } from './pages/public/TypingTest';
 import {
   AccuracyTestPage, DailyExercisePage, ProgressTrackerPage, SpeedByAgePage,
   SpeedTestPage, TimedChallengePage, ToolsHubPage, WeakKeysPage, WpmCalculatorPage,
 } from './pages/tools';
-import { buildHead, headToHtml } from './lib/seo/head';
-import { pageByPath, PUBLIC_PAGES, type PublicPage as PublicPageDef } from './lib/seo/site';
+import { buildHead, buildNoIndexHead, headToHtml } from './lib/seo/head';
+import { pageByPath, PUBLIC_PAGES, SITE_NAME, type PublicPage as PublicPageDef } from './lib/seo/site';
 
 // Re-exported so scripts/gen-seo.mjs can reach the generators through the same
 // compiled bundle rather than needing its own TypeScript pipeline.
@@ -86,11 +87,31 @@ export interface Rendered {
   head: string;
 }
 
+/**
+ * The 404 document's route.
+ *
+ * Not a PublicPage: it must never appear in the sitemap, robots.txt or
+ * llms.txt, which are all derived from PUBLIC_PAGES. It is prerendered anyway,
+ * because a static host needs a real file to serve with a 404 status.
+ */
+export const NOT_FOUND_ROUTE = '/404';
+
 export function routes(): string[] {
-  return PUBLIC_PAGES.map((p) => p.path);
+  return [...PUBLIC_PAGES.map((p) => p.path), NOT_FOUND_ROUTE];
 }
 
 export function render(path: string): Rendered {
+  // The 404 page is rendered before the registry lookup, since by definition it
+  // has no registry entry. `noindex, nofollow`, no canonical, no JSON-LD.
+  if (path === NOT_FOUND_ROUTE) {
+    const body = renderToStaticMarkup(
+      <StaticRouter location={path}>
+        <NotFoundPage />
+      </StaticRouter>,
+    );
+    return { path, body, head: headToHtml(buildNoIndexHead(`Page not found | ${SITE_NAME}`)) };
+  }
+
   const page = pageByPath(path);
   if (!page) throw new Error(`No PublicPage registered for ${path}`);
 

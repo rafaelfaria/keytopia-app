@@ -33,8 +33,14 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!assets/|og/|.*\\.[a-zA-Z0-9]+$).*)",
+      "source": "/(app|race|signin|welcome|who|join|onboarding|auth)(/.*)?",
       "destination": "/index.html"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/rebuild",
+      "schedule": "15 0 * * *"
     }
   ]
 }

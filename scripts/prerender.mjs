@@ -86,9 +86,16 @@ async function main() {
 
     // "/" -> dist/index.html; "/faq" -> dist/faq/index.html, so any static host
     // serves the right document without rewrite rules.
+    //
+    // "/404" is the exception: it goes to dist/404.html rather than
+    // dist/404/index.html, because that is the filename Vercel looks for when a
+    // request matches no route, and it is what makes the response a real 404
+    // instead of the soft 200 the SPA rewrite used to produce.
     const outFile = path === '/'
       ? join(DIST, 'index.html')
-      : join(DIST, path.replace(/^\//, ''), 'index.html');
+      : path === '/404'
+        ? join(DIST, '404.html')
+        : join(DIST, path.replace(/^\//, ''), 'index.html');
 
     await mkdir(dirname(outFile), { recursive: true });
     await writeFile(outFile, html, 'utf8');

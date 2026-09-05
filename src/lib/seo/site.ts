@@ -406,7 +406,7 @@ export function pageByPath(path: string): PublicPage | undefined {
 }
 
 /** Routes that must never be indexed — the app itself is private, per-device state. */
-export const PRIVATE_PATHS = ['/app/', '/onboarding', '/who', '/auth/'];
+export const PRIVATE_PATHS = ['/app/', '/onboarding', '/who', '/auth/', '/api/'];
 
 /**
  * The social preview image for a page. scripts/gen-og.mjs stamps each page's

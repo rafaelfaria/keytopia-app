@@ -13,6 +13,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { CtaBand, NextSteps, PublicPage } from '../../components/public/PublicPage';
+import { SiteFooter } from '../../components/public/SiteFooter';
 import {
   MockAnalytics, MockCoach, MockModes, MockPractice, MockRace,
 } from '../../components/public/Mock';
@@ -749,23 +750,21 @@ export function HomeOutline() {
         ))}
       </dl>
 
-      <h2>Explore</h2>
-      <ul>
-        <li><Link to="/typing-test">Free typing test</Link></li>
-        <li><Link to="/learn-to-type">How to learn touch typing</Link></li>
-        <li><Link to="/curriculum">The full curriculum</Link></li>
-        <li><Link to="/typing-games">The typing games</Link></li>
-        <li><Link to="/adaptive-practice">How adaptive practice works</Link></li>
-        <li><Link to="/typing-practice-modes">The practice modes</Link></li>
-        <li><Link to="/typing-races">Typing races</Link></li>
-        <li><Link to="/typing-analytics">Typing analytics</Link></li>
-        <li><Link to="/typing-for-kids">Typing for kids</Link></li>
-        <li><Link to="/typing-for-schools">Typing for schools</Link></li>
-        <li><Link to="/faq">FAQ</Link></li>
-        <li><Link to="/typing-glossary">Typing glossary</Link></li>
-        <li><Link to="/privacy">Privacy</Link></li>
-        <li><Link to="/terms">Terms</Link></li>
-      </ul>
+      {/*
+        The shared footer, not a hand-written list.
+
+        This used to be an "Explore" <ul> of fourteen links typed out here. It
+        was written before the tools and the blog existed and nobody went back
+        to it, so the home page — the strongest page on the domain, and the one
+        every crawler reaches first — was the only page of twenty-six that
+        linked to neither /tools, nor any of the eight tool pages, nor /blog.
+        The live landing page already renders SiteFooter; only the crawlable
+        outline was missing it.
+
+        SiteFooter derives its columns from the PublicPage registry, so the home
+        page's outbound links now cannot fall behind the site again.
+      */}
+      <SiteFooter />
       </div>
     </>
   );

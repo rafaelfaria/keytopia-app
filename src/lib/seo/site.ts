@@ -19,6 +19,7 @@ import {
   BLOG_POSTS, postPath, publishedPosts, todayIso, type BlogPost,
 } from '../blog/posts';
 import { TOOL_PAGES } from './toolsPages';
+import { CONTENT_REVISED } from './revisions.generated';
 
 export { BRAND };
 
@@ -81,7 +82,6 @@ export interface PublicPage {
   group: 'Core' | 'Product' | 'Learn' | 'Tools' | 'Audiences' | 'Reference' | 'Legal' | 'Blog';
 }
 
-const TODAY = '2026-08-12';
 
 /**
  * The hand-written pages. The blog's fifty-one routes are appended below, and
@@ -99,7 +99,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'Product overview: the adaptive engine, training modes, games, races, analytics and who KeyTopia is for.',
     priority: 1.0,
     changeFrequency: 'weekly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Core',
   },
   {
@@ -112,7 +112,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'Free in-browser typing speed test (15s–120s) reporting WPM, raw WPM, accuracy, consistency and per-key timing.',
     priority: 0.9,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Tools',
   },
   {
@@ -125,7 +125,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'Pillar guide to learning touch typing. Posture, home row, finger assignment, accuracy-before-speed, realistic timelines and plateau fixes.',
     priority: 0.9,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Learn',
   },
   {
@@ -138,7 +138,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'The full lesson-by-lesson curriculum, grouped into five worlds and nine regions, with the skill each stage builds.',
     priority: 0.8,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Learn',
   },
   {
@@ -152,7 +152,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'The nine original typing games and the specific skill each one trains.',
     priority: 0.8,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Learn',
   },
   {
@@ -165,7 +165,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'The adaptive practice engine: the per-key mastery map, how practice sets are generated from weak keys and slow bigrams, and how the coach reports.',
     priority: 0.9,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Product',
   },
   {
@@ -178,7 +178,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'The training modes, grouped into foundations, precision, feel and real-world work, with the skill each one builds.',
     priority: 0.8,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Product',
   },
   {
@@ -191,7 +191,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'The racing system: CPU rival difficulties and habits, ghost racing against your own records, and private join-code rooms.',
     priority: 0.8,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Product',
   },
   {
@@ -204,7 +204,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'The analytics surface: per-key heatmaps, finger balance, rhythm fingerprint, consistency, session echo replay, records and the practice calendar.',
     priority: 0.8,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Product',
   },
   {
@@ -217,7 +217,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'The kids experience: island map, quests, stickers, guardian companion, and the safety and privacy model for children.',
     priority: 0.8,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Audiences',
   },
   {
@@ -230,8 +230,23 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'The schools and classroom use case. Assignable lessons, private race rooms, accessibility profiles, teacher dashboard and the data model.',
     priority: 0.8,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Audiences',
+  },
+  {
+    path: '/about',
+    label: 'About',
+    title: 'About KeyTopia: who makes it, how it works and why it is free',
+    description:
+      'What KeyTopia is, how it decides what to make you practise, how it is built, why it is free '
+      + 'with no advertising or paid tier, and how to reach a person about it.',
+    llmsNote:
+      'About the project: what KeyTopia is, how the adaptive engine picks practice, the local-first '
+      + 'architecture, the no-advertising no-subscription funding model, and contact details.',
+    priority: 0.5,
+    changeFrequency: 'yearly',
+    lastModified: CONTENT_REVISED,
+    group: 'Reference',
   },
   {
     path: '/faq',
@@ -243,7 +258,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'Frequently asked questions about pricing, layouts, ages, data storage, accessibility and how progress is measured.',
     priority: 0.7,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Reference',
   },
   {
@@ -256,7 +271,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'Definitions of typing terminology. WPM, raw WPM, CPM, accuracy, consistency, IKI, bigram, home row, touch typing, rollover, burst speed.',
     priority: 0.7,
     changeFrequency: 'monthly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Reference',
   },
   {
@@ -269,7 +284,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'Privacy policy: data collected, sub-processors, legal bases, retention, children and schools, and your rights.',
     priority: 0.3,
     changeFrequency: 'yearly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Legal',
   },
   {
@@ -280,7 +295,7 @@ const STATIC_PAGES: PublicPage[] = [
     llmsNote: 'Terms of use: eligibility, accounts and profiles, acceptable use, content ownership, disclaimers and liability.',
     priority: 0.3,
     changeFrequency: 'yearly',
-    lastModified: TODAY,
+    lastModified: CONTENT_REVISED,
     group: 'Legal',
   },
 ];
@@ -326,7 +341,7 @@ const BLOG_INDEX: PublicPage = {
   llmsNote: 'The KeyTopia blog: touch-typing guides, WPM benchmarks, typing for kids, students and adults, and the science of typing practice.',
   priority: 0.9,
   changeFrequency: 'daily',
-  lastModified: LIVE_POSTS.length ? LIVE_POSTS[0].publishedAt : TODAY,
+  lastModified: LIVE_POSTS.length ? LIVE_POSTS[0].publishedAt : CONTENT_REVISED,
   group: 'Learn',
 };
 

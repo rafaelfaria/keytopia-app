@@ -20,8 +20,9 @@ import {
 import { GameArt, RaceArt } from '../../components/public/GameArt';
 import { BRAND } from '../../lib/brand';
 import { pageByPath, type PublicPage as PageDef } from '../../lib/seo/site';
+import { PAGE_DEPTH } from '../../lib/seo/pageDepth';
 import {
-  ACCESSIBILITY, AUDIENCES, CORE_FEATURES, CURRICULUM, FAQS, GAMES, GLOSSARY,
+  ABOUT_SECTIONS, ACCESSIBILITY, AUDIENCES, CORE_FEATURES, CURRICULUM, FAQS, GAMES, GLOSSARY,
   KIDS_POINTS, LEARN_GUIDE, LEARN_GUIDE_INTRO, LEGAL_CONTACT, LEGAL_EFFECTIVE,
   METHOD_STEPS, MODE_CLUSTERS, PRIVACY_SECTIONS, PRODUCT_SUMMARY, SCHOOLS_POINTS, SESSION_LOOP,
   SUBPROCESSORS, TERMS_SECTIONS, TRAINING_MODES,
@@ -67,6 +68,34 @@ function FeatureGrid({ items }: { items: { name: string; description: string }[]
 }
 
 // ── /learn-to-type ─────────────────────────────────────────────────────────
+
+
+/**
+ * The extra sections a page carries in src/lib/seo/pageDepth.ts.
+ *
+ * Rendered as plain prose sections rather than cards: this is the part of the
+ * page a reader who scrolled past the feature grid is reading properly, and
+ * the part a search engine or an answer engine quotes from.
+ */
+function Depth({ path }: { path: string }) {
+  const sections = PAGE_DEPTH[path];
+  if (!sections) return null;
+  return (
+    <>
+      {sections.map((section) => (
+        <section className="pub-section" key={section.heading}>
+          <h2>{section.heading}</h2>
+          {section.paragraphs.map((text) => <p key={text.slice(0, 40)}>{text}</p>)}
+          {section.bullets && (
+            <ul className="pub-list">
+              {section.bullets.map((b) => <li key={b}>{b}</li>)}
+            </ul>
+          )}
+        </section>
+      ))}
+    </>
+  );
+}
 
 export function LearnToTypePage() {
   return (
@@ -143,6 +172,8 @@ export function CurriculumPage() {
         </section>
       ))}
 
+      <Depth path="/curriculum" />
+
       <CtaBand
         title="Start at the right place, not at lesson one"
         body="The placement assessment reads your current technique and opens the curriculum where you actually are."
@@ -150,7 +181,7 @@ export function CurriculumPage() {
 
       <NextSteps items={[
         { path: '/learn-to-type', label: 'How to learn touch typing', note: 'The method behind the lesson order.' },
-        { path: '/typing-games', label: 'The seven games', note: 'What each one trains, and why.' },
+        { path: '/typing-games', label: 'The nine games', note: 'What each one trains, and why.' },
         { path: '/typing-for-schools', label: 'For schools', note: 'Assignable lessons and classroom rooms.' },
       ]} />
     </PublicPage>
@@ -200,6 +231,8 @@ export function TypingGamesPage() {
         ))}
       </div>
 
+      <Depth path="/typing-games" />
+
       <CtaBand title="Play something that actually trains you" body="Every game is free and runs in the browser. Nothing to download." />
 
       <NextSteps items={[
@@ -243,6 +276,8 @@ export function KidsPage() {
           progress rather than minutes logged.
         </p>
       </section>
+
+      <Depth path="/typing-for-kids" />
 
       <CtaBand title="Set up an explorer" body="Two minutes of onboarding, then the first island. Free, and your child never signs in." />
 
@@ -290,6 +325,8 @@ export function SchoolsPage() {
         </p>
       </section>
 
+      <Depth path="/typing-for-schools" />
+
       <CtaBand title="Try it with one class" body="No sign-up, no procurement, no data agreement to negotiate. Open the page and go." />
 
       <NextSteps items={[
@@ -302,6 +339,37 @@ export function SchoolsPage() {
 }
 
 // ── /faq ───────────────────────────────────────────────────────────────────
+
+// ── /about ─────────────────────────────────────────────────────────────────
+
+export function AboutPage() {
+  return (
+    <PublicPage
+      page={def('/about')}
+      lede="A free typing tutor that measures how you type before it decides what to make you practise. What it is, how it is built, and who pays for it."
+    >
+      {ABOUT_SECTIONS.map((section) => (
+        <section className="pub-section" key={section.heading}>
+          <h2>{section.heading}</h2>
+          {section.paragraphs.map((text) => <p key={text.slice(0, 40)}>{text}</p>)}
+          {section.bullets && (
+            <ul className="pub-list">
+              {section.bullets.map((b) => <li key={b}>{b}</li>)}
+            </ul>
+          )}
+        </section>
+      ))}
+
+      <CtaBand title="Start with the placement test" body="Sixty seconds of typing, then a practice plan built from your own weak keys. Free, and no account needed." />
+
+      <NextSteps items={[
+        { path: '/learn-to-type', label: 'How to learn touch typing', note: 'The method, written out in full.' },
+        { path: '/privacy', label: 'Privacy', note: 'What is collected, and what deliberately is not.' },
+        { path: '/faq', label: 'FAQ', note: 'Ages, layouts, offline use and accessibility.' },
+      ]} />
+    </PublicPage>
+  );
+}
 
 export function FaqPage() {
   return (
@@ -430,6 +498,8 @@ export function AdaptivePracticePage() {
         <MockCoach />
       </Shot>
 
+      <Depth path="/adaptive-practice" />
+
       <CtaBand
         title="Find out what your weak keys actually are"
         body="The 60-second placement draws your first map, and practice starts from there rather than from lesson one."
@@ -483,6 +553,8 @@ export function PracticeModesPage() {
           </dl>
         </section>
       ))}
+
+      <Depth path="/typing-practice-modes" />
 
       <CtaBand
         title="Pick a mode and go"
@@ -546,6 +618,8 @@ export function RacesPage() {
         </p>
       </section>
 
+      <Depth path="/typing-races" />
+
       <CtaBand title="Open a room, or race a bot" body="Five difficulties, an adaptive rival, and the ghost of your own best run. All free." />
 
       <NextSteps items={[
@@ -606,6 +680,8 @@ export function AnalyticsPage() {
           <Link to="/privacy">privacy policy</Link> sets out the whole chain.
         </p>
       </section>
+
+      <Depth path="/typing-analytics" />
 
       <CtaBand title="Get your first reading" body="The 60-second test produces every measurement on this page, immediately." />
 

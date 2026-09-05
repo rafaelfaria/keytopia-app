@@ -7,7 +7,7 @@
     "test": "tsc -p tsconfig.test.json && vitest run",
     "test:watch": "vitest",
     "dev": "vite",
-    "build": "tsc -b && vite build && npm run build:ssr && npm run seo",
+    "build": "node scripts/gen-revisions.mjs && tsc -b && vite build && npm run build:ssr && npm run seo",
     "build:ssr": "vite build --ssr src/entry-prerender.tsx --outDir dist-ssr",
     "seo": "node scripts/prerender.mjs && node scripts/gen-og.mjs && node scripts/gen-seo.mjs",
     "seo:ping": "node scripts/ping-indexnow.mjs",
@@ -25,7 +25,8 @@
     "db:push": "supabase db push",
     "deploy:templates": "bash scripts/deploy-email-templates.sh",
     "deploy:functions": "supabase functions deploy notify-welcome-new-user",
-    "setup:resend": "bash scripts/setup-resend.sh"
+    "setup:resend": "bash scripts/setup-resend.sh",
+    "revisions": "node scripts/gen-revisions.mjs"
   },
   "keywords": [],
   "author": "",

@@ -20,7 +20,7 @@ import BlogIndex from './pages/blog/BlogIndex';
 import BlogPostPage from './pages/blog/BlogPost';
 import { articleBySlugIncludingScheduled } from './lib/blog/registry';
 import {
-  AdaptivePracticePage, AnalyticsPage, CurriculumPage, FaqPage, GlossaryPage,
+  AboutPage, AdaptivePracticePage, AnalyticsPage, CurriculumPage, FaqPage, GlossaryPage,
   HomeOutline, KidsPage, LearnToTypePage, PracticeModesPage, PrivacyPage,
   RacesPage, SchoolsPage, TermsPage, TypingGamesPage,
 } from './pages/public/pages';
@@ -60,6 +60,7 @@ const ROUTES: Record<string, () => React.ReactElement> = {
   '/typing-for-kids': KidsPage,
   '/typing-for-schools': SchoolsPage,
   '/faq': FaqPage,
+  '/about': AboutPage,
   '/typing-glossary': GlossaryPage,
   '/privacy': PrivacyPage,
   '/terms': TermsPage,

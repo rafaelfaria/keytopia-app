@@ -1005,6 +1005,27 @@ html:has(.pub-root) { background: #0b1020; color-scheme: dark; }
   color: #8b93b8;
 }
 
+/* The contact line sits under the blurb, quieter than the nav columns but
+   still a real link: it is the only route to a human from a non-legal page. */
+.site-foot-brand .site-foot-contact {
+  margin: 10px 0 0;
+  max-width: none;
+  font-size: 0.82rem;
+  color: #6a7cb8;
+}
+
+.site-foot-brand .site-foot-contact a {
+  color: #8b93b8;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(139, 147, 184, 0.28);
+}
+
+.site-foot-brand .site-foot-contact a:hover,
+.site-foot-brand .site-foot-contact a:focus-visible {
+  color: #eef1fb;
+  border-bottom-color: rgba(238, 241, 251, 0.55);
+}
+
 .site-foot-col { display: flex; flex-direction: column; gap: 9px; }
 
 .site-foot-col strong {

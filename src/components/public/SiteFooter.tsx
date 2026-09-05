@@ -19,6 +19,7 @@
 import { Link } from 'react-router-dom';
 import { LogoMark } from '../Brand';
 import { PUBLIC_PAGES, SITE_NAME, type PublicPage as PageDef } from '../../lib/seo/site';
+import { LEGAL_CONTACT } from '../../lib/seo/content';
 
 type Group = PageDef['group'];
 
@@ -59,6 +60,15 @@ export function SiteFooter() {
           <p>
             Every keyboard is a world. {SITE_NAME} is free, carries no advertising, and writes every
             keystroke to your own browser first, so practice never waits on the network.
+          </p>
+          {/* The contact address used to appear only on the privacy and terms
+              pages, so a reader who landed anywhere else had no visible way to
+              reach a person. It belongs on every page, not behind the legal
+              links. */}
+          <p className="site-foot-contact">
+            <Link to="/about">About {SITE_NAME}</Link>
+            {' · '}
+            <a href={`mailto:${LEGAL_CONTACT}`}>{LEGAL_CONTACT}</a>
           </p>
         </div>
 

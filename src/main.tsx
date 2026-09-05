@@ -19,26 +19,8 @@ import './styles/arena.css';
 import { AppShell, ThemeSync } from './components/Shell';
 import { Boundary } from './components/Boundary';
 import Landing from './pages/Landing';
-import Onboarding from './pages/Onboarding';
-import ProfilePicker from './pages/ProfilePicker';
-import { HomeGate } from './pages/KidHome';
-import Learn from './pages/Learn';
-import LessonPlayer from './pages/LessonPlayer';
-import PracticeHub from './pages/PracticeHub';
-import TrainSession from './pages/TrainSession';
-import Games from './pages/Games';
-import RaceHub from './pages/RaceHub';
-import RaceLive from './pages/RaceLive';
-import GuestRoom from './pages/GuestRoom';
-import Challenge from './pages/Challenge';
-import ProgressHub from './pages/ProgressHub';
-import BadgesPage from './pages/BadgesPage';
-import Family from './pages/Family';
-import Profile from './pages/Profile';
-import ExplorerBuilder from './pages/ExplorerBuilder';
-import Settings from './pages/Settings';
 import {
-  AdaptivePracticePage, AnalyticsPage, CurriculumPage, FaqPage, GlossaryPage,
+  AboutPage, AdaptivePracticePage, AnalyticsPage, CurriculumPage, FaqPage, GlossaryPage,
   KidsPage, LearnToTypePage, PracticeModesPage, PrivacyPage, RacesPage,
   SchoolsPage, TermsPage, TypingGamesPage,
 } from './pages/public/pages';
@@ -48,15 +30,9 @@ import {
   AccuracyTestPage, DailyExercisePage, ProgressTrackerPage, SpeedByAgePage,
   SpeedTestPage, TimedChallengePage, ToolsHubPage, WeakKeysPage, WpmCalculatorPage,
 } from './pages/tools';
-import { AuthCallback, RequireAccount } from './components/Account';
 
-import SignIn from './pages/SignIn';
-import CreateProfile from './pages/CreateProfile';
-import JoinClass from './pages/JoinClass';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { GtagLoader } from './components/analytics/GtagLoader';
-import { startSync } from './lib/syncEngine';
-import { startClassroomWatch } from './lib/classroom';
 
 /**
  * The blog is the one part of the public site that is code-split.
@@ -79,6 +55,45 @@ import { startClassroomWatch } from './lib/classroom';
  * The games are behind the account boundary, so the reader who benefits most
  * is the first-time visitor who never reaches one.
  */
+/**
+ * The application, split away from the marketing pages.
+ *
+ * Every one of these used to be a static import, so the 1.3 MB entry chunk was
+ * downloaded and parsed by someone who had landed on a blog post from a search
+ * result and would never sign in. The public pages are prerendered, so that
+ * work bought them nothing at all: the text was already on screen.
+ *
+ * These routes sit behind RequireAccount or a deliberate click, which is the
+ * natural seam. Landing and the public pages stay eager because they are what
+ * a first visit actually renders.
+ */
+// Account pulls in the Supabase client, so a static import here put a 200 kB
+// auth bundle in the modulepreload list of every prerendered marketing page.
+// It is only ever rendered behind a route that already requires an account.
+const RequireAccount = React.lazy(() => import('./components/Account').then((m) => ({ default: m.RequireAccount })));
+const AuthCallback = React.lazy(() => import('./components/Account').then((m) => ({ default: m.AuthCallback })));
+const Onboarding = React.lazy(() => import('./pages/Onboarding'));
+const ProfilePicker = React.lazy(() => import('./pages/ProfilePicker'));
+const Learn = React.lazy(() => import('./pages/Learn'));
+const LessonPlayer = React.lazy(() => import('./pages/LessonPlayer'));
+const PracticeHub = React.lazy(() => import('./pages/PracticeHub'));
+const TrainSession = React.lazy(() => import('./pages/TrainSession'));
+const Games = React.lazy(() => import('./pages/Games'));
+const RaceHub = React.lazy(() => import('./pages/RaceHub'));
+const RaceLive = React.lazy(() => import('./pages/RaceLive'));
+const GuestRoom = React.lazy(() => import('./pages/GuestRoom'));
+const Challenge = React.lazy(() => import('./pages/Challenge'));
+const ProgressHub = React.lazy(() => import('./pages/ProgressHub'));
+const BadgesPage = React.lazy(() => import('./pages/BadgesPage'));
+const Family = React.lazy(() => import('./pages/Family'));
+const Profile = React.lazy(() => import('./pages/Profile'));
+const ExplorerBuilder = React.lazy(() => import('./pages/ExplorerBuilder'));
+const Settings = React.lazy(() => import('./pages/Settings'));
+const SignIn = React.lazy(() => import('./pages/SignIn'));
+const CreateProfile = React.lazy(() => import('./pages/CreateProfile'));
+const JoinClass = React.lazy(() => import('./pages/JoinClass'));
+const HomeGate = React.lazy(() => import('./pages/KidHome').then((m) => ({ default: m.HomeGate })));
+
 const WordfallGame = React.lazy(() => import('./pages/WordfallGame'));
 const LetterFallGame = React.lazy(() => import('./pages/LetterFallGame'));
 const KeySafariGame = React.lazy(() => import('./pages/KeySafariGame'));
@@ -169,6 +184,11 @@ container.__ktRoot.render(
     <BrowserRouter>
       <ThemeSync />
       <ScrollToTop />
+      {/* One boundary above every route, because the application pages are lazy
+          chunks now and a route without a boundary above it throws rather than
+          waits. The public pages are eager and prerendered, so they never
+          suspend and never see this fallback. */}
+      <React.Suspense fallback={<div className="pub-root" style={{ minHeight: '100vh' }} />}>
       <Routes>
         <Route path="/" element={<Landing />} />
 
@@ -187,6 +207,7 @@ container.__ktRoot.render(
         <Route path="/typing-for-kids" element={<KidsPage />} />
         <Route path="/typing-for-schools" element={<SchoolsPage />} />
         <Route path="/faq" element={<FaqPage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/typing-glossary" element={<GlossaryPage />} />
 
         {/* The free tools. Eight working tools plus their hub, sharing the
@@ -285,6 +306,7 @@ container.__ktRoot.render(
         <Route path="/404" element={<NotFoundPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </React.Suspense>
 
       {/* Two measurements, deliberately. GA4 runs in Consent Mode with storage
           denied, which keeps the privacy page's "no analytics cookies" true but
@@ -304,11 +326,16 @@ container.__ktRoot.render(
 // A timeout rather than requestAnimationFrame on purpose — rAF never fires in a
 // background tab, which would strand a restored session with sync switched off.
 // With no Supabase project configured this is a no-op.
-setTimeout(startSync, 0);
+// Imported dynamically as well as deferred. A static import puts the sync
+// engine and the whole Supabase client in the entry graph, so Vite emits a
+// modulepreload for them on every prerendered marketing page, and a reader who
+// arrived at a blog post from a search result downloaded an auth client they
+// will never use.
+setTimeout(() => { void import('./lib/syncEngine').then((m) => m.startSync()); }, 0);
 // Same contract for the classroom mirror: it watches the store from outside and
 // pushes finished daily-challenge runs to class boards in the background, so no
 // classroom code sits on the typing path (docs/classrooms-plan.md §2.5).
-setTimeout(startClassroomWatch, 0);
+setTimeout(() => { void import('./lib/classroom').then((m) => m.startClassroomWatch()); }, 0);
 
 
 

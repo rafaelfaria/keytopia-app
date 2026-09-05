@@ -8,12 +8,12 @@
  * yet, both see the complete index.
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SiteFooter } from '../../components/public/SiteFooter';
 import { SiteHeader } from '../../components/public/SiteHeader';
 import { PublicHero } from '../../components/public/PublicHero';
-import { usePublicMotion } from '../../components/public/usePublicMotion';
+import { refreshPublicMotion, usePublicMotion } from '../../components/public/usePublicMotion';
 import { Seo } from '../../lib/seo/Seo';
 import { LIVE_POSTS, SITE_NAME } from '../../lib/seo/site';
 import { BLOG_CATEGORIES, postPath, type BlogCategory } from '../../lib/blog/posts';
@@ -24,6 +24,11 @@ type Filter = BlogCategory | 'All';
 export default function BlogIndex() {
   usePublicMotion('/blog');
   const [filter, setFilter] = useState<Filter>('All');
+
+  // Filtering hides cards, which shortens the page and moves everything below
+  // the grid. Without this the call-to-action band underneath keeps the scroll
+  // position it was measured at and never reveals.
+  useEffect(() => { void refreshPublicMotion(); }, [filter]);
 
   const posts = LIVE_POSTS;
   const [lead, ...rest] = posts;
@@ -42,7 +47,8 @@ export default function BlogIndex() {
 
   // Publication order, not newest-first: "Start here" is a reading order, and
   // the pillars were scheduled in the order they make sense to read.
-  const pillars = posts.filter((p) => p.pillar).slice().sort((a, b) => a.day - b.day);
+  const pillars = posts.filter((p) => p.pillar).slice()
+    .sort((a, b) => a.publishedAt.localeCompare(b.publishedAt));
 
   return (
     <div className="pub-root blog-root" data-page="/blog">
@@ -59,8 +65,8 @@ export default function BlogIndex() {
           </nav>
           <h1 className="pub-h1">Writing about learning to type</h1>
           <p className="pub-lede">
-            Guides, honest benchmarks and the research behind typing practice. One new article a day,
-            written to be useful whether or not you ever open {SITE_NAME}.
+            Guides, honest benchmarks and the research behind typing practice. A new article every
+            other day, written to be useful whether or not you ever open {SITE_NAME}.
           </p>
         </PublicHero>
 

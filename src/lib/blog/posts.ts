@@ -47,8 +47,8 @@ export const CATEGORY_HUES: Record<BlogCategory, { hue: string; hue2: string }> 
 };
 
 export interface BlogPost {
-  /** 1..50. Unique, and the campaign's ordering. */
-  day: number;
+  /** ISO publication date. The article is live once this date has arrived. */
+  publishedAt: string;
   /** Slug only — the path is derived, so `/blog/` is written in one place. */
   slug: string;
   /** The visible `<h1>`. */
@@ -73,22 +73,6 @@ export interface BlogPost {
   related: string[];
 }
 
-/** Day 1 of the campaign. Every publication date is derived from this. */
-export const CAMPAIGN_START = '2026-09-04';
-
-/**
- * The publication date for a day number, as an ISO date.
- *
- * Computed rather than typed out fifty times: a hand-written list develops a
- * duplicate or a skipped day the moment the schedule is edited, and the day
- * number is what the rest of the campaign is keyed on.
- */
-export function dateForDay(day: number): string {
-  const start = new Date(`${CAMPAIGN_START}T00:00:00Z`);
-  start.setUTCDate(start.getUTCDate() + (day - 1));
-  return start.toISOString().slice(0, 10);
-}
-
 /** `/blog/<slug>`. The one place the blog's URL shape is written down. */
 export const BLOG_BASE = '/blog';
 export const postPath = (post: Pick<BlogPost, 'slug'>): string => `${BLOG_BASE}/${post.slug}`;
@@ -97,13 +81,17 @@ export const postPath = (post: Pick<BlogPost, 'slug'>): string => `${BLOG_BASE}/
  * The fifty articles, in publication order.
  *
  * Order is an SEO decision, not the order they were commissioned in: the eight
- * pillars go out in the first two weeks so that every cluster article published
- * afterwards has a live page to point at, and the narrow benchmark queries
- * ("is 40 wpm good") follow the broad ones they depend on.
+ * pillars go out first so that every cluster article published afterwards has a
+ * live page to point at, and the narrow benchmark queries ("is 40 wpm good")
+ * follow the broad ones they depend on.
+ *
+ * Dates are written out rather than derived from a start date and an interval.
+ * The date is the fact; anything computed from a slot number means a single
+ * article cannot be moved without shifting every one after it.
  */
 export const BLOG_POSTS: BlogPost[] = [
   {
-    day: 1,
+    publishedAt: '2026-09-04',
     slug: 'how-to-learn-touch-typing',
     title: 'How to Learn Touch Typing: A Beginner’s Step-by-Step Guide',
     seoTitle: 'How to Learn Touch Typing: A Beginner’s Guide',
@@ -122,7 +110,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['correct-finger-placement-for-touch-typing', 'how-long-to-learn-touch-typing', 'what-is-touch-typing'],
   },
   {
-    day: 2,
+    publishedAt: '2026-09-06',
     slug: 'how-to-type-faster',
     title: 'How to Type Faster: A Complete Guide to Improving Your Typing Speed',
     seoTitle: 'How to Type Faster: The Complete Speed Guide',
@@ -141,7 +129,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-speed-vs-accuracy', 'how-to-reach-100-wpm', 'typing-mistakes'],
   },
   {
-    day: 3,
+    publishedAt: '2026-09-08',
     slug: 'what-is-a-good-typing-speed',
     title: 'What Is a Good Typing Speed? WPM by Age and Skill Level',
     seoTitle: 'What Is a Good Typing Speed? WPM by Age & Level',
@@ -160,7 +148,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['average-typing-speed', 'what-does-wpm-mean', 'is-60-wpm-good'],
   },
   {
-    day: 4,
+    publishedAt: '2026-09-10',
     slug: 'typing-for-kids-guide-for-parents',
     title: 'Typing for Kids: The Complete Guide for Parents',
     seoTitle: 'Typing for Kids: The Complete Parent’s Guide',
@@ -179,7 +167,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['what-age-should-kids-learn-to-type', 'how-to-teach-a-child-to-type', 'typing-practice-for-kids-routine'],
   },
   {
-    day: 5,
+    publishedAt: '2026-09-12',
     slug: 'what-does-wpm-mean',
     title: 'What Does WPM Mean? How Typing Speed Is Calculated',
     seoTitle: 'What Does WPM Mean? How Typing Speed Is Measured',
@@ -198,7 +186,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['average-typing-speed', 'how-to-test-typing-speed', 'why-typing-speed-varies-between-tests'],
   },
   {
-    day: 6,
+    publishedAt: '2026-09-14',
     slug: 'what-is-touch-typing',
     title: 'What Is Touch Typing, and Why Is It Better Than Hunt-and-Peck?',
     seoTitle: 'What Is Touch Typing? Touch Typing vs Hunt-and-Peck',
@@ -216,7 +204,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['how-to-learn-touch-typing', 'correct-finger-placement-for-touch-typing', 'stop-looking-at-the-keyboard'],
   },
   {
-    day: 7,
+    publishedAt: '2026-09-16',
     slug: 'correct-finger-placement-for-touch-typing',
     title: 'The Correct Finger Placement for Touch Typing',
     seoTitle: 'Correct Finger Placement for Touch Typing',
@@ -234,7 +222,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['home-row-keys', 'how-to-learn-touch-typing', 'break-bad-typing-habits'],
   },
   {
-    day: 8,
+    publishedAt: '2026-09-18',
     slug: 'learn-touch-typing-as-an-adult',
     title: 'How to Learn Touch Typing as an Adult',
     seoTitle: 'How to Learn Touch Typing as an Adult',
@@ -253,12 +241,12 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['break-bad-typing-habits', 'typing-practice-for-adults', 'learn-touch-typing-later-in-life'],
   },
   {
-    day: 9,
+    publishedAt: '2026-09-20',
     slug: 'science-of-touch-typing-muscle-memory',
     title: 'The Science Behind Touch Typing: How Muscle Memory Develops',
     seoTitle: 'The Science of Touch Typing and Muscle Memory',
     description:
-      'What research on skilled typing actually shows: the two control loops behind fluent typing, the three stages of motor learning, and why typists cannot draw their own keyboard.',
+      'What research on skilled typing shows: the two control loops behind fluent typing, the three stages of motor learning, and why typists cannot draw a keyboard.',
     lede: 'Skilled typing is one of the most studied motor skills there is. What the research says is stranger, and more useful, than "practice makes perfect".',
     primaryKeyword: 'typing muscle memory',
     secondaryKeywords: [
@@ -272,7 +260,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['how-your-brain-learns-to-type', 'why-repetition-makes-you-faster', 'accuracy-before-speed'],
   },
   {
-    day: 10,
+    publishedAt: '2026-09-22',
     slug: 'average-typing-speed',
     title: 'Average Typing Speed: How Does Your WPM Compare?',
     seoTitle: 'Average Typing Speed: How Does Your WPM Compare?',
@@ -290,7 +278,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['what-is-a-good-typing-speed', 'what-does-wpm-mean', 'is-40-wpm-good'],
   },
   {
-    day: 11,
+    publishedAt: '2026-09-24',
     slug: 'how-long-to-learn-touch-typing',
     title: 'How Long Does It Take to Learn Touch Typing?',
     seoTitle: 'How Long Does It Take to Learn Touch Typing?',
@@ -308,7 +296,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['how-to-learn-touch-typing', 'stop-looking-at-the-keyboard', 'typing-practice-for-adults'],
   },
   {
-    day: 12,
+    publishedAt: '2026-09-26',
     slug: 'home-row-keys',
     title: 'Where Should Your Fingers Rest on a Keyboard? A Guide to the Home Row',
     seoTitle: 'Home Row Keys: Where Your Fingers Should Rest',
@@ -326,7 +314,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['correct-finger-placement-for-touch-typing', 'how-to-learn-touch-typing', 'stop-looking-at-the-keyboard'],
   },
   {
-    day: 13,
+    publishedAt: '2026-09-28',
     slug: 'typing-speed-vs-accuracy',
     title: 'Typing Speed vs Accuracy: Which Should You Improve First?',
     seoTitle: 'Typing Speed vs Accuracy: Which Comes First?',
@@ -344,7 +332,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['accuracy-before-speed', 'improve-typing-accuracy', 'how-to-type-faster'],
   },
   {
-    day: 14,
+    publishedAt: '2026-09-30',
     slug: 'what-age-should-kids-learn-to-type',
     title: 'What Age Should Kids Learn to Type?',
     seoTitle: 'What Age Should Kids Learn to Type?',
@@ -362,7 +350,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-for-kids-guide-for-parents', 'how-to-teach-a-child-to-type', 'typing-speed-for-kids-by-age'],
   },
   {
-    day: 15,
+    publishedAt: '2026-10-02',
     slug: 'how-to-test-typing-speed',
     title: 'How to Test Your Typing Speed Accurately',
     seoTitle: 'How to Test Your Typing Speed Accurately',
@@ -380,7 +368,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['why-typing-speed-varies-between-tests', 'what-does-wpm-mean', 'average-typing-speed'],
   },
   {
-    day: 16,
+    publishedAt: '2026-10-04',
     slug: 'improve-typing-accuracy',
     title: 'How to Improve Typing Accuracy Without Slowing Down',
     seoTitle: 'How to Improve Typing Accuracy Without Slowing Down',
@@ -398,7 +386,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['accuracy-before-speed', 'typing-speed-vs-accuracy', 'adaptive-typing-lessons'],
   },
   {
-    day: 17,
+    publishedAt: '2026-10-06',
     slug: 'stop-looking-at-the-keyboard',
     title: 'How to Stop Looking at the Keyboard When Typing',
     seoTitle: 'How to Stop Looking at the Keyboard When You Type',
@@ -416,7 +404,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['how-to-learn-touch-typing', 'home-row-keys', 'break-bad-typing-habits'],
   },
   {
-    day: 18,
+    publishedAt: '2026-10-08',
     slug: 'typing-for-students',
     title: 'Typing for Students: Why Keyboard Skills Matter',
     seoTitle: 'Typing for Students: Why Keyboard Skills Matter',
@@ -435,7 +423,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-speed-for-students', 'typing-and-homework', 'typing-vs-handwriting'],
   },
   {
-    day: 19,
+    publishedAt: '2026-10-10',
     slug: 'typing-speed-for-kids-by-age',
     title: 'What Is a Good Typing Speed for Kids? WPM by Age',
     seoTitle: 'Good Typing Speed for Kids: WPM by Age',
@@ -453,7 +441,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-for-kids-guide-for-parents', 'what-age-should-kids-learn-to-type', 'what-is-a-good-typing-speed'],
   },
   {
-    day: 20,
+    publishedAt: '2026-10-12',
     slug: 'typing-mistakes',
     title: '10 Typing Mistakes That Are Slowing You Down',
     seoTitle: '10 Typing Mistakes That Are Slowing You Down',
@@ -471,7 +459,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['break-bad-typing-habits', 'how-to-type-faster', 'improve-typing-accuracy'],
   },
   {
-    day: 21,
+    publishedAt: '2026-10-14',
     slug: 'typing-posture',
     title: 'The Best Sitting Position for Faster, More Comfortable Typing',
     seoTitle: 'Typing Posture: The Best Sitting Position to Type',
@@ -489,7 +477,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['mechanical-vs-membrane-keyboards', 'home-row-keys', 'typing-faster-at-work'],
   },
   {
-    day: 22,
+    publishedAt: '2026-10-16',
     slug: 'how-to-teach-a-child-to-type',
     title: 'How to Teach a Child to Type Without Making It Feel Like Homework',
     seoTitle: 'How to Teach a Child to Type Without the Battle',
@@ -507,7 +495,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-for-kids-guide-for-parents', 'make-typing-practice-fun', 'typing-practice-for-kids-routine'],
   },
   {
-    day: 23,
+    publishedAt: '2026-10-18',
     slug: 'accuracy-before-speed',
     title: 'Why Typing Accuracy Should Come Before Speed',
     seoTitle: 'Why Typing Accuracy Should Come Before Speed',
@@ -525,7 +513,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['science-of-touch-typing-muscle-memory', 'typing-speed-vs-accuracy', 'improve-typing-accuracy'],
   },
   {
-    day: 24,
+    publishedAt: '2026-10-20',
     slug: 'typing-practice-for-adults',
     title: 'Typing Practice for Adults: A 15-Minute Daily Training Plan',
     seoTitle: 'Typing Practice for Adults: A 15-Minute Daily Plan',
@@ -543,7 +531,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['learn-touch-typing-as-an-adult', 'best-way-to-practise-typing', 'break-bad-typing-habits'],
   },
   {
-    day: 25,
+    publishedAt: '2026-10-22',
     slug: 'is-40-wpm-good',
     title: 'Is 40 WPM Good? Understanding Typing Speed Benchmarks',
     seoTitle: 'Is 40 WPM Good? What That Speed Really Means',
@@ -561,7 +549,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['is-60-wpm-good', 'average-typing-speed', 'what-is-a-good-typing-speed'],
   },
   {
-    day: 26,
+    publishedAt: '2026-10-24',
     slug: 'best-typing-games-for-kids',
     title: 'Best Typing Games for Kids: How Games Can Build Real Typing Skills',
     seoTitle: 'Best Typing Games for Kids That Build Real Skills',
@@ -579,12 +567,12 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['make-typing-practice-fun', 'typing-for-kids-guide-for-parents', 'typing-practice-for-kids-routine'],
   },
   {
-    day: 27,
+    publishedAt: '2026-10-26',
     slug: 'how-your-brain-learns-to-type',
     title: 'How Your Brain Learns to Type Without Looking at the Keyboard',
     seoTitle: 'How Your Brain Learns to Type Without Looking',
     description:
-      'How typing becomes automatic: the shift from conscious key-hunting to hierarchical control, why you cannot describe a layout you can type, and what that means for practice.',
+      'How typing becomes automatic: the shift from conscious key-hunting to hierarchical control, and why you cannot describe a layout you can type fluently.',
     lede: 'Skilled typists genuinely do not know where the keys are, in the sense they could tell you. Their hands do. That gap explains a lot.',
     primaryKeyword: 'how the brain learns to type',
     secondaryKeywords: [
@@ -597,7 +585,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['science-of-touch-typing-muscle-memory', 'stop-looking-at-the-keyboard', 'why-repetition-makes-you-faster'],
   },
   {
-    day: 28,
+    publishedAt: '2026-10-28',
     slug: 'why-is-the-keyboard-qwerty',
     title: 'QWERTY Explained: Why Are Keyboard Letters Arranged This Way?',
     seoTitle: 'QWERTY Explained: Why Keyboards Are Arranged That Way',
@@ -615,7 +603,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['mechanical-vs-membrane-keyboards', 'home-row-keys', 'correct-finger-placement-for-touch-typing'],
   },
   {
-    day: 29,
+    publishedAt: '2026-10-30',
     slug: 'break-bad-typing-habits',
     title: 'How to Break Bad Typing Habits You’ve Had for Years',
     seoTitle: 'How to Break Bad Typing Habits You’ve Had for Years',
@@ -633,7 +621,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['learn-touch-typing-as-an-adult', 'typing-mistakes', 'typing-practice-for-adults'],
   },
   {
-    day: 30,
+    publishedAt: '2026-11-01',
     slug: 'is-60-wpm-good',
     title: 'Is 60 WPM Good? What Your Typing Speed Says About Your Skill Level',
     seoTitle: 'Is 60 WPM Good? What That Speed Says About You',
@@ -651,7 +639,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['is-40-wpm-good', 'how-to-reach-100-wpm', 'what-is-a-good-typing-speed'],
   },
   {
-    day: 31,
+    publishedAt: '2026-11-03',
     slug: 'typing-practice-for-kids-routine',
     title: 'Typing Practice for Kids: A Simple 10-Minute Daily Routine',
     seoTitle: 'Typing Practice for Kids: A 10-Minute Daily Routine',
@@ -669,7 +657,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['how-to-teach-a-child-to-type', 'typing-for-kids-guide-for-parents', 'make-typing-practice-fun'],
   },
   {
-    day: 32,
+    publishedAt: '2026-11-05',
     slug: 'adaptive-typing-lessons',
     title: 'How Adaptive Typing Lessons Can Target Your Weakest Keys',
     seoTitle: 'How Adaptive Typing Lessons Target Your Weak Keys',
@@ -687,7 +675,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['how-typing-apps-measure-progress', 'improve-typing-accuracy', 'best-way-to-practise-typing'],
   },
   {
-    day: 33,
+    publishedAt: '2026-11-07',
     slug: 'learn-touch-typing-later-in-life',
     title: 'Can You Learn Touch Typing Later in Life?',
     seoTitle: 'Can You Learn Touch Typing Later in Life?',
@@ -705,7 +693,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['learn-touch-typing-as-an-adult', 'typing-practice-for-adults', 'science-of-touch-typing-muscle-memory'],
   },
   {
-    day: 34,
+    publishedAt: '2026-11-09',
     slug: 'kids-typing-with-two-fingers',
     title: 'How to Help Kids Stop Typing With Two Fingers',
     seoTitle: 'How to Help Kids Stop Typing With Two Fingers',
@@ -723,7 +711,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['how-to-teach-a-child-to-type', 'typing-for-kids-guide-for-parents', 'correct-finger-placement-for-touch-typing'],
   },
   {
-    day: 35,
+    publishedAt: '2026-11-11',
     slug: 'best-way-to-practise-typing',
     title: 'The Best Way to Practise Typing: Words, Sentences or Random Letters?',
     seoTitle: 'Words, Sentences or Random Letters? Typing Practice',
@@ -741,7 +729,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['adaptive-typing-lessons', 'why-repetition-makes-you-faster', 'typing-practice-for-adults'],
   },
   {
-    day: 36,
+    publishedAt: '2026-11-13',
     slug: 'touch-typing-for-programmers',
     title: 'Touch Typing for Programmers: Does Typing Speed Actually Matter?',
     seoTitle: 'Touch Typing for Programmers: Does Speed Matter?',
@@ -759,7 +747,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-faster-at-work', 'time-saved-by-typing-faster', 'how-to-reach-100-wpm'],
   },
   {
-    day: 37,
+    publishedAt: '2026-11-15',
     slug: 'typing-speed-for-students',
     title: 'Typing Speed for Students: What’s a Good WPM?',
     seoTitle: 'Typing Speed for Students: What’s a Good WPM?',
@@ -777,7 +765,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-for-students', 'typing-and-homework', 'what-is-a-good-typing-speed'],
   },
   {
-    day: 38,
+    publishedAt: '2026-11-17',
     slug: 'how-to-reach-100-wpm',
     title: 'How to Reach 100 WPM: A Practical Training Plan',
     seoTitle: 'How to Reach 100 WPM: A Practical Training Plan',
@@ -795,7 +783,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['is-60-wpm-good', 'how-to-type-faster', 'best-way-to-practise-typing'],
   },
   {
-    day: 39,
+    publishedAt: '2026-11-19',
     slug: 'why-touch-typing-matters-for-kids',
     title: 'Why Touch Typing Is an Important Skill for Kids',
     seoTitle: 'Why Touch Typing Is an Important Skill for Kids',
@@ -813,7 +801,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-for-kids-guide-for-parents', 'should-schools-teach-typing', 'typing-vs-handwriting'],
   },
   {
-    day: 40,
+    publishedAt: '2026-11-21',
     slug: 'why-repetition-makes-you-faster',
     title: 'Why Repetition Makes You a Faster Typist',
     seoTitle: 'Why Repetition Makes You a Faster Typist',
@@ -831,7 +819,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['science-of-touch-typing-muscle-memory', 'best-way-to-practise-typing', 'how-your-brain-learns-to-type'],
   },
   {
-    day: 41,
+    publishedAt: '2026-11-23',
     slug: 'time-saved-by-typing-faster',
     title: 'How Much Time Can Faster Typing Save You at Work?',
     seoTitle: 'How Much Time Does Faster Typing Save at Work?',
@@ -849,7 +837,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-faster-at-work', 'touch-typing-for-programmers', 'typing-practice-for-adults'],
   },
   {
-    day: 42,
+    publishedAt: '2026-11-25',
     slug: 'make-typing-practice-fun',
     title: 'How to Make Typing Practice Fun for Kids',
     seoTitle: 'How to Make Typing Practice Fun for Kids',
@@ -867,7 +855,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['best-typing-games-for-kids', 'how-to-teach-a-child-to-type', 'typing-practice-for-kids-routine'],
   },
   {
-    day: 43,
+    publishedAt: '2026-11-27',
     slug: 'why-typing-speed-varies-between-tests',
     title: 'Why Your Typing Speed Changes Between Different Typing Tests',
     seoTitle: 'Why Your Typing Speed Differs Between Typing Tests',
@@ -885,7 +873,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['how-to-test-typing-speed', 'what-does-wpm-mean', 'how-typing-apps-measure-progress'],
   },
   {
-    day: 44,
+    publishedAt: '2026-11-29',
     slug: 'should-schools-teach-typing',
     title: 'Should Schools Still Teach Touch Typing?',
     seoTitle: 'Should Schools Still Teach Touch Typing?',
@@ -903,7 +891,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-vs-handwriting', 'why-touch-typing-matters-for-kids', 'typing-for-homeschoolers'],
   },
   {
-    day: 45,
+    publishedAt: '2026-12-01',
     slug: 'typing-faster-at-work',
     title: 'Typing Faster at Work: Practical Techniques for Emails, Documents and Chat',
     seoTitle: 'Typing Faster at Work: Email, Docs and Chat',
@@ -921,7 +909,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['time-saved-by-typing-faster', 'typing-practice-for-adults', 'touch-typing-for-programmers'],
   },
   {
-    day: 46,
+    publishedAt: '2026-12-03',
     slug: 'mechanical-vs-membrane-keyboards',
     title: 'Mechanical vs Membrane Keyboards: Does Your Keyboard Affect Typing Speed?',
     seoTitle: 'Mechanical vs Membrane: Does Your Keyboard Matter?',
@@ -939,7 +927,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-posture', 'why-is-the-keyboard-qwerty', 'how-to-type-faster'],
   },
   {
-    day: 47,
+    publishedAt: '2026-12-05',
     slug: 'typing-and-homework',
     title: 'How Faster Typing Can Help Students With Homework and Assignments',
     seoTitle: 'How Faster Typing Helps With Homework and Essays',
@@ -957,7 +945,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['typing-for-students', 'typing-speed-for-students', 'typing-vs-handwriting'],
   },
   {
-    day: 48,
+    publishedAt: '2026-12-07',
     slug: 'how-typing-apps-measure-progress',
     title: 'How Typing Apps Measure Speed, Accuracy and Progress',
     seoTitle: 'How Typing Apps Measure Speed, Accuracy and Progress',
@@ -975,7 +963,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['adaptive-typing-lessons', 'why-typing-speed-varies-between-tests', 'what-does-wpm-mean'],
   },
   {
-    day: 49,
+    publishedAt: '2026-12-09',
     slug: 'typing-for-homeschoolers',
     title: 'Typing for Homeschoolers: How to Add Keyboard Skills to Your Curriculum',
     seoTitle: 'Typing for Homeschoolers: Adding Keyboard Skills',
@@ -993,7 +981,7 @@ export const BLOG_POSTS: BlogPost[] = [
     related: ['should-schools-teach-typing', 'typing-practice-for-kids-routine', 'typing-for-kids-guide-for-parents'],
   },
   {
-    day: 50,
+    publishedAt: '2026-12-11',
     slug: 'typing-vs-handwriting',
     title: 'Typing vs Handwriting: What Does the Research Say About Learning?',
     seoTitle: 'Typing vs Handwriting: What the Research Says',
@@ -1028,9 +1016,13 @@ export function postBySlug(slug: string): BlogPost | undefined {
  * whole campaign is reviewable before it runs.
  */
 export function publishedPosts(today: string, showAll = false): BlogPost[] {
-  return BLOG_POSTS.filter((p) => showAll || dateForDay(p.day) <= today)
-    .slice()
-    .sort((a, b) => b.day - a.day);
+  return BLOG_POSTS
+    .map((post, i) => ({ post, i }))
+    .filter(({ post }) => showAll || post.publishedAt <= today)
+    // Newest first. The array index breaks ties, so two articles sharing a date
+    // keep the order they were written in rather than an arbitrary one.
+    .sort((a, b) => b.post.publishedAt.localeCompare(a.post.publishedAt) || b.i - a.i)
+    .map(({ post }) => post);
 }
 
 /** Today as an ISO date, in UTC so the build and the browser agree. */

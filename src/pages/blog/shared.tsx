@@ -8,7 +8,7 @@
 import { Link } from 'react-router-dom';
 import type { HeroVariant } from '../../components/public/PublicHero';
 import {
-  CATEGORY_HUES, dateForDay, postPath, type BlogCategory, type BlogPost,
+  CATEGORY_HUES, postPath, type BlogCategory, type BlogPost,
 } from '../../lib/blog/posts';
 import { minutesFor } from '../../lib/blog/registry';
 
@@ -64,7 +64,7 @@ export function CategoryTag({ category }: { category: BlogCategory }) {
 
 /** The card used on the index and in the "keep reading" rails. */
 export function PostCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
-  const date = dateForDay(post.day);
+  const date = post.publishedAt;
   return (
     <article className={featured ? 'blog-card blog-card-lead' : 'blog-card'}>
       <div className="blog-card-top">

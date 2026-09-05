@@ -17,7 +17,9 @@
     "noEmit": true,
     "types": ["vite/client"]
   },
-  "include": ["src"],
+  // middleware.ts sits at the repo root because that is where Vercel looks for
+  // it, but it imports application modules and must be typechecked with them.
+  "include": ["src", "middleware.ts"],
   // Tests are compiled by tsconfig.test.json, not by the app build. They use
   // Node APIs (suite.test.ts reads the route files to check that the registries
   // and the routers agree), and giving the whole application Node's globals so

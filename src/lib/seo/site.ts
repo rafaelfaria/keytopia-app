@@ -16,7 +16,7 @@
 
 import { BRAND, BRAND_TITLE } from '../brand';
 import {
-  BLOG_POSTS, dateForDay, postPath, publishedPosts, todayIso, type BlogPost,
+  BLOG_POSTS, postPath, publishedPosts, todayIso, type BlogPost,
 } from '../blog/posts';
 import { TOOL_PAGES } from './toolsPages';
 
@@ -291,7 +291,7 @@ const STATIC_PAGES: PublicPage[] = [
  * Whether unpublished articles are visible.
  *
  * The campaign is a drip: an article joins the sitemap, the prerenderer and the
- * index on the day it is scheduled for, and not before, because publishing
+ * index on the date it is scheduled for, and not before, because publishing
  * fifty pages at once is the thing the schedule exists to avoid. Development
  * shows the whole run so the campaign can be reviewed before it starts, and
  * `VITE_BLOG_PUBLISH_ALL=1` does the same for a staging build.
@@ -299,8 +299,22 @@ const STATIC_PAGES: PublicPage[] = [
 export const BLOG_SHOW_ALL =
   env.VITE_BLOG_PUBLISH_ALL === '1' || String(env.DEV) === 'true';
 
+/**
+ * The articles published as of `today`, newest first.
+ *
+ * A function as well as a constant because the two callers want different
+ * things. The browser and the build scripts want the snapshot below, taken once
+ * at module load, which for them *is* the current moment. Middleware does not:
+ * a serverless instance is reused across requests, so its module scope was
+ * evaluated at cold start and could be days old by the time a crawler asks for
+ * the sitemap. It calls this instead.
+ */
+export function livePosts(today: string = todayIso()): BlogPost[] {
+  return publishedPosts(today, BLOG_SHOW_ALL);
+}
+
 /** The articles this build publishes, newest first. */
-export const LIVE_POSTS: BlogPost[] = publishedPosts(todayIso(), BLOG_SHOW_ALL);
+export const LIVE_POSTS: BlogPost[] = livePosts();
 
 const BLOG_INDEX: PublicPage = {
   path: '/blog',
@@ -312,7 +326,7 @@ const BLOG_INDEX: PublicPage = {
   llmsNote: 'The KeyTopia blog: touch-typing guides, WPM benchmarks, typing for kids, students and adults, and the science of typing practice.',
   priority: 0.9,
   changeFrequency: 'daily',
-  lastModified: LIVE_POSTS.length ? dateForDay(LIVE_POSTS[0].day) : TODAY,
+  lastModified: LIVE_POSTS.length ? LIVE_POSTS[0].publishedAt : TODAY,
   group: 'Learn',
 };
 
@@ -323,7 +337,7 @@ const BLOG_INDEX: PublicPage = {
  * missing from the router, or carry a canonical URL that disagrees with the
  * link the index renders.
  */
-const BLOG_PAGES: PublicPage[] = LIVE_POSTS.map((post) => ({
+const blogPageFor = (post: BlogPost): PublicPage => ({
   path: postPath(post),
   label: post.title,
   title: post.seoTitle,
@@ -333,9 +347,11 @@ const BLOG_PAGES: PublicPage[] = LIVE_POSTS.map((post) => ({
   // pillar pages they exist to feed, so they sit a step below them.
   priority: post.pillar ? 0.8 : 0.7,
   changeFrequency: 'monthly',
-  lastModified: dateForDay(post.day),
+  lastModified: post.publishedAt,
   group: 'Blog',
-}));
+});
+
+const BLOG_PAGES: PublicPage[] = LIVE_POSTS.map(blogPageFor);
 
 /**
  * Every crawlable route: the hand-written pages, then the free-tools suite,
@@ -349,6 +365,22 @@ const BLOG_PAGES: PublicPage[] = LIVE_POSTS.map((post) => ({
 export const PUBLIC_PAGES: PublicPage[] = [
   ...STATIC_PAGES, ...TOOL_PAGES, BLOG_INDEX, ...BLOG_PAGES,
 ];
+
+/**
+ * The same list, recomputed for a given date.
+ *
+ * Exists alongside the constant for the reason given on `livePosts`: middleware
+ * serves sitemap.xml from a reused instance whose module scope is older than
+ * the request.
+ */
+export function publicPages(today: string = todayIso()): PublicPage[] {
+  const posts = livePosts(today);
+  const index: PublicPage = {
+    ...BLOG_INDEX,
+    lastModified: posts.length ? posts[0].publishedAt : BLOG_INDEX.lastModified,
+  };
+  return [...STATIC_PAGES, ...TOOL_PAGES, index, ...posts.map(blogPageFor)];
+}
 
 /** The free-tools routes, for the parts of the site that treat them as a set. */
 export const TOOL_PATHS: string[] = TOOL_PAGES.map((p) => p.path);

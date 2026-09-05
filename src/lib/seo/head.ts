@@ -13,7 +13,6 @@ import {
   pageTitle, postForPath, type PublicPage,
 } from './site';
 import { jsonLdForPath, serializeJsonLd, type HeadExtras } from './jsonLd';
-import { dateForDay } from '../blog/posts';
 
 export interface HeadTag {
   tag: 'meta' | 'link';
@@ -80,7 +79,7 @@ export function buildHead(page: PublicPage, extras: HeadExtras = {}): HeadDoc {
   // Article-specific Open Graph. Facebook, LinkedIn and several readers surface
   // the publication date from these rather than from the JSON-LD.
   if (post) {
-    const published = `${dateForDay(post.day)}T09:00:00Z`;
+    const published = `${post.publishedAt}T09:00:00Z`;
     tags.push(
       meta({ property: 'article:published_time', content: published }),
       meta({ property: 'article:modified_time', content: published }),

@@ -12,7 +12,7 @@
 
 import { BODIES } from './bodies';
 import {
-  BLOG_POSTS, dateForDay, postBySlug, postPath, type BlogPost,
+  BLOG_POSTS, postBySlug, postPath, type BlogPost,
 } from './posts';
 // The live set is decided by the SEO layer, which is also what the sitemap and
 // the prerenderer read — so "reachable" and "in the sitemap" cannot disagree.
@@ -60,7 +60,7 @@ export function articleBySlug(slug: string): Article | undefined {
   const blocks = parseMarkdown(source);
   const article: Article = {
     post,
-    date: dateForDay(post.day),
+    date: post.publishedAt,
     blocks,
     toc: tableOfContents(blocks),
     faqs: extractFaqs(blocks),
@@ -149,16 +149,21 @@ export interface BlogProblem { slug: string; problem: string }
  */
 export function validateBlog(): BlogProblem[] {
   const problems: BlogProblem[] = [];
-  const days = new Map<number, string>();
+  const dates = new Map<string, string>();
   const slugs = new Set<string>();
 
   for (const post of BLOG_POSTS) {
     if (slugs.has(post.slug)) problems.push({ slug: post.slug, problem: 'duplicate slug' });
     slugs.add(post.slug);
 
-    const clash = days.get(post.day);
-    if (clash) problems.push({ slug: post.slug, problem: `day ${post.day} already taken by ${clash}` });
-    days.set(post.day, post.slug);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(post.publishedAt)) {
+      problems.push({ slug: post.slug, problem: `publishedAt is not an ISO date: ${post.publishedAt}` });
+    }
+    // Two articles on one date is legal in the model and almost never intended:
+    // spreading the campaign out is the whole point of scheduling it.
+    const clash = dates.get(post.publishedAt);
+    if (clash) problems.push({ slug: post.slug, problem: `publishes on ${post.publishedAt}, same day as ${clash}` });
+    dates.set(post.publishedAt, post.slug);
 
     const source = BODIES[post.slug];
     if (!source) {
@@ -177,10 +182,6 @@ export function validateBlog(): BlogProblem[] {
     if (internalLinks(source).some((h) => h === postPath(post))) {
       problems.push({ slug: post.slug, problem: 'links to itself' });
     }
-  }
-
-  for (const day of Array.from({ length: BLOG_POSTS.length }, (_, i) => i + 1)) {
-    if (!days.has(day)) problems.push({ slug: '—', problem: `day ${day} has no article` });
   }
 
   for (const slug of Object.keys(BODIES)) {

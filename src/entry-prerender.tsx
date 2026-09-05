@@ -35,8 +35,11 @@ import { pageByPath, PUBLIC_PAGES, type PublicPage as PublicPageDef } from './li
 // Re-exported so scripts/gen-seo.mjs can reach the generators through the same
 // compiled bundle rather than needing its own TypeScript pipeline.
 export {
-  allUrls, buildLlmsFullTxt, buildLlmsTxt, buildRobotsTxt, buildSitemapIndexXml, buildSitemapXml,
+  allUrls, buildLlmsTxt, buildRobotsTxt, buildSitemapIndexXml, buildSitemapXml,
 } from './lib/seo/generators';
+// llms-full.txt lives apart because it is the one generator that needs the
+// article prose. Only build-time callers reach it.
+export { buildLlmsFullTxt } from './lib/seo/generatorsFull';
 export { SITE_URL, PUBLIC_PAGES } from './lib/seo/site';
 // Re-exported so scripts/prerender.mjs can fail the build on a broken internal
 // link, a duplicate publication day or an article with no prose.

@@ -17,7 +17,7 @@ import {
 } from './site';
 import { TOOLS, TOOLS_BASE, toolByPath } from '../tools/registry';
 import { TOOL_CONTENT, TOOLS_HUB_FAQS } from './toolsContent';
-import { dateForDay, postPath } from '../blog/posts';
+import { postPath } from '../blog/posts';
 import {
   CORE_FEATURES, FAQS, GAMES, GLOSSARY, PRODUCT_PRICE, PRODUCT_SUMMARY,
   CURRICULUM, LEARN_GUIDE, METHOD_STEPS,
@@ -143,7 +143,7 @@ export function webPageNode(page: PublicPage, extra: JsonLd = {}): JsonLd {
     about: { '@id': APP_ID },
     inLanguage: 'en',
     primaryImageOfPage: { '@type': 'ImageObject', url: absUrl(ogImage(page)) },
-    datePublished: post ? dateForDay(post.day) : '2026-08-01',
+    datePublished: post ? post.publishedAt : '2026-08-01',
     dateModified: page.lastModified,
     ...extra,
   };
@@ -385,7 +385,7 @@ export function blogNode(page: PublicPage): JsonLd {
       '@id': `${absUrl(postPath(p))}#article`,
       headline: p.title,
       url: absUrl(postPath(p)),
-      datePublished: dateForDay(p.day),
+      datePublished: p.publishedAt,
     })),
   };
 }
@@ -401,7 +401,7 @@ export function blogNode(page: PublicPage): JsonLd {
 export function blogPostingNode(page: PublicPage, extra: HeadExtras = {}): JsonLd {
   const post = postForPath(page.path);
   if (!post) return {};
-  const published = dateForDay(post.day);
+  const published = post.publishedAt;
   return {
     '@type': 'BlogPosting',
     '@id': `${absUrl(page.path)}#article`,

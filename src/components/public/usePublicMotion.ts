@@ -37,14 +37,36 @@ const TARGETS = [
   '.tool-card',
   '.tool-next-card',
   '.tool-tier',
-  // The blog index's cards and the article's closing call to action. Same rule
-  // again, and it matters most here: `.blog-body` is deliberately absent, since
-  // an article's prose is the entire point of the page and must never depend on
-  // a tween finishing in order to be readable.
-  '.blog-card',
+  // The blog index's pillar rail and the article's closing call to action. Same
+  // rule again, and it matters most here: `.blog-body` is deliberately absent,
+  // since an article's prose is the entire point of the page and must never
+  // depend on a tween finishing in order to be readable.
+  //
+  // `.blog-card` is absent for a second reason. The index's cards live in a
+  // filterable grid, and hiding forty of them collapses the layout under
+  // ScrollTrigger's cached measurements: the nine that survive move up into the
+  // viewport with their reveal still pending, so filtering appeared to empty the
+  // page rather than filter it. A list the reader can rearrange should not have
+  // its items waiting on a scroll position that no longer exists.
   '.blog-pillar',
   '.blog-try',
 ];
+
+/**
+ * Re-measure every trigger.
+ *
+ * Anything that changes the height of the page after load — the blog index's
+ * category filter is the case that prompted this — leaves ScrollTrigger holding
+ * positions from the old layout, so blocks below the change never reveal. The
+ * import is dynamic and cached, and a refresh with no triggers registered is a
+ * no-op, so this is safe to call from a page that never animated anything.
+ */
+export async function refreshPublicMotion(): Promise<void> {
+  if (typeof window === 'undefined') return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+  ScrollTrigger.refresh();
+}
 
 export function usePublicMotion(key: string): void {
   useEffect(() => {

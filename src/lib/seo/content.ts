@@ -63,7 +63,7 @@ export const CORE_FEATURES: Feature[] = [
   { name: '60-second placement assessment', description: 'Reads speed, accuracy, rhythm, hesitation, backspace habits and per-key reflexes, then names your rank and draws your starting map.' },
   { name: '41-lesson curriculum', description: 'Nine regions grouped into five worlds, from the two home-row anchor keys through capitals, numbers, symbols, code, rhythm and endurance.' },
   { name: 'Fourteen training modes', description: 'Adaptive practice, weak-key workouts, speed sprints, Accuracy Lab, rhythm studio, zen, lights-out, code forge, numerals, recovery, endurance, camp checkpoints, real-world desk and copy desk.' },
-  { name: 'Seven original typing games', description: 'Each game is built around one named skill and tells you which skill it trains. No typing glued onto an unrelated arcade game.' },
+  { name: 'Nine original typing games', description: 'Each game is built around one named skill and tells you which skill it trains. No typing glued onto an unrelated arcade game.' },
   { name: 'Racing with CPU rivals', description: 'Five difficulties plus adaptive, rivals with believable habits, a ghost of your own best run, and private rooms with join codes for friends or a classroom.' },
   { name: 'Deep analytics', description: 'Per-key heatmaps, finger and hand balance, rhythm fingerprints, session echo replay, consistency scoring, records and a practice calendar.' },
   { name: 'A coach that is specific', description: 'Kip reads your actual session data and names the exact keys and transitions holding you back, then prescribes a drill for them.' },
@@ -683,3 +683,29 @@ export const TERMS_SECTIONS: GuideSection[] = [
     ],
   },
 ];
+
+/**
+ * The games count, written as a word, must match the games.
+ *
+ * CORE_FEATURES spells the number out because it is read as a sentence, and
+ * GAMES is the list itself. They drifted: the feature said "Seven original
+ * typing games" while the prose beside it, the product summary and llms.txt all
+ * said nine, so every page shipped structured data that contradicted its own
+ * copy. Nothing caught it, because nothing was comparing them.
+ *
+ * This runs at import, which means in Node during the prerender and the sitemap
+ * build, and in the browser in dev. Adding a tenth game now fails the build
+ * instead of quietly publishing the wrong number on twenty-six pages.
+ */
+const GAMES_COUNT_WORD = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+
+{
+  const feature = CORE_FEATURES.find((f) => f.name.toLowerCase().includes('original typing games'));
+  const expected = GAMES_COUNT_WORD[GAMES.length];
+  if (feature && expected && !feature.name.toLowerCase().startsWith(expected)) {
+    throw new Error(
+      `CORE_FEATURES says "${feature.name}" but GAMES has ${GAMES.length} entries. `
+      + `Expected the feature to start with "${expected}". Update src/lib/seo/content.ts.`,
+    );
+  }
+}

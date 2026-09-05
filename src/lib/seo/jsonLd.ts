@@ -194,22 +194,31 @@ export function guideArticleNode(page: PublicPage): JsonLd {
   };
 }
 
-/** The three-step method, as a HowTo — eligible for how-to style surfaces. */
-export function howToNode(): JsonLd {
+/**
+ * The three-step method on the home page, as an Article.
+ *
+ * This was a HowTo. Google retired HowTo rich results in September 2023, so the
+ * markup earned nothing and only added weight. On /learn-to-type the Article
+ * from `guideArticleNode` already described the same three steps, so that page
+ * simply lost the HowTo. The home page had no Article of its own, and deleting
+ * the HowTo there would have left "Assess, Adapt, Advance" with no structured
+ * description at all — hence this node, which keeps the steps machine-readable
+ * for answer engines through a type that is still supported.
+ */
+export function methodArticleNode(page: PublicPage): JsonLd {
   return {
-    '@type': 'HowTo',
-    name: 'How to learn touch typing with KeyTopia',
+    '@type': 'Article',
+    '@id': `${absUrl(page.path)}#article`,
+    headline: 'KeyTopia learns you first',
     description: 'Assess your current typing, adapt practice to your own weak keys, then advance accuracy first and speed second.',
-    totalTime: 'PT15M',
-    supply: { '@type': 'HowToSupply', name: 'A computer keyboard' },
-    tool: { '@type': 'HowToTool', name: 'A web browser' },
-    step: METHOD_STEPS.map((s, i) => ({
-      '@type': 'HowToStep',
-      position: i + 1,
-      name: s.name,
-      text: s.text,
-      url: `${absUrl('/learn-to-type')}#step-${i + 1}`,
-    })),
+    articleSection: METHOD_STEPS.map((s) => s.name),
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    datePublished: '2026-08-01',
+    dateModified: page.lastModified,
+    mainEntityOfPage: { '@id': `${absUrl(page.path)}#webpage` },
+    image: absUrl(ogImage(page)),
+    inLanguage: 'en',
   };
 }
 
@@ -483,13 +492,13 @@ export function jsonLdForPath(page: PublicPage, opts: HeadExtras = {}): JsonLd {
 
   switch (page.path) {
     case '/':
-      extra.push(faqNode(FAQS.slice(0, 6)), howToNode());
+      extra.push(faqNode(FAQS.slice(0, 6)), methodArticleNode(page));
       break;
     case '/typing-test':
       extra.push(typingTestNode(page));
       break;
     case '/learn-to-type':
-      extra.push(guideArticleNode(page), howToNode());
+      extra.push(guideArticleNode(page));
       break;
     case '/curriculum':
       extra.push(courseNode());

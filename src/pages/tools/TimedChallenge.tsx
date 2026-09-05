@@ -12,7 +12,7 @@
  */
 
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ToolPage, ToolCta } from '../../components/tools/ToolShell';
 import {
   DurationPicker, RestartButton, TypingSurface,
@@ -24,6 +24,8 @@ import { toolByPath } from '../../lib/tools/registry';
 import { speedTestText } from '../../lib/tools/text';
 import { isMeaningful, speedBand } from '../../lib/tools/metrics';
 import { toolCompleted, toolRestarted, toolStarted } from '../../lib/tools/analytics';
+import { buildToolPath, readOneOf } from '../../lib/tools/deepLink';
+import { ShareLink } from '../../components/tools/ShareLink';
 import { SITE_NAME, absUrl } from '../../lib/seo/site';
 
 const DURATIONS = [15, 30, 60, 120, 300] as const;
@@ -39,7 +41,10 @@ function shareLine(wpm: number, acc: number, seconds: number): string {
 }
 
 export function TimedChallengePage() {
-  const [duration, setDuration] = useState<Duration>(60);
+  const [params] = useSearchParams();
+  const [duration, setDuration] = useState<Duration>(
+    () => readOneOf(params, 'duration', DURATIONS) ?? 60,
+  );
   const [seed, setSeed] = useState(FIRST_SEED);
   const [run, setRun] = useState<FinishedRun | null>(null);
   const [copied, setCopied] = useState(false);
@@ -136,6 +141,11 @@ export function TimedChallengePage() {
             </div>
 
             {copied && <p className="tool-saved" role="status">Your result is on the clipboard.</p>}
+
+            <ShareLink
+              path={buildToolPath(TOOL.path, { duration })}
+              hint="Challenge somebody: this link opens the same clock they need to beat it on."
+            />
 
             <p className="tt-handoff">
               Want a real opponent rather than a clock? KeyTopia has{' '}

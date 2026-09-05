@@ -58,6 +58,97 @@
 .tool-controls .tt-controls { margin: 0; }
 .tool-controls .tt-restart { margin-left: 0; }
 
+/* ── The hub: the front door ─────────────────────────────────────────────
+   A directory of eight equals gives nobody a first move, so one of them is
+   promoted out of the grid and offered as an action. */
+
+.tool-start {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.75rem 2.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 var(--flow-5);
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+.tool-start-body { flex: 1 1 24rem; min-width: 0; }
+
+.tool-start-eyebrow {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tool-start h2 { margin: 0 0 0.6rem; font-size: clamp(1.35rem, 3vw, 1.7rem); letter-spacing: -0.02em; }
+.tool-start p { margin: 0 0 1.35rem; max-width: 46ch; line-height: 1.65; color: var(--text-dim); }
+
+.tool-start-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+
+.tool-start-alt { font-size: 0.9rem; color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+.tool-start-alt:hover { border-bottom-color: currentColor; }
+.tool-start-alt:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+/* Three facts rather than a paragraph making the same three claims. */
+.tool-start-facts {
+  flex: 0 1 auto;
+  display: flex;
+  gap: clamp(1.25rem, 4vw, 2.25rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tool-start-facts li { text-align: center; }
+.tool-start-facts b {
+  display: block;
+  font-size: clamp(1.7rem, 5vw, 2.3rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.tool-start-facts span {
+  display: block;
+  margin-top: 0.35rem;
+  max-width: 9ch;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+/* ── The hub: the three steps ────────────────────────────────────────────
+   The categories were already the right grouping; numbering them is what turns
+   a taxonomy into an instruction. */
+
+.tool-cat { margin: 0 0 var(--flow-5); }
+
+.tool-cat-head { display: flex; gap: 0.9rem; align-items: flex-start; margin-bottom: var(--flow-2); }
+
+.tool-cat-step {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  margin-top: 0.1rem;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.tool-cat-head h2 { margin: 0 0 0.3rem; font-size: 1.25rem; letter-spacing: -0.02em; }
+
 /* ── The hub ─────────────────────────────────────────────────────────────── */
 
 .tool-cat-blurb {
@@ -76,7 +167,8 @@
 .tool-card {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.35rem;
+  height: 100%;
   padding: 1.15rem 1.25rem;
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -89,17 +181,119 @@
 .tool-card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .tool-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .tool-card strong { font-size: 1rem; letter-spacing: -0.01em; }
-.tool-card span { font-size: 0.88rem; line-height: 1.55; color: var(--muted); }
+
+/* The outcome carries the weight, because it is what a reader scanning eight
+   cards is actually comparing. The description is demoted under it. */
+.tool-card-outcome { font-size: 0.9rem; line-height: 1.5; color: var(--text-dim); }
+.tool-card-blurb { font-size: 0.83rem; line-height: 1.5; color: var(--muted); }
+
+.tool-card.is-featured { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
 
 .tool-card em {
-  margin-top: 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  margin-top: auto;
+  padding-top: 0.7rem;
   font-style: normal;
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--accent) 78%, var(--muted));
+  color: var(--muted);
 }
+
+/* The time cost is the deciding fact for most people, so it is the one that
+   gets the accent. */
+.tool-card em > span:first-child { color: color-mix(in srgb, var(--accent) 80%, var(--muted)); }
+
+/* ── The hub: claims, parameters and onward links ───────────────────────── */
+
+.tool-promises,
+.tool-elsewhere {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 0.9rem;
+}
+
+.tool-promise {
+  padding: 1.15rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.tool-promise h3 { margin: 0 0 0.5rem; font-size: 0.98rem; }
+.tool-promise p { margin: 0; font-size: 0.88rem; line-height: 1.6; color: var(--muted); }
+
+.tool-elsewhere a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.95rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.tool-elsewhere a:hover { border-color: var(--accent); }
+.tool-elsewhere a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.tool-elsewhere strong { font-size: 0.94rem; }
+.tool-elsewhere span { font-size: 0.83rem; line-height: 1.45; color: var(--muted); }
+
+.tool-params code {
+  font-family: var(--font-type);
+  font-size: 0.84rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 5px;
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.tool-params th[scope='row'] { vertical-align: top; font-weight: 650; }
+.tool-params th[scope='row'] a { color: var(--accent); text-decoration: none; }
+.tool-params th[scope='row'] a:hover { text-decoration: underline; }
+.tool-params td a { text-decoration: none; }
+.tool-params td a:hover code { color: var(--accent); }
+
+/* ── Share a configured link ─────────────────────────────────────────────── */
+
+.tool-share { margin-top: 1.5rem; }
+
+.tool-share-btn {
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.5rem 0.9rem;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tool-share-btn:hover { color: var(--text); border-color: var(--accent); }
+.tool-share-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.tool-share-url { margin-top: 0.6rem; max-width: 34rem; font-size: 0.82rem; }
+.tool-share-hint { margin-top: 0.5rem; }
+
+.tool-goal {
+  margin: 1.25rem 0 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: var(--measure);
+}
+
+.tool-drill-linked { margin-top: 0; }
+.tool-drill-linked h2 { margin: 0 0 0.5rem; font-size: 1.2rem; }
 
 @media (prefers-reduced-motion: reduce) {
   .tool-card:hover { transform: none; }
@@ -572,6 +766,9 @@
 
 @media (max-width: 40rem) {
   .tool-nav { gap: 0.35rem; }
+  .tool-start { gap: 1.25rem; }
+  .tool-start-facts { width: 100%; justify-content: space-between; gap: 1rem; }
+  .tool-start-facts span { max-width: none; }
   .tool-nav-link { font-size: 0.8rem; padding: 0.42rem 0.6rem; }
   .tool-daily-head { flex-direction: column; }
   .tool-answer-grid { gap: 1.25rem; }

@@ -14,7 +14,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ToolPage, ToolCta } from '../../components/tools/ToolShell';
 import { LineChart } from '../../components/charts';
 import { toolByPath } from '../../lib/tools/registry';
@@ -25,6 +25,8 @@ import {
 import { progressSaved } from '../../lib/tools/analytics';
 import { accuracyBand, speedBand } from '../../lib/tools/metrics';
 import { relTime } from '../../lib/metrics';
+import { buildToolPath, readNumber } from '../../lib/tools/deepLink';
+import { ShareLink } from '../../components/tools/ShareLink';
 
 const TOOL = toolByPath('/tools/typing-progress-tracker')!;
 
@@ -116,6 +118,11 @@ function ManualEntry({ onAdd }: { onAdd: () => void }) {
 }
 
 export function ProgressTrackerPage() {
+  const [params] = useSearchParams();
+  // `?goal=60`. The link to send somebody who has just been told to reach a
+  // particular speed: their own history, measured against that number.
+  const goal = readNumber(params, 'goal', { min: 1, max: 400 });
+
   const [results, setResults] = useState<ToolResult[] | null>(null);
 
   const reload = useCallback(() => {
@@ -155,9 +162,11 @@ export function ProgressTrackerPage() {
           <div className="tool-empty">
             <h2>No results yet</h2>
             <p>
-              Take a 60-second typing test to create your first one. When you finish, press
-              &ldquo;Keep this result&rdquo; and it will appear here, along with everything you
-              record afterwards.
+              {goal !== null
+                ? `Your target is ${goal} WPM. Take a 60-second typing test to find out where you are starting from.`
+                : 'Take a 60-second typing test to create your first one.'}{' '}
+              When you finish, press &ldquo;Keep this result&rdquo; and it will appear here,
+              along with everything you record afterwards.
             </p>
             <div className="tt-again">
               <ToolCta tool="typing-progress-tracker" to="/tools/typing-speed-test">
@@ -189,6 +198,21 @@ export function ProgressTrackerPage() {
               </div>
             </dl>
 
+            {goal !== null && summary.latest && (
+              <p className="tool-goal" role="status">
+                {summary.best.wpm >= goal ? (
+                  <>Target of <strong>{goal} WPM</strong> reached: your best is {summary.best.wpm}.
+                    Holding it consistently is the next thing, and the average below is the
+                    honest measure of that.</>
+                ) : (
+                  <>Target of <strong>{goal} WPM</strong>.
+                    You are {Math.round((goal - summary.latest.wpm) * 10) / 10} WPM away from it
+                    on your latest run, and {Math.round((goal - summary.averageWpm) * 10) / 10} on
+                    your average. The average is the one that counts.</>
+                )}
+              </p>
+            )}
+
             <p className="tool-trend" role="status">
               {summary.trend === null ? (
                 <>Keep {6 - summary.count} more {6 - summary.count === 1 ? 'result' : 'results'} and
@@ -211,8 +235,21 @@ export function ProgressTrackerPage() {
 
             {points.length >= 2 && (
               <figure className="tool-chart">
-                <figcaption>Speed over your last {points.length} kept results</figcaption>
-                <LineChart points={points} unit=" WPM" showDots height={200} />
+                <figcaption>
+                  Speed over your last {points.length} kept results
+                  {goal !== null && `, against a ${goal} WPM target`}
+                </figcaption>
+                {/* The goal joins the chart by widening its scale rather than by
+                    drawing a line the chart component does not support: an
+                    axis that stops below the target would show you meeting a
+                    goal you have not met. */}
+                <LineChart
+                  points={points}
+                  unit=" WPM"
+                  showDots
+                  height={200}
+                  yMin={goal !== null ? 0 : undefined}
+                />
               </figure>
             )}
 
@@ -277,6 +314,14 @@ export function ProgressTrackerPage() {
                 Clear everything
               </button>
             </div>
+
+            <ShareLink
+              path={buildToolPath(TOOL.path, { goal })}
+              label={goal !== null ? 'Copy a link to this target' : 'Copy a link to this tracker'}
+              hint={goal !== null
+                ? `Opens the tracker measured against ${goal} WPM, on whoever's history it is opened with.`
+                : 'Add ?goal=60 to this link to open the tracker with a target of 60 WPM.'}
+            />
 
             <p className="tt-handoff">
               This history lives in this browser only, so clearing site data clears it and it will

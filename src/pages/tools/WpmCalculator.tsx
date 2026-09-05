@@ -13,13 +13,15 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ToolPage, ToolCta } from '../../components/tools/ToolShell';
 import { toolByPath } from '../../lib/tools/registry';
 import {
   CHARS_PER_WORD, accuracyBand, cpm, grossWpm, netWpmFromErrors, secondsFromInput, speedBand,
 } from '../../lib/tools/metrics';
 import { track } from '../../lib/analytics/ga4';
+import { buildToolPath, readEnum, readNumber } from '../../lib/tools/deepLink';
+import { ShareLink } from '../../components/tools/ShareLink';
 
 const TOOL = toolByPath('/tools/wpm-calculator')!;
 
@@ -45,11 +47,29 @@ function parse(v: string): number | null {
 }
 
 export function WpmCalculatorPage() {
-  const [basis, setBasis] = useState<Basis>('words');
-  const [amount, setAmount] = useState('');
-  const [time, setTime] = useState('');
-  const [unit, setUnit] = useState<Unit>('minutes');
-  const [errors, setErrors] = useState('');
+  const [params] = useSearchParams();
+  // The advertising case this whole layer exists for: `?words=60&time=1` opens
+  // the calculator with the answer already on screen, so a link can make the
+  // point rather than merely offering to.
+  const linked = useMemo(() => {
+    const chars = readNumber(params, 'chars', { min: 0.01, max: 1e9 });
+    const words = readNumber(params, 'words', { min: 0.01, max: 1e9 });
+    return {
+      // `chars` wins when both are present, because it is the more specific
+      // request: somebody who sent a character count meant characters.
+      basis: (chars !== null ? 'characters' : 'words') as Basis,
+      amount: chars ?? words,
+      time: readNumber(params, 'time', { min: 0.01, max: 86_400 }),
+      unit: readEnum(params, 'unit', ['minutes', 'seconds'] as const),
+      errors: readNumber(params, 'errors', { min: 0, max: 1e6 }),
+    };
+  }, [params]);
+
+  const [basis, setBasis] = useState<Basis>(linked.basis);
+  const [amount, setAmount] = useState(linked.amount === null ? '' : String(linked.amount));
+  const [time, setTime] = useState(linked.time === null ? '' : String(linked.time));
+  const [unit, setUnit] = useState<Unit>(linked.unit ?? 'minutes');
+  const [errors, setErrors] = useState(linked.errors === null ? '' : String(linked.errors));
 
   const { outcome, problem } = useMemo((): { outcome: Outcome | null; problem: string | null } => {
     const a = parse(amount);
@@ -247,6 +267,16 @@ export function WpmCalculatorPage() {
                   {speedBand(outcome.gross).note}
                 </p>
               </div>
+
+              <ShareLink
+                path={buildToolPath(TOOL.path, {
+                  [basis === 'words' ? 'words' : 'chars']: amount,
+                  time,
+                  unit: unit === 'minutes' ? null : unit,
+                  errors,
+                })}
+                hint="Opens the calculator with these figures already filled in and the answer showing."
+              />
 
               <div className="tt-again">
                 <ToolCta tool="wpm-calculator" to="/tools/typing-speed-test">

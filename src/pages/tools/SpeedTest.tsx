@@ -11,7 +11,7 @@
  */
 
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ToolPage, ToolCta } from '../../components/tools/ToolShell';
 import {
   DurationPicker, RestartButton, TypingSurface,
@@ -23,6 +23,8 @@ import { toolByPath } from '../../lib/tools/registry';
 import { speedTestText } from '../../lib/tools/text';
 import { cpm, isMeaningful, speedBand } from '../../lib/tools/metrics';
 import { toolCompleted, toolRestarted, toolStarted } from '../../lib/tools/analytics';
+import { buildToolPath, readOneOf } from '../../lib/tools/deepLink';
+import { ShareLink } from '../../components/tools/ShareLink';
 import { saveAnonResult } from '../../lib/starter';
 import type { SessionResult } from '../../lib/types';
 
@@ -38,7 +40,12 @@ const TOOL = toolByPath('/tools/typing-speed-test')!;
 const FIRST_SEED = 4_120_907;
 
 export function SpeedTestPage() {
-  const [duration, setDuration] = useState<Duration>(60);
+  const [params] = useSearchParams();
+  // `?duration=30`. Read once, as the initial value, so the URL sets the
+  // starting state without fighting the reader for the buttons afterwards.
+  const [duration, setDuration] = useState<Duration>(
+    () => readOneOf(params, 'duration', DURATIONS) ?? 60,
+  );
   const [seed, setSeed] = useState(FIRST_SEED);
   const [run, setRun] = useState<FinishedRun | null>(null);
   const [best, setBest] = useState<SessionResult | null>(null);
@@ -139,6 +146,11 @@ export function SpeedTestPage() {
                 Turn this into a training plan
               </ToolCta>
             </div>
+
+            <ShareLink
+              path={buildToolPath(TOOL.path, { duration })}
+              hint={`Opens this test already set to ${duration < 60 ? `${duration} seconds` : `${duration / 60} minutes`}.`}
+            />
 
             <p className="tt-handoff">
               Two questions this number raises, and where they are answered:{' '}

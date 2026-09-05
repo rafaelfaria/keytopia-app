@@ -207,6 +207,135 @@ html:has(.pub-root) { background: #0b1020; color-scheme: dark; }
   .site-head-cta { gap: 7px; }
 }
 
+/* ── The "Free tools" menu (src/components/public/ToolsMenu.tsx) ────────
+   Hard-coded colours, like the rest of the header: this markup renders inside
+   .landing, which carries its own palette, as well as inside .pub-root. Hover
+   opens it, but focus and the chevron button do too, so nothing here is the
+   only route in. */
+
+.site-head-tools { position: relative; display: flex; align-items: center; gap: 4px; }
+
+.site-head-caret {
+  display: inline-grid;
+  place-items: center;
+  /* 28px, not the 44px touch minimum: it sits inside a nav bar that is itself
+     hidden below 60rem, so it is only ever operated by a mouse or a keyboard.
+     The 44px rule buys nothing here and would push the header taller. */
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: #8b93b8;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.2s ease;
+}
+
+.site-head-tools:hover .site-head-caret,
+.site-head-tools.is-open .site-head-caret { color: #eef1fb; }
+.site-head-tools.is-open .site-head-caret { transform: rotate(180deg); }
+.site-head-caret:focus-visible { outline: 2px solid #14d8c4; outline-offset: 2px; }
+
+.site-head-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  /* The gap between the trigger and the panel is padding on the panel, not
+     margin: a real gap means the pointer leaves the group on the way down and
+     the panel closes underneath the cursor. */
+  padding-top: 14px;
+  z-index: 50;
+  width: min(46rem, calc(100vw - 2rem));
+  animation: toolsMenuIn 0.16s ease-out;
+}
+
+.site-head-menu[hidden] { display: none; }
+
+@keyframes toolsMenuIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-head-menu { animation: none; }
+  .site-head-tools.is-open .site-head-caret { transition: none; }
+}
+
+.site-head-menu-inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 22px;
+  padding: 18px 20px 14px;
+  border: 1px solid #2a3560;
+  border-bottom: 0;
+  border-radius: 14px 14px 0 0;
+  background: #101731;
+  box-shadow: 0 22px 48px rgba(3, 6, 20, 0.55);
+}
+
+.site-head-menu-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.site-head-menu-col > strong {
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: #6a7cb8;
+  padding: 0 8px 6px;
+}
+
+.site-head-menu-col a {
+  display: block;
+  padding: 7px 8px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.site-head-menu-col a:hover { background: rgba(255, 255, 255, 0.06); }
+.site-head-menu-col a:focus-visible { outline: 2px solid #14d8c4; outline-offset: -1px; }
+
+.site-head-menu-col a span {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: #eef1fb;
+  line-height: 1.35;
+}
+
+/* The outcome, in the menu as well as on the cards. A list of eight names is
+   not something anybody can choose from at a glance. */
+.site-head-menu-col a em {
+  display: block;
+  margin-top: 1px;
+  font-style: normal;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: #8b93b8;
+}
+
+.site-head-menu-all {
+  display: block;
+  padding: 11px 20px;
+  border: 1px solid #2a3560;
+  border-radius: 0 0 14px 14px;
+  background: #0d1226;
+  box-shadow: 0 22px 48px rgba(3, 6, 20, 0.55);
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #14d8c4;
+  text-decoration: none;
+}
+
+.site-head-menu-all:hover { background: #111938; }
+.site-head-menu-all:focus-visible { outline: 2px solid #14d8c4; outline-offset: -2px; }
+
+@media (max-width: 74rem) {
+  .site-head-menu { width: min(34rem, calc(100vw - 2rem)); }
+  .site-head-menu-inner { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ── Hero band (src/components/public/PublicHero.tsx) ───────────────────
    A WebGL keycap field behind the page title, giving the content pages the
    same world the landing page opens in. The canvas is decoration: the title

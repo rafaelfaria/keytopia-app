@@ -20,7 +20,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ToolPage, ToolCta } from '../../components/tools/ToolShell';
 import { toolByPath } from '../../lib/tools/registry';
 import {
@@ -29,6 +29,8 @@ import {
 } from '../../lib/tools/benchmarks';
 import { lastResult } from '../../lib/tools/storage';
 import { benchmarkCompared } from '../../lib/tools/analytics';
+import { buildToolPath, readNumber } from '../../lib/tools/deepLink';
+import { ShareLink } from '../../components/tools/ShareLink';
 
 const TOOL = toolByPath('/tools/typing-speed-by-age')!;
 
@@ -49,17 +51,34 @@ const AGE_OPTIONS = [
 
 const TIER_ORDER: Tier[] = ['measured', 'target', 'guidance'];
 
+/** The closest age the picker actually offers, for `?age=` values between bands. */
+function nearestAge(age: number): number {
+  return AGE_OPTIONS.reduce(
+    (best, o) => (Math.abs(o.value - age) < Math.abs(best - age) ? o.value : best),
+    AGE_OPTIONS[0].value,
+  );
+}
+
 export function SpeedByAgePage() {
-  const [wpm, setWpm] = useState('');
-  const [age, setAge] = useState(25);
+  const [params] = useSearchParams();
+  // `?wpm=45&age=10`. The age snaps to the nearest option the picker offers,
+  // so `?age=34` selects the 30-to-49 band rather than silently doing nothing.
+  const linkedWpm = readNumber(params, 'wpm', { min: 1, max: 400 });
+  const linkedAge = readNumber(params, 'age', { min: 4, max: 120 });
+
+  const [wpm, setWpm] = useState(linkedWpm === null ? '' : String(linkedWpm));
+  const [age, setAge] = useState(() => (linkedAge === null ? 25 : nearestAge(linkedAge)));
   const [prefilled, setPrefilled] = useState<number | null>(null);
 
   // The result from a test taken elsewhere in the suite, if there is one.
   // Read on mount because localStorage is a browser global and this page is
-  // prerendered in Node.
+  // prerendered in Node. A speed in the URL wins: whoever built that link
+  // meant that number, and overwriting it with a stale local result would make
+  // an advertised link show something other than what it advertised.
   useEffect(() => {
+    if (linkedWpm !== null) return;
     const last = lastResult();
-    if (last && !wpm) {
+    if (last) {
       setWpm(String(last.wpm));
       setPrefilled(last.wpm);
     }
@@ -197,6 +216,11 @@ export function SpeedByAgePage() {
                   Start practising, it&apos;s free
                 </ToolCta>
               </div>
+
+              <ShareLink
+                path={buildToolPath(TOOL.path, { wpm: parsed, age })}
+                hint="Sends somebody straight to this comparison, with the speed and age already filled in."
+              />
 
               <p className="tt-handoff">
                 The comparison worth making is with yourself last month, not with a benchmark

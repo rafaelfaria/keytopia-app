@@ -14,7 +14,7 @@
  */
 
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ToolPage, ToolCta } from '../../components/tools/ToolShell';
 import {
   RestartButton, ToolControls, TypingSurface,
@@ -27,16 +27,22 @@ import { accuracyText } from '../../lib/tools/text';
 import { accuracyBand, isMeaningful } from '../../lib/tools/metrics';
 import { analyseKeys } from '../../lib/tools/keys';
 import { toolCompleted, toolRestarted, toolStarted } from '../../lib/tools/analytics';
+import { buildToolPath, readNumber } from '../../lib/tools/deepLink';
+import { ShareLink } from '../../components/tools/ShareLink';
 
 const TOOL = toolByPath('/tools/typing-accuracy-test')!;
 const FIRST_SEED = 3_305_118;
 
 export function AccuracyTestPage() {
+  const [params] = useSearchParams();
+  // `?sentences=8`. Rounded and clamped rather than trusted: the passage pool
+  // is finite and a link asking for four hundred sentences is not a request.
+  const sentences = Math.round(readNumber(params, 'sentences', { min: 3, max: 10 }) ?? 5);
   const [seed, setSeed] = useState(FIRST_SEED);
   const [run, setRun] = useState<FinishedRun | null>(null);
   const surface = useRef<SurfaceHandle | null>(null);
 
-  const text = useMemo(() => accuracyText(seed, 5), [seed]);
+  const text = useMemo(() => accuracyText(seed, sentences), [seed, sentences]);
 
   const onFinish = useCallback((r: FinishedRun) => {
     setRun(r);
@@ -87,8 +93,8 @@ export function AccuracyTestPage() {
           <>
             <ToolControls><RestartButton onClick={restart} label="New passage" /></ToolControls>
             <p className="tool-brief">
-              Five sentences, with capitals and punctuation. There is no clock. Type them as
-              accurately as you can, and correct anything you notice, exactly as you would in
+              {sentences} sentences, with capitals and punctuation. There is no clock. Type them
+              as accurately as you can, and correct anything you notice, exactly as you would in
               real work.
             </p>
             <TypingSurface
@@ -179,6 +185,11 @@ export function AccuracyTestPage() {
                 Practise these keys in KeyTopia
               </ToolCta>
             </div>
+
+            <ShareLink
+              path={buildToolPath(TOOL.path, { sentences: sentences === 5 ? null : sentences })}
+              hint={`Opens the same ${sentences}-sentence accuracy test.`}
+            />
 
             <p className="tt-handoff">
               To find out which keys are behind this properly, rather than from whichever letters

@@ -42,29 +42,62 @@ const TRUSTWORTHY_RESULT: GuideSection = {
   ],
 };
 
+/**
+ * The lede, and the reason it is short.
+ *
+ * It used to be sixty words, and it sat between the reader and every tool on
+ * the page. Somebody who searched for "typing speed test" and landed here had
+ * to read a paragraph about the engine architecture before they could see that
+ * a typing speed test was available. The detail is all still on the page; it is
+ * now underneath the thing people came for.
+ */
 export const TOOLS_HUB_INTRO =
-  'Eight free typing tools that actually run in your browser: speed tests, an accuracy test, a per-key weakness analysis, a WPM calculator, age benchmarks, a daily exercise and a progress tracker. No sign-up, no limit on attempts, no result hidden behind an email box. They share one typing engine and one definition of WPM, so a number from one of them means the same thing in all of them.';
+  'Eight typing tools that actually work. Free, no sign-up, unlimited attempts, and your results never leave your browser.';
+
+/** The one-line answer to "what is this page for", above the fold. */
+export const TOOLS_HUB_PROMISE =
+  'Measure your typing, find out which keys are slowing you down, and keep a record of whether you are getting better.';
+
+/**
+ * Three claims, each of which is either true or a lie somebody can check. They
+ * replaced three prose sections that said the same things at four times the
+ * length and were, in the reader's words, a dump.
+ */
+export const TOOLS_HUB_PROMISES: { title: string; body: string }[] = [
+  {
+    title: 'Nothing is held back',
+    body: 'Every tool gives you the whole result, immediately, however many times you use it. No email box in front of a score, no attempt limit, no paid tier. KeyTopia itself is free too, so there is nothing being saved up for later.',
+  },
+  {
+    title: 'One engine, one definition of WPM',
+    body: 'The eight tools are one typing engine asked eight questions, and it is the engine the lessons, games and races run on. A speed from one of them means the same thing in all of them, and comparing two is comparing like with like.',
+  },
+  {
+    title: 'Your results stay in your browser',
+    body: 'Results are kept in local storage as summaries: date, speed, accuracy, duration, mistakes. What you typed is never stored and never sent anywhere. Clearing site data clears it, which is the trade for there being nothing to leak.',
+  },
+];
 
 export const TOOLS_HUB_SECTIONS: GuideSection[] = [
   {
-    heading: 'Why these are free, and what the catch is',
+    heading: 'Which one to start with',
     paragraphs: [
-      'KeyTopia is a typing tutor. These tools are the measuring half of that, split out and given their own addresses because a measurement is useful on its own and because most people arrive wanting to know one number rather than wanting to enrol in anything.',
-      'The catch, stated plainly: every tool ends by pointing at KeyTopia. Nothing is withheld to make that pointer more attractive. You get the full result, every time, with no attempt limit and no account, and if you never click through, the tool still did the thing it said it would.',
+      'The 60-second speed test, unless you already know your number. It gives you the figure most people arrive looking for, and every other tool here can pick that result up: the age benchmark prefills it, the progress tracker charts it, and the weak-key analysis tells you which letters produced it.',
+      'If you already know you are inaccurate rather than slow, start with the accuracy test instead. If you know you are slow and cannot say why, the weak-key analysis is the one that answers that, and it is the tool here you will not find a real equivalent of elsewhere.',
     ],
   },
   {
-    heading: 'They share one engine',
+    heading: 'How the eight fit together',
     paragraphs: [
-      'The eight tools are one typing engine with eight different questions asked of it. That matters more than it sounds: it is why the speed test and the timed challenge cannot disagree about your WPM, why the accuracy test and the weak-key analysis count a mistake the same way, and why a result saved from any of them fits in the same progress chart.',
-      'It is the same engine the lessons, the games and the races run on, which is why a result you record here is directly comparable with what you see once you start practising properly.',
+      'Three steps, and the categories above are those steps. You measure, which takes a minute. You work out what the measurement means, which is where the per-key analysis and the benchmarks come in. Then you do something about it daily and keep a record, which is the only part that actually changes the number.',
+      'Most people stop after the first step, retake the test a few times, and conclude they have plateaued. Retaking a test measures the same skill repeatedly without changing it. The second and third steps are what the first one is for.',
     ],
   },
   {
-    heading: 'Where your results are kept',
+    heading: 'Every tool is a link you can send',
     paragraphs: [
-      'In your browser, and nowhere else. Results are stored in local storage on the device you typed on, as summaries: a date, a speed, an accuracy, a duration and a mistake count. The text you typed is never stored and never transmitted.',
-      'That has an obvious limitation and one hidden benefit. The limitation is that clearing site data clears your history, and a result from your laptop will not appear on your phone. The benefit is that there is nothing to leak, nothing to sell, and nothing to ask you for an email address in order to unlock.',
+      'Each tool reads its setup from its own URL, so a link can arrive already configured rather than merely offering to be. A WPM calculator link can carry the figures and show the answer, an analysis link can open straight into a drill for R, T and P, and a daily-exercise link can name the day so it still means the same thing on Thursday.',
+      'Every tool also has a "copy link to this setup" button on its results, which builds the link for you. The reference below lists what each one accepts. Parameters are configuration rather than separate pages, so all of them canonicalise back to the plain tool URL.',
     ],
   },
 ];

@@ -26,6 +26,18 @@ export interface ToolEntry {
   name: string;
   /** The promise, in one line, on the hub card. */
   blurb: string;
+  /**
+   * What you walk away holding.
+   *
+   * Separate from `blurb` because they answer different questions. The blurb
+   * says what the tool does; this says what you have afterwards that you did
+   * not have before, which is the only thing that makes a directory of eight
+   * similar-sounding tools navigable. Written as a noun phrase, deliberately:
+   * a reader scanning eight cards is comparing outcomes, not reading sentences.
+   */
+  outcome: string;
+  /** Roughly how long it takes, for the card. */
+  time: string;
   category: ToolCategory;
   /** Whether it involves actually typing, which decides the keyboard hint. */
   typing: boolean;
@@ -59,6 +71,8 @@ export const TOOLS: ToolEntry[] = [
     path: '/tools/typing-speed-test',
     name: 'Typing speed test',
     blurb: 'A 15, 30, 60 or 120-second test. WPM, accuracy, mistakes and a session best.',
+    outcome: 'Your WPM, accuracy and mistake count',
+    time: '1 min',
     category: 'test',
     typing: true,
     next: ['/tools/typing-speed-by-age', '/tools/weak-key-analysis', '/tools/typing-progress-tracker'],
@@ -68,6 +82,8 @@ export const TOOLS: ToolEntry[] = [
     path: '/tools/typing-accuracy-test',
     name: 'Accuracy test',
     blurb: 'Type a passage as carefully as you can. Accuracy leads; speed is the footnote.',
+    outcome: 'An accuracy score and the keys behind your errors',
+    time: '2–3 min',
     category: 'test',
     typing: true,
     next: ['/tools/weak-key-analysis', '/tools/daily-typing-exercise', '/tools/wpm-calculator'],
@@ -77,6 +93,8 @@ export const TOOLS: ToolEntry[] = [
     path: '/tools/timed-typing-challenge',
     name: 'Timed challenge',
     blurb: 'Pick a clock from 15 seconds to 5 minutes and go. A score you can copy and send.',
+    outcome: 'A locked score you can copy and send',
+    time: '15 sec – 5 min',
     category: 'test',
     typing: true,
     next: ['/tools/typing-speed-test', '/tools/typing-progress-tracker', '/tools/typing-speed-by-age'],
@@ -86,6 +104,8 @@ export const TOOLS: ToolEntry[] = [
     path: '/tools/wpm-calculator',
     name: 'WPM calculator',
     blurb: 'Words or characters, plus a time. Get gross and net WPM with the formula shown.',
+    outcome: 'Gross WPM, net WPM and CPM, with the working shown',
+    time: 'Instant',
     category: 'understand',
     typing: false,
     next: ['/tools/typing-speed-test', '/tools/timed-typing-challenge', '/tools/typing-speed-by-age'],
@@ -95,6 +115,8 @@ export const TOOLS: ToolEntry[] = [
     path: '/tools/weak-key-analysis',
     name: 'Weak-key analysis',
     blurb: 'A passage built to see every letter, then a report on which keys cost you, and a drill for them.',
+    outcome: 'A ranked list of your weakest keys, and a drill for them',
+    time: '3–4 min',
     category: 'understand',
     typing: true,
     next: ['/tools/daily-typing-exercise', '/tools/typing-accuracy-test', '/tools/typing-progress-tracker'],
@@ -104,6 +126,8 @@ export const TOOLS: ToolEntry[] = [
     path: '/tools/typing-speed-by-age',
     name: 'Speed by age',
     blurb: 'Compare a result against what research measured and what schools aim at, kept apart.',
+    outcome: 'Where a speed sits against sourced benchmarks',
+    time: 'Instant',
     category: 'understand',
     typing: false,
     next: ['/tools/typing-speed-test', '/tools/typing-progress-tracker'],
@@ -113,6 +137,8 @@ export const TOOLS: ToolEntry[] = [
     path: '/tools/daily-typing-exercise',
     name: 'Daily exercise',
     blurb: 'One exercise a day, the same for everyone, new tomorrow. Builds a streak in your browser.',
+    outcome: 'Today\'s exercise, and a streak for showing up',
+    time: '3–10 min',
     category: 'improve',
     typing: true,
     next: ['/tools/typing-progress-tracker', '/tools/weak-key-analysis'],
@@ -122,6 +148,8 @@ export const TOOLS: ToolEntry[] = [
     path: '/tools/typing-progress-tracker',
     name: 'Progress tracker',
     blurb: 'Every result you keep, charted. Best, average, latest and whether you are actually improving.',
+    outcome: 'A chart of your speed over time, and a real trend',
+    time: 'Instant',
     category: 'improve',
     typing: false,
     next: ['/tools/typing-speed-test', '/tools/daily-typing-exercise'],

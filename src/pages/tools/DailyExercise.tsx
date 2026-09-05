@@ -14,7 +14,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ToolPage, ToolCta } from '../../components/tools/ToolShell';
 import {
   RestartButton, ToolControls, TypingSurface,
@@ -27,6 +27,8 @@ import { dailyExercise, dayKey } from '../../lib/tools/text';
 import { isMeaningful } from '../../lib/tools/metrics';
 import { dailyStreak, loadState, recordDaily } from '../../lib/tools/storage';
 import { toolCompleted, toolRestarted, toolStarted } from '../../lib/tools/analytics';
+import { buildToolPath, readDay } from '../../lib/tools/deepLink';
+import { ShareLink } from '../../components/tools/ShareLink';
 
 const TOOL = toolByPath('/tools/daily-typing-exercise')!;
 
@@ -40,6 +42,14 @@ function longDate(day: string): string {
 }
 
 export function DailyExercisePage() {
+  const [params] = useSearchParams();
+  // `?day=2026-09-07` opens that day's exercise instead of today's. For a
+  // teacher setting Monday's warm-up, and for any link that has to keep meaning
+  // the same thing after it is sent. It is deliberately view-only: a run on
+  // another day never touches the streak, because a streak you can backfill
+  // from a URL is not a record of showing up.
+  const linkedDay = readDay(params, 'day');
+
   const [today, setToday] = useState<string | null>(null);
   const [run, setRun] = useState<FinishedRun | null>(null);
   const [streak, setStreak] = useState(0);
@@ -57,17 +67,20 @@ export function DailyExercisePage() {
     setDone(Object.keys(state.daily).length);
   }, []);
 
-  const exercise = useMemo(() => (today ? dailyExercise(today) : null), [today]);
+  // A linked day needs no clock, so it renders during the prerender too.
+  const shownDay = linkedDay ?? today;
+  const isToday = !linkedDay || linkedDay === today;
+  const exercise = useMemo(() => (shownDay ? dailyExercise(shownDay) : null), [shownDay]);
 
   const onFinish = useCallback((r: FinishedRun) => {
     setRun(r);
-    if (!today || !isMeaningful(r.result.typed, r.result.seconds * 1000)) return;
+    if (!today || !isToday || !isMeaningful(r.result.typed, r.result.seconds * 1000)) return;
     const state = recordDaily(today, r.result.wpm, r.result.acc);
     setStreak(dailyStreak(state.daily));
     setBestToday(state.daily[today] ?? null);
     setDone(Object.keys(state.daily).length);
     toolCompleted('daily-typing-exercise', r.result, { day: today });
-  }, [today]);
+  }, [today, isToday]);
 
   const restart = useCallback(() => {
     setRun(null);
@@ -99,7 +112,9 @@ export function DailyExercisePage() {
           <>
             <div className="tool-daily-head">
               <div>
-                <p className="tool-daily-date">{longDate(exercise.day)}</p>
+                <p className="tool-daily-date">
+                  {longDate(exercise.day)}{!isToday && ' (linked day)'}
+                </p>
                 <h2>{exercise.title}</h2>
                 <p className="tool-daily-focus">
                   Today&apos;s focus: {exercise.focus}. About {exercise.minutes[1]} to{' '}
@@ -118,7 +133,15 @@ export function DailyExercisePage() {
               </dl>
             </div>
 
-            {bestToday && !run && (
+            {!isToday && (
+              <p className="tool-notice" role="note">
+                You are looking at a specific day rather than today&apos;s exercise, so this run
+                will not count towards a streak.{' '}
+                <Link to={TOOL.path}>Open today&apos;s instead</Link>.
+              </p>
+            )}
+
+            {isToday && bestToday && !run && (
               <p className="tool-saved" role="status">
                 You have already done today&apos;s exercise, at {bestToday.wpm} WPM and{' '}
                 {bestToday.acc}% accuracy. Doing it again is fine: only your best run of the day
@@ -179,6 +202,12 @@ export function DailyExercisePage() {
                 Get a plan instead of a passage
               </ToolCta>
             </div>
+
+            <ShareLink
+              path={buildToolPath(TOOL.path, { day: exercise?.day })}
+              label="Copy a link to this day"
+              hint="Sends somebody this exact exercise, on any day they open it. Set it as a class warm-up, or keep it to come back to."
+            />
 
             <p className="tt-handoff">
               Your streak and your best runs live in this browser, and nowhere else. To chart

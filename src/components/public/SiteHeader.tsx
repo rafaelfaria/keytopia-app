@@ -21,14 +21,21 @@
 import type { ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { LogoMark } from '../Brand';
+import { ToolsMenu } from './ToolsMenu';
 import { SITE_NAME } from '../../lib/seo/site';
 
-const LINKS: { to: string; label: string }[] = [
+/**
+ * `menu: true` marks the item that opens a panel rather than only navigating.
+ * Only "Free tools" has one: it is the single link with eight destinations
+ * behind it, and a header where several items drop down is a header nobody can
+ * cross with a mouse.
+ */
+const LINKS: { to: string; label: string; menu?: boolean }[] = [
   { to: '/typing-test', label: 'Typing test' },
   { to: '/learn-to-type', label: 'Learn to type' },
   { to: '/curriculum', label: 'Curriculum' },
   { to: '/typing-games', label: 'Games' },
-  { to: '/tools', label: 'Free tools' },
+  { to: '/tools', label: 'Free tools', menu: true },
   { to: '/blog', label: 'Blog' },
   { to: '/faq', label: 'FAQ' },
 ];
@@ -43,7 +50,9 @@ export function SiteHeader({ cta }: { cta?: ReactNode }) {
         </Link>
 
         <nav className="site-head-nav" aria-label="Main">
-          {LINKS.map((l) => (
+          {LINKS.map((l) => (l.menu ? (
+            <ToolsMenu key={l.to} />
+          ) : (
             <NavLink
               key={l.to}
               to={l.to}
@@ -51,7 +60,7 @@ export function SiteHeader({ cta }: { cta?: ReactNode }) {
             >
               {l.label}
             </NavLink>
-          ))}
+          )))}
         </nav>
 
         {/* Two doors, not one. "Start free" was the only way in from every

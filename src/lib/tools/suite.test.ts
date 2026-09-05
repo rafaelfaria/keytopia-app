@@ -17,10 +17,15 @@ import { describe, expect, it } from 'vitest';
 import { PUBLIC_PAGES, pageByPath, pageTitle, SITE_URL, absUrl } from '../seo/site';
 import { TOOL_PAGES, TOOL_PAGE_PATHS } from '../seo/toolsPages';
 import { TOOLS, TOOLS_BASE, TOOL_PATHS, toolByPath, toolsIn, CATEGORIES } from './registry';
-import { TOOL_CONTENT, TOOLS_HUB_FAQS, contentForPath } from '../seo/toolsContent';
+import {
+  TOOL_CONTENT, TOOLS_HUB_FAQS, TOOLS_HUB_PROMISE, TOOLS_HUB_PROMISES, contentForPath,
+} from '../seo/toolsContent';
 import { jsonLdForPath } from '../seo/jsonLd';
 import { BENCHMARKS, SOURCES, benchmarksForAge, compare, sourceById } from './benchmarks';
 import { BLOG_POSTS } from '../blog/posts';
+import { buildLlmsTxt, buildSitemapXml } from '../seo/generators';
+import { buildLlmsFullTxt } from '../seo/generatorsFull';
+import { paramsFor } from './deepLink';
 
 const read = (p: string) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 
@@ -259,6 +264,91 @@ describe('the written content', () => {
   it('asks each question only once across the whole suite', () => {
     const all = TOOLS.flatMap((t) => contentForPath(t.path).faqs.map((f) => f.question));
     expect(new Set(all).size).toBe(all.length);
+  });
+});
+
+describe('the crawler-facing files carry the suite', () => {
+  const sitemap = buildSitemapXml();
+  const llms = buildLlmsTxt();
+  const full = buildLlmsFullTxt();
+
+  it('puts every tool in the sitemap', () => {
+    for (const path of TOOL_PATHS) {
+      expect(sitemap, `${path} missing from sitemap.xml`).toContain(`<loc>${absUrl(path)}</loc>`);
+    }
+  });
+
+  it('gives the sitemap a lastmod and a priority for each', () => {
+    for (const page of TOOL_PAGES) {
+      expect(page.lastModified).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(page.priority).toBeGreaterThanOrEqual(0.5);
+    }
+  });
+
+  it('links every tool from llms.txt', () => {
+    for (const t of TOOLS) {
+      expect(llms, `${t.path} missing from llms.txt`).toContain(absUrl(t.path));
+      expect(llms, `${t.name} has no outcome in llms.txt`).toContain(t.outcome);
+    }
+  });
+
+  it('publishes every deep-link parameter in llms.txt', () => {
+    // An agent asked to "work out somebody's WPM" should be able to build the
+    // configured URL from this file alone, which means the parameters have to
+    // be in it rather than only in the hub's table.
+    expect(llms).toContain('Linking to a tool with values');
+    for (const t of TOOLS) {
+      for (const spec of paramsFor(t.path)) {
+        expect(llms, `${t.path} ${spec.name} undocumented in llms.txt`)
+          .toContain(`${absUrl(t.path)}${spec.example}`);
+      }
+    }
+  });
+
+  it('repeats the parameters on each tool section of llms-full.txt', () => {
+    for (const t of TOOLS) {
+      const specs = paramsFor(t.path);
+      for (const spec of specs) {
+        expect(full, `${t.path} ${spec.name} missing from llms-full.txt`)
+          .toContain(`\`?${spec.name}=\``);
+      }
+    }
+    expect((full.match(/#### Link parameters/g) ?? []).length).toBe(TOOLS.length);
+  });
+
+  it('describes the hub itself in both files', () => {
+    expect(llms).toContain('## Free tools');
+    expect(full).toContain(absUrl(TOOLS_BASE));
+  });
+});
+
+describe('the hub reads as a directory rather than a dump', () => {
+  it('keeps the lede to one line', () => {
+    // It was sixty words and sat above every tool on the page. A reader who
+    // searched for a typing test met a paragraph about engine architecture.
+    const words = TOOLS_HUB_PROMISE.split(/\s+/).length;
+    expect(words).toBeLessThanOrEqual(30);
+  });
+
+  it('gives every card an outcome and a time, not just a name', () => {
+    for (const t of TOOLS) {
+      expect(t.outcome.length, `${t.path} outcome`).toBeGreaterThan(15);
+      expect(t.time.length, `${t.path} time`).toBeGreaterThan(2);
+      // The outcome is what you get, so it must not simply restate the name.
+      expect(t.outcome.toLowerCase()).not.toBe(t.name.toLowerCase());
+    }
+  });
+
+  it('states its claims as three short panels rather than three essays', () => {
+    expect(TOOLS_HUB_PROMISES).toHaveLength(3);
+    for (const p of TOOLS_HUB_PROMISES) {
+      const words = p.body.split(/\s+/).length;
+      expect(words, `"${p.title}" is ${words} words`).toBeLessThanOrEqual(60);
+    }
+  });
+
+  it('names one tool as the place to start', () => {
+    expect(toolByPath('/tools/typing-speed-test')).toBeDefined();
   });
 });
 

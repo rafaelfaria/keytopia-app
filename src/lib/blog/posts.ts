@@ -1075,10 +1075,23 @@ export function postBySlug(slug: string): BlogPost | undefined {
  * how the development server and the blog's own preview escape that, so the
  * whole campaign is reviewable before it runs.
  */
+/**
+ * Whether one article is published on a given day.
+ *
+ * The single definition of the schedule. Three things ask this question and
+ * they must never disagree: `isLive` (what the app will render), the sitemap
+ * and llms.txt (what the site advertises), and middleware.ts (what the edge
+ * will actually serve). They used to compare dates separately, which is how the
+ * sitemap came to advertise articles the app would not serve.
+ */
+export function isPublishedOn(post: BlogPost, today: string, showAll = false): boolean {
+  return showAll || post.publishedAt <= today;
+}
+
 export function publishedPosts(today: string, showAll = false): BlogPost[] {
   return BLOG_POSTS
     .map((post, i) => ({ post, i }))
-    .filter(({ post }) => showAll || post.publishedAt <= today)
+    .filter(({ post }) => isPublishedOn(post, today, showAll))
     // Newest first. The array index breaks ties, so two articles sharing a date
     // keep the order they were written in rather than an arbitrary one.
     .sort((a, b) => b.post.publishedAt.localeCompare(a.post.publishedAt) || b.i - a.i)

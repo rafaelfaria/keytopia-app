@@ -337,7 +337,7 @@ const BLOG_INDEX: PublicPage = {
  * missing from the router, or carry a canonical URL that disagrees with the
  * link the index renders.
  */
-const blogPageFor = (post: BlogPost): PublicPage => ({
+export const blogPageFor = (post: BlogPost): PublicPage => ({
   path: postPath(post),
   label: post.title,
   title: post.seoTitle,

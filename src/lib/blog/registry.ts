@@ -12,7 +12,7 @@
 
 import { BODIES } from './bodies';
 import {
-  BLOG_POSTS, postBySlug, postPath, todayIso, type BlogPost,
+  BLOG_POSTS, isPublishedOn, postBySlug, postPath, todayIso, type BlogPost,
 } from './posts';
 // The override that makes every scheduled article reachable in dev and in
 // preview builds. The live decision itself is made against the clock in
@@ -41,32 +41,30 @@ const CACHE = new Map<string, Article>();
  *
  * This used to read a `Set` built from `LIVE_POSTS`, which is evaluated once at
  * module load. In the browser bundle that moment is the build, so the running
- * app's idea of "published" froze on the day it was deployed. Meanwhile
- * middleware.ts generates sitemap.xml and llms.txt per request, from the real
- * date. The two disagreed the moment a build was a day old: the sitemap
- * advertised the day's new article, a crawler followed the link, and the app
- * said the article did not exist.
+ * app's idea of "published" froze on the day it was deployed, while
+ * middleware.ts generated sitemap.xml and llms.txt per request from the real
+ * date. The two disagreed as soon as a build was a day old.
  *
- * Asking the clock instead means a missed build degrades to a client-rendered
- * article rather than a 404. The prerendered HTML for that article still only
- * arrives with the next deploy, which is what the daily cron in vercel.json is
- * for. This is the safety net under it, not a replacement for it.
+ * Asking the clock is what lets the whole drip be a read of the calendar rather
+ * than a property of when the site last built. Every article is prerendered at
+ * build time; this decides which of them may be served, and middleware.ts
+ * applies the same decision at the edge.
  */
 export const isLive = (slug: string): boolean => {
   const post = postBySlug(slug);
-  return !!post && (BLOG_SHOW_ALL || post.publishedAt <= todayIso());
+  return !!post && isPublishedOn(post, todayIso(), BLOG_SHOW_ALL);
 };
 
 /**
- * An article, if it is published.
+ * An article, published or not.
  *
- * The live check is here rather than in the route, because every caller needs
- * it: without it a scheduled article would be absent from the sitemap and yet
- * fully readable at its own URL, which is the one combination the drip is meant
- * to prevent.
+ * The prerenderer needs this: it writes static HTML for all fifty articles
+ * on every build, including the ones whose date has not arrived, so that no
+ * later build is required for a scheduled article to exist as a file. Nothing
+ * that serves a request may use it. `articleBySlug` is the gated door and is
+ * what every runtime caller wants.
  */
-export function articleBySlug(slug: string): Article | undefined {
-  if (!isLive(slug)) return undefined;
+export function articleBySlugIncludingScheduled(slug: string): Article | undefined {
   const cached = CACHE.get(slug);
   if (cached) return cached;
 
@@ -86,6 +84,21 @@ export function articleBySlug(slug: string): Article | undefined {
   };
   CACHE.set(slug, article);
   return article;
+}
+
+/**
+ * An article, if it is published.
+ *
+ * The gate is here rather than in the route because every caller needs it:
+ * without it a scheduled article would be absent from the sitemap and yet fully
+ * readable at its own URL, which is the one combination the drip is meant to
+ * prevent. Since every article is now prerendered to a real file on every
+ * build, that combination is exactly what would happen by default, so this
+ * check and the matching one in middleware.ts are what hold the schedule.
+ */
+export function articleBySlug(slug: string): Article | undefined {
+  if (!isLive(slug)) return undefined;
+  return articleBySlugIncludingScheduled(slug);
 }
 
 /**

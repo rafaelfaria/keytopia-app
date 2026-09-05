@@ -19,15 +19,18 @@
  */
 
 import { buildLlmsTxt, buildSitemapXml } from './src/lib/seo/generators';
-import { livePosts, publicPages } from './src/lib/seo/site';
+import { isPublishedOn, postBySlug, todayIso } from './src/lib/blog/posts';
+import { BLOG_SHOW_ALL, livePosts, publicPages } from './src/lib/seo/site';
 
 /**
- * Only these two paths. Without a matcher, middleware runs on every request to
- * the site — including every asset — to serve two files that are asked for a
- * handful of times a day.
+ * The two generated files, plus every article URL.
+ *
+ * Without a matcher, middleware runs on every request to the site — including
+ * every asset — so it names exactly what it needs. The blog pattern is here
+ * because the schedule is enforced at the edge: see `blogGate` below.
  */
 export const config = {
-  matcher: ['/sitemap.xml', '/llms.txt'],
+  matcher: ['/sitemap.xml', '/llms.txt', '/blog/:slug'],
 };
 
 /**
@@ -41,8 +44,51 @@ export const config = {
  */
 const CACHE = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
 
-export default function middleware(request: Request): Response | undefined {
+/**
+ * The publication schedule, enforced at the edge.
+ *
+ * Every article is prerendered on every build, scheduled ones included, so that
+ * an article going live is a fact about the calendar and never about when the
+ * site last built. The cost of that is that the static file for a scheduled
+ * article exists and would otherwise be served the moment somebody guessed its
+ * URL, which is precisely the "not in the sitemap, yet readable" combination
+ * the drip exists to prevent.
+ *
+ * So the file is on disk and this decides whether anyone may have it. The date
+ * is read per request, which is the whole point: nothing has to run, deploy or
+ * rebuild for the next article to become available at midnight UTC.
+ *
+ * An unknown slug is left alone. There is no file behind it, so it falls
+ * through to the 404 document like any other unrecognised path.
+ */
+async function blogGate(request: Request, slug: string): Promise<Response | undefined> {
+  const post = postBySlug(slug);
+  if (!post) return undefined;
+  if (isPublishedOn(post, todayIso(), BLOG_SHOW_ALL)) return undefined;
+
+  // Serve the site's own 404 document rather than a bare body, so a person who
+  // guessed a URL gets the real page. Only reachable by guessing, since nothing
+  // links to a scheduled article, so the extra fetch costs nothing in practice.
+  const notFound = await fetch(new URL('/404.html', request.url));
+  return new Response(await notFound.text(), {
+    status: 404,
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      // Cacheable only until the day turns. A scheduled article becomes
+      // published on a date boundary, and a 404 cached past it would outlive
+      // the reason it was issued.
+      'Cache-Control': 'public, max-age=0, s-maxage=300',
+      'X-Robots-Tag': 'noindex, nofollow',
+    },
+  });
+}
+
+export default async function middleware(request: Request): Promise<Response | undefined> {
   const { pathname } = new URL(request.url);
+
+  if (pathname.startsWith('/blog/')) {
+    return blogGate(request, pathname.slice('/blog/'.length));
+  }
 
   // Both registries are computed here, per request, rather than read from the
   // module-level snapshots. A warm instance's module scope was evaluated at

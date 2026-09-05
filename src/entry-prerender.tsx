@@ -18,7 +18,7 @@ import { Route, Routes } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 import BlogIndex from './pages/blog/BlogIndex';
 import BlogPostPage from './pages/blog/BlogPost';
-import { articleBySlug } from './lib/blog/registry';
+import { articleBySlugIncludingScheduled } from './lib/blog/registry';
 import {
   AdaptivePracticePage, AnalyticsPage, CurriculumPage, FaqPage, GlossaryPage,
   HomeOutline, KidsPage, LearnToTypePage, PracticeModesPage, PrivacyPage,
@@ -31,7 +31,8 @@ import {
   SpeedTestPage, TimedChallengePage, ToolsHubPage, WeakKeysPage, WpmCalculatorPage,
 } from './pages/tools';
 import { buildHead, buildNoIndexHead, headToHtml } from './lib/seo/head';
-import { pageByPath, PUBLIC_PAGES, SITE_NAME, type PublicPage as PublicPageDef } from './lib/seo/site';
+import { blogPageFor, pageByPath, PUBLIC_PAGES, SITE_NAME, type PublicPage as PublicPageDef } from './lib/seo/site';
+import { BLOG_POSTS, postBySlug, postPath } from './lib/blog/posts';
 
 // Re-exported so scripts/gen-seo.mjs can reach the generators through the same
 // compiled bundle rather than needing its own TypeScript pipeline.
@@ -96,8 +97,20 @@ export interface Rendered {
  */
 export const NOT_FOUND_ROUTE = '/404';
 
+/**
+ * Every route that gets a static file.
+ *
+ * PUBLIC_PAGES holds only the articles whose date has arrived, because it is
+ * also what builds the sitemap and llms.txt. The prerenderer deliberately goes
+ * wider: it writes HTML for all fifty articles, scheduled ones included, so
+ * that an article becoming published is purely a question of the date and never
+ * requires another build. middleware.ts refuses to serve the ones that are not
+ * published yet, so the extra files are unreachable until they are due.
+ */
 export function routes(): string[] {
-  return [...PUBLIC_PAGES.map((p) => p.path), NOT_FOUND_ROUTE];
+  const listed = new Set(PUBLIC_PAGES.map((p) => p.path));
+  const scheduled = BLOG_POSTS.map(postPath).filter((path) => !listed.has(path));
+  return [...listed, ...scheduled, NOT_FOUND_ROUTE];
 }
 
 export function render(path: string): Rendered {
@@ -112,7 +125,12 @@ export function render(path: string): Rendered {
     return { path, body, head: headToHtml(buildNoIndexHead(`Page not found | ${SITE_NAME}`)) };
   }
 
-  const page = pageByPath(path);
+  // A scheduled article has no registry entry, because the registry is also the
+  // sitemap. Its page definition is derived from the post the same way a
+  // published one's is, so the two documents are built identically and the only
+  // difference between them is whether anything will serve it yet.
+  const scheduled = path.startsWith('/blog/') ? postBySlug(path.slice('/blog/'.length)) : undefined;
+  const page = pageByPath(path) ?? (scheduled ? blogPageFor(scheduled) : undefined);
   if (!page) throw new Error(`No PublicPage registered for ${path}`);
 
   // The blog is matched by shape rather than listed above: there is one route
@@ -151,7 +169,7 @@ function renderBlog(path: string, page: PublicPageDef): Rendered {
   // Markdown, and they are what turn its head into BlogPosting + FAQPage
   // structured data rather than a bare WebPage.
   const slug = path.startsWith('/blog/') ? path.slice('/blog/'.length) : '';
-  const article = slug ? articleBySlug(slug) : undefined;
+  const article = slug ? articleBySlugIncludingScheduled(slug) : undefined;
   const head = article
     ? buildHead(page, { faqs: article.faqs, words: article.words, timeRequired: `PT${article.minutes}M` })
     : buildHead(page);

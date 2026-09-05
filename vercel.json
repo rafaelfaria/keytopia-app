@@ -36,11 +36,5 @@
       "source": "/(app|race|signin|welcome|who|join|onboarding|auth)(/.*)?",
       "destination": "/index.html"
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/rebuild",
-      "schedule": "15 0 * * *"
-    }
   ]
 }

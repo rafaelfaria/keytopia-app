@@ -308,13 +308,14 @@ container.__ktRoot.render(
       </Routes>
       </React.Suspense>
 
-      {/* Two measurements, deliberately. GA4 runs in Consent Mode with storage
-          denied, which keeps the privacy page's "no analytics cookies" true but
-          leaves it unable to tell one visitor from another: every page view
-          looks like a new person. Vercel identifies a visitor by a hash of IP,
-          user agent and a salt that rotates daily and is then thrown away, so
-          the visitor and bounce numbers are real without anything being stored
-          on the device. GA keeps the event stream; Vercel counts the people. */}
+      {/* Two measurements, deliberately. GA4 keeps the event stream and, with
+          its cookie, tells a returning visitor from a new one; where the law
+          wants a yes before that cookie, GtagLoader asks (consent.ts holds the
+          regions and the privacy page the wording: change both or neither).
+          Vercel identifies a visitor by a hash of IP, user agent and a salt
+          that rotates daily and is then thrown away, so its visitor and bounce
+          numbers are real without anything being stored on the device, and
+          they are the numbers to trust wherever GA was declined. */}
       <GtagLoader />
       <VercelAnalytics />
     </BrowserRouter>

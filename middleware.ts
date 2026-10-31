@@ -23,14 +23,16 @@ import { isPublishedOn, postBySlug, todayIso } from './src/lib/blog/posts';
 import { BLOG_SHOW_ALL, livePosts, publicPages } from './src/lib/seo/site';
 
 /**
- * The two generated files, plus every article URL.
+ * The two generated files, the geo lookup, plus every article URL.
  *
  * Without a matcher, middleware runs on every request to the site — including
  * every asset — so it names exactly what it needs. The blog pattern is here
- * because the schedule is enforced at the edge: see `blogGate` below.
+ * because the schedule is enforced at the edge: see `blogGate` below. The geo
+ * lookup is here because the edge is the only place that knows the answer:
+ * see `geo` below.
  */
 export const config = {
-  matcher: ['/sitemap.xml', '/llms.txt', '/blog/:slug'],
+  matcher: ['/sitemap.xml', '/llms.txt', '/api/geo', '/blog/:slug'],
 };
 
 /**
@@ -83,12 +85,35 @@ async function blogGate(request: Request, slug: string): Promise<Response | unde
   });
 }
 
+/**
+ * The visitor's country, for the cookie question and nothing else.
+ *
+ * Google Analytics may set its cookie without asking in most of the world, but
+ * not in the UK, the EEA or Switzerland, and the browser cannot tell which side
+ * of that line it is on. Vercel can: it resolves the country from the IP
+ * address and puts the two-letter code on the request, so this hands that code
+ * back and never sees the address itself. `no-store`, because a cached answer
+ * would be the previous visitor's. Off Vercel the header is absent and the
+ * client treats null as "may need asking" (src/lib/analytics/consent.ts).
+ */
+function geo(request: Request): Response {
+  const country = request.headers.get('x-vercel-ip-country');
+  return new Response(JSON.stringify({ country: country || null }), {
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'private, no-store',
+    },
+  });
+}
+
 export default async function middleware(request: Request): Promise<Response | undefined> {
   const { pathname } = new URL(request.url);
 
   if (pathname.startsWith('/blog/')) {
     return blogGate(request, pathname.slice('/blog/'.length));
   }
+
+  if (pathname === '/api/geo') return geo(request);
 
   // Both registries are computed here, per request, rather than read from the
   // module-level snapshots. A warm instance's module scope was evaluated at

@@ -10,11 +10,13 @@
  *  - Localhost never reports. Development would otherwise pollute the property
  *    with sessions nobody made, and a game under construction fires a lot of
  *    events.
- *  - Consent stays denied. KeyTopia's privacy page promises no analytics
- *    cookies and no cookie banner, so the tag runs in Consent Mode's cookieless
- *    form: aggregated pings, no client identifier, nothing stored on the
- *    device. `setAnalyticsConsent` exists for the day that changes, and until
- *    something calls it with `true` the promise on the privacy page holds.
+ *  - analytics_storage is granted by default and denied where the law wants a
+ *    yes first; GtagLoader sets both and consent.ts asks the question. This
+ *    replaced a "denied for everybody" default on 2026-10-24: GA4 does not
+ *    report consent-denied pings at all unless behavioural modelling is on,
+ *    and modelling needs a thousand consented daily users, so a property that
+ *    never grants shows nothing, Realtime included. Ad storage stays denied
+ *    for good: there are no ads here.
  */
 
 declare global {
@@ -112,8 +114,9 @@ export function trackScrollDepth(percentScrolled: number): void {
 /**
  * Flip Consent Mode's analytics_storage.
  *
- * Unused today: see the note at the top of this file. A consent banner would
- * call this, and only then does GA4 set a cookie.
+ * Called by consent.ts when the visitor answers the cookie question, and by
+ * GtagLoader to replay a stored answer. Granting is what lets GA4 set its
+ * cookie; in the regions that start denied, nothing is stored before this.
  */
 export function setAnalyticsConsent(granted: boolean): void {
   if (typeof window === 'undefined') return;

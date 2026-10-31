@@ -431,7 +431,7 @@ export const LEGAL_EFFECTIVE = '19 August 2026';
 export const SUBPROCESSORS: { name: string; role: string; data: string }[] = [
   { name: 'Supabase', role: 'Database, authentication and file storage', data: 'Account email address, profile records, lesson and session results, class membership. Hosted in the region shown on the account page.' },
   { name: 'Vercel', role: 'Website hosting, content delivery and visitor counts', data: 'Standard web-server request data: IP address, user agent, requested URL, timestamp. For visitor counts these are turned into a one-way hash that changes every day and is then discarded, so the same person cannot be recognised tomorrow.' },
-  { name: 'Google Analytics', role: 'Page and feature counts', data: 'The page being viewed, its title, the site you arrived from, and coarse device and country information derived from your IP address. It runs without cookies or any identifier, so it counts visits rather than people.' },
+  { name: 'Google Analytics', role: 'Page and feature counts', data: 'The page being viewed, its title, the site you arrived from, and coarse device and country information derived from your IP address, which Google does not keep. A first-party cookie holding a random visitor number, so a returning visitor is not counted as a new one. In the UK, the EEA and Switzerland it is set only after you say yes. No advertising features are switched on.' },
   { name: 'Resend', role: 'Transactional email delivery', data: 'Account email address, and delivery metadata for sign-in links.' },
   { name: 'Google', role: 'Optional sign-in provider', data: 'Only if you choose to sign in with Google: your email address and account identifier. KeyTopia requests nothing else from your Google account.' },
 ];
@@ -440,11 +440,11 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
   {
     heading: 'The short version',
     paragraphs: [
-      'KeyTopia is free, carries no advertising, and sells nothing to anyone. There are no tracking pixels and no advertising networks. We do count which pages get read and which games get opened, in a way that cannot follow you between sites or recognise you on your next visit.',
+      'KeyTopia is free, carries no advertising, and sells nothing to anyone. There are no tracking pixels and no advertising networks. We do count which pages get read and which games get opened, with a counter that cannot follow you between sites and knows you only as a random number.',
       'Every keystroke you make is written to your own browser first, so practice never waits on a network call and keeps working offline. What syncs to our servers is the outcome of a session, not the text you typed. Signing in is what makes a mastery map survive a lost laptop, and it is the only reason we hold an email address at all.',
     ],
     bullets: [
-      'Reading this site, taking the typing test and browsing the guides needs no account and no cookie banner.',
+      'Reading this site, taking the typing test and browsing the guides needs no account. In the UK, the EEA and Switzerland you are asked once whether our visit counter may set its cookie, and no is a complete answer.',
       'Saving progress needs one free account, held by a grown-up. Learners get profiles, not logins.',
       'We never collect a child\'s email address, real name, photograph, location or contact details.',
       'You can export or delete everything at any time, from inside the app or by emailing us.',
@@ -486,24 +486,24 @@ export const PRIVACY_SECTIONS: GuideSection[] = [
   {
     heading: 'Legal bases for processing',
     paragraphs: [
-      'Under UK and EU data protection law we rely on two bases. Performing our contract with you covers your account, your profiles and your learning records, because without them the product cannot do the one thing it promises. Our legitimate interest in running a secure, working service covers server logs and abuse prevention.',
-      'We do not process your data for marketing, and we do not rely on consent for anything, which is why there is no cookie banner to dismiss.',
+      'Under UK and EU data protection law we rely on three bases. Performing our contract with you covers your account, your profiles and your learning records, because without them the product cannot do the one thing it promises. Our legitimate interest in running a secure, working service covers server logs, abuse prevention and, outside the UK, the EEA and Switzerland, counting visits.',
+      'Consent covers one thing: the Google Analytics cookie, in the UK, the EEA and Switzerland, where the law asks for a yes before an analytics cookie is set. Decline and the site works exactly the same. We do not process your data for marketing.',
     ],
   },
   {
     heading: 'Cookies and browser storage',
     paragraphs: [
-      'KeyTopia sets no advertising or analytics cookies. It uses your browser\'s local storage to hold your profiles, settings and practice history so the app can start instantly and work offline, and it stores a session token so you are not asked to sign in on every visit. Both are strictly necessary for the service to function.',
+      'KeyTopia sets no advertising cookies. Google Analytics sets two first-party cookies, _ga and one named after our property, which hold a random visitor number and expire after thirteen months. In the UK, the EEA and Switzerland they are set only after you say yes. Beyond that, the site uses your browser\'s local storage to hold your profiles, settings and practice history so the app can start instantly and work offline, your answer to the cookie question, and a session token so you are not asked to sign in on every visit. Those are strictly necessary for the service to function.',
       'Clearing your browser data for this site removes the local copy. If you are signed in, your synced records remain in your account and return when you sign in again.',
     ],
   },
   {
     heading: 'How we count visits',
     paragraphs: [
-      'We look at which pages are read and which parts of the app are opened, because otherwise we are guessing about what to build next. Both tools that do this are set up so that they measure the visit and not the visitor.',
-      'Google Analytics runs in its consent mode with storage denied, permanently and for everybody. That means it writes no cookie, is given no identifier, and stores nothing on your device, so it cannot tell your second page from somebody else\'s first, cannot recognise you when you come back, and cannot follow you to another site. It receives the address and title of the page, where you arrived from, and the country and device type its servers work out from your IP address.',
+      'We look at which pages are read and which parts of the app are opened, because otherwise we are guessing about what to build next. Two tools do this, and both are set up to collect as little as the job needs.',
+      'Google Analytics receives the address and title of the page, where you arrived from, and the country and device type its servers work out from your IP address, which it does not keep. To tell a returning visitor from a new one it sets a cookie holding a random number. That number is never joined to your name, email or account, it cannot follow you to another site, and every advertising signal is denied in the tag. In the UK, the EEA and Switzerland the cookie is set only if you allow it. Until you answer, and if you say no, it runs cookieless: nothing is stored on your device, no identifier is assigned, and your visit is not counted.',
       'Vercel, who host the site, count visitors from a hash of your IP address, your browser and a secret that is regenerated every day and never kept. That produces an honest count of how many people read a page without anything being stored on your device and without the count surviving into tomorrow.',
-      'Neither is joined to your account, your profiles or your learning records, and neither ever sees the text you type. This is why there is still no cookie banner: there is no consent to ask for when nothing is stored and nobody is identified.',
+      'Neither is joined to your account, your profiles or your learning records, and neither ever sees the text you type.',
     ],
   },
   {
